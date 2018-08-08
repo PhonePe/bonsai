@@ -1,4 +1,4 @@
-package com.phonepe.platform.bonsai.core.core;
+package com.phonepe.platform.bonsai.core.vital;
 
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.data.MapKnotData;
@@ -22,9 +22,14 @@ import java.util.stream.Collectors;
 /**
  * This is where the cool stuff happens.
  * The entire forest is maintained here. The adjacency tree representation,
- * whose {@link Knot}s contain recursive references to the same Node
- * Id mappings are for quick lookups on ids.
+ * whose keys point to {@link Knot}s, which contain recursive references to keys in the tree.
+ * <p>
  * {@link Knot}(Knot is latin for Node) is how the directed Tree is represented.
+ * Every {@link Knot} contains a  bunch of directional {@link Edge}s,
+ * which all point to a certain {@link Knot} if its conditions are met
+ * <p>
+ * Key mappings represent the tree
+ * Id mappings are for quick lookups on ids.
  *
  * @author tushar.naik
  * @version 1.0  11/07/18 - 2:09 PM
@@ -39,6 +44,7 @@ public class AdjacencyBonsai implements Bonsai {
         this.keyMapping = new HashMap<>();
         this.idMapping = new HashMap<>();
         this.edgeConditionEngine = new EdgeConditionEngine();
+        JsonPathSetup.setup();
     }
 
     @Override
@@ -108,7 +114,7 @@ public class AdjacencyBonsai implements Bonsai {
     public KeyNode evaluate(String key, Context context) {
 
         /* if context preferences already contains the key, return it */
-        if (context.getPreferences().containsKey(key)) {
+        if (context.getPreferences() != null && context.getPreferences().containsKey(key)) {
             return context.getPreferences().get(key);
         }
 

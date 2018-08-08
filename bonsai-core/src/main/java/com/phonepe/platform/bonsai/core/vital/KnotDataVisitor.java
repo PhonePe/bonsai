@@ -1,4 +1,4 @@
-package com.phonepe.platform.bonsai.core.core;
+package com.phonepe.platform.bonsai.core.vital;
 
 import com.phonepe.platform.bonsai.core.data.*;
 

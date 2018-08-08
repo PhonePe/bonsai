@@ -1,7 +1,7 @@
 package com.phonepe.platform.bonsai.core;
 
 import com.google.common.collect.Lists;
-import com.phonepe.platform.bonsai.core.core.Edge;
+import com.phonepe.platform.bonsai.core.vital.Edge;
 import com.phonepe.platform.bonsai.core.structures.OrderedList;
 import org.junit.Test;
 

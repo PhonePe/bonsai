@@ -1,9 +1,9 @@
 package com.phonepe.platform.bonsai.core;
 
-import com.phonepe.platform.bonsai.core.core.Context;
-import com.phonepe.platform.bonsai.core.core.Edge;
-import com.phonepe.platform.bonsai.core.core.Knot;
-import com.phonepe.platform.bonsai.core.core.KnotData;
+import com.phonepe.platform.bonsai.core.vital.Context;
+import com.phonepe.platform.bonsai.core.vital.Edge;
+import com.phonepe.platform.bonsai.core.vital.Knot;
+import com.phonepe.platform.bonsai.core.vital.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.models.KeyNode;
 

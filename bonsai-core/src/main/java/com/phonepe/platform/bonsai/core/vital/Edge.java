@@ -1,4 +1,4 @@
-package com.phonepe.platform.bonsai.core.core;
+package com.phonepe.platform.bonsai.core.vital;
 
 import com.phonepe.folios.condition.engine.Condition;
 import com.phonepe.platform.bonsai.core.query.filter.Filter;
@@ -8,6 +8,9 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
+ * An edge signifies a directional component of a Bonsai, which points to a single {@link Knot}
+ * It is part of a {@link Knot}
+ *
  * @author tushar.naik
  * @version 1.0  10/07/18 - 2:41 PM
  */

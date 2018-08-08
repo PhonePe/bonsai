@@ -1,12 +1,14 @@
 package com.phonepe.platform.bonsai.core;
 
 import com.jayway.jsonpath.JsonPath;
-import com.phonepe.platform.bonsai.core.core.*;
 import com.phonepe.platform.bonsai.core.data.MultiKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.query.filter.general.EqualsFilter;
+import com.phonepe.platform.bonsai.core.vital.AdjacencyBonsai;
+import com.phonepe.platform.bonsai.core.vital.Context;
+import com.phonepe.platform.bonsai.core.vital.Edge;
+import com.phonepe.platform.bonsai.core.vital.Knot;
 import com.phonepe.platform.bonsai.models.KeyNode;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -17,11 +19,6 @@ import java.util.Map;
  * @version 1.0  27/07/18 - 2:36 PM
  */
 public class AdjacencyBonsaiTest {
-
-    @Before
-    public void setUp() {
-        JsonPathSetup.setup();
-    }
 
     @Test
     public void testBonsai() throws IOException, BonsaiError {
@@ -54,7 +51,7 @@ public class AdjacencyBonsaiTest {
 
         bonsai.connect(widgetKnot1.getId(), Edge.builder()
                                                 .condition(new EqualsFilter("$.gender", "female"))
-                                                .pivot("aaa")
+                                                .pivot("gender")
                                                 .knot(femaleKnot)
                                                 .build());
 
