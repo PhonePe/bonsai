@@ -1,4 +1,4 @@
-package com.phonepe.platform.bonsai.core.model;
+package com.phonepe.platform.bonsai.models;
 
 import lombok.Builder;
 import lombok.Data;

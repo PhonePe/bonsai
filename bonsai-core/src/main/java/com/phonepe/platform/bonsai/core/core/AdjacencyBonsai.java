@@ -6,12 +6,12 @@ import com.phonepe.platform.bonsai.core.data.MultiKnotData;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
-import com.phonepe.platform.bonsai.core.model.KeyNode;
-import com.phonepe.platform.bonsai.core.model.ListNode;
-import com.phonepe.platform.bonsai.core.model.MapNode;
-import com.phonepe.platform.bonsai.core.model.ValueNode;
 import com.phonepe.platform.bonsai.core.structures.CycleIdentifier;
 import com.phonepe.platform.bonsai.core.structures.OrderedList;
+import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.models.ListNode;
+import com.phonepe.platform.bonsai.models.MapNode;
+import com.phonepe.platform.bonsai.models.ValueNode;
 
 import java.util.HashMap;
 import java.util.Map;

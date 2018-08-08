@@ -4,8 +4,8 @@ import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.core.*;
 import com.phonepe.platform.bonsai.core.data.MultiKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.core.model.KeyNode;
 import com.phonepe.platform.bonsai.core.query.filter.general.EqualsFilter;
+import com.phonepe.platform.bonsai.models.KeyNode;
 import org.junit.Before;
 import org.junit.Test;
 

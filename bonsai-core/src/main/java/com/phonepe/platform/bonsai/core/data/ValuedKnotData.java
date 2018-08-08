@@ -2,7 +2,7 @@ package com.phonepe.platform.bonsai.core.data;
 
 import com.phonepe.platform.bonsai.core.core.KnotData;
 import com.phonepe.platform.bonsai.core.core.KnotDataVisitor;
-import com.phonepe.platform.bonsai.core.data.value.Value;
+import com.phonepe.platform.bonsai.models.value.Value;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

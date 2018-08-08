@@ -1,7 +1,7 @@
 package com.phonepe.platform.bonsai.core.core;
 
 import com.jayway.jsonpath.DocumentContext;
-import com.phonepe.platform.bonsai.core.model.KeyNode;
+import com.phonepe.platform.bonsai.models.KeyNode;
 import lombok.Builder;
 import lombok.Data;
 

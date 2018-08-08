@@ -5,7 +5,7 @@ import com.phonepe.platform.bonsai.core.core.Edge;
 import com.phonepe.platform.bonsai.core.core.Knot;
 import com.phonepe.platform.bonsai.core.core.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.core.model.KeyNode;
+import com.phonepe.platform.bonsai.models.KeyNode;
 
 /**
  * This is a multi level Forest implementation.
