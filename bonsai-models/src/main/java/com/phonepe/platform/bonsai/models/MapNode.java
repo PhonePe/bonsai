@@ -26,4 +26,9 @@ public class MapNode extends Node {
         super(NodeType.MAP, id, version);
         this.nodeMap = nodeMap;
     }
+
+    @Override
+    public <T> T accept(NodeVisitor<T> nodeVisitor) {
+        return nodeVisitor.visit(this);
+    }
 }

@@ -23,4 +23,9 @@ public class ListNode extends Node {
         super(NodeType.LIST, id, version);
         this.nodes = nodes;
     }
+
+    @Override
+    public <T> T accept(NodeVisitor<T> nodeVisitor) {
+        return nodeVisitor.visit(this);
+    }
 }

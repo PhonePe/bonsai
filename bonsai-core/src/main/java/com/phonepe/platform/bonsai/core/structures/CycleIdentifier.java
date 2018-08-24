@@ -21,7 +21,7 @@ public class CycleIdentifier<T> {
 
     public void add(T item) throws BonsaiError {
         if (items.contains(item)) {
-            throw new BonsaiError(BonsaiErrorCode.CYCLE_DETECTED);
+            throw new BonsaiError(BonsaiErrorCode.CYCLE_DETECTED, "Cycle identified at item:" + item);
         }
         items.add(item);
     }

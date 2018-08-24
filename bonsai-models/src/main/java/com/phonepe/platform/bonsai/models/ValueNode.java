@@ -25,4 +25,9 @@ public class ValueNode extends Node {
         super(NodeType.VALUE, id, version);
         this.value = value;
     }
+
+    @Override
+    public <T> T accept(NodeVisitor<T> nodeVisitor) {
+        return nodeVisitor.visit(this);
+    }
 }

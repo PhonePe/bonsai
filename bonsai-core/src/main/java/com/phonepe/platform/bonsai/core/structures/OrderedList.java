@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 /**
- * An ordered list of elements.
+ * An ordered list of elements, where ordering is maintained based on the comparable element
  * Adding elements at a position isn't allowed
  * This will ensure that all elements that are added are in a specific order
  *
