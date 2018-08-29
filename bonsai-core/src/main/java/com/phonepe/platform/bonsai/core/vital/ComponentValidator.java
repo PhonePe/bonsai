@@ -9,6 +9,11 @@ import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
  * @version 1.0  23/08/18 - 1:07 PM
  */
 public class ComponentValidator implements Validator {
+    private BonsaiProperties bonsaiProperties;
+
+    public ComponentValidator(BonsaiProperties bonsaiProperties) {
+        this.bonsaiProperties = bonsaiProperties;
+    }
 
     @Override
     public void validate(KnotData knotData) {
@@ -28,6 +33,9 @@ public class ComponentValidator implements Validator {
         checkNotNull(edge, "edge");
         checkNotNullOrEmpty(edge.getId(), "edge.id");
         checkNotNullOrEmpty(edge.getPivot(), "edge.pivot");
+        if (bonsaiProperties.isSinglePivotEdgeSetting() && edge.getConditions().size() > 1) {
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "singlePivotEdgeSetting is turned on, edge has more than 1 conditions");
+        }
     }
 
     @Override

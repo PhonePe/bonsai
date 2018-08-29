@@ -46,12 +46,13 @@ public class IBonsai implements Bonsai {
 
     public IBonsai(MappingStore<String, String> mappingStore,
                    KnotStore<String, AtomicKnot, AtomicEdge> knotStore,
-                   EdgeStore<String, AtomicEdge> edgeEdgeStore) {
+                   EdgeStore<String, AtomicEdge> edgeEdgeStore,
+                   BonsaiProperties bonsaiProperties) {
         this.mappingStore = mappingStore;
         this.knotStore = knotStore;
         this.edgeEdgeStore = edgeEdgeStore;
         this.edgeConditionEngine = new RequirementConditionEngine();
-        this.componentValidator = new ComponentValidator();
+        this.componentValidator = new ComponentValidator(bonsaiProperties);
         JsonPathSetup.setup();
     }
 
@@ -66,25 +67,33 @@ public class IBonsai implements Bonsai {
     }
 
     @Override
-    public Knot add(String key, KnotData knotData) {
+    public Knot createMapping(String key, KnotData knotData) {
         componentValidator.validate(knotData);
         if (mappingStore.containsKey(key)) {
             return Converters.toKnot(knotStore.get(mappingStore.get(key)));
         }
         Knot knot = create(knotData);
         mappingStore.map(key, knot.getId());
-        knotStore.createMapping(knot.getId(), Converters.toAtomicKnot(knot));
+        knotStore.create(knot.getId(), Converters.toAtomicKnot(knot));
         return knot;
     }
 
     @Override
-    public Knot add(String key, Knot knot) throws BonsaiError {
+    public Knot createMapping(String key, Knot knot) throws BonsaiError {
         componentValidator.validate(knot);
         checkForCycles(Converters.toAtomicKnot(knot));
         knot.updateVersion();
         mappingStore.map(key, knot.getId());
-        knotStore.createMapping(knot.getId(), Converters.toAtomicKnot(knot));
+        knotStore.create(knot.getId(), Converters.toAtomicKnot(knot));
+
+        /* connect every edge in the knot */
+        knot.getEdges().forEach(edge -> connect(knot.getId(), edge));
         return knot;
+    }
+
+    @Override
+    public boolean add(Knot knot) throws BonsaiError {
+        return knotStore.create(knot.getId(), Converters.toAtomicKnot(knot));
     }
 
     @Override
@@ -107,10 +116,10 @@ public class IBonsai implements Bonsai {
                 throw new BonsaiError(BonsaiErrorCode.EDGE_PIVOT_CONSTRAINT_ERROR);
             });
 
-        CycleIdentifier<AtomicKnot> knotCycleIdentifier = new CycleIdentifier<>();
-        knotCycleIdentifier.add(knot);
+        /* check for circular loops */
         AtomicEdge atomicEdge = Converters.toAtomicEdge(edge);
-        checkForCycles(atomicEdge, knotCycleIdentifier);
+        checkForCycles(knot, atomicEdge);
+
         edgeEdgeStore.map(edge.getId(), atomicEdge);
         knot.getEdges().add(edge.getId());
         knotStore.update(knot);
@@ -200,38 +209,74 @@ public class IBonsai implements Bonsai {
      * @throws BonsaiError throws {@link BonsaiErrorCode#CYCLE_DETECTED}
      */
     private void checkForCycles(AtomicKnot knot) throws BonsaiError {
-        CycleIdentifier<AtomicKnot> knotCycleIdentifier = new CycleIdentifier<>();
-        knotCycleIdentifier.add(knot);
-        for (String edgeId : knot.getEdges()) {
-            AtomicEdge mEdge = edgeEdgeStore.get(edgeId);
-            if (mEdge != null) {
-                checkForCycles(mEdge, knotCycleIdentifier);
-            }
+        checkForCycles(knot, new CycleIdentifier<>());
+    }
+
+    private void checkForCycles(AtomicKnot knot, AtomicEdge edge) throws BonsaiError {
+        if (knot == null || edge == null || Strings.isNullOrEmpty(edge.getKnotId())) {
+            return;
         }
+        CycleIdentifier<AtomicKnot> cycleIdentifier = new CycleIdentifier<>();
+        cycleIdentifier.add(knot);
+        checkForCycles(knotStore.get(edge.getKnotId()), cycleIdentifier);
     }
 
     /**
      * recursively check for cycles in the tree
      *
-     * @param edge            current edge
+     * @param knot            current knot
      * @param cycleIdentifier ds to identify cycles among {@link Knot}s
      * @throws BonsaiError error incase cycles are detected {@link BonsaiErrorCode#CYCLE_DETECTED}
      */
-    private void checkForCycles(AtomicEdge edge, CycleIdentifier<AtomicKnot> cycleIdentifier) throws BonsaiError {
-        if (edge == null || Strings.isNullOrEmpty(edge.getKnotId())) {
+    private void checkForCycles(AtomicKnot knot, CycleIdentifier<AtomicKnot> cycleIdentifier) throws BonsaiError {
+        if (knot == null) {
             return;
         }
-        AtomicKnot knot = knotStore.get(edge.getKnotId());
-        cycleIdentifier.add(knot);
-        if (knot != null && knot.getEdges() != null) {
-            for (String edgeId : knot.getEdges()) {
+        /* get the knot again from the mapping, else the reference of the incoming Knot from the Edge, will not be complete */
+        AtomicKnot knotFromStore = knotStore.get(knot.getId());
+        if (knotFromStore == null) {
+            return;
+        }
+        cycleIdentifier.add(knotFromStore);
+        if (knotFromStore.getEdges() != null) {
+            for (String edgeId : knotFromStore.getEdges()) {
                 AtomicEdge mEdge = edgeEdgeStore.get(edgeId);
-                if (mEdge != null) {
-                    checkForCycles(mEdge, cycleIdentifier);
+                if (mEdge != null && Strings.isNullOrEmpty(mEdge.getKnotId())) {
+                    AtomicKnot edgeKnot = knotStore.get(mEdge.getKnotId());
+                    checkForCycles(edgeKnot, cycleIdentifier);
                 }
             }
         }
+        knotFromStore.getKnotData().accept(new KnotDataVisitor<Void>() {
+            @Override
+            public Void visit(ValuedKnotData valuedKnotData) {
+                return null;
+            }
+
+            @Override
+            public Void visit(MultiKnotData multiKnotData) {
+                multiKnotData.getKeys().stream()
+                             .map(mappingStore::get)
+                             .map(knotStore::get)
+                             .filter(Objects::nonNull)
+                             .forEach(knot -> checkForCycles(knot, cycleIdentifier));
+                return null;
+            }
+
+            @Override
+            public Void visit(MapKnotData mapKnotData) {
+                mapKnotData.getMapKeys()
+                           .values()
+                           .stream()
+                           .filter(Objects::nonNull)
+                           .map(mappingStore::get)
+                           .map(knotStore::get)
+                           .forEach(knot -> checkForCycles(knot, cycleIdentifier));
+                return null;
+            }
+        });
     }
+
 
     /**
      * this method recursively traverses the keyMapping, along all the matching / condition-satisfying edges

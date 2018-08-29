@@ -39,15 +39,22 @@ public interface Bonsai {
      * @param knotData data for the knot
      * @return created Knot with some id, version, etc
      */
-    Knot add(String key, KnotData knotData);
+    Knot createMapping(String key, KnotData knotData);
 
     /**
      * @param key  key to associate the Knot with
      * @param knot Knot to be associated with the key
-     * @return created Knot with some id, version, etc
+     * @return knot that was mapped
      * @throws BonsaiError if there are some sort of cycles
      */
-    Knot add(String key, Knot knot) throws BonsaiError;
+    Knot createMapping(String key, Knot knot) throws BonsaiError;
+
+    /**
+     * @param knot Knot to be added to the system
+     * @return true if added
+     * @throws BonsaiError if there are some sort of cycles
+     */
+    boolean add(Knot knot) throws BonsaiError;
 
     /**
      * @param id   id of the {@link Knot}

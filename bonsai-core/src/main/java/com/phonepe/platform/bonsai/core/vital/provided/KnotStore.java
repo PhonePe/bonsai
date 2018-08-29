@@ -6,7 +6,7 @@ package com.phonepe.platform.bonsai.core.vital.provided;
  */
 public interface KnotStore<I, K, E> {
     boolean containsKey(I i);
-    boolean createMapping(I i, K knot);
+    boolean create(I i, K knot);
     boolean update(K knot);
     K get(I i);
 }

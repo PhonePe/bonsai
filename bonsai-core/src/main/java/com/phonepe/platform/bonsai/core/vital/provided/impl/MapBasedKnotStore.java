@@ -26,7 +26,7 @@ public class MapBasedKnotStore implements KnotStore<String, AtomicKnot, AtomicEd
     }
 
     @Override
-    public boolean createMapping(String s, AtomicKnot knot) {
+    public boolean create(String s, AtomicKnot knot) {
         return storage.put(s, knot) != null;
     }
 

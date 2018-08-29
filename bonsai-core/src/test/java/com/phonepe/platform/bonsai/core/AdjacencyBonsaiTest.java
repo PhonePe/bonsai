@@ -4,10 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.data.MultiKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.query.filter.general.EqualsFilter;
-import com.phonepe.platform.bonsai.core.vital.BonsaiIdGen;
-import com.phonepe.platform.bonsai.core.vital.Context;
-import com.phonepe.platform.bonsai.core.vital.Edge;
-import com.phonepe.platform.bonsai.core.vital.Knot;
+import com.phonepe.platform.bonsai.core.vital.*;
 import com.phonepe.platform.bonsai.core.vital.adjacency.AdjacencyBonsai;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ListNode;
@@ -23,30 +20,31 @@ import java.util.Map;
  * @version 1.0  27/07/18 - 2:36 PM
  */
 public class AdjacencyBonsaiTest {
-    private Bonsai bonsai = new AdjacencyBonsai();
+    private Bonsai bonsai = new AdjacencyBonsai(new BonsaiProperties());
 
     @Test
     public void testBonsai() throws IOException, BonsaiError {
         Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
         Map userContext2 = new ObjectExtractor().getObject("userData2.json", Map.class);
 
-        Knot homePageKnot = bonsai.add("home_page_1", MultiKnotData.builder()
-                                                                   .key("widget_1")
-                                                                   .key("widget_2")
-                                                                   .key("widget_3")
-                                                                   .build());
+        Knot homePageKnot = bonsai.createMapping("home_page_1", MultiKnotData.builder()
+                                                                             .key("widget_1")
+                                                                             .key("widget_2")
+                                                                             .key("widget_3")
+                                                                             .build());
         Knot femaleConditionKnot = bonsai.create(MultiKnotData.builder()
                                                               .key("icon_3")
                                                               .key("icon_1")
                                                               .key("icon_4")
                                                               .build());
+        bonsai.add(femaleConditionKnot);
 
-        Knot widgetKnot1 = bonsai.add("widget_1", MultiKnotData.builder()
-                                                               .key("icon_1")
-                                                               .key("icon_4")
-                                                               .key("icon_2")
-                                                               .key("icon_3")
-                                                               .build());
+        Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
+                                                                         .key("icon_1")
+                                                                         .key("icon_4")
+                                                                         .key("icon_2")
+                                                                         .key("icon_3")
+                                                                         .build());
         Assert.assertTrue(bonsai.connect(widgetKnot1.getId(), Edge.builder()
                                                                   .condition(new EqualsFilter("$.gender", "female"))
                                                                   .pivot("gender")
@@ -110,22 +108,22 @@ public class AdjacencyBonsaiTest {
 
     @Test(expected = BonsaiError.class)
     public void testInvalidInput() {
-        bonsai.add("home_page_1", MultiKnotData.builder()
-                                               .key("widget_1")
-                                               .key("widget_2")
-                                               .key("widget_3")
-                                               .build());
+        bonsai.createMapping("home_page_1", MultiKnotData.builder()
+                                                         .key("widget_1")
+                                                         .key("widget_2")
+                                                         .key("widget_3")
+                                                         .build());
         Knot femaleConditionKnot = bonsai.create(MultiKnotData.builder()
                                                               .key("icon_3")
                                                               .key("icon_1")
                                                               .key("icon_4")
                                                               .build());
-        Knot widgetKnot1 = bonsai.add("widget_1", MultiKnotData.builder()
-                                                               .key("icon_1")
-                                                               .key("icon_4")
-                                                               .key("icon_2")
-                                                               .key("icon_3")
-                                                               .build());
+        Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
+                                                                         .key("icon_1")
+                                                                         .key("icon_4")
+                                                                         .key("icon_2")
+                                                                         .key("icon_3")
+                                                                         .build());
         Assert.assertTrue(bonsai.connect(widgetKnot1.getId(), Edge.builder()
                                                                   .condition(new EqualsFilter("$.gender", "female"))
                                                                   .pivot("gender")
@@ -135,22 +133,22 @@ public class AdjacencyBonsaiTest {
 
     @Test(expected = BonsaiError.class)
     public void testPivotCheck() {
-        bonsai.add("home_page_1", MultiKnotData.builder()
-                                               .key("widget_1")
-                                               .key("widget_2")
-                                               .key("widget_3")
-                                               .build());
+        bonsai.createMapping("home_page_1", MultiKnotData.builder()
+                                                         .key("widget_1")
+                                                         .key("widget_2")
+                                                         .key("widget_3")
+                                                         .build());
         Knot femaleConditionKnot = bonsai.create(MultiKnotData.builder()
                                                               .key("icon_3")
                                                               .key("icon_1")
                                                               .key("icon_4")
                                                               .build());
-        Knot widgetKnot1 = bonsai.add("widget_1", MultiKnotData.builder()
-                                                               .key("icon_1")
-                                                               .key("icon_4")
-                                                               .key("icon_2")
-                                                               .key("icon_3")
-                                                               .build());
+        Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
+                                                                         .key("icon_1")
+                                                                         .key("icon_4")
+                                                                         .key("icon_2")
+                                                                         .key("icon_3")
+                                                                         .build());
         bonsai.connect(widgetKnot1.getId(), Edge.builder()
                                                 .condition(new EqualsFilter("$.gender", "female"))
                                                 .pivot("gender")
@@ -165,26 +163,26 @@ public class AdjacencyBonsaiTest {
                                                 .build());
     }
 
-    @Test()
+    @Test(expected = BonsaiError.class)
     public void testCycleDependencyCheck() throws IOException {
         Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
         Map userContext2 = new ObjectExtractor().getObject("userData2.json", Map.class);
-        Knot homePageKnot = bonsai.add("home_page_1", MultiKnotData.builder()
-                                                                   .key("widget_1")
-                                                                   .key("widget_2")
-                                                                   .key("widget_3")
-                                                                   .build());
+        Knot homePageKnot = bonsai.createMapping("home_page_1", MultiKnotData.builder()
+                                                                             .key("widget_1")
+                                                                             .key("widget_2")
+                                                                             .key("widget_3")
+                                                                             .build());
         Knot femaleConditionKnot = bonsai.create(MultiKnotData.builder()
                                                               .key("icon_3")
                                                               .key("icon_1")
                                                               .key("icon_4")
                                                               .build());
-        Knot widgetKnot1 = bonsai.add("widget_1", MultiKnotData.builder()
-                                                               .key("icon_1")
-                                                               .key("icon_4")
-                                                               .key("icon_2")
-                                                               .key("icon_3")
-                                                               .build());
+        Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
+                                                                         .key("icon_1")
+                                                                         .key("icon_4")
+                                                                         .key("icon_2")
+                                                                         .key("icon_3")
+                                                                         .build());
         Assert.assertTrue(bonsai.connect(widgetKnot1.getId(), Edge.builder()
                                                                   .condition(new EqualsFilter("$.gender", "female"))
                                                                   .pivot("gender")
@@ -205,26 +203,26 @@ public class AdjacencyBonsaiTest {
     }
 
 
-    @Test()
+    @Test(expected = BonsaiError.class)
     public void testCycleDependencyCheckOnKeys() throws IOException {
         Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
         Map userContext2 = new ObjectExtractor().getObject("userData2.json", Map.class);
-        Knot homePageKnot = bonsai.add("home_page_1", MultiKnotData.builder()
-                                                                   .key("widget_1")
-                                                                   .key("widget_2")
-                                                                   .key("widget_3")
-                                                                   .build());
+        Knot homePageKnot = bonsai.createMapping("home_page_1", MultiKnotData.builder()
+                                                                             .key("widget_1")
+                                                                             .key("widget_2")
+                                                                             .key("widget_3")
+                                                                             .build());
         Knot femaleConditionKnot = bonsai.create(MultiKnotData.builder()
                                                               .key("icon_3")
                                                               .key("icon_1")
                                                               .key("icon_4")
                                                               .build());
-        Knot widgetKnot1 = bonsai.add("widget_1", MultiKnotData.builder()
-                                                               .key("icon_1")
-                                                               .key("icon_4")
-                                                               .key("icon_2")
-                                                               .key("home_page_1")
-                                                               .build());
+        Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
+                                                                         .key("icon_1")
+                                                                         .key("icon_4")
+                                                                         .key("icon_2")
+                                                                         .key("home_page_1")
+                                                                         .build());
         Assert.assertTrue(bonsai.connect(widgetKnot1.getId(), Edge.builder()
                                                                   .condition(new EqualsFilter("$.gender", "female"))
                                                                   .pivot("gender")
