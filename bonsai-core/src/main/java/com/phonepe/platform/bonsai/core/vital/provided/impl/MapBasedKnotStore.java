@@ -2,7 +2,6 @@ package com.phonepe.platform.bonsai.core.vital.provided.impl;
 
 import com.google.common.collect.Maps;
 import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
-import com.phonepe.platform.bonsai.core.vital.provided.model.AtomicEdge;
 import com.phonepe.platform.bonsai.core.vital.provided.model.AtomicKnot;
 import lombok.AllArgsConstructor;
 
@@ -13,7 +12,7 @@ import java.util.Map;
  * @version 1.0  22/08/18 - 5:34 PM
  */
 @AllArgsConstructor
-public class MapBasedKnotStore implements KnotStore<String, AtomicKnot, AtomicEdge> {
+public class MapBasedKnotStore implements KnotStore<String, AtomicKnot> {
     private final Map<String, AtomicKnot> storage;
 
     public MapBasedKnotStore() {
@@ -26,17 +25,18 @@ public class MapBasedKnotStore implements KnotStore<String, AtomicKnot, AtomicEd
     }
 
     @Override
-    public boolean create(String s, AtomicKnot knot) {
-        return storage.put(s, knot) != null;
+    public boolean mapKnot(String id, AtomicKnot knot) {
+        storage.put(id, knot);
+        return true;
     }
 
     @Override
-    public boolean update(AtomicKnot knot) {
-        return storage.put(knot.getId(), knot) != null;
+    public AtomicKnot get(String id) {
+        return storage.get(id);
     }
 
     @Override
-    public AtomicKnot get(String s) {
-        return storage.get(s);
+    public AtomicKnot delete(String s) {
+        return storage.remove(s);
     }
 }

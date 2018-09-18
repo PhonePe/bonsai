@@ -6,7 +6,7 @@ import com.phonepe.platform.bonsai.core.vital.Context;
 import com.phonepe.platform.bonsai.core.vital.provided.model.AtomicEdge;
 
 /**
- * This is responsible for matching the {@link AtomicEdge}s conditions (filters) against the {@link Context}
+ * This is responsible for matching the {@link AtomicEdge}s filters (filters) against the {@link Context}
  * We are using the {@link EvaluateJsonFilter} to evaluate if all {@link com.phonepe.platform.bonsai.core.query.filter.Filter}s
  * present in the {@link AtomicEdge} are true
  * If so, this {@link AtomicEdge} will return true, ie, the Context satisfies the {@link AtomicEdge}s criteria
@@ -18,11 +18,11 @@ public class RequirementConditionEngine extends ConditionEngine<Context, AtomicE
 
     @Override
     public Boolean match(Context context, AtomicEdge edge) {
-        /* in case no document context is passed, we will not match the edge's conditions */
+        /* in case no document context is passed, we will not match the edge's filters */
         if (context.getDocumentContext() == null) {
             return false;
         }
-        return edge.getConditions()
+        return edge.getFilters()
                    .stream()
                    .allMatch(k -> k.accept(new EvaluateJsonFilter(context.getDocumentContext())));
     }

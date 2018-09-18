@@ -18,22 +18,20 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class AtomicEdge extends Condition implements Comparable<AtomicEdge>{
+public class AtomicEdge extends Condition implements Comparable<AtomicEdge> {
     private String id;
     private String knotId;
-    private String pivot;
     private int priority;
-    private int version;
-    private List<Filter> conditions;
+    private long version;
+    private List<Filter> filters;
 
     @Builder
-    public AtomicEdge(String id, String knotId, String pivot, int priority, int version, @Singular List<Filter> conditions) {
+    public AtomicEdge(String id, String knotId, int priority, long version, @Singular List<Filter> filters) {
         this.id = id;
         this.knotId = knotId;
-        this.pivot = pivot;
         this.priority = priority;
         this.version = version;
-        this.conditions = conditions;
+        this.filters = filters;
     }
 
     @Override
@@ -42,5 +40,10 @@ public class AtomicEdge extends Condition implements Comparable<AtomicEdge>{
             return 1;
         }
         return Integer.compare(priority, edge.priority);
+    }
+
+    public AtomicEdge updateVersion() {
+        this.version = System.currentTimeMillis();
+        return this;
     }
 }

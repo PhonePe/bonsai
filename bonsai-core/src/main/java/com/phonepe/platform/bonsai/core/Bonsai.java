@@ -1,11 +1,13 @@
 package com.phonepe.platform.bonsai.core;
 
-import com.phonepe.platform.bonsai.core.vital.Context;
-import com.phonepe.platform.bonsai.core.vital.Edge;
-import com.phonepe.platform.bonsai.core.vital.Knot;
-import com.phonepe.platform.bonsai.core.vital.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
+import com.phonepe.platform.bonsai.core.query.filter.Filter;
+import com.phonepe.platform.bonsai.core.vital.*;
+import com.phonepe.platform.bonsai.core.vital.provided.model.AtomicEdge;
+import com.phonepe.platform.bonsai.core.vital.provided.model.AtomicKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
+
+import java.util.List;
 
 /**
  * This is a multi level Forest implementation.
@@ -24,62 +26,102 @@ import com.phonepe.platform.bonsai.models.KeyNode;
  */
 public interface Bonsai {
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////  KNOT OPERATIONS  //////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * create a {@link Knot} out of the {@link KnotData}
      *
      * @param knotData some kind of data knot
      * @return created Knot with some id, version, etc
      */
-    Knot create(KnotData knotData);
+    AtomicKnot createKnot(KnotData knotData);
+
+    AtomicKnot getKnot(String id);
 
     /**
-     * associate a key with some {@link KnotData}
+     * update the data associated with a {@link Knot}
      *
-     * @param key      a string for association
-     * @param knotData data for the knot
-     * @return created Knot with some id, version, etc
+     * @param id       id of the knot
+     * @param knotData new data
+     * @return true if updated
      */
-    Knot createMapping(String key, KnotData knotData);
+    boolean updateKnotData(String id, KnotData knotData);
 
     /**
-     * @param key  key to associate the Knot with
-     * @param knot Knot to be associated with the key
-     * @return knot that was mapped
-     * @throws BonsaiError if there are some sort of cycles
+     * delete the knot and its associated edges
+     *
+     * @param id        id of the knot to be deleted
+     * @param recursive true if you want to delete all related {@link Edge}s and {@link Knot}s below it
+     * @return true if successfully deleted
      */
-    Knot createMapping(String key, Knot knot) throws BonsaiError;
+    List<AtomicKnot> deleteKnot(String id, boolean recursive);
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////  EDGE OPERATIONS  /////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     /**
-     * @param knot Knot to be added to the system
-     * @return true if added
-     * @throws BonsaiError if there are some sort of cycles
-     */
-    boolean add(Knot knot) throws BonsaiError;
-
-    /**
-     * @param id   id of the {@link Knot}
-     * @param edge edge to connect to the {@link Knot}
-     * @return true if successfully connected
+     * @param knotId    id of the {@link Knot}
+     * @param variation variation of a {@link Knot}. An edge to connect to the {@link Knot} with another variation of the Knot
+     * @return edgeId
      * @throws BonsaiError 1. if there are cycles {@link com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode#CYCLE_DETECTED}
      *                     2. if the edge's pivot is violated at that level {@link com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode#EDGE_PIVOT_CONSTRAINT_ERROR}
      */
-    boolean connect(String id, Edge edge) throws BonsaiError;
+    String addVariation(String knotId, Variation variation) throws BonsaiError;
 
     /**
-     * get the Knot associated with the key
+     * update the edge with a new set of filters
+     * needs to be a valid update id
      *
-     * @param key key
-     * @return matching Knot
+     * @param knotId  knot id to which the edge is associated with
+     * @param edgeId  edge id to be updated
+     * @param filters filters set
+     * @return false if edge id wasnt present, or if edge wasnt updated
      */
-    Knot get(String key);
+    boolean updateEdgeFilters(String knotId, String edgeId, List<Filter> filters);
 
     /**
-     * get Knot for the id
+     * add a bunch of filters to an edge.
+     * this method will append to the existing list of filters that already exist
      *
-     * @param id id of Knot
-     * @return Knot with the id
+     * @param edgeId  edge id to which filters will be added to
+     * @param filters filters to be added
+     * @return false if edge wasnt updated
      */
-    Knot getForId(String id);
+    boolean addEdgeFilters(String edgeId, List<Filter> filters);
+
+    /**
+     * remove the edge only (all {@link Knot}s that the {@link Edge} contains, will continue to exist, but will be disconnected from the main tree
+     *
+     * @param edgeId edge id to be removed
+     * @return true if it was successfully removed
+     */
+    boolean unlinkVariation(String knotId, String edgeId);
+
+    List<AtomicKnot> deleteVariation(String knotId, String edgeId, boolean recursive);
+
+    AtomicEdge getEdge(String edgeId);
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////  TREE OPERATIONS  //////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @param key    key to associate the Knot with
+     * @param knotId if of the Knot to be associated with the key
+     * @return knot that was mapped
+     * @throws BonsaiError if there are some sort of cycles
+     */
+    AtomicKnot createMapping(String key, String knotId) throws BonsaiError;
+
+    AtomicKnot createMapping(String key, KnotData knotData) throws BonsaiError;
+
+    AtomicKnot removeMapping(String key) throws BonsaiError;
 
     /**
      * Perform a full evaluation of the Key

@@ -1,18 +1,19 @@
 package com.phonepe.platform.bonsai.core.vital.provided;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.data.MapKnotData;
 import com.phonepe.platform.bonsai.core.data.MultiKnotData;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
+import com.phonepe.platform.bonsai.core.query.filter.Filter;
 import com.phonepe.platform.bonsai.core.structures.CycleIdentifier;
 import com.phonepe.platform.bonsai.core.structures.OrderedList;
 import com.phonepe.platform.bonsai.core.vital.*;
-import com.phonepe.platform.bonsai.core.vital.provided.model.Converters;
-import com.phonepe.platform.bonsai.core.vital.provided.model.AtomicKnot;
 import com.phonepe.platform.bonsai.core.vital.provided.model.AtomicEdge;
+import com.phonepe.platform.bonsai.core.vital.provided.model.AtomicKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ListNode;
 import com.phonepe.platform.bonsai.models.MapNode;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
  * <p>
  * {@link Knot}(Knot is latin for Node) is how the directed Tree is represented.
  * Every {@link Knot} containsKey a  bunch of directional {@link Edge}s,
- * which all point to a certain {@link Knot} if its conditions are met
+ * which all point to a certain {@link Knot} if its filters are met
  * <p>
  * Key mappings represent the tree
  * Id mappings are for quick lookups on ids.
@@ -39,101 +40,190 @@ import java.util.stream.Collectors;
 public class IBonsai implements Bonsai {
 
     private MappingStore<String, String> mappingStore;
-    private KnotStore<String, AtomicKnot, AtomicEdge> knotStore;
-    private EdgeStore<String, AtomicEdge> edgeEdgeStore;
+    private KnotStore<String, AtomicKnot> knotStore;
+    private EdgeStore<String, AtomicEdge> edgeStore;
     private RequirementConditionEngine edgeConditionEngine;
     private ComponentValidator componentValidator;
+    private BonsaiProperties bonsaiProperties;
+    private BonsaiIdGenerator bonsaiIdGenerator;
 
     public IBonsai(MappingStore<String, String> mappingStore,
-                   KnotStore<String, AtomicKnot, AtomicEdge> knotStore,
-                   EdgeStore<String, AtomicEdge> edgeEdgeStore,
+                   KnotStore<String, AtomicKnot> knotStore,
+                   EdgeStore<String, AtomicEdge> edgeStore,
                    BonsaiProperties bonsaiProperties) {
         this.mappingStore = mappingStore;
         this.knotStore = knotStore;
-        this.edgeEdgeStore = edgeEdgeStore;
+        this.edgeStore = edgeStore;
         this.edgeConditionEngine = new RequirementConditionEngine();
         this.componentValidator = new ComponentValidator(bonsaiProperties);
+        this.bonsaiProperties = bonsaiProperties;
+        this.bonsaiIdGenerator = new BonsaiIdGenerator() { //todo remove this
+            @Override
+            public String newEdgeId() {
+                return BonsaiIdGen.newId();
+            }
+
+            @Override
+            public String newKnotId() {
+                return BonsaiIdGen.newId();
+            }
+        };
         JsonPathSetup.setup();
     }
 
     @Override
-    public Knot create(KnotData knotData) {
+    public AtomicKnot createKnot(KnotData knotData) {
         componentValidator.validate(knotData);
-        return Knot.builder()
-                   .id(BonsaiIdGen.newId())
-                   .knotData(knotData)
-                   .version(System.currentTimeMillis())
-                   .build();
+        AtomicKnot atomicKnot = AtomicKnot.builder()
+                                          .id(bonsaiIdGenerator.newKnotId())
+                                          .knotData(knotData)
+                                          .version(System.currentTimeMillis())
+                                          .build();
+        knotStore.mapKnot(atomicKnot.getId(), atomicKnot);
+        return atomicKnot;
     }
 
     @Override
-    public Knot createMapping(String key, KnotData knotData) {
-        componentValidator.validate(knotData);
-        if (mappingStore.containsKey(key)) {
-            return Converters.toKnot(knotStore.get(mappingStore.get(key)));
+    public AtomicKnot getKnot(String knotId) {
+        return knotStore.get(mappingStore.get(knotId));
+    }
+
+    @Override
+    public boolean updateKnotData(String knotId, KnotData knotData) {
+        AtomicKnot atomicKnot = knotStore.get(knotId);
+        atomicKnot.setKnotData(knotData);
+        return knotStore.mapKnot(knotId, atomicKnot.updateVersion());
+    }
+
+    public List<AtomicKnot> deleteKnot(String id, boolean recursive) {
+        List<AtomicKnot> deletedKnots = Lists.newArrayList();
+        if (recursive) {
+            /* this is a recursive delete operation */
+            AtomicKnot atomicKnot = knotStore.get(id);
+            edgeStore.getAll(atomicKnot.getEdges())
+                     .stream().map(AtomicEdge::getKnotId)
+                     .map(knotId -> deleteKnot(knotId, true))
+                     .forEach(deletedKnots::addAll);
+
         }
-        Knot knot = create(knotData);
-        mappingStore.map(key, knot.getId());
-        knotStore.create(knot.getId(), Converters.toAtomicKnot(knot));
-        return knot;
+        deletedKnots.add(knotStore.delete(id));
+        return deletedKnots;
     }
 
     @Override
-    public Knot createMapping(String key, Knot knot) throws BonsaiError {
-        componentValidator.validate(knot);
-        checkForCycles(Converters.toAtomicKnot(knot));
-        knot.updateVersion();
-        mappingStore.map(key, knot.getId());
-        knotStore.create(knot.getId(), Converters.toAtomicKnot(knot));
-
-        /* connect every edge in the knot */
-        knot.getEdges().forEach(edge -> connect(knot.getId(), edge));
-        return knot;
-    }
-
-    @Override
-    public boolean add(Knot knot) throws BonsaiError {
-        return knotStore.create(knot.getId(), Converters.toAtomicKnot(knot));
-    }
-
-    @Override
-    public boolean connect(String id, Edge edge) throws BonsaiError {
-        componentValidator.validate(edge);
-        if (!knotStore.containsKey(id)) {
-            return false;
+    public String addVariation(String knotId, Variation variation) throws BonsaiError {
+        componentValidator.validate(variation);
+        if (!knotStore.containsKey(knotId)) {
+            return null; //todo change this
         }
-        AtomicKnot knot = knotStore.get(id);
-        if (knot.getEdges() == null) {
-            knot.setEdges(new OrderedList<>());
+        AtomicKnot atomicKnot = knotStore.get(knotId);
+        if (atomicKnot.getEdges() == null) {
+            atomicKnot.setEdges(new OrderedList<>());
         }
 
-        /* if there is any edge with the same pivot, in the inner layer, throw exception */
-        knot.getEdges()
-            .stream()
-            .map(s -> edgeEdgeStore.get(s))
-            .filter(mEdge1 -> mEdge1 != null && !mEdge1.getPivot().equals(edge.getPivot()))
-            .forEach(mEdge1 -> {
-                throw new BonsaiError(BonsaiErrorCode.EDGE_PIVOT_CONSTRAINT_ERROR);
-            });
+        AtomicEdge atomicEdge = AtomicEdge.builder()
+                                          .id(bonsaiIdGenerator.newEdgeId())
+                                          .knotId(variation.getKnotId())
+                                          .priority(variation.getPriority())
+                                          .version(System.currentTimeMillis())
+                                          .filters(variation.getFilters())
+                                          .build();
+
+        /* if there is any edge with a different pivot (ie, condition is on a different field), in the inner layer, throw exception */
+        validateConstraints(atomicKnot, atomicEdge);
 
         /* check for circular loops */
-        AtomicEdge atomicEdge = Converters.toAtomicEdge(edge);
-        checkForCycles(knot, atomicEdge);
+        checkForCycles(atomicKnot, atomicEdge);
 
-        edgeEdgeStore.map(edge.getId(), atomicEdge);
-        knot.getEdges().add(edge.getId());
-        knotStore.update(knot);
+        edgeStore.mapEdge(atomicEdge.getId(), atomicEdge);
+        atomicKnot.getEdges().add(atomicEdge.getId());
+        knotStore.mapKnot(atomicKnot.getId(), atomicKnot);
+        return atomicEdge.getId();
+    }
+
+    @Override
+    public boolean updateEdgeFilters(String knotId, String edgeId, List<Filter> filters) {
+        AtomicKnot atomicKnot = knotStore.get(knotId);
+        AtomicEdge atomicEdge = edgeStore.get(edgeId);
+        if (atomicEdge == null) {
+            return false;
+        }
+        atomicEdge.setFilters(filters);
+
+        /* if there is any edge with a different pivot (ie, condition is on a different field), in the inner layer, throw exception */
+        validateConstraints(atomicKnot, atomicEdge);
+
+        edgeStore.mapEdge(edgeId, atomicEdge.updateVersion());
+        return true;
+    }
+
+
+    @Override
+    public boolean addEdgeFilters(String edgeId, List<Filter> filters) {
+        AtomicEdge atomicEdge = edgeStore.get(edgeId);
+        if (atomicEdge == null) {
+            return false;
+        }
+        atomicEdge.getFilters().addAll(filters);
+        componentValidator.validate(atomicEdge);
+        if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
+            Set<String> allFields = atomicEdge.getFilters().stream().map(Filter::getField).collect(Collectors.toSet());
+            if (!allFields.isEmpty() && allFields.size() > 1) {
+                throw new BonsaiError(BonsaiErrorCode.EDGE_PIVOT_CONSTRAINT_ERROR);
+            }
+        }
+        edgeStore.mapEdge(edgeId, atomicEdge);
         return true;
     }
 
     @Override
-    public Knot get(String key) {
-        return Converters.toKnot(knotStore.get(mappingStore.get(key)));
+    public boolean unlinkVariation(String knotId, String edgeId) {
+        AtomicKnot atomicKnot = knotStore.get(knotId);
+        atomicKnot.setEdges(atomicKnot.getEdges().stream().filter(eid -> !eid.equals(edgeId))
+                                      .collect(Collectors.toCollection(OrderedList::new)));
+        return knotStore.mapKnot(knotId, atomicKnot);
+    }
+
+
+    @Override
+    public List<AtomicKnot> deleteVariation(String knotId, String edgeId, boolean recursive) {
+        //todo check this piece
+        unlinkVariation(knotId, edgeId);
+        AtomicEdge atomicEdge = edgeStore.get(edgeId);
+        List<AtomicKnot> atomicKnots = deleteKnot(atomicEdge.getKnotId(), recursive);
+        edgeStore.delete(edgeId);
+        return atomicKnots;
     }
 
     @Override
-    public Knot getForId(String id) {
-        return Converters.toKnot(knotStore.get(id));
+    public AtomicEdge getEdge(String edgeId) {
+        return edgeStore.get(edgeId);
+    }
+
+
+    @Override
+    public AtomicKnot createMapping(String key, String knotId) {
+        AtomicKnot atomicKnot = knotStore.get(knotId);
+        if (atomicKnot == null) {
+            //todo
+        }
+        if (mappingStore.containsKey(key)) {
+            return knotStore.get(mappingStore.get(key));
+        }
+        String olderMappedKey = mappingStore.map(key, knotId);
+        return knotStore.get(olderMappedKey);
+    }
+
+    @Override
+    public AtomicKnot createMapping(String key, KnotData knotData) throws BonsaiError {
+        AtomicKnot createdKnot = createKnot(knotData);
+        createMapping(key, createdKnot.getId());
+        return createdKnot;
+    }
+
+    @Override
+    public AtomicKnot removeMapping(String key) throws BonsaiError {
+        return knotStore.get(mappingStore.remove(key));
     }
 
     @Override
@@ -206,12 +296,9 @@ public class IBonsai implements Bonsai {
      * throw an exception if there is a cycle detected in the Bonsai
      *
      * @param knot knot from where cycle needs to be detected
+     * @param edge edge along which cycle is detected
      * @throws BonsaiError throws {@link BonsaiErrorCode#CYCLE_DETECTED}
      */
-    private void checkForCycles(AtomicKnot knot) throws BonsaiError {
-        checkForCycles(knot, new CycleIdentifier<>());
-    }
-
     private void checkForCycles(AtomicKnot knot, AtomicEdge edge) throws BonsaiError {
         if (knot == null || edge == null || Strings.isNullOrEmpty(edge.getKnotId())) {
             return;
@@ -240,7 +327,7 @@ public class IBonsai implements Bonsai {
         cycleIdentifier.add(knotFromStore);
         if (knotFromStore.getEdges() != null) {
             for (String edgeId : knotFromStore.getEdges()) {
-                AtomicEdge mEdge = edgeEdgeStore.get(edgeId);
+                AtomicEdge mEdge = edgeStore.get(edgeId);
                 if (mEdge != null && Strings.isNullOrEmpty(mEdge.getKnotId())) {
                     AtomicKnot edgeKnot = knotStore.get(mEdge.getKnotId());
                     checkForCycles(edgeKnot, cycleIdentifier);
@@ -295,7 +382,7 @@ public class IBonsai implements Bonsai {
             /* base condition for the recursion */
             return knot;
         }
-        List<AtomicEdge> atomicEdges = edgeEdgeStore.getAll(edges);
+        List<AtomicEdge> atomicEdges = edgeStore.getAll(edges);
         Optional<AtomicEdge> conditionSatisfyingEdge = edgeConditionEngine.match(context, atomicEdges);
         if (!conditionSatisfyingEdge.isPresent()) {
             /* base condition for the recursion */
@@ -308,5 +395,24 @@ public class IBonsai implements Bonsai {
             return knot;
         }
         return matchingNode;
+    }
+
+
+    private void validateConstraints(AtomicKnot atomicKnot, AtomicEdge atomicEdge) {
+        if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
+            Set<String> allFields = edgeStore.getAll(atomicKnot.getEdges())
+                                             .stream()
+                                             .flatMap(k -> k.getFilters().stream().map(Filter::getField))
+                                             .collect(Collectors.toSet());
+            if (allFields.size() > 1) {
+                throw new BonsaiError(BonsaiErrorCode.INVALID_STATE,
+                                      String.format("mutualExclusivitySettingTurnedOn but multiple fields exist for knot:%s fields:%s",
+                                                    atomicKnot.getId(), allFields));
+            }
+            if (!allFields.isEmpty() &&
+                    atomicEdge.getFilters().stream().anyMatch(filter -> !allFields.contains(filter.getField()))) {
+                throw new BonsaiError(BonsaiErrorCode.EDGE_PIVOT_CONSTRAINT_ERROR);
+            }
+        }
     }
 }

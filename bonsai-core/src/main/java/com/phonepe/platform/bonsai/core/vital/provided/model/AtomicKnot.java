@@ -19,7 +19,7 @@ public class AtomicKnot {
     private long version;
     private KnotData knotData;
     private OrderedList<String> edges;
-    
+
     @Builder
     public AtomicKnot(String id, long version,
                       OrderedList<String> edges, KnotData knotData) {
@@ -42,7 +42,8 @@ public class AtomicKnot {
         return Objects.hash(id);
     }
 
-    public void updateVersion() {
-        version = System.currentTimeMillis();
+    public AtomicKnot updateVersion() {
+        this.version = System.currentTimeMillis();
+        return this;
     }
 }

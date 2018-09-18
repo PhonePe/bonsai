@@ -4,6 +4,7 @@ import com.phonepe.platform.bonsai.core.structures.OrderedList;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Objects;
 
@@ -43,5 +44,15 @@ public class Knot {
 
     public void updateVersion() {
         version = System.currentTimeMillis();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("version", version)
+                .append("edges", edges.stream().map(Edge::getId).reduce((s1, s2) -> s1 + ":" + s2))
+                .append("knotData", knotData)
+                .toString();
     }
 }

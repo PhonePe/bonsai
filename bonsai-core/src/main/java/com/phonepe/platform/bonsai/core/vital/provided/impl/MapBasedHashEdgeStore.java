@@ -23,13 +23,18 @@ public class MapBasedHashEdgeStore implements EdgeStore<String, AtomicEdge> {
     }
 
     @Override
-    public boolean map(String s, AtomicEdge atomicEdge) {
-        return storage.put(s, atomicEdge) != null;
+    public AtomicEdge mapEdge(String s, AtomicEdge atomicEdge) {
+        return storage.put(s, atomicEdge);
     }
 
     @Override
     public AtomicEdge get(String s) {
         return storage.get(s);
+    }
+
+    @Override
+    public AtomicEdge delete(String s) {
+        return storage.remove(s);
     }
 
     @Override

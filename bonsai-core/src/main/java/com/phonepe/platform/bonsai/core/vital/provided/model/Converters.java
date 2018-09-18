@@ -38,8 +38,7 @@ public interface Converters {
         return AtomicEdge.builder()
                          .id(edge.getId())
                          .priority(edge.getPriority())
-                         .conditions(edge.getConditions())
-                         .pivot(edge.getPivot())
+                         .filters(edge.getFilters())
                          .knotId(edge.getKnot().getId())
                          .version(edge.getVersion())
                          .build();

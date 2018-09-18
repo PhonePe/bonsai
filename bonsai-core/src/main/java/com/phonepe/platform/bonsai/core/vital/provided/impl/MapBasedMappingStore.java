@@ -11,7 +11,7 @@ import java.util.Map;
  * @version 1.0  22/08/18 - 5:34 PM
  */
 @AllArgsConstructor
-public class MapBasedMappingStore implements MappingStore<String, String> {
+public class MapBasedMappingStore implements MappingStore<String,String> {
     private final Map<String, String> storage;
 
     public MapBasedMappingStore() {
@@ -24,12 +24,17 @@ public class MapBasedMappingStore implements MappingStore<String, String> {
     }
 
     @Override
-    public boolean map(String key, String id) {
-        return storage.put(key, id) != null;
+    public String map(String key, String id) {
+        return storage.put(key, id);
     }
 
     @Override
     public String get(String id) {
         return storage.get(id);
+    }
+
+    @Override
+    public String remove(String s) {
+        return storage.remove(s);
     }
 }

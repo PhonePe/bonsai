@@ -24,4 +24,9 @@ public class ReferenceValue extends Value {
         super(ValueType.REFERENCE);
         this.reference = reference;
     }
+
+    @Override
+    public <T> T accept(ValueVisitor<T> valueVisitor) {
+        return valueVisitor.visit(this);
+    }
 }

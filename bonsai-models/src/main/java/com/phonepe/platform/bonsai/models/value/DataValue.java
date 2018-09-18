@@ -24,4 +24,9 @@ public class DataValue extends Value {
         super(ValueType.DATA);
         this.data = data;
     }
+
+    @Override
+    public <T> T accept(ValueVisitor<T> valueVisitor) {
+        return valueVisitor.visit(this);
+    }
 }

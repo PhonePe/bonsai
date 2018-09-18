@@ -1,0 +1,63 @@
+//package com.phonepe.platform.bonsai.core.vital.adjacency;
+//
+//import com.google.common.collect.ImmutableMap;
+//import com.jayway.jsonpath.JsonPath;
+//import com.phonepe.platform.bonsai.core.Bonsai;
+//import com.phonepe.platform.bonsai.core.PerformanceEvaluator;
+//import com.phonepe.platform.bonsai.core.TreeUtils;
+//import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
+//import com.phonepe.platform.bonsai.core.vital.BonsaiProperties;
+//import com.phonepe.platform.bonsai.core.vital.Context;
+//import com.phonepe.platform.bonsai.core.vital.Knot;
+//import com.phonepe.platform.bonsai.models.KeyNode;
+//import com.phonepe.platform.bonsai.models.ValueNode;
+//import com.phonepe.platform.bonsai.models.value.DataValue;
+//import org.junit.Assert;
+//import org.junit.Test;
+//
+///**
+// * @author tushar.naik
+// * @version 1.0  05/09/18 - 1:56 PM
+// */
+//public class EdgeConditionPerformanceTest {
+//    private Bonsai bonsai = new AdjacencyBonsai(BonsaiProperties
+//                                                        .builder()
+//                                                        .singleConditionEdgeSettingTurnedOn(true)
+//                                                        .mutualExclusivitySettingTurnedOn(true)
+//                                                        .build());
+//
+//    @Test
+//    public void simpleTestingOFBonsai() {
+//        Knot data = bonsai.create(ValuedKnotData.builder().value(DataValue.builder().data("Data").build()).build());
+//        bonsai.createMapping("mera_data", data);
+//        TreeUtils.generateEdges(data, bonsai, 1000);
+//        KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
+//                                                               .documentContext(JsonPath.parse(ImmutableMap.of("E", 933)))
+//                                                               .build());
+//        Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
+//        Assert.assertEquals(((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString(), "Data933");
+//        System.out.println(evaluate);
+//
+//    }
+//
+//    @Test
+//    public void perfTestingOFBonsai() {
+//        Knot data = bonsai.create(ValuedKnotData.builder().value(DataValue.builder().data("Data").build()).build());
+//        bonsai.createMapping("tera_data", data);
+//        long performanceTreeCreation = PerformanceEvaluator.evaluate(1, () -> TreeUtils.generateEdges(data, bonsai, 10000));
+//        System.out.println("time for treeCreation = " + performanceTreeCreation);
+//
+//        long start = System.currentTimeMillis();
+//        KeyNode evaluate1 = bonsai.evaluate("tera_data", Context.builder()
+//                                                                .documentContext(JsonPath.parse(ImmutableMap
+//                                                                                                        .of("E", Integer.MAX_VALUE)))
+//                                                                .build());
+//        System.out.println("elapse:" + (System.currentTimeMillis() - start));
+//
+//        float evaluate = PerformanceEvaluator.evaluateAndAvg(1000, () -> bonsai.evaluate("tera_data", Context.builder()
+//                                                                                                             .documentContext(JsonPath.parse(ImmutableMap
+//                                                                                                                                                     .of("E", Integer.MAX_VALUE)))
+//                                                                                                             .build()));
+//        System.out.println("evaluate = " + evaluate);
+//    }
+//}
