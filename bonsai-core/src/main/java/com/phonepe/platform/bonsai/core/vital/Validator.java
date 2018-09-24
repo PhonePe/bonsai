@@ -1,6 +1,8 @@
 package com.phonepe.platform.bonsai.core.vital;
 
-import com.phonepe.platform.bonsai.core.vital.provided.model.AtomicEdge;
+import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
+import com.phonepe.platform.bonsai.core.data.KnotData;
+import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 
 /**
  * @author tushar.naik
@@ -9,7 +11,7 @@ import com.phonepe.platform.bonsai.core.vital.provided.model.AtomicEdge;
 public interface Validator {
     void validate(KnotData knotData);
 
-    void validate(AtomicEdge edge);
+    void validate(Edge edge);
 
     void validate(Context context);
 

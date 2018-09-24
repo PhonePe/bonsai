@@ -3,12 +3,11 @@ package com.phonepe.platform.bonsai.core;
 import com.phonepe.platform.bonsai.core.data.MapKnotData;
 import com.phonepe.platform.bonsai.core.data.MultiKnotData;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
-import com.phonepe.platform.bonsai.core.query.filter.general.EqualsFilter;
-import com.phonepe.platform.bonsai.core.vital.Knot;
-import com.phonepe.platform.bonsai.core.vital.KnotData;
-import com.phonepe.platform.bonsai.core.vital.KnotDataVisitor;
-import com.phonepe.platform.bonsai.core.vital.Variation;
-import com.phonepe.platform.bonsai.core.vital.provided.model.AtomicKnot;
+import com.phonepe.platform.bonsai.core.variation.filter.general.EqualsFilter;
+import com.phonepe.platform.bonsai.core.data.KnotData;
+import com.phonepe.platform.bonsai.core.data.KnotDataVisitor;
+import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
+import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.models.value.DataValue;
 import com.phonepe.platform.bonsai.models.value.ReferenceValue;
 import com.phonepe.platform.bonsai.models.value.Value;
@@ -22,13 +21,12 @@ import java.util.stream.IntStream;
  * @version 1.0  05/09/18 - 1:56 PM
  */
 public class TreeUtils {
+
     private static Random random = new Random();
 
     public static void generateEdges(Knot knot, Bonsai bonsai, int numOfEdges, int levels) {
         IntStream.range(0, levels)
-                 .forEach(level -> {
-                     generateEdges(knot, bonsai, numOfEdges);
-                 });
+                 .forEach(level -> generateEdges(knot, bonsai, numOfEdges));
 
     }
 
@@ -51,7 +49,7 @@ public class TreeUtils {
                              return null;
                          }
                      });
-                     AtomicKnot newlyCreatedKnot = bonsai.createKnot(accept);
+                     Knot newlyCreatedKnot = bonsai.createKnot(accept);
                      bonsai.addVariation(knot.getId(), Variation.builder()
 //                                                                .id("E" + i + ":ED" + random.nextInt(99999))
                                                                 .filter(new EqualsFilter("E", i))

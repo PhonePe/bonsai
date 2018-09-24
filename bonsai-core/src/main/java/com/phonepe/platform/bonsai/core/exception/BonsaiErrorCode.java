@@ -7,7 +7,7 @@ package com.phonepe.platform.bonsai.core.exception;
 public enum BonsaiErrorCode {
     INTERNAL_SERVER_ERROR,
     CYCLE_DETECTED,
-    EDGE_PIVOT_CONSTRAINT_ERROR,
+    VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR,
     INVALID_INPUT,
     INVALID_STATE
 }

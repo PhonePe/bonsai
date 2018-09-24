@@ -1,7 +1,5 @@
 package com.phonepe.platform.bonsai.core.data;
 
-import com.phonepe.platform.bonsai.core.vital.KnotData;
-import com.phonepe.platform.bonsai.core.vital.KnotDataVisitor;
 import com.phonepe.platform.bonsai.models.value.Value;
 import lombok.Builder;
 import lombok.Data;
