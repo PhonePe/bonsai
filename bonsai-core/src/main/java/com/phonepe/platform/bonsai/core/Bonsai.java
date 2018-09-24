@@ -1,11 +1,11 @@
 package com.phonepe.platform.bonsai.core;
 
+import com.phonepe.platform.bonsai.core.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.variation.filter.Filter;
-import com.phonepe.platform.bonsai.core.vital.*;
+import com.phonepe.platform.bonsai.core.vital.Context;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
-import com.phonepe.platform.bonsai.core.data.KnotData;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.models.KeyNode;
 
@@ -26,7 +26,7 @@ import java.util.List;
  * @author tushar.naik
  * @version 1.0  27/07/18 - 2:54 AM
  */
-public interface Bonsai {
+public interface Bonsai<C extends Context> {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////  KNOT OPERATIONS  //////////////////////////////////////////
@@ -173,5 +173,5 @@ public interface Bonsai {
      * @param context context to be evaluated against
      * @return {@link KeyNode} after evaluation
      */
-    KeyNode evaluate(String key, Context context);
+    KeyNode evaluate(String key, C context);
 }

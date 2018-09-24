@@ -43,12 +43,12 @@ import java.util.stream.Stream;
  * @author tushar.naik
  * @version 1.0  11/07/18 - 2:09 PM
  */
-public class BonsaiTree implements Bonsai {
+public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     private MappingStore<String, String> mappingStore;
     private KnotStore<String, Knot> knotStore;
     private EdgeStore<String, Edge> edgeStore;
-    private VariationSelectorEngine variationSelectorEngine;
+    private VariationSelectorEngine<C> variationSelectorEngine;
     private ComponentValidator componentValidator;
     private BonsaiProperties bonsaiProperties;
     private BonsaiIdGenerator bonsaiIdGenerator;
@@ -218,7 +218,7 @@ public class BonsaiTree implements Bonsai {
     }
 
     @Override
-    public KeyNode evaluate(String key, Context context) {
+    public KeyNode evaluate(String key, C context) {
         componentValidator.validate(context);
 
         /* if context preferences already containsKey the key, return it */
@@ -364,7 +364,7 @@ public class BonsaiTree implements Bonsai {
      * @param context current context
      * @return node after traversal
      */
-    private Knot getMatchingNode(Knot knot, Context context) {
+    private Knot getMatchingNode(Knot knot, C context) {
         if (knot == null) {
             return null;
         }

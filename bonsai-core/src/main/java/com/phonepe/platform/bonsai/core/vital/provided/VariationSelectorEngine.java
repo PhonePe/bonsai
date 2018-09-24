@@ -14,10 +14,10 @@ import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
  * @author tushar.naik
  * @version 1.0  13/07/18 - 11:43 AM
  */
-public class VariationSelectorEngine extends ConditionEngine<Context, Edge> {
+public class VariationSelectorEngine<C extends Context> extends ConditionEngine<C, Edge> {
 
     @Override
-    public Boolean match(Context context, Edge edge) {
+    public Boolean match(C context, Edge edge) {
         /* in case no document context is passed, we will not match the edge's filters */
         if (context.getDocumentContext() == null) {
             return false;

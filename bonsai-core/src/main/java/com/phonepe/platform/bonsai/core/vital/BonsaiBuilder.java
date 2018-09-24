@@ -1,10 +1,7 @@
-package com.phonepe.platform.bonsai.core;
+package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.base.Preconditions;
-import com.phonepe.platform.bonsai.core.vital.BonsaiIdGenerator;
-import com.phonepe.platform.bonsai.core.vital.BonsaiProperties;
-import com.phonepe.platform.bonsai.core.vital.BonsaiTree;
-import com.phonepe.platform.bonsai.core.vital.ComponentValidator;
+import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.provided.*;
@@ -20,49 +17,49 @@ import java.util.UUID;
  * @author tushar.naik
  * @version 1.0  19/09/18 - 12:10 PM
  */
-public class BonsaiBuilder {
+public class BonsaiBuilder<C extends Context> {
     private MappingStore<String, String> mappingStore;
     private KnotStore<String, Knot> knotStore;
     private EdgeStore<String, Edge> edgeStore;
-    private VariationSelectorEngine variationSelectorEngine;
+    private VariationSelectorEngine<C> variationSelectorEngine;
     private BonsaiProperties bonsaiProperties;
     private BonsaiIdGenerator bonsaiIdGenerator;
 
-    public static BonsaiBuilder builder() {
-        return new BonsaiBuilder();
+    public static <C extends Context> BonsaiBuilder<C> builder() {
+        return new BonsaiBuilder<>();
     }
 
-    public BonsaiBuilder withMappingStore(MappingStore<String, String> mappingStore) {
+    public BonsaiBuilder<C> withMappingStore(MappingStore<String, String> mappingStore) {
         this.mappingStore = mappingStore;
         return this;
     }
 
-    public BonsaiBuilder withKnotStore(KnotStore<String, Knot> knotStore) {
+    public BonsaiBuilder<C> withKnotStore(KnotStore<String, Knot> knotStore) {
         this.knotStore = knotStore;
         return this;
     }
 
-    public BonsaiBuilder withEdgeStore(EdgeStore<String, Edge> edgeStore) {
+    public BonsaiBuilder<C> withEdgeStore(EdgeStore<String, Edge> edgeStore) {
         this.edgeStore = edgeStore;
         return this;
     }
 
-    public BonsaiBuilder withVariationSelectorEngine(VariationSelectorEngine variationSelectorEngine) {
+    public BonsaiBuilder<C> withVariationSelectorEngine(VariationSelectorEngine<C> variationSelectorEngine) {
         this.variationSelectorEngine = variationSelectorEngine;
         return this;
     }
 
-    public BonsaiBuilder withBonsaiProperties(BonsaiProperties bonsaiProperties) {
+    public BonsaiBuilder<C> withBonsaiProperties(BonsaiProperties bonsaiProperties) {
         this.bonsaiProperties = bonsaiProperties;
         return this;
     }
 
-    public BonsaiBuilder withBonsaiIdGenerator(BonsaiIdGenerator bonsaiIdGenerator) {
+    public BonsaiBuilder<C> withBonsaiIdGenerator(BonsaiIdGenerator bonsaiIdGenerator) {
         this.bonsaiIdGenerator = bonsaiIdGenerator;
         return this;
     }
 
-    public Bonsai build() {
+    public Bonsai<C> build() {
         Preconditions.checkNotNull(bonsaiProperties, "bonsaiProperties cannot be null");
         mappingStore = mappingStore == null ? new InMemoryMappingStore() : mappingStore;
         knotStore = knotStore == null ? new InMemoryKnotStore() : knotStore;
@@ -81,6 +78,6 @@ public class BonsaiBuilder {
                 return UUID.randomUUID().toString();
             }
         } : bonsaiIdGenerator;
-        return new BonsaiTree(mappingStore, knotStore, edgeStore, variationSelectorEngine, new ComponentValidator(bonsaiProperties), bonsaiProperties, bonsaiIdGenerator);
+        return new BonsaiTree<>(mappingStore, knotStore, edgeStore, variationSelectorEngine, new ComponentValidator(bonsaiProperties), bonsaiProperties, bonsaiIdGenerator);
     }
 }

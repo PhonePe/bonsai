@@ -3,7 +3,7 @@ package com.phonepe.platform.bonsai.core.variation;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
-import com.phonepe.platform.bonsai.core.BonsaiBuilder;
+import com.phonepe.platform.bonsai.core.vital.BonsaiBuilder;
 import com.phonepe.platform.bonsai.core.PerformanceEvaluator;
 import com.phonepe.platform.bonsai.core.TreeUtils;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
@@ -21,12 +21,13 @@ import org.junit.Test;
  * @version 1.0  19/09/18 - 2:49 PM
  */
 public class FilterEvaluationEngineTest {
-    private Bonsai bonsai = BonsaiBuilder.builder().withBonsaiProperties(BonsaiProperties
-                                                                                 .builder()
-                                                                                 .singleConditionEdgeSettingTurnedOn(true)
-                                                                                 .mutualExclusivitySettingTurnedOn(true)
-                                                                                 .build())
-                                         .build();
+    private Bonsai<Context> bonsai = BonsaiBuilder.builder()
+                                                  .withBonsaiProperties(BonsaiProperties
+                                                                                .builder()
+                                                                                .singleConditionEdgeSettingTurnedOn(true)
+                                                                                .mutualExclusivitySettingTurnedOn(true)
+                                                                                .build())
+                                                  .build();
 
     @Test
     public void simpleTestingOfBonsai() {
@@ -61,9 +62,9 @@ public class FilterEvaluationEngineTest {
         System.out.println("elapse:" + (System.currentTimeMillis() - start));
 
         float evaluate = PerformanceEvaluator.evaluateAndAvg(100, () -> bonsai.evaluate("tera_data", Context.builder()
-                                                                                                             .documentContext(JsonPath.parse(ImmutableMap
-                                                                                                                                                     .of("E", Integer.MAX_VALUE)))
-                                                                                                             .build()));
+                                                                                                            .documentContext(JsonPath.parse(ImmutableMap
+                                                                                                                                                    .of("E", Integer.MAX_VALUE)))
+                                                                                                            .build()));
         System.out.println("evaluate = " + evaluate);
     }
 }

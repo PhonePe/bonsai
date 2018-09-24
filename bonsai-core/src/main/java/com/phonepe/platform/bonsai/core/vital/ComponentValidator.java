@@ -64,7 +64,7 @@ public final class ComponentValidator implements Validator {
 
     @Override
     public void validate(Context context) {
-        checkNotNull(context.getDocumentContext(), "context.documentContext");
+        checkNotNull(context.getDocumentContext(), "context.documentContext"); //todo this might not be necessary
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.phonepe.platform.bonsai.core;
 
+import com.phonepe.platform.bonsai.core.vital.BonsaiBuilder;
 import org.junit.Test;
 
 /**

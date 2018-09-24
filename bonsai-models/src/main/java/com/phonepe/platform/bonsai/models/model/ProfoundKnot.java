@@ -1,11 +1,10 @@
-package com.phonepe.platform.bonsai.core.vital.provided.model;
+package com.phonepe.platform.bonsai.models.model;
 
-import com.phonepe.platform.bonsai.core.data.KnotData;
-import com.phonepe.platform.bonsai.core.structures.OrderedList;
+import com.phonepe.platform.bonsai.models.KeyNode;
 import lombok.Builder;
 import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -16,12 +15,12 @@ import java.util.Objects;
 public class ProfoundKnot {
     private String id;
     private long version;
-    private OrderedList<ProfoundEdge> profoundEdges;
-    private KnotData knotData;
+    private List<ProfoundEdge> profoundEdges;
+    private KeyNode knotData;
 
     @Builder
     public ProfoundKnot(String id, long version,
-                        OrderedList<ProfoundEdge> profoundEdges, KnotData knotData) {
+                        List<ProfoundEdge> profoundEdges, KeyNode knotData) {
         this.id = id;
         this.version = version;
         this.profoundEdges = profoundEdges;
@@ -43,15 +42,5 @@ public class ProfoundKnot {
 
     public void updateVersion() {
         version = System.currentTimeMillis();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("version", version)
-                .append("edges", profoundEdges.stream().map(ProfoundEdge::getId).reduce((s1, s2) -> s1 + ":" + s2))
-                .append("knotData", knotData)
-                .toString();
     }
 }

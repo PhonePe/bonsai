@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
-import com.phonepe.platform.bonsai.core.BonsaiBuilder;
 import com.phonepe.platform.bonsai.core.Mapper;
 import com.phonepe.platform.bonsai.core.ObjectExtractor;
 import com.phonepe.platform.bonsai.core.data.MapKnotData;
@@ -32,12 +31,13 @@ import java.util.Map;
  */
 public class BonsaiTreeTest {
 
-    private Bonsai bonsai = BonsaiBuilder.builder().withBonsaiProperties(BonsaiProperties
-                                                                                 .builder()
-                                                                                 .singleConditionEdgeSettingTurnedOn(true)
-                                                                                 .mutualExclusivitySettingTurnedOn(true)
-                                                                                 .build())
-                                         .build();
+    private Bonsai<Context> bonsai = BonsaiBuilder.builder()
+                                                  .withBonsaiProperties(BonsaiProperties
+                                                                                .builder()
+                                                                                .singleConditionEdgeSettingTurnedOn(true)
+                                                                                .mutualExclusivitySettingTurnedOn(true)
+                                                                                .build())
+                                                  .build();
 
     @Test
     public void testBonsai() throws IOException, BonsaiError {
@@ -130,9 +130,9 @@ public class BonsaiTreeTest {
 
         Knot homePageKnot = bonsai.createKnot(MapKnotData.builder()
                                                          .mapKeys(ImmutableMap.of("w1", "widget_1",
-                                                                                        "w2", "widget_2",
-                                                                                        "w3", "widget_3",
-                                                                                        "w4", "widget_4"))
+                                                                                  "w2", "widget_2",
+                                                                                  "w3", "widget_3",
+                                                                                  "w4", "widget_4"))
                                                          .build());
         Assert.assertNull(bonsai.createMapping("home_page_1", homePageKnot.getId()));
         Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
@@ -151,8 +151,8 @@ public class BonsaiTreeTest {
         bonsai.createMapping("widget_1", widgetKnot1.getId());
         Knot icon3 = bonsai.createKnot(ValuedKnotData.builder()
                                                      .value(DataValue.builder()
-                                                                           .data("This is some coool icon")
-                                                                           .build())
+                                                                     .data("This is some coool icon")
+                                                                     .build())
                                                      .build());
         /* there is no older mapping, hence it will return null */
         Assert.assertNull(bonsai.createMapping("icon_3", icon3.getId()));
