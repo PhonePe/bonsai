@@ -20,23 +20,22 @@ public class InMemoryKnotStore implements KnotStore<String, Knot> {
     }
 
     @Override
-    public boolean containsKey(String key) {
+    public boolean containsKnot(String key) {
         return storage.containsKey(key);
     }
 
     @Override
-    public boolean mapKnot(String id, Knot knot) {
-        storage.put(id, knot);
-        return true;
+    public Knot mapKnot(String id, Knot knot) {
+        return storage.put(id, knot);
     }
 
     @Override
-    public Knot get(String id) {
+    public Knot getKnot(String id) {
         return storage.get(id);
     }
 
     @Override
-    public Knot delete(String s) {
+    public Knot deleteKnot(String s) {
         return storage.remove(s);
     }
 }

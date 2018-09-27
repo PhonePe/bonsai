@@ -6,7 +6,7 @@ import com.phonepe.platform.bonsai.core.vital.Context;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 
 /**
- * This is responsible for matching the {@link Edge}s filters (filters) against the {@link Context}
+ * This is responsible for matching the {@link Edge}s filters against the {@link Context}
  * We are using the {@link FilterEvaluationEngine} to evaluate if all {@link com.phonepe.platform.bonsai.core.variation.filter.Filter}s
  * present in the {@link Edge} are true
  * If so, this {@link Edge} will return true, ie, the Context satisfies the {@link Edge}s criteria

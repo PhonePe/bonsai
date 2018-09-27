@@ -1,7 +1,7 @@
 package com.phonepe.platform.bonsai.core.vital.provided.impl;
 
 import com.google.common.collect.Maps;
-import com.phonepe.platform.bonsai.core.vital.provided.MappingStore;
+import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
 import lombok.AllArgsConstructor;
 
 import java.util.Map;
@@ -11,10 +11,10 @@ import java.util.Map;
  * @version 1.0  22/08/18 - 5:34 PM
  */
 @AllArgsConstructor
-public class InMemoryMappingStore implements MappingStore<String,String> {
+public class InMemoryKeyTreeStore implements KeyTreeStore<String,String> {
     private final Map<String, String> storage;
 
-    public InMemoryMappingStore() {
+    public InMemoryKeyTreeStore() {
         this.storage = Maps.newHashMap();
     }
 
@@ -24,17 +24,17 @@ public class InMemoryMappingStore implements MappingStore<String,String> {
     }
 
     @Override
-    public String map(String key, String id) {
+    public String createKeyTree(String key, String id) {
         return storage.put(key, id);
     }
 
     @Override
-    public String get(String id) {
+    public String getKeyTree(String id) {
         return storage.get(id);
     }
 
     @Override
-    public String remove(String s) {
+    public String removeKeyTree(String s) {
         return storage.remove(s);
     }
 }

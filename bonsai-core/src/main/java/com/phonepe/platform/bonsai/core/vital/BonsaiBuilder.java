@@ -7,7 +7,7 @@ import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.provided.*;
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryEdgeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryKnotStore;
-import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryMappingStore;
+import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryKeyTreeStore;
 
 import java.util.UUID;
 
@@ -18,7 +18,7 @@ import java.util.UUID;
  * @version 1.0  19/09/18 - 12:10 PM
  */
 public class BonsaiBuilder<C extends Context> {
-    private MappingStore<String, String> mappingStore;
+    private KeyTreeStore<String, String> keyTreeStore;
     private KnotStore<String, Knot> knotStore;
     private EdgeStore<String, Edge> edgeStore;
     private VariationSelectorEngine<C> variationSelectorEngine;
@@ -29,8 +29,8 @@ public class BonsaiBuilder<C extends Context> {
         return new BonsaiBuilder<>();
     }
 
-    public BonsaiBuilder<C> withMappingStore(MappingStore<String, String> mappingStore) {
-        this.mappingStore = mappingStore;
+    public BonsaiBuilder<C> withMappingStore(KeyTreeStore<String, String> keyTreeStore) {
+        this.keyTreeStore = keyTreeStore;
         return this;
     }
 
@@ -61,7 +61,7 @@ public class BonsaiBuilder<C extends Context> {
 
     public Bonsai<C> build() {
         Preconditions.checkNotNull(bonsaiProperties, "bonsaiProperties cannot be null");
-        mappingStore = mappingStore == null ? new InMemoryMappingStore() : mappingStore;
+        keyTreeStore = keyTreeStore == null ? new InMemoryKeyTreeStore() : keyTreeStore;
         knotStore = knotStore == null ? new InMemoryKnotStore() : knotStore;
         edgeStore = edgeStore == null ? new InMemoryEdgeStore() : edgeStore;
         variationSelectorEngine = variationSelectorEngine == null ?
@@ -78,6 +78,6 @@ public class BonsaiBuilder<C extends Context> {
                 return UUID.randomUUID().toString();
             }
         } : bonsaiIdGenerator;
-        return new BonsaiTree<>(mappingStore, knotStore, edgeStore, variationSelectorEngine, new ComponentValidator(bonsaiProperties), bonsaiProperties, bonsaiIdGenerator);
+        return new BonsaiTree<>(keyTreeStore, knotStore, edgeStore, variationSelectorEngine, new ComponentValidator(bonsaiProperties), bonsaiProperties, bonsaiIdGenerator);
     }
 }

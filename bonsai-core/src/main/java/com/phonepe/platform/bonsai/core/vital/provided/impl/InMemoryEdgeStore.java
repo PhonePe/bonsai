@@ -1,13 +1,15 @@
 package com.phonepe.platform.bonsai.core.vital.provided.impl;
 
 import com.google.common.collect.Maps;
-import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
+import com.phonepe.platform.bonsai.core.structures.CollectorFunctions;
+import com.phonepe.platform.bonsai.core.structures.Pair;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
+import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
 import lombok.AllArgsConstructor;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author tushar.naik
@@ -27,17 +29,17 @@ public class InMemoryEdgeStore implements EdgeStore<String, Edge> {
     }
 
     @Override
-    public Edge get(String s) {
+    public Edge getEdge(String s) {
         return storage.get(s);
     }
 
     @Override
-    public Edge delete(String s) {
+    public Edge deleteEdge(String s) {
         return storage.remove(s);
     }
 
     @Override
-    public List<Edge> getAll(List<String> ids) {
-        return ids.stream().map(storage::get).collect(Collectors.toList());
+    public LinkedHashMap<String, Edge> getAllEdges(List<String> ids) {
+        return ids.stream().map(k -> new Pair<>(k, storage.get(k))).collect(CollectorFunctions.pairLinkedHashMapCollector());
     }
 }
