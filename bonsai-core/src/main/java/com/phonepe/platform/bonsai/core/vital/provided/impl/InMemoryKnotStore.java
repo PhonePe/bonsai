@@ -35,7 +35,7 @@ public class InMemoryKnotStore implements KnotStore<String, Knot> {
     }
 
     @Override
-    public Knot deleteKnot(String s) {
-        return storage.remove(s);
+    public Knot deleteKnot(String id) {
+        return storage.remove(id);
     }
 }

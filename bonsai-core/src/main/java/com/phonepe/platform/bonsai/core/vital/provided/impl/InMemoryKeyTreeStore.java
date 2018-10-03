@@ -29,12 +29,12 @@ public class InMemoryKeyTreeStore implements KeyTreeStore<String,String> {
     }
 
     @Override
-    public String getKeyTree(String id) {
-        return storage.get(id);
+    public String getKeyTree(String key) {
+        return storage.get(key);
     }
 
     @Override
-    public String removeKeyTree(String s) {
-        return storage.remove(s);
+    public String removeKeyTree(String key) {
+        return storage.remove(key);
     }
 }

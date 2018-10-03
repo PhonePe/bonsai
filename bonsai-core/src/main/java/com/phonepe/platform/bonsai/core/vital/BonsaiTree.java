@@ -71,6 +71,11 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
+    public Knot createKnot(String knotId, Knot knot) {
+        return knotStore.mapKnot(knotId, knot);
+    }
+
+    @Override
     public Knot createKnot(KnotData knotData) {
         componentValidator.validate(knotData);
         Knot knot = Knot.builder()
@@ -178,6 +183,10 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         return true;
     }
 
+    @Override
+    public Edge createEdge(String edgeId, Edge edge) {
+        return edgeStore.mapEdge(edgeId, edge);
+    }
 
     @Override
     public List<Knot> deleteVariation(String knotId, String edgeId, boolean recursive) {

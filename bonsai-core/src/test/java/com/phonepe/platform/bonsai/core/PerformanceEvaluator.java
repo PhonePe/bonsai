@@ -1,13 +1,35 @@
 package com.phonepe.platform.bonsai.core;
 
-import java.time.Duration;
-import java.time.Instant;
+import com.codahale.metrics.ConsoleReporter;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author tushar.naik
  * @version 1.0  21/04/17 - 11:15 PM
  */
+@AllArgsConstructor
 public class PerformanceEvaluator {
+
+    @Getter
+    private final Timer timer;
+
+    private final ConsoleReporter reporter;
+
+    public PerformanceEvaluator() {
+        this("perf-eval");
+    }
+
+    public PerformanceEvaluator(String name) {
+        MetricRegistry metricRegistry = new MetricRegistry();
+        this.timer = metricRegistry.timer(name);
+        this.reporter = ConsoleReporter.forRegistry(metricRegistry).convertRatesTo(TimeUnit.SECONDS)
+                                       .convertDurationsTo(TimeUnit.MILLISECONDS).build();
+    }
 
     /**
      * evaluate the time consumed by a runnable to perform x operations
@@ -16,25 +38,21 @@ public class PerformanceEvaluator {
      * @param runnable      runnable to be executed
      * @return time the runnable takes to run numOperations times
      */
-    public static long evaluate(long numOperations, Runnable runnable) {
-        Instant start = Instant.now();
+    public Timer evaluate(long numOperations, Runnable runnable) {
         for (long i = 0; i < numOperations; i++) {
             printStatus(numOperations, i);
-            runnable.run();
+            try {
+                timer.time(() -> {
+                    runnable.run();
+                    return true;
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         System.out.println();
-        return getElapsedDuration(start).toMillis();
-    }
-
-    /**
-     * evaluate the average time consumed by a runnable to perform x operations
-     *
-     * @param numOperations number of times the runnable is to be executed
-     * @param runnable      runnable to be executed
-     * @return average time the runnable takes to run numOperations times
-     */
-    public static float evaluateAndAvg(long numOperations, Runnable runnable) {
-        return evaluate(numOperations, runnable) / (float) numOperations;
+        reporter.report();
+        return timer;
     }
 
     private static void printStatus(long numOperations, long iteration) {
@@ -49,15 +67,5 @@ public class PerformanceEvaluator {
                 System.out.print("#");
             }
         }
-    }
-
-    /**
-     * get elapsed duration between an older instant and now
-     *
-     * @param instant older instant
-     * @return duration
-     */
-    public static Duration getElapsedDuration(Instant instant) {
-        return Duration.between(instant, Instant.now());
     }
 }

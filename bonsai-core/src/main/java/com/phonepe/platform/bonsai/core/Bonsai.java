@@ -41,6 +41,15 @@ public interface Bonsai<C extends Context> {
     Knot createKnot(KnotData knotData);
 
     /**
+     * create a Knot directly
+     *
+     * @param knotId knot id
+     * @param knot   knot
+     * @return older knot if present
+     */
+    Knot createKnot(String knotId, Knot knot);
+
+    /**
      * get the knot for an id
      *
      * @param knotId id to be retrieved
@@ -71,6 +80,14 @@ public interface Bonsai<C extends Context> {
     ///////////////////////////////////////////  EDGE OPERATIONS  /////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * create edge directly
+     *
+     * @param edgeId edge id
+     * @param edge   edge
+     * @return edge if an older mapping existed
+     */
+    Edge createEdge(String edgeId, Edge edge);
 
     /**
      * @param knotId    id of the {@link Knot}

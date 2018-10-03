@@ -1,12 +1,13 @@
 package com.phonepe.platform.bonsai.core.variation;
 
+import com.codahale.metrics.Timer;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
-import com.phonepe.platform.bonsai.core.vital.BonsaiBuilder;
 import com.phonepe.platform.bonsai.core.PerformanceEvaluator;
 import com.phonepe.platform.bonsai.core.TreeUtils;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
+import com.phonepe.platform.bonsai.core.vital.BonsaiBuilder;
 import com.phonepe.platform.bonsai.core.vital.BonsaiProperties;
 import com.phonepe.platform.bonsai.core.vital.Context;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
@@ -51,8 +52,8 @@ public class FilterEvaluationEngineTest {
                                                     .value(DataValue.builder().data("Data").build())
                                                     .build());
         bonsai.createMapping("tera_data", knot.getId());
-        long performanceTreeCreation = PerformanceEvaluator.evaluate(1, () -> TreeUtils.generateEdges(knot, bonsai, 10000));
-        System.out.println("time for treeCreation = " + performanceTreeCreation);
+        Timer performanceTreeCreation = new PerformanceEvaluator().evaluate(1, () -> TreeUtils.generateEdges(knot, bonsai, 1000));
+        System.out.println("time for treeCreation = " + performanceTreeCreation.getSnapshot().get99thPercentile());
 
         long start = System.currentTimeMillis();
         KeyNode evaluate1 = bonsai.evaluate("tera_data", Context.builder()
@@ -61,10 +62,14 @@ public class FilterEvaluationEngineTest {
                                                                 .build());
         System.out.println("elapse:" + (System.currentTimeMillis() - start));
 
-        float evaluate = PerformanceEvaluator.evaluateAndAvg(100, () -> bonsai.evaluate("tera_data", Context.builder()
-                                                                                                            .documentContext(JsonPath.parse(ImmutableMap
-                                                                                                                                                    .of("E", Integer.MAX_VALUE)))
-                                                                                                            .build()));
-        System.out.println("evaluate = " + evaluate);
+        Timer evaluate = new PerformanceEvaluator().evaluate(1000, () -> bonsai.evaluate("tera_data", Context.builder()
+                                                                                                             .documentContext(JsonPath.parse(ImmutableMap
+                                                                                                                                                     .of("E", Integer.MAX_VALUE)))
+                                                                                                             .build()));
+        if (evaluate.getSnapshot().getMean() / 1_000_000 > 100) {
+            Assert.fail("Evaluation is taking more than 100ms");
+        }
+
+
     }
 }

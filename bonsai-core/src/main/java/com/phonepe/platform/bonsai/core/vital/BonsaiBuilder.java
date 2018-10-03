@@ -29,7 +29,7 @@ public class BonsaiBuilder<C extends Context> {
         return new BonsaiBuilder<>();
     }
 
-    public BonsaiBuilder<C> withMappingStore(KeyTreeStore<String, String> keyTreeStore) {
+    public BonsaiBuilder<C> withKeyTreeStore(KeyTreeStore<String, String> keyTreeStore) {
         this.keyTreeStore = keyTreeStore;
         return this;
     }
