@@ -2,23 +2,22 @@ package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.data.*;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.platform.bonsai.core.structures.CycleIdentifier;
 import com.phonepe.platform.bonsai.core.structures.OrderedList;
+import com.phonepe.platform.bonsai.core.variation.filter.Filter;
 import com.phonepe.platform.bonsai.core.variation.filter.FilterFieldIdentifier;
 import com.phonepe.platform.bonsai.core.variation.jsonpath.JsonPathSetup;
-import com.phonepe.platform.bonsai.core.variation.filter.Filter;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
-import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
+import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
 import com.phonepe.platform.bonsai.core.vital.provided.VariationSelectorEngine;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ListNode;
@@ -71,8 +70,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public Knot createKnot(String knotId, Knot knot) {
-        return knotStore.mapKnot(knotId, knot);
+    public Knot createKnot(Knot knot) {
+        return knotStore.mapKnot(knot.getId(), knot);
     }
 
     @Override
@@ -93,11 +92,10 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public boolean updateKnotData(String knotId, KnotData knotData) {
+    public Knot updateKnotData(String knotId, KnotData knotData) {
         Knot knot = knotStore.getKnot(knotId);
         knot.setKnotData(knotData);
-        knotStore.mapKnot(knotId, knot.updateVersion());
-        return true;
+        return knotStore.mapKnot(knotId, knot.updateVersion());
     }
 
     public List<Knot> deleteKnot(String id, boolean recursive) {
@@ -146,32 +144,30 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public boolean updateEdgeFilters(String knotId, String edgeId, List<Filter> filters) {
+    public Edge updateEdgeFilters(String knotId, String edgeId, List<Filter> filters) {
         Knot knot = knotStore.getKnot(knotId);
         Edge edge = edgeStore.getEdge(edgeId);
         if (edge == null) {
-            return false;
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "No edge found for edgeId:" + edgeId);
         }
         edge.setFilters(filters);
 
         /* if there is any edge with a different pivot (ie, condition is on a different field), in the inner layer, throw exception */
         validateConstraints(knot, edge);
 
-        edgeStore.mapEdge(edgeId, edge.updateVersion());
-        return true;
+        return edgeStore.mapEdge(edgeId, edge.updateVersion());
     }
 
 
     @Override
-    public boolean addEdgeFilters(String edgeId, List<Filter> filters) {
+    public Edge addEdgeFilters(String edgeId, List<Filter> filters) {
         Edge edge = edgeStore.getEdge(edgeId);
         if (edge == null) {
-            return false;
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "No edge found for edgeId:" + edgeId);
         }
         edge.getFilters().addAll(filters);
         componentValidator.validate(edge);
-        edgeStore.mapEdge(edgeId, edge);
-        return true;
+        return edgeStore.mapEdge(edgeId, edge);
     }
 
     @Override
@@ -184,8 +180,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public Edge createEdge(String edgeId, Edge edge) {
-        return edgeStore.mapEdge(edgeId, edge);
+    public Edge createEdge(Edge edge) {
+        return edgeStore.mapEdge(edge.getEdgeIdentifier().getId(), edge);
     }
 
     @Override
@@ -206,10 +202,10 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     @Override
     public Knot createMapping(String key, String knotId) {
-        Knot knot = knotStore.getKnot(knotId);
-        if (knot == null) {
-            //todo
-        }
+//        Knot knot = knotStore.getKnot(knotId);
+//        if (knot == null) {
+//            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "knotId:" + knotId +  " is invalid");
+//        }
         if (keyTreeStore.containsKey(key)) {
             return knotStore.getKnot(keyTreeStore.getKeyTree(key));
         }
@@ -428,19 +424,5 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                 throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR);
             }
         }
-    }
-
-    public static void main(String[] args) {
-        LinkedHashMap<String, String> linkedHashMap = Maps.newLinkedHashMap();
-        linkedHashMap.put("asd-1", "asdf-1");
-        linkedHashMap.put("asdf", "asdf");
-        linkedHashMap.put("asd1", "asdf1");
-        linkedHashMap.put("asd2", "asdf2");
-        linkedHashMap.put("asd3", "asdf3");
-        linkedHashMap.put("asd1", "asdf11");
-        linkedHashMap.put("asd1", "asdf111");
-        linkedHashMap.put("asd1", "asdf1111");
-        linkedHashMap.values().stream().forEach(System.out::println);
-
     }
 }

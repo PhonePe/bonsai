@@ -18,7 +18,7 @@ public interface EdgeStore<I, Edge> {
      *
      * @param i    id
      * @param edge edge to be associated
-     * @return previous edge associated with the id
+     * @return the previous value associated with <tt>id</tt>, or <tt>null</tt> if there was no mapping for <tt>id</tt>.
      */
     Edge mapEdge(I i, Edge edge);
 
@@ -32,7 +32,7 @@ public interface EdgeStore<I, Edge> {
      * delete the edge that is mapped to the id
      *
      * @param i id
-     * @return the edge that was mapped to the id
+     * @return the previous edge associated with <tt>id</tt>, or <tt>null</tt> if there was no mapping for <tt>id</tt>.
      */
     Edge deleteEdge(I i);
 

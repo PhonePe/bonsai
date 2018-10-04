@@ -24,7 +24,7 @@ public interface KeyTreeStore<K, T> {
      *
      * @param k key
      * @param t tree to map the key with
-     * @return older associated value if it exists, else returns null
+     * @return the previous tree associated with <tt>key</tt>, or <tt>null</tt> if there was no mapping for <tt>key</tt>.
      */
     T createKeyTree(K k, T t);
 
@@ -38,7 +38,7 @@ public interface KeyTreeStore<K, T> {
      * remove KeyTree
      *
      * @param k key
-     * @return Tree that was removed
+     * @return the previous tree associated with <tt>key</tt>, or <tt>null</tt> if there was no mapping for <tt>key</tt>.
      */
     T removeKeyTree(K k);
 }

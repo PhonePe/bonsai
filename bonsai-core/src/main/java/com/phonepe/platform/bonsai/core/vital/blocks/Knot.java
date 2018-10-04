@@ -21,8 +21,7 @@ public class Knot {
     private OrderedList<EdgeIdentifier> edges;
 
     @Builder
-    public Knot(String id, long version,
-                OrderedList<EdgeIdentifier> edges, KnotData knotData) {
+    public Knot(String id, long version, OrderedList<EdgeIdentifier> edges, KnotData knotData) {
         this.id = id;
         this.version = version;
         this.edges = edges;

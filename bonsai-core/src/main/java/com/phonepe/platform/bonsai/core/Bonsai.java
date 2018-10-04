@@ -43,11 +43,10 @@ public interface Bonsai<C extends Context> {
     /**
      * create a Knot directly
      *
-     * @param knotId knot id
-     * @param knot   knot
-     * @return older knot if present
+     * @param knot knot
+     * @return older knot if some other data was present (on the knotId)
      */
-    Knot createKnot(String knotId, Knot knot);
+    Knot createKnot(Knot knot);
 
     /**
      * get the knot for an id
@@ -60,20 +59,20 @@ public interface Bonsai<C extends Context> {
     /**
      * update the data associated with a {@link Knot}
      *
-     * @param id       id of the knot
+     * @param knotId   knotId of the knot
      * @param knotData new data
-     * @return true if updated
+     * @return older knot if some other data was present (on the knotId)
      */
-    boolean updateKnotData(String id, KnotData knotData);
+    Knot updateKnotData(String knotId, KnotData knotData);
 
     /**
      * delete the knot and its associated edges
      *
-     * @param id        id of the knot to be deleted
+     * @param knotId    knotId of the knot to be deleted
      * @param recursive true if you want to delete all related {@link Edge}s and {@link Knot}s below it
-     * @return true if successfully deleted
+     * @return the list of knots that were deleted
      */
-    List<Knot> deleteKnot(String id, boolean recursive);
+    List<Knot> deleteKnot(String knotId, boolean recursive);
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,11 +82,10 @@ public interface Bonsai<C extends Context> {
     /**
      * create edge directly
      *
-     * @param edgeId edge id
-     * @param edge   edge
+     * @param edge edge
      * @return edge if an older mapping existed
      */
-    Edge createEdge(String edgeId, Edge edge);
+    Edge createEdge(Edge edge);
 
     /**
      * @param knotId    id of the {@link Knot}
@@ -107,7 +105,7 @@ public interface Bonsai<C extends Context> {
      * @param filters filters set
      * @return false if edge id wasnt present, or if edge wasnt updated
      */
-    boolean updateEdgeFilters(String knotId, String edgeId, List<Filter> filters);
+    Edge updateEdgeFilters(String knotId, String edgeId, List<Filter> filters);
 
     /**
      * add a bunch of filters to an edge.
@@ -117,7 +115,7 @@ public interface Bonsai<C extends Context> {
      * @param filters filters to be added
      * @return false if edge wasnt updated
      */
-    boolean addEdgeFilters(String edgeId, List<Filter> filters);
+    Edge addEdgeFilters(String edgeId, List<Filter> filters);
 
     /**
      * remove the edge only (all {@link Knot}s that the {@link Edge} contains, will continue to exist, but will be disconnected from the main tree

@@ -1,5 +1,6 @@
 package com.phonepe.platform.bonsai.core.vital;
 
+import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
@@ -7,10 +8,8 @@ import com.phonepe.platform.bonsai.core.variation.filter.Filter;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
-import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
-import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
-import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
-import com.phonepe.platform.bonsai.core.vital.provided.VariationSelectorEngine;
+import com.phonepe.platform.bonsai.models.KeyNode;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
@@ -18,15 +17,23 @@ import java.util.List;
  * @author tushar.naik
  * @version 1.0  2018-10-03 - 11:55
  */
-public class ImmutableBonsaiTree<C extends Context> extends BonsaiTree<C> {
+@AllArgsConstructor
+public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
+    private Bonsai<C> bonsai;
 
-    public ImmutableBonsaiTree(KeyTreeStore<String, String> keyTreeStore,
-                               KnotStore<String, Knot> knotStore,
-                               EdgeStore<String, Edge> edgeStore,
-                               VariationSelectorEngine<C> variationSelectorEngine,
-                               ComponentValidator componentValidator, BonsaiProperties bonsaiProperties,
-                               BonsaiIdGenerator bonsaiIdGenerator) {
-        super(keyTreeStore, knotStore, edgeStore, variationSelectorEngine, componentValidator, bonsaiProperties, bonsaiIdGenerator);
+    @Override
+    public Edge getEdge(String edgeId) {
+        return bonsai.getEdge(edgeId);
+    }
+
+    @Override
+    public Knot getKnot(String knotId) {
+        return bonsai.getKnot(knotId);
+    }
+
+    @Override
+    public KeyNode evaluate(String key, C context) {
+        return bonsai.evaluate(key, context);
     }
 
     @Override
@@ -35,12 +42,22 @@ public class ImmutableBonsaiTree<C extends Context> extends BonsaiTree<C> {
     }
 
     @Override
-    public boolean updateKnotData(String knotId, KnotData knotData) {
+    public Knot createKnot(Knot knot) {
         throw unsupportedOperationError();
     }
 
     @Override
-    public List<Knot> deleteKnot(String id, boolean recursive) {
+    public Knot updateKnotData(String knotId, KnotData knotData) {
+        throw unsupportedOperationError();
+    }
+
+    @Override
+    public List<Knot> deleteKnot(String knotId, boolean recursive) {
+        throw unsupportedOperationError();
+    }
+
+    @Override
+    public Edge createEdge(Edge edge) {
         throw unsupportedOperationError();
     }
 
@@ -50,12 +67,14 @@ public class ImmutableBonsaiTree<C extends Context> extends BonsaiTree<C> {
     }
 
     @Override
-    public boolean updateEdgeFilters(String knotId, String edgeId, List<Filter> filters) {
+    public Edge updateEdgeFilters(String knotId, String edgeId,
+                                  List<Filter> filters) {
         throw unsupportedOperationError();
     }
 
     @Override
-    public boolean addEdgeFilters(String edgeId, List<Filter> filters) {
+    public Edge addEdgeFilters(String edgeId,
+                               List<Filter> filters) {
         throw unsupportedOperationError();
     }
 
@@ -85,6 +104,6 @@ public class ImmutableBonsaiTree<C extends Context> extends BonsaiTree<C> {
     }
 
     private BonsaiError unsupportedOperationError() {
-        return new BonsaiError(BonsaiErrorCode.UNSUPPORTED_OPERATION, "EvaluationOnlyBonsaiTree cannot modify the Tree");
+        return new BonsaiError(BonsaiErrorCode.UNSUPPORTED_OPERATION, "ImmutableBonsaiTree cannot be modified");
     }
 }

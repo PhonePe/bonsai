@@ -24,7 +24,7 @@ public interface KnotStore<I, K> {
      *
      * @param id   id to be mapped to the knot
      * @param knot knot being mapped
-     * @return true if successfully mapped
+     * @return the previous value associated with <tt>id</tt>, or <tt>null</tt> if there was no mapping for <tt>id</tt>.
      */
     Knot mapKnot(I id, K knot);
 
@@ -40,7 +40,7 @@ public interface KnotStore<I, K> {
      * remove the knot associated with id
      *
      * @param i id
-     * @return knot that was mapped to it
+     * @return the previous value associated with <tt>id</tt>, or <tt>null</tt> if there was no mapping for <tt>id</tt>.
      */
     K deleteKnot(I i);
 }

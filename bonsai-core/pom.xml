@@ -5,7 +5,7 @@
     <parent>
         <artifactId>bonsai</artifactId>
         <groupId>com.phonepe.platform</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>com.phonepe.platform</groupId>
             <artifactId>bonsai-models</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
