@@ -169,6 +169,12 @@ public interface Bonsai<C extends Context> {
     Knot createMapping(String key, KnotData knotData);
 
     /**
+     * @param key key
+     * @return knot id
+     */
+    String getMapping(String key);
+
+    /**
      * remove the mapping between the key and the corresponding knot
      *
      * @param key key to be unmapped

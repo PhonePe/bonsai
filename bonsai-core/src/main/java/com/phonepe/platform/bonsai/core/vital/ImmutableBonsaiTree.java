@@ -37,6 +37,11 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
+    public String getMapping(String key) {
+        return bonsai.getMapping(key);
+    }
+
+    @Override
     public Knot createKnot(KnotData knotData) {
         throw unsupportedOperationError();
     }

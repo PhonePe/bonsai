@@ -221,6 +221,11 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
+    public String getMapping(String key) {
+        return keyTreeStore.getKeyTree(key);
+    }
+
+    @Override
     public Knot removeMapping(String key) {
         return knotStore.getKnot(keyTreeStore.removeKeyTree(key));
     }

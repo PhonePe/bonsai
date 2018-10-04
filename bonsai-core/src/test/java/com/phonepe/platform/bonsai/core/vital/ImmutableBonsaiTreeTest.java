@@ -95,7 +95,7 @@ public class ImmutableBonsaiTreeTest {
     }
 
     @Test
-    public void testImmutableBonsaiTreesEithEval() {
+    public void testImmutableBonsaiTreesWithEval() {
         Bonsai<Context> bonsai = BonsaiBuilder.builder()
                                               .withBonsaiProperties(BonsaiProperties.builder().build())
                                               .build();
