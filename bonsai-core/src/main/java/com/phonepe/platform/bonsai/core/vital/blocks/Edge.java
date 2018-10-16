@@ -16,6 +16,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@NoArgsConstructor
 public class Edge extends Condition {
     private String knotId;
     private EdgeIdentifier edgeIdentifier;

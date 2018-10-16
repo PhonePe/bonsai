@@ -14,6 +14,7 @@ import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.variation.filter.general.EqualsFilter;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
+import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ListNode;
 import com.phonepe.platform.bonsai.models.MapNode;
@@ -355,5 +356,54 @@ public class BonsaiTreeTest {
                                                       .documentContext(JsonPath.parse(Maps.newHashMap()))
                                                       .build());
         System.out.println("widget_1 = " + widget_1);
+    }
+
+
+    @Test
+    public void testGetCompleteTree() throws IOException {
+        Knot hpKnot = bonsai.createKnot(MultiKnotData.builder()
+                                                     .key("widget_1")
+                                                     .key("widget_2")
+                                                     .key("widget_3")
+                                                     .build());
+
+        bonsai.createMapping("home_page_1", hpKnot.getId());
+
+        Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
+                                                                  .key("icon_3")
+                                                                  .key("icon_1")
+                                                                  .key("icon_4")
+                                                                  .build());
+
+        Knot innerKnot = bonsai.createKnot(MultiKnotData.builder()
+                                                        .key("icon_3")
+                                                        .key("icon_1")
+                                                        .key("icon_4")
+                                                        .build());
+
+        bonsai.addVariation(femaleConditionKnot.getId(), Variation.builder().knotId(innerKnot.getId())
+                                                                  .filter(new EqualsFilter("$.gender", "female"))
+                                                                  .build());
+
+        Knot widgetKnot1 = bonsai.createKnot(MultiKnotData.builder()
+                                                          .key("icon_1")
+                                                          .key("icon_4")
+                                                          .key("icon_2")
+                                                          .key("icon_3")
+                                                          .build());
+        bonsai.createMapping("widget_1", widgetKnot1.getId());
+        Assert.assertNotNull(femaleConditionKnot);
+        bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
+                                                          .filter(new EqualsFilter("$.gender", "female"))
+                                                          .knotId(femaleConditionKnot.getId())
+                                                          .build());
+        TreeKnot widget_1 = bonsai.getCompleteTree("widget_1");
+
+        System.out.println(Mapper.MAPPER.writeValueAsString(widget_1));
+        Assert.assertEquals(widget_1.getId(), widgetKnot1.getId());
+        Assert.assertEquals(widget_1.getTreeEdges().get(0).getTreeKnot().getId(), femaleConditionKnot.getId());
+        Assert.assertEquals(widget_1.getTreeEdges().get(0).getTreeKnot().getTreeEdges().get(0)
+                                    .getTreeKnot().getId(), innerKnot.getId());
+
     }
 }

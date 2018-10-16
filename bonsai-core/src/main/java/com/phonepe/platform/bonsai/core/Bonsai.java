@@ -7,6 +7,7 @@ import com.phonepe.platform.bonsai.core.vital.Context;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
+import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
 
 import java.util.List;
@@ -181,6 +182,15 @@ public interface Bonsai<C extends Context> {
      * @return knot that was unmapped
      */
     Knot removeMapping(String key);
+
+    /**
+     * get the complete tree recursively)
+     * use this only for debugging purposes
+     *
+     * @param key key with mapping
+     * @return TreeKnot
+     */
+    TreeKnot getCompleteTree(String key);
 
     /**
      * Perform a full evaluation of the Key

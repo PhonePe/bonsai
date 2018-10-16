@@ -1,9 +1,7 @@
 package com.phonepe.platform.bonsai.core.vital.blocks;
 
 import com.phonepe.platform.bonsai.core.variation.filter.Filter;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,8 +11,10 @@ import java.util.List;
  * @author tushar.naik
  * @version 1.0  17/09/18 - 7:00 PM
  */
-@Builder
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Variation {
 
     private int priority;

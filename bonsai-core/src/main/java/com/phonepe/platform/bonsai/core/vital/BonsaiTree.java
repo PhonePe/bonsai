@@ -15,6 +15,8 @@ import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
+import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
+import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
@@ -88,7 +90,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     @Override
     public Knot getKnot(String knotId) {
-        return knotStore.getKnot(keyTreeStore.getKeyTree(knotId));
+        return knotStore.getKnot(knotId);
     }
 
     @Override
@@ -158,7 +160,6 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         return edgeStore.mapEdge(edgeId, edge.updateVersion());
     }
 
-
     @Override
     public Edge addEdgeFilters(String edgeId, List<Filter> filters) {
         Edge edge = edgeStore.getEdge(edgeId);
@@ -223,6 +224,12 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     @Override
     public String getMapping(String key) {
         return keyTreeStore.getKeyTree(key);
+    }
+
+    @Override
+    public TreeKnot getCompleteTree(String key) {
+        String knotId = keyTreeStore.getKeyTree(key);
+        return TreeKnot(knotId);
     }
 
     @Override
@@ -404,6 +411,36 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         return matchingNode;
     }
 
+    private TreeKnot TreeKnot(String knotId) {
+        if (Strings.isNullOrEmpty(knotId)) {
+            return null;
+        }
+        Knot knot = knotStore.getKnot(knotId);
+
+        TreeKnot.TreeKnotBuilder profoundKnotBuilder
+                = TreeKnot.builder()
+                          .id(knot.getId())
+                          .version(knot.getVersion())
+                          .knotData(knot.getKnotData());
+
+        if (knot.getEdges() != null) {
+            List<TreeEdge> treeEdges
+                    = edgeStore.getAllEdges(knot.getEdges().stream()
+                                                .map(EdgeIdentifier::getId)
+                                                .collect(Collectors.toList()))
+                               .values()
+                               .stream()
+                               .map(edge -> TreeEdge.builder()
+                                                    .edgeIdentifier(edge.getEdgeIdentifier())
+                                                    .filters(edge.getFilters())
+                                                    .version(edge.getVersion())
+                                                    .treeKnot(TreeKnot(edge.getKnotId()))
+                                                    .build())
+                               .collect(Collectors.toList());
+            profoundKnotBuilder.treeEdges(treeEdges);
+        }
+        return profoundKnotBuilder.build();
+    }
 
     private void validateConstraints(Knot knot, Edge edge) {
         if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {

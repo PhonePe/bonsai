@@ -8,6 +8,7 @@ import com.phonepe.platform.bonsai.core.variation.filter.Filter;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
+import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import lombok.AllArgsConstructor;
 
@@ -106,6 +107,11 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     @Override
     public Knot removeMapping(String key) {
         throw unsupportedOperationError();
+    }
+
+    @Override
+    public TreeKnot getCompleteTree(String key) {
+        return bonsai.getCompleteTree(key);
     }
 
     private BonsaiError unsupportedOperationError() {
