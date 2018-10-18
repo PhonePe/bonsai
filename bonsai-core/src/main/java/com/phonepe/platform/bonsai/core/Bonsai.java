@@ -10,6 +10,7 @@ import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -143,6 +144,14 @@ public interface Bonsai<C extends Context> {
      * @return edge
      */
     Edge getEdge(String edgeId);
+
+    /**
+     * return all edges (in the same order)
+     *
+     * @param edgeIds edge ids
+     * @return mapping of id to edge
+     */
+    LinkedHashMap<String, Edge> getAllEdges(List<String> edgeIds);
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////

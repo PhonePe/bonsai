@@ -105,10 +105,12 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         if (recursive) {
             /* this is a recursive delete operation */
             Knot knot = knotStore.getKnot(id);
-            edgeStore.getAllEdges(knot.getEdges().stream().map(EdgeIdentifier::getId).collect(Collectors.toList()))
-                     .values().stream().map(Edge::getKnotId)
-                     .map(knotId -> deleteKnot(knotId, true))
-                     .forEach(deletedKnots::addAll);
+            if (knot.getEdges() != null) {
+                edgeStore.getAllEdges(knot.getEdges().stream().map(EdgeIdentifier::getId).collect(Collectors.toList()))
+                         .values().stream().map(Edge::getKnotId)
+                         .map(knotId -> deleteKnot(knotId, true))
+                         .forEach(deletedKnots::addAll);
+            }
 
         }
         deletedKnots.add(knotStore.deleteKnot(id));
@@ -200,6 +202,9 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         return edgeStore.getEdge(edgeId);
     }
 
+    public LinkedHashMap<String, Edge> getAllEdges(List<String> edgeIds) {
+        return edgeStore.getAllEdges(edgeIds);
+    }
 
     @Override
     public Knot createMapping(String key, String knotId) {
@@ -229,7 +234,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     @Override
     public TreeKnot getCompleteTree(String key) {
         String knotId = keyTreeStore.getKeyTree(key);
-        return TreeKnot(knotId);
+        return composeTreeKnot(knotId);
     }
 
     @Override
@@ -411,7 +416,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         return matchingNode;
     }
 
-    private TreeKnot TreeKnot(String knotId) {
+    private TreeKnot composeTreeKnot(String knotId) {
         if (Strings.isNullOrEmpty(knotId)) {
             return null;
         }
@@ -434,7 +439,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                                                     .edgeIdentifier(edge.getEdgeIdentifier())
                                                     .filters(edge.getFilters())
                                                     .version(edge.getVersion())
-                                                    .treeKnot(TreeKnot(edge.getKnotId()))
+                                                    .treeKnot(composeTreeKnot(edge.getKnotId()))
                                                     .build())
                                .collect(Collectors.toList());
             profoundKnotBuilder.treeEdges(treeEdges);

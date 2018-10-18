@@ -1,8 +1,6 @@
 package com.phonepe.platform.bonsai.core.vital.provided.impl;
 
 import com.google.common.collect.Maps;
-import com.phonepe.platform.bonsai.core.structures.CollectorFunctions;
-import com.phonepe.platform.bonsai.core.structures.Pair;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
 import lombok.AllArgsConstructor;
@@ -40,6 +38,10 @@ public class InMemoryEdgeStore implements EdgeStore<String, Edge> {
 
     @Override
     public LinkedHashMap<String, Edge> getAllEdges(List<String> ids) {
-        return ids.stream().map(k -> new Pair<>(k, storage.get(k))).collect(CollectorFunctions.pairLinkedHashMapCollector());
+        LinkedHashMap<String, Edge> resultMapping = new LinkedHashMap<>();
+        for (String id : ids) {
+            resultMapping.put(id, storage.get(id));
+        }
+        return resultMapping;
     }
 }

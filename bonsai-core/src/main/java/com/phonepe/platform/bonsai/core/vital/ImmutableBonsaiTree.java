@@ -12,6 +12,7 @@ import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import lombok.AllArgsConstructor;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -25,6 +26,11 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     @Override
     public Edge getEdge(String edgeId) {
         return bonsai.getEdge(edgeId);
+    }
+
+    @Override
+    public LinkedHashMap<String, Edge> getAllEdges(List<String> edgeIds) {
+        return bonsai.getAllEdges(edgeIds);
     }
 
     @Override
