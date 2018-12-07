@@ -11,6 +11,7 @@
     <modules>
         <module>bonsai-core</module>
         <module>bonsai-models</module>
+        <module>bonsai-json-eval</module>
     </modules>
 
     <properties>
