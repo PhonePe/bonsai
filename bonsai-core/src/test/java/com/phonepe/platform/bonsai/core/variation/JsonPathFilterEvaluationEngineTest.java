@@ -21,7 +21,7 @@ import org.junit.Test;
  * @author tushar.naik
  * @version 1.0  19/09/18 - 2:49 PM
  */
-public class FilterEvaluationEngineTest {
+public class JsonPathFilterEvaluationEngineTest {
     private Bonsai<Context> bonsai = BonsaiBuilder.builder()
                                                   .withBonsaiProperties(BonsaiProperties
                                                                                 .builder()

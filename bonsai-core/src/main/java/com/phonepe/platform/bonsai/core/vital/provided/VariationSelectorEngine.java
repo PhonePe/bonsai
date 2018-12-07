@@ -1,13 +1,13 @@
 package com.phonepe.platform.bonsai.core.vital.provided;
 
 import com.phonepe.folios.condition.engine.ConditionEngine;
-import com.phonepe.platform.bonsai.core.variation.FilterEvaluationEngine;
 import com.phonepe.platform.bonsai.core.vital.Context;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
+import com.phonepe.platform.bonsai.json.eval.JsonPathFilterEvaluationEngine;
 
 /**
  * This is responsible for matching the {@link Edge}s filters against the {@link Context}
- * We are using the {@link FilterEvaluationEngine} to evaluate if all {@link com.phonepe.platform.query.dsl.Filter}s
+ * We are using the {@link JsonPathFilterEvaluationEngine} to evaluate if all {@link com.phonepe.platform.query.dsl.Filter}s
  * present in the {@link Edge} are true
  * If so, this {@link Edge} will return true, ie, the Context satisfies the {@link Edge}s criteria
  *
@@ -24,6 +24,6 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
         }
         return edge.getFilters()
                    .stream()
-                   .allMatch(k -> k.accept(new FilterEvaluationEngine(context.getDocumentContext())));
+                   .allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine(context.getDocumentContext())));
     }
 }

@@ -1,4 +1,4 @@
-package com.phonepe.platform.bonsai.core.variation;
+package com.phonepe.platform.bonsai.json.eval;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
@@ -16,14 +16,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This is a Json path based filter evaluator.
+ * This is a Json path based filter evaluator
  * A filter predicate visitor that will apply the filter, and tell whether it is true or false
  *
  * @author tushar.naik
- * @version 1.0  20/06/18 - 8:28 PM
+ * @version 1.0  29/09/17 - 1:08 PM
  */
 @AllArgsConstructor
-public class FilterEvaluationEngine implements FilterVisitor<Boolean> {
+public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
 
     private static final TypeRef<List<Number>> NUMBER_TYPE_REF = new TypeRef<List<Number>>() {
     };
@@ -95,7 +95,8 @@ public class FilterEvaluationEngine implements FilterVisitor<Boolean> {
         List<Object> nonNullValues = values == null ? null : values.stream().filter(Objects::nonNull)
                                                                    .collect(Collectors.toList());
         Set<Object> notIn = new HashSet<>(filter.getValues());
-        return nonNullValues != null && !nonNullValues.isEmpty() && nonNullValues.stream().noneMatch(notIn::contains);
+        return nonNullValues != null && !nonNullValues.isEmpty() && nonNullValues.stream()
+                                                                                 .noneMatch(notIn::contains);
     }
 
     @Override
@@ -119,7 +120,8 @@ public class FilterEvaluationEngine implements FilterVisitor<Boolean> {
         List<Object> nonNullValues = values == null ? null : values.stream().filter(Objects::nonNull)
                                                                    .collect(Collectors.toList());
         Set<Object> notIn = new HashSet<>(filter.getValues());
-        return nonNullValues != null && !nonNullValues.isEmpty() && nonNullValues.stream().anyMatch(notIn::contains);
+        return nonNullValues != null && !nonNullValues.isEmpty() && nonNullValues.stream()
+                                                                                 .anyMatch(notIn::contains);
     }
 
     @Override

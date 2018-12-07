@@ -56,7 +56,7 @@ public class PathExpression {
 
     public Pair<String, Object> eval(DocumentContext context) {
         if (filters != null && !filters.isEmpty() &&
-                !filters.stream().allMatch(k -> k.accept(new EvaluateJsonFilter(context)))) {
+                !filters.stream().allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine(context)))) {
             return null;
         }
         if (value != null) {
@@ -163,7 +163,7 @@ public class PathExpression {
                             .map(k -> k.accept(new JsonPathFilterBuilder()))
                             .reduce(com.jayway.jsonpath.Filter::or)
                             .orElse(null);
-            if (!filters.stream().allMatch(k -> k.accept(new EvaluateJsonFilter(context)))) {
+            if (!filters.stream().allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine(context)))) {
                 return null;
             }
         }
