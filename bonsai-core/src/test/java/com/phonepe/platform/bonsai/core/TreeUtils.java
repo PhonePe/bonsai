@@ -3,7 +3,7 @@ package com.phonepe.platform.bonsai.core;
 import com.phonepe.platform.bonsai.core.data.MapKnotData;
 import com.phonepe.platform.bonsai.core.data.MultiKnotData;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
-import com.phonepe.platform.bonsai.core.variation.filter.general.EqualsFilter;
+import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.bonsai.core.data.KnotData;
 import com.phonepe.platform.bonsai.core.data.KnotDataVisitor;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;

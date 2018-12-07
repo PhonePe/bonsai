@@ -4,8 +4,8 @@ import com.google.common.base.Strings;
 import com.phonepe.platform.bonsai.core.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
-import com.phonepe.platform.bonsai.core.variation.filter.FilterCounter;
-import com.phonepe.platform.bonsai.core.variation.filter.FilterFieldIdentifier;
+import com.phonepe.platform.query.dsl.FilterCounter;
+import com.phonepe.platform.query.dsl.FilterFieldIdentifier;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 

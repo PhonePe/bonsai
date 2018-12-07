@@ -2,10 +2,10 @@ package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.collect.ImmutableList;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.core.variation.filter.logical.AndFilter;
-import com.phonepe.platform.bonsai.core.variation.filter.logical.OrFilter;
-import com.phonepe.platform.bonsai.core.variation.filter.numeric.GreaterEqualFilter;
-import com.phonepe.platform.bonsai.core.variation.filter.numeric.LessEqualFilter;
+import com.phonepe.platform.query.dsl.logical.AndFilter;
+import com.phonepe.platform.query.dsl.logical.OrFilter;
+import com.phonepe.platform.query.dsl.numeric.GreaterEqualFilter;
+import com.phonepe.platform.query.dsl.numeric.LessEqualFilter;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;

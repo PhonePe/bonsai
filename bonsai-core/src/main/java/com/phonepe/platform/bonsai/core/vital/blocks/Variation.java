@@ -1,6 +1,6 @@
 package com.phonepe.platform.bonsai.core.vital.blocks;
 
-import com.phonepe.platform.bonsai.core.variation.filter.Filter;
+import com.phonepe.platform.query.dsl.Filter;
 import lombok.*;
 
 import java.util.List;

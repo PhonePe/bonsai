@@ -2,11 +2,11 @@ package com.phonepe.platform.bonsai.core.variation;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
-import com.phonepe.platform.bonsai.core.variation.filter.FilterVisitor;
-import com.phonepe.platform.bonsai.core.variation.filter.general.*;
-import com.phonepe.platform.bonsai.core.variation.filter.logical.AndFilter;
-import com.phonepe.platform.bonsai.core.variation.filter.logical.OrFilter;
-import com.phonepe.platform.bonsai.core.variation.filter.numeric.*;
+import com.phonepe.platform.query.dsl.FilterVisitor;
+import com.phonepe.platform.query.dsl.general.*;
+import com.phonepe.platform.query.dsl.logical.AndFilter;
+import com.phonepe.platform.query.dsl.logical.OrFilter;
+import com.phonepe.platform.query.dsl.numeric.*;
 import lombok.AllArgsConstructor;
 
 import java.util.HashSet;

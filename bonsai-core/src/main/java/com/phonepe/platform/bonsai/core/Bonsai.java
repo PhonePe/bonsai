@@ -2,7 +2,7 @@ package com.phonepe.platform.bonsai.core;
 
 import com.phonepe.platform.bonsai.core.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.core.variation.filter.Filter;
+import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.bonsai.core.vital.Context;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;

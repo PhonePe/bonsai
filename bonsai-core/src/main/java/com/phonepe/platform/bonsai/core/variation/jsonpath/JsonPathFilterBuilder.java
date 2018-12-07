@@ -3,11 +3,22 @@ package com.phonepe.platform.bonsai.core.variation.jsonpath;
 import com.jayway.jsonpath.Criteria;
 import com.jayway.jsonpath.Filter;
 import com.phonepe.platform.bonsai.core.variation.FilterEvaluationEngine;
-import com.phonepe.platform.bonsai.core.variation.filter.FilterVisitor;
-import com.phonepe.platform.bonsai.core.variation.filter.general.*;
-import com.phonepe.platform.bonsai.core.variation.filter.logical.AndFilter;
-import com.phonepe.platform.bonsai.core.variation.filter.logical.OrFilter;
-import com.phonepe.platform.bonsai.core.variation.filter.numeric.*;
+import com.phonepe.platform.query.dsl.FilterVisitor;
+import com.phonepe.platform.query.dsl.general.AnyFilter;
+import com.phonepe.platform.query.dsl.general.ContainsFilter;
+import com.phonepe.platform.query.dsl.general.EqualsFilter;
+import com.phonepe.platform.query.dsl.general.ExistsFilter;
+import com.phonepe.platform.query.dsl.general.InFilter;
+import com.phonepe.platform.query.dsl.general.MissingFilter;
+import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
+import com.phonepe.platform.query.dsl.general.NotInFilter;
+import com.phonepe.platform.query.dsl.logical.AndFilter;
+import com.phonepe.platform.query.dsl.logical.OrFilter;
+import com.phonepe.platform.query.dsl.numeric.BetweenFilter;
+import com.phonepe.platform.query.dsl.numeric.GreaterEqualFilter;
+import com.phonepe.platform.query.dsl.numeric.GreaterThanFilter;
+import com.phonepe.platform.query.dsl.numeric.LessEqualFilter;
+import com.phonepe.platform.query.dsl.numeric.LessThanFilter;
 
 /**
  * A jayway jsonpath equivalent of the {@link FilterEvaluationEngine} (which builders the filter, that may be applied)

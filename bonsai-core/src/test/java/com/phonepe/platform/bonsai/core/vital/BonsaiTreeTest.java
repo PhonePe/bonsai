@@ -11,7 +11,7 @@ import com.phonepe.platform.bonsai.core.data.MapKnotData;
 import com.phonepe.platform.bonsai.core.data.MultiKnotData;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.core.variation.filter.general.EqualsFilter;
+import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
@@ -78,6 +78,85 @@ public class BonsaiTreeTest {
                                                           .filter(new EqualsFilter("$.gender", "female"))
                                                           .knotId(femaleConditionKnot.getId())
                                                           .build());
+
+        KeyNode user1HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
+                                                                                .documentContext(JsonPath.parse(userContext1))
+                                                                                .build());
+        System.out.println(Mapper.MAPPER.writeValueAsString(user1HomePageEvaluation));
+
+        Assert.assertEquals(user1HomePageEvaluation.getKey(), "home_page_1");
+        Assert.assertEquals(user1HomePageEvaluation.getNode().getId(), hpKnot.getId());
+        Assert.assertTrue(NodeVisitors.isList(user1HomePageEvaluation.getNode()));
+
+        Assert.assertEquals(((ListNode) user1HomePageEvaluation.getNode()).getNodes().size(), 3);
+        Assert.assertTrue(NodeVisitors.isList(((ListNode) user1HomePageEvaluation.getNode()).getNodes()
+                                                                                            .get(0)
+                                                                                            .getNode()));
+
+        Assert.assertEquals(((ListNode) (((ListNode) user1HomePageEvaluation.getNode()).getNodes()
+                                                                                       .get(0)
+                                                                                       .getNode())).getNodes()
+                                                                                                   .size(), 4);
+
+        /* evaluate with context 2 */
+        KeyNode user2HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
+                                                                                .documentContext(JsonPath.parse(userContext2))
+                                                                                .build());
+
+
+        Assert.assertEquals(user2HomePageEvaluation.getKey(), "home_page_1");
+        Assert.assertEquals(user2HomePageEvaluation.getNode().getId(), hpKnot.getId());
+        Assert.assertTrue(NodeVisitors.isList(user2HomePageEvaluation.getNode()));
+
+        Assert.assertEquals(((ListNode) user2HomePageEvaluation.getNode()).getNodes().size(), 3);
+        Assert.assertTrue(NodeVisitors.isList(((ListNode) user2HomePageEvaluation.getNode()).getNodes()
+                                                                                            .get(0)
+                                                                                            .getNode()));
+
+        Assert.assertEquals(((ListNode) (((ListNode) user2HomePageEvaluation.getNode()).getNodes()
+                                                                                       .get(0)
+                                                                                       .getNode())).getNodes()
+                                                                                                   .size(), 3);
+
+        Assert.assertEquals((((ListNode) user2HomePageEvaluation.getNode()).getNodes()
+                                                                           .get(0)
+                                                                           .getNode()).getId(), femaleConditionKnot.getId());
+
+        System.out.println(Mapper.MAPPER.writeValueAsString(user2HomePageEvaluation));
+    }
+
+    @Test
+    public void testBonsai2() throws IOException, BonsaiError {
+        Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
+        Map userContext2 = new ObjectExtractor().getObject("userData2.json", Map.class);
+
+        Knot hpKnot = bonsai.createKnot(MultiKnotData.builder()
+                                                     .key("widget_1")
+                                                     .key("widget_2")
+                                                     .key("widget_3")
+                                                     .build());
+
+        bonsai.createMapping("home_page_1", hpKnot.getId());
+
+        Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
+                                                                  .key("icon_3")
+                                                                  .key("icon_1")
+                                                                  .key("icon_4")
+                                                                  .build());
+
+        Knot widgetKnot1 = bonsai.createKnot(MultiKnotData.builder()
+                                                          .key("icon_1")
+                                                          .key("icon_4")
+                                                          .key("icon_2")
+                                                          .key("icon_3")
+                                                          .build());
+        bonsai.createMapping("widget_1", widgetKnot1.getId());
+        Assert.assertNotNull(femaleConditionKnot);
+
+        Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
+                                                                               .filter(new EqualsFilter("$.location.tier", "tier2"))
+                                                                               .knotId(femaleConditionKnot.getId())
+                                                                               .build()));
 
         KeyNode user1HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
                                                                                 .documentContext(JsonPath.parse(userContext1))
