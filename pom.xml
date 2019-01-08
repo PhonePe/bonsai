@@ -7,7 +7,7 @@
     <groupId>com.phonepe.platform</groupId>
     <artifactId>bonsai</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.4</version>
     <modules>
         <module>bonsai-core</module>
         <module>bonsai-models</module>
