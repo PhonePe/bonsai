@@ -82,7 +82,7 @@ public class JsonPathFilterBuilder implements FilterVisitor<Filter> {
 
     @Override
     public Filter visit(AndFilter andFilter) {
-        return andFilter.getFilters().stream().map(k -> k.accept(this)).reduce(Filter::or).orElse(null);
+        return andFilter.getFilters().stream().map(k -> k.accept(this)).reduce(Filter::and).orElse(null);
     }
 
     @Override
