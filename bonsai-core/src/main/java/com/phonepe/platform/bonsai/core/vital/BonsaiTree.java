@@ -210,7 +210,6 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     @Override
     public TreeEdge deleteVariation(String knotId, String edgeId, boolean recursive) {
-        //todo check this piece
         Edge edge = edgeStore.getEdge(edgeId);
         TreeEdge treeEdge = Converters.toTreeEdge(edge);
         if (recursive) {

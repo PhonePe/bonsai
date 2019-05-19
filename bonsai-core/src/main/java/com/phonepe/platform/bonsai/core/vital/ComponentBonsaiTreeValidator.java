@@ -69,14 +69,14 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
 
     @Override
     public void validate(Context context) {
-        checkNotNull(context.getDocumentContext(), "context.documentContext"); //todo this might not be necessary
+        checkNotNull(context.getDocumentContext(), "context.documentContext");
     }
 
     @Override
     public void validate(Variation variation) {
         checkNotNull(variation, "variation");
         checkNotNull(variation.getKnotId(), "variation.knotId");
-        checkNotNullOrEmpty(variation.getFilters(), "variation.filters"); //todo check this
+        checkNotNullOrEmpty(variation.getFilters(), "variation.filters");
         checkCondition(variation.getPriority() >= 0, "variation.priority cannot be less than 0");
         if (variation.getFilters()
                      .stream()
