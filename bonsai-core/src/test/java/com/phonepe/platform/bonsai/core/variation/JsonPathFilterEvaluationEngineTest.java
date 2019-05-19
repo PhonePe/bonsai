@@ -25,7 +25,6 @@ public class JsonPathFilterEvaluationEngineTest {
     private Bonsai<Context> bonsai = BonsaiBuilder.builder()
                                                   .withBonsaiProperties(BonsaiProperties
                                                                                 .builder()
-                                                                                .singleConditionEdgeSettingTurnedOn(true)
                                                                                 .mutualExclusivitySettingTurnedOn(true)
                                                                                 .build())
                                                   .build();

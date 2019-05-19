@@ -98,7 +98,7 @@ public class PathExpression {
                 }
             }
         } catch (Exception e) {
-            log.error("Error while evaluating expression: " + this, toString(), e);
+            log.error("Error while evaluating expression: " +  toString(), e);
             return null;
         }
     }

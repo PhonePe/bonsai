@@ -7,7 +7,7 @@
     <groupId>com.phonepe.platform</groupId>
     <artifactId>bonsai</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <modules>
         <module>bonsai-core</module>
         <module>bonsai-models</module>
@@ -184,7 +184,7 @@
                 <configuration>
                     <debug>false</debug>
                     <xmlOutput>true</xmlOutput>
-                    <failOnError>true</failOnError>
+                    <failOnError>false</failOnError>
                 </configuration>
                 <executions>
                     <execution>
@@ -223,11 +223,6 @@
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.4</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>3.0.3</version>
-                </plugin>
                 <!-- Source code metrics: mvn javancss:report or mvn site -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -249,6 +244,18 @@
                             <phase>prepare-package</phase>
                             <goals>
                                 <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
                             </goals>
                         </execution>
                     </executions>

@@ -3,6 +3,7 @@ package com.phonepe.platform.bonsai.core;
 import com.phonepe.platform.bonsai.core.data.MapKnotData;
 import com.phonepe.platform.bonsai.core.data.MultiKnotData;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
+import com.phonepe.platform.bonsai.core.vital.Context;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.bonsai.core.data.KnotData;
 import com.phonepe.platform.bonsai.core.data.KnotDataVisitor;
@@ -76,5 +77,9 @@ public class TreeUtils {
                                                       }
                                                   }))
                              .build();
+    }
+
+    public static Knot createTestKnot(Bonsai<Context> bonsai, String data) {
+        return bonsai.createKnot(MultiKnotData.builder().key(data).build());
     }
 }

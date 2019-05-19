@@ -15,13 +15,13 @@ import org.junit.Test;
  * @author tushar.naik
  * @version 1.0  19/09/18 - 3:20 PM
  */
-public class ComponentValidatorTest {
+public class ComponentBonsaiTreeValidatorTest {
 
-    private ComponentValidator componentValidator
-            = new ComponentValidator(BonsaiProperties.builder()
-                                                     .mutualExclusivitySettingTurnedOn(true)
-                                                     .singleConditionEdgeSettingTurnedOn(false)
-                                                     .build());
+    private ComponentBonsaiTreeValidator componentValidator
+            = new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
+                                                               .mutualExclusivitySettingTurnedOn(true)
+                                                               .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
+                                                               .build());
 
     @Test(expected = BonsaiError.class)
     public void validateEdge() {
@@ -67,10 +67,9 @@ public class ComponentValidatorTest {
     @Test(expected = BonsaiError.class)
     public void validateEdgeErrorOnSingleConditionEdgeSettingOnAndMultipleFiltersSet() {
 
-        new ComponentValidator(BonsaiProperties.builder()
-                                               .mutualExclusivitySettingTurnedOn(true)
-                                               .singleConditionEdgeSettingTurnedOn(true)
-                                               .build())
+        new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
+                                                         .mutualExclusivitySettingTurnedOn(true)
+                                                         .build())
                 .validate(Edge.builder()
                               .edgeIdentifier(new EdgeIdentifier("id1", 1))
                               .version(1)
@@ -115,10 +114,9 @@ public class ComponentValidatorTest {
 
     @Test(expected = BonsaiError.class)
     public void validateVariationSingleCondition() {
-        new ComponentValidator(BonsaiProperties.builder()
-                                               .mutualExclusivitySettingTurnedOn(true)
-                                               .singleConditionEdgeSettingTurnedOn(true)
-                                               .build())
+        new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
+                                                         .mutualExclusivitySettingTurnedOn(true)
+                                                         .build())
                 .validate(Variation.builder()
                                    .filter(new AndFilter(ImmutableList.of(new GreaterEqualFilter("field1", 123),
                                                                           new GreaterEqualFilter("field1", 123))))

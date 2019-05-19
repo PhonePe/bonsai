@@ -18,7 +18,7 @@ import lombok.Getter;
 })
 public abstract class KnotData {
 
-    public enum DataType {
+    public enum KnotDataType {
         VALUED(false),
         MULTI_KNOT(true),
         MAP_KNOT(true);
@@ -26,15 +26,15 @@ public abstract class KnotData {
         @Getter
         private boolean isDeReferenced;
 
-        DataType(boolean isDeReferenced) {
+        KnotDataType(boolean isDeReferenced) {
             this.isDeReferenced = isDeReferenced;
         }
     }
 
-    private DataType dataType;
+    private KnotDataType knotDataType;
 
-    protected KnotData(DataType dataType) {
-        this.dataType = dataType;
+    protected KnotData(KnotDataType knotDataType) {
+        this.knotDataType = knotDataType;
     }
 
     public abstract <T> T accept(KnotDataVisitor<T> knotDataVisitor);
