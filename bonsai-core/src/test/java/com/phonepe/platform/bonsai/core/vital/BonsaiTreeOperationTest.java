@@ -28,6 +28,7 @@ public class BonsaiTreeOperationTest {
                                                   .withBonsaiProperties(BonsaiProperties
                                                                                 .builder()
                                                                                 .maxAllowedConditionsPerEdge(1)
+                                                                                .maxAllowedVariationsPerKnot(10)
                                                                                 .mutualExclusivitySettingTurnedOn(true)
                                                                                 .build())
                                                   .build();
