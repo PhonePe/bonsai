@@ -10,7 +10,7 @@ import lombok.Getter;
  * @version 1.0  12/07/18 - 3:41 PM
  */
 @Data
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "dataType")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "knotDataType")
 @JsonSubTypes({
         @JsonSubTypes.Type(name = "VALUED", value = ValuedKnotData.class),
         @JsonSubTypes.Type(name = "MULTI_KNOT", value = MultiKnotData.class),
