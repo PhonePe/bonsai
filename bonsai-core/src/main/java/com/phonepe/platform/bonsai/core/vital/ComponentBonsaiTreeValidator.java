@@ -33,7 +33,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
         checkNotNull(knot, "knot");
         checkNotNullOrEmpty(knot.getId(), "knot.id");
         checkNotNull(knot.getKnotData(), "knot.knotData");
-        checkNotNull(knot.getKnotData().getKnotDataType(), "knotData.dataType");
+        checkNotNull(knot.getKnotData().getKnotDataType(), "knot.knotData.knotDataType");
         checkCondition(knot.getVersion() >= 0, "knot.version cannot be less than 0");
         if (knot.getEdges() != null && knot.getEdges().size() > bonsaiProperties.getMaxAllowedVariationsPerKnot()) {
             throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "variations exceed max allowed:" + bonsaiProperties.getMaxAllowedVariationsPerKnot());
@@ -44,7 +44,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
     public void validate(Edge edge) {
         checkNotNull(edge, "edge");
         checkNotNull(edge.getEdgeIdentifier(), "edge.identifier");
-        checkNotNullOrEmpty(edge.getEdgeIdentifier().getId(), "edge.id");
+        checkNotNullOrEmpty(edge.getEdgeIdentifier().getId(), "edge.identifier.id");
         checkCondition(edge.getEdgeIdentifier().getPriority() >= 0, "edge.priority cannot be less than 0");
         checkCondition(edge.getVersion() >= 0, "edge.version cannot be less than 0");
         if (edge.getFilters() != null
