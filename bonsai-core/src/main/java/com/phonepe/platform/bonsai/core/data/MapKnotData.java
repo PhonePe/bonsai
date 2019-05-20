@@ -18,12 +18,12 @@ public class MapKnotData extends KnotData {
     private Map<String, String> mapKeys;
 
     public MapKnotData() {
-        super(DataType.MAP_KNOT);
+        super(KnotDataType.MAP_KNOT);
     }
 
     @Builder
     public MapKnotData(Map<String, String> mapKeys) {
-        super(DataType.MAP_KNOT);
+        super(KnotDataType.MAP_KNOT);
         this.mapKeys = mapKeys;
     }
 

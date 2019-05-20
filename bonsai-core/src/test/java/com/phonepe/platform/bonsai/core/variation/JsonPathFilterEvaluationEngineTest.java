@@ -25,8 +25,8 @@ public class JsonPathFilterEvaluationEngineTest {
     private Bonsai<Context> bonsai = BonsaiBuilder.builder()
                                                   .withBonsaiProperties(BonsaiProperties
                                                                                 .builder()
-                                                                                .singleConditionEdgeSettingTurnedOn(true)
                                                                                 .mutualExclusivitySettingTurnedOn(true)
+                                                                                .maxAllowedVariationsPerKnot(Integer.MAX_VALUE)
                                                                                 .build())
                                                   .build();
 
@@ -43,8 +43,8 @@ public class JsonPathFilterEvaluationEngineTest {
         Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
         Assert.assertEquals(((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString(), "Data9333");
         System.out.println(evaluate);
-
     }
+
 
     @Test
     public void perfTestingOfBonsai() {

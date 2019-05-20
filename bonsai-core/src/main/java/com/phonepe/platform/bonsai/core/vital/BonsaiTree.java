@@ -1,7 +1,6 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.data.*;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
@@ -12,6 +11,7 @@ import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
+import com.phonepe.platform.bonsai.core.vital.blocks.model.Converters;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
@@ -51,7 +51,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     private KnotStore<String, Knot> knotStore;
     private EdgeStore<String, Edge> edgeStore;
     private VariationSelectorEngine<C> variationSelectorEngine;
-    private ComponentValidator componentValidator;
+    private ComponentBonsaiTreeValidator componentValidator;
     private BonsaiProperties bonsaiProperties;
     private BonsaiIdGenerator bonsaiIdGenerator;
 
@@ -59,7 +59,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                       KnotStore<String, Knot> knotStore,
                       EdgeStore<String, Edge> edgeStore,
                       VariationSelectorEngine<C> variationSelectorEngine,
-                      ComponentValidator componentValidator, BonsaiProperties bonsaiProperties,
+                      ComponentBonsaiTreeValidator componentValidator, BonsaiProperties bonsaiProperties,
                       BonsaiIdGenerator bonsaiIdGenerator) {
         this.keyTreeStore = keyTreeStore;
         this.knotStore = knotStore;
@@ -78,12 +78,12 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     @Override
     public Knot createKnot(KnotData knotData) {
-        componentValidator.validate(knotData);
         Knot knot = Knot.builder()
                         .id(bonsaiIdGenerator.newKnotId())
                         .knotData(knotData)
                         .version(System.currentTimeMillis())
                         .build();
+        componentValidator.validate(knot);
         knotStore.mapKnot(knot.getId(), knot);
         return knot;
     }
@@ -97,28 +97,39 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     public Knot updateKnotData(String knotId, KnotData knotData) {
         Knot knot = knotStore.getKnot(knotId);
         knot.setKnotData(knotData);
+        componentValidator.validate(knot);
         return knotStore.mapKnot(knotId, knot.updateVersion());
     }
 
-    public List<Knot> deleteKnot(String id, boolean recursive) {
-        List<Knot> deletedKnots = Lists.newArrayList();
-        if (recursive) {
-            /* this is a recursive delete operation */
-            Knot knot = knotStore.getKnot(id);
-            if (knot.getEdges() != null) {
-                edgeStore.getAllEdges(knot.getEdges().stream().map(EdgeIdentifier::getId).collect(Collectors.toList()))
-                         .values().stream().map(Edge::getKnotId)
-                         .map(knotId -> deleteKnot(knotId, true))
-                         .forEach(deletedKnots::addAll);
+    public TreeKnot deleteKnot(String id, boolean recursive) {
+        Knot knot = knotStore.getKnot(id);
+        if (knot != null) {
+            TreeKnot treeKnot = Converters.toTreeKnot(knot);
+            if (recursive) {
+                /* this is a recursive delete operation */
+                if (knot.getEdges() != null) {
+                    //todo optimize and handle failures
+                    LinkedHashMap<String, Edge> allEdges = edgeStore
+                            .getAllEdges(knot.getEdges()
+                                             .stream()
+                                             .map(EdgeIdentifier::getId)
+                                             .collect(Collectors.toList()));
+                    List<TreeEdge> collectedTreeEdges = allEdges
+                            .values()
+                            .stream()
+                            .map(edge -> deleteVariation(knot.getId(), edge.getEdgeIdentifier().getId(), true))
+                            .collect(Collectors.toList());
+                    treeKnot.setTreeEdges(collectedTreeEdges);
+                }
             }
-
+            knotStore.deleteKnot(id);
+            return treeKnot;
         }
-        deletedKnots.add(knotStore.deleteKnot(id));
-        return deletedKnots;
+        return null;
     }
 
     @Override
-    public String addVariation(String knotId, Variation variation) {
+    public Edge addVariation(String knotId, Variation variation) {
         componentValidator.validate(variation);
         if (!knotStore.containsKnot(knotId)) {
             return null; //todo change this
@@ -141,10 +152,12 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         /* check for circular loops */
         checkForCycles(knot, edge);
 
-        edgeStore.mapEdge(edge.getEdgeIdentifier().getId(), edge);
         knot.getEdges().add(edge.getEdgeIdentifier());
+        componentValidator.validate(knot);
+
+        edgeStore.mapEdge(edge.getEdgeIdentifier().getId(), edge);
         knotStore.mapKnot(knot.getId(), knot);
-        return edge.getEdgeIdentifier().getId();
+        return edge;
     }
 
     @Override
@@ -168,7 +181,11 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         if (edge == null) {
             throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "No edge found for edgeId:" + edgeId);
         }
-        edge.getFilters().addAll(filters);
+//        edge.getFilters().addAll(filters);
+        /* need to create a copy */
+        ArrayList<Filter> newFilters = new ArrayList<>(filters);
+        newFilters.addAll(filters);
+        edge.setFilters(newFilters);
         componentValidator.validate(edge);
         return edgeStore.mapEdge(edgeId, edge);
     }
@@ -178,7 +195,11 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         Knot knot = knotStore.getKnot(knotId);
         knot.setEdges(knot.getEdges().stream().filter(eid -> !eid.getId().equals(edgeId))
                           .collect(Collectors.toCollection(OrderedList::new)));
+
+        componentValidator.validate(knot);
+
         knotStore.mapKnot(knotId, knot);
+        edgeStore.deleteEdge(edgeId);
         return true;
     }
 
@@ -188,13 +209,15 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public List<Knot> deleteVariation(String knotId, String edgeId, boolean recursive) {
-        //todo check this piece
-        unlinkVariation(knotId, edgeId);
+    public TreeEdge deleteVariation(String knotId, String edgeId, boolean recursive) {
         Edge edge = edgeStore.getEdge(edgeId);
-        List<Knot> knots = deleteKnot(edge.getKnotId(), recursive);
-        edgeStore.deleteEdge(edgeId);
-        return knots;
+        TreeEdge treeEdge = Converters.toTreeEdge(edge);
+        if (recursive) {
+            TreeKnot treeKnot = deleteKnot(edge.getKnotId(), true);
+            treeEdge.setTreeKnot(treeKnot);
+        }
+        unlinkVariation(knotId, edgeId);
+        return treeEdge;
     }
 
     @Override
@@ -421,6 +444,10 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             return null;
         }
         Knot knot = knotStore.getKnot(knotId);
+
+        if (knot == null) {
+            return null;
+        }
 
         TreeKnot.TreeKnotBuilder profoundKnotBuilder
                 = TreeKnot.builder()

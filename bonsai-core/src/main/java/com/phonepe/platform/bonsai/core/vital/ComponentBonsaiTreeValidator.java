@@ -1,13 +1,13 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.base.Strings;
-import com.phonepe.platform.bonsai.core.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
+import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
+import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
+import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.query.dsl.FilterCounter;
 import com.phonepe.platform.query.dsl.FilterFieldIdentifier;
-import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
-import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 
 import java.util.Collection;
 import java.util.Set;
@@ -21,33 +21,38 @@ import java.util.stream.Stream;
  * @author tushar.naik
  * @version 1.0  23/08/18 - 1:07 PM
  */
-public final class ComponentValidator implements Validator {
+public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
     private BonsaiProperties bonsaiProperties;
 
-    public ComponentValidator(BonsaiProperties bonsaiProperties) {
+    public ComponentBonsaiTreeValidator(BonsaiProperties bonsaiProperties) {
         this.bonsaiProperties = bonsaiProperties;
     }
 
     @Override
-    public void validate(KnotData knotData) {
-        checkNotNull(knotData, "knotData");
-        checkNotNull(knotData.getDataType(), "knotData.dataType");
+    public void validate(Knot knot) {
+        checkNotNull(knot, "knot");
+        checkNotNullOrEmpty(knot.getId(), "knot.id");
+        checkNotNull(knot.getKnotData(), "knot.knotData");
+        checkNotNull(knot.getKnotData().getKnotDataType(), "knot.knotData.knotDataType");
+        checkCondition(knot.getVersion() >= 0, "knot.version cannot be less than 0");
+        if (knot.getEdges() != null && knot.getEdges().size() > bonsaiProperties.getMaxAllowedVariationsPerKnot()) {
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "variations exceed max allowed:" + bonsaiProperties.getMaxAllowedVariationsPerKnot());
+        }
     }
 
     @Override
     public void validate(Edge edge) {
         checkNotNull(edge, "edge");
         checkNotNull(edge.getEdgeIdentifier(), "edge.identifier");
-        checkNotNullOrEmpty(edge.getEdgeIdentifier().getId(), "edge.id");
+        checkNotNullOrEmpty(edge.getEdgeIdentifier().getId(), "edge.identifier.id");
         checkCondition(edge.getEdgeIdentifier().getPriority() >= 0, "edge.priority cannot be less than 0");
         checkCondition(edge.getVersion() >= 0, "edge.version cannot be less than 0");
-        if (bonsaiProperties.isSingleConditionEdgeSettingTurnedOn()
-                && edge.getFilters() != null
+        if (edge.getFilters() != null
                 && edge.getFilters()
                        .stream()
                        .mapToInt(k -> k.accept(new FilterCounter()))
-                       .sum() > 1) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "singleConditionEdgeSettingTurnedOn is turned on, edge has more than 1 filters");
+                       .sum() > bonsaiProperties.getMaxAllowedConditionsPerEdge()) {
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "filters exceed max allowed:" + bonsaiProperties.getMaxAllowedConditionsPerEdge());
         }
         if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
             Set<String> allFields = edge.getFilters()
@@ -57,27 +62,26 @@ public final class ComponentValidator implements Validator {
                                         .orElse(Stream.empty())
                                         .collect(Collectors.toSet());
             if (!allFields.isEmpty() && allFields.size() > 1) {
-                throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR);
+                throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR, "fields are not mutually exclusive fields:" + allFields);
             }
         }
     }
 
     @Override
     public void validate(Context context) {
-        checkNotNull(context.getDocumentContext(), "context.documentContext"); //todo this might not be necessary
+        checkNotNull(context.getDocumentContext(), "context.documentContext");
     }
 
     @Override
     public void validate(Variation variation) {
         checkNotNull(variation, "variation");
         checkNotNull(variation.getKnotId(), "variation.knotId");
-        checkNotNullOrEmpty(variation.getFilters(), "variation.filters"); //todo check this
+        checkNotNullOrEmpty(variation.getFilters(), "variation.filters");
         checkCondition(variation.getPriority() >= 0, "variation.priority cannot be less than 0");
-        if (bonsaiProperties.isSingleConditionEdgeSettingTurnedOn()
-                && variation.getFilters()
-                            .stream()
-                            .mapToInt(k -> k.accept(new FilterCounter()))
-                            .sum() > 1) {
+        if (variation.getFilters()
+                     .stream()
+                     .mapToInt(k -> k.accept(new FilterCounter()))
+                     .sum() > bonsaiProperties.getMaxAllowedConditionsPerEdge()) {
             throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "singleConditionEdgeSettingTurnedOn is turned on, variation has more than 1 filter");
         }
         if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {

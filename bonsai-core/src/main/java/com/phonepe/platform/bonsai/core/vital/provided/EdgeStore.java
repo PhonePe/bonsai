@@ -39,7 +39,7 @@ public interface EdgeStore<I, Edge> {
     /**
      * given a list of ids, fetch all the edges
      *
-     * @param i ides
+     * @param i ids
      * @return map of ids to corresponding edges (it returns a linkedHashMap, to maintain the order)
      */
     LinkedHashMap<I, Edge> getAllEdges(List<I> i);

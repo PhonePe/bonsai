@@ -2,6 +2,7 @@ package com.phonepe.platform.bonsai.core;
 
 import com.phonepe.platform.bonsai.core.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
+import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
 import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.bonsai.core.vital.Context;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
@@ -74,7 +75,7 @@ public interface Bonsai<C extends Context> {
      * @param recursive true if you want to delete all related {@link Edge}s and {@link Knot}s below it
      * @return the list of knots that were deleted
      */
-    List<Knot> deleteKnot(String knotId, boolean recursive);
+    TreeKnot deleteKnot(String knotId, boolean recursive);
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,7 +97,7 @@ public interface Bonsai<C extends Context> {
      * @throws BonsaiError 1. if there are cycles {@link com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode#CYCLE_DETECTED}
      *                     2. if the edge's pivot is violated at that level {@link com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode#VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR}
      */
-    String addVariation(String knotId, Variation variation);
+    Edge addVariation(String knotId, Variation variation);
 
     /**
      * update the edge with a new set of filters
@@ -135,7 +136,7 @@ public interface Bonsai<C extends Context> {
      * @param recursive if all {@link Knot}s and {@link Edge}s connected to this Edge, are supposed to be deleted recursively
      * @return list of knots that were removed
      */
-    List<Knot> deleteVariation(String knotId, String edgeId, boolean recursive);
+    TreeEdge deleteVariation(String knotId, String edgeId, boolean recursive);
 
     /**
      * return the edge that matched the id

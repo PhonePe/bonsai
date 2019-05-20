@@ -7,18 +7,16 @@ import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.Mapper;
 import com.phonepe.platform.bonsai.core.ObjectExtractor;
+import com.phonepe.platform.bonsai.core.TreeUtils;
 import com.phonepe.platform.bonsai.core.data.MapKnotData;
 import com.phonepe.platform.bonsai.core.data.MultiKnotData;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
+import com.phonepe.platform.bonsai.models.*;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
-import com.phonepe.platform.bonsai.models.KeyNode;
-import com.phonepe.platform.bonsai.models.ListNode;
-import com.phonepe.platform.bonsai.models.MapNode;
-import com.phonepe.platform.bonsai.models.NodeVisitors;
 import com.phonepe.platform.bonsai.models.value.DataValue;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,10 +33,71 @@ public class BonsaiTreeTest {
     private Bonsai<Context> bonsai = BonsaiBuilder.builder()
                                                   .withBonsaiProperties(BonsaiProperties
                                                                                 .builder()
-                                                                                .singleConditionEdgeSettingTurnedOn(true)
                                                                                 .mutualExclusivitySettingTurnedOn(true)
                                                                                 .build())
                                                   .build();
+
+
+    @Test(expected = BonsaiError.class)
+    public void testBonsaiEdgeMaxCondition() {
+        Knot knot = bonsai.createKnot(ValuedKnotData.builder()
+                                                    .value(DataValue.builder().data("Data").build())
+                                                    .build());
+        bonsai.createMapping("mera_data", knot.getId());
+        TreeUtils.generateEdges(knot, bonsai, 10000);
+        KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
+                                                               .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
+                                                               .build());
+        Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
+        Assert.assertEquals(((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString(), "Data9333");
+        System.out.println(evaluate);
+    }
+
+    @Test
+    public void testBonsaiEdgeMaxCondition2() {
+        Bonsai<Context> bonsai = BonsaiBuilder.builder()
+                                              .withBonsaiProperties(BonsaiProperties
+                                                                            .builder()
+                                                                            .mutualExclusivitySettingTurnedOn(true)
+                                                                            .maxAllowedVariationsPerKnot(10)
+                                                                            .build())
+                                              .build();
+
+        Knot knot = bonsai.createKnot(ValuedKnotData.builder()
+                                                    .value(DataValue.builder().data("Data").build())
+                                                    .build());
+        bonsai.createMapping("mera_data", knot.getId());
+        TreeUtils.generateEdges(knot, bonsai, 9);
+        KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
+                                                               .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
+                                                               .build());
+        Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
+        Assert.assertEquals(((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString(), "Data");
+        System.out.println(evaluate);
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void testBonsaiEdgeMaxCondition3() {
+        Bonsai<Context> bonsai = BonsaiBuilder.builder()
+                                              .withBonsaiProperties(BonsaiProperties
+                                                                            .builder()
+                                                                            .mutualExclusivitySettingTurnedOn(true)
+                                                                            .maxAllowedVariationsPerKnot(10)
+                                                                            .build())
+                                              .build();
+
+        Knot knot = bonsai.createKnot(ValuedKnotData.builder()
+                                                    .value(DataValue.builder().data("Data").build())
+                                                    .build());
+        bonsai.createMapping("mera_data", knot.getId());
+        TreeUtils.generateEdges(knot, bonsai, 11);
+        KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
+                                                               .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
+                                                               .build());
+        Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
+        Assert.assertEquals(((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString(), "Data9333");
+        System.out.println(evaluate);
+    }
 
     @Test
     public void testBonsai() throws IOException, BonsaiError {
@@ -72,12 +131,6 @@ public class BonsaiTreeTest {
                                                                                .filter(new EqualsFilter("$.gender", "female"))
                                                                                .knotId(femaleConditionKnot.getId())
                                                                                .build()));
-
-        /* checking multiple additions */
-        bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
-                                                          .filter(new EqualsFilter("$.gender", "female"))
-                                                          .knotId(femaleConditionKnot.getId())
-                                                          .build());
 
         KeyNode user1HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
                                                                                 .documentContext(JsonPath.parse(userContext1))
@@ -244,12 +297,6 @@ public class BonsaiTreeTest {
                                                                                .filter(new EqualsFilter("$.gender", "female"))
                                                                                .knotId(femaleConditionKnot.getId())
                                                                                .build()));
-
-        /* checking multiple additions */
-        bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
-                                                          .filter(new EqualsFilter("$.gender", "female"))
-                                                          .knotId(femaleConditionKnot.getId())
-                                                          .build());
 
         KeyNode user1HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
                                                                                 .documentContext(JsonPath.parse(userContext1))

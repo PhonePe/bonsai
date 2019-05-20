@@ -4,6 +4,7 @@ import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
+import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
 import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
@@ -64,7 +65,7 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public List<Knot> deleteKnot(String knotId, boolean recursive) {
+    public TreeKnot deleteKnot(String knotId, boolean recursive) {
         throw unsupportedOperationError();
     }
 
@@ -74,7 +75,7 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public String addVariation(String knotId, Variation variation) {
+    public Edge addVariation(String knotId, Variation variation) {
         throw unsupportedOperationError();
     }
 
@@ -96,7 +97,7 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public List<Knot> deleteVariation(String knotId, String edgeId, boolean recursive) {
+    public TreeEdge deleteVariation(String knotId, String edgeId, boolean recursive) {
         throw unsupportedOperationError();
     }
 

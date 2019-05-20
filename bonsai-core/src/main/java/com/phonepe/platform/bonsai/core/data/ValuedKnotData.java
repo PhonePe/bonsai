@@ -17,12 +17,12 @@ public class ValuedKnotData extends KnotData {
     private Value value;
 
     public ValuedKnotData() {
-        super(DataType.VALUED);
+        super(KnotDataType.VALUED);
     }
 
     @Builder
     public ValuedKnotData(Value value) {
-        super(DataType.VALUED);
+        super(KnotDataType.VALUED);
         this.value = value;
     }
 
