@@ -1,5 +1,8 @@
 package com.phonepe.platform.bonsai.core.structures;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -10,6 +13,7 @@ import java.util.stream.Collectors;
  * @author tushar.naik
  * @version 1.0  27/09/18 - 12:45 PM
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CollectorFunctions {
 
     public static <K, V> Collector<Pair<K, V>, ?, LinkedHashMap<K, V>> pairLinkedHashMapCollector() {

@@ -1,7 +1,7 @@
 package com.phonepe.platform.bonsai.core.vital.provided;
 
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A store for edges
@@ -42,5 +42,5 @@ public interface EdgeStore<I, Edge> {
      * @param i ids
      * @return map of ids to corresponding edges (it returns a linkedHashMap, to maintain the order)
      */
-    LinkedHashMap<I, Edge> getAllEdges(List<I> i);
+    Map<I, Edge> getAllEdges(List<I> i);
 }

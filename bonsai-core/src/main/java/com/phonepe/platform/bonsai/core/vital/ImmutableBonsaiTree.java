@@ -4,17 +4,17 @@ import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
-import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
-import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
+import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.query.dsl.Filter;
 import lombok.AllArgsConstructor;
 
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author tushar.naik
@@ -30,7 +30,7 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public LinkedHashMap<String, Edge> getAllEdges(List<String> edgeIds) {
+    public Map<String, Edge> getAllEdges(List<String> edgeIds) {
         return bonsai.getAllEdges(edgeIds);
     }
 

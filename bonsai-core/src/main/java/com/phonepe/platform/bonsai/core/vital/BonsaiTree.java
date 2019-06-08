@@ -105,22 +105,21 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         Knot knot = knotStore.getKnot(id);
         if (knot != null) {
             TreeKnot treeKnot = Converters.toTreeKnot(knot);
-            if (recursive) {
-                /* this is a recursive delete operation */
-                if (knot.getEdges() != null) {
-                    //todo optimize and handle failures
-                    LinkedHashMap<String, Edge> allEdges = edgeStore
-                            .getAllEdges(knot.getEdges()
-                                             .stream()
-                                             .map(EdgeIdentifier::getId)
-                                             .collect(Collectors.toList()));
-                    List<TreeEdge> collectedTreeEdges = allEdges
-                            .values()
-                            .stream()
-                            .map(edge -> deleteVariation(knot.getId(), edge.getEdgeIdentifier().getId(), true))
-                            .collect(Collectors.toList());
-                    treeKnot.setTreeEdges(collectedTreeEdges);
-                }
+            /* this is a recursive delete operation */
+            if (recursive && knot.getEdges() != null) {
+                //todo optimize and handle failures
+                Map<String, Edge> allEdges = edgeStore
+                        .getAllEdges(knot.getEdges()
+                                         .stream()
+                                         .map(EdgeIdentifier::getId)
+                                         .collect(Collectors.toList()));
+                List<TreeEdge> collectedTreeEdges = allEdges
+                        .values()
+                        .stream()
+                        .map(edge -> deleteVariation(knot.getId(), edge.getEdgeIdentifier().getId(), true))
+                        .collect(Collectors.toList());
+                treeKnot.setTreeEdges(collectedTreeEdges);
+
             }
             knotStore.deleteKnot(id);
             return treeKnot;
@@ -225,7 +224,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         return edgeStore.getEdge(edgeId);
     }
 
-    public LinkedHashMap<String, Edge> getAllEdges(List<String> edgeIds) {
+    public Map<String, Edge> getAllEdges(List<String> edgeIds) {
         return edgeStore.getAllEdges(edgeIds);
     }
 

@@ -41,7 +41,7 @@ public class JsonPathFilterEvaluationEngineTest {
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
         Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals(((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString(), "Data9333");
+        Assert.assertEquals("Data9333", ((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString());
         System.out.println(evaluate);
     }
 
@@ -60,6 +60,7 @@ public class JsonPathFilterEvaluationEngineTest {
                                                                 .documentContext(JsonPath.parse(ImmutableMap
                                                                                                         .of("E", Integer.MAX_VALUE)))
                                                                 .build());
+        System.out.println("evaluate1 = " + evaluate1);
         System.out.println("elapse:" + (System.currentTimeMillis() - start));
 
         Timer evaluate = new PerformanceEvaluator().evaluate(1000, () -> bonsai.evaluate("tera_data", Context.builder()

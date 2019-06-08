@@ -1,0 +1,306 @@
+server:
+  maxThreads: 512
+  minThreads: 128
+  applicationConnectors:
+    - type: http
+      port: 8080
+  adminConnectors:
+    - type: http
+      port: 8081
+  applicationContextPath: /
+  requestLog:
+    appenders:
+      - type: console
+        timeZone: IST
+
+logging:
+  level: INFO
+  loggers:
+    org.hibernate: WARN
+  appenders:
+    - type: console
+      timeZone: IST
+
+discovery:
+  namespace: phonepe
+  environment: stage
+  zookeeper: stg-zookeeper001.phonepe.nm2:2181
+  publishedHost: ${HOST}
+  publishedPort: ${PORT_8080}
+
+riemann:
+  host: payments-riemann.phonepe.nm1
+  port: 5555
+  prefix: phonepe.stage.scroll
+  pollingInterval: 30
+  tags:
+    - scroll
+
+eventIngestor:
+  environment: stage
+  usingZookeeper: false
+  serviceName: dp-ingestion-api
+  namespace: phonepe
+  host: events.traefik.stg.phonepe.com
+  port: 80
+  clientType: queued
+  queuePath: /var/log/scroll/${MARATHON_APP_ID}
+
+swagger:
+  resourcePackage: com.phonepe.platform.scroll.resources
+
+userService:
+  usingZookeeper: true
+  environment: stage
+  serviceName: users
+  connections: 10
+  idleTimeOutSeconds: 10
+
+configService:
+  usingZookeeper: false
+  host: configservice.traefik.stg.phonepe.com
+  port: 80
+  connections: 10
+  idleTimeOutSeconds: 10
+
+urlShortener:
+  http:
+    usingZookeeper: false
+    host: urlshortener.traefik.stg.phonepe.com
+    port: 80
+    connections: 10
+    idleTimeOutSeconds: 10
+  domain: stg.phon.pe
+  defaultURL: "https://phonepe.com"
+  secure: false
+
+tncService:
+  usingZookeeper: false
+  connections: 10
+  idleTimeOutSeconds: 10
+
+notificationConfig:
+  mode: ASYNC
+  notificationHubEnabled: false
+  actorConfig:
+    prefetchCount: 1
+    concurrency: 10
+    prefix: scroll.actor
+    exchange: scroll.notification
+    retryConfig:
+      type: COUNT_LIMITED_EXPONENTIAL_BACKOFF
+      maxAttempts: 6
+      multipier: 10
+      maxTimeBetweenRetries: 10s
+
+rmqConfig:
+  brokers:
+    - host: stg-rmq002.phonepe.nm2
+      port: 25672
+  threadPoolSize: 300
+  userName: admin
+  password: admin
+
+shardedDB:
+  shards:
+    - driverClass: org.mariadb.jdbc.Driver
+      user: ppdb
+      password: phonepe
+      url: jdbc:mariadb:://stg-dbvip001.phonepe.nm2/objects_shard1?createDatabaseIfNotExist=true
+      properties:
+        charSet: UTF-8
+        hibernate.dialect: org.hibernate.dialect.MySQLDialect
+        #hibernate.hbm2ddl.auto: create
+      maxWaitForConnection: 1s
+      validationQuery: "/* MyApplication Health Check */ SELECT 1"
+      minSize: 8
+      maxSize: 8
+      initialSize: 8
+      logAbandonedConnections: true
+      logValidationErrors: true
+      checkConnectionWhileIdle: true
+      checkConnectionOnConnect: true
+      validationQueryTimeout: 1s
+      removeAbandoned: true
+      evictionInterval: 30s
+      minIdleTime: 1m
+
+    - driverClass: org.mariadb.jdbc.Driver
+      user: ppdb
+      password: phonepe
+      url: jdbc:mariadb:://stg-dbvip001.phonepe.nm2/objects_shard2?createDatabaseIfNotExist=true
+      properties:
+        charSet: UTF-8
+        hibernate.dialect: org.hibernate.dialect.MySQLDialect
+        #hibernate.hbm2ddl.auto: create
+      maxWaitForConnection: 1s
+      validationQuery: "/* MyApplication Health Check */ SELECT 1"
+      minSize: 8
+      maxSize: 8
+      initialSize: 8
+      logAbandonedConnections: true
+      logValidationErrors: true
+      checkConnectionWhileIdle: true
+      checkConnectionOnConnect: true
+      validationQueryTimeout: 1s
+      removeAbandoned: true
+      evictionInterval: 30s
+      minIdleTime: 1m
+
+tagEngineConfig:
+  pathExpressionConfigPath: /v1/phonepe/scroll-tag-engine/stage
+
+flipcastConfig:
+  http:
+    usingZookeeper: false
+    environment: stage
+    serviceName: flipcast
+    host: flipcast.traefik.stg.phonepe.com
+    port: 80
+    connections: 10
+    idleTimeOutSeconds: 30
+  configName: phonepe
+  pushNotificationProfileName: default
+  pushNotificationPriority: default
+  emailProfileName: transactionEmail
+  emailSenderName: PhonePe
+  emailSenderId: noreply@phonepe.com
+
+hbaseConfig:
+  secure : false
+  hbaseZookeeperParent: /hbase-unsecure
+  hbaseZookeeperQuorum: stg-dwhxenial002.phonepe.nm2:2181
+  hbaseZookeeperClientPort: 2181
+  useHbaseWD: true
+  hbaseWDBucketSize: 32
+  scrollTableName: scroll-primary-v3
+  auditUpdatesTableName: scroll-audit-update-v3
+  auditTimelineTableName: scroll-audit-timeline-v3
+  taskTableName: scroll-task-v3
+  parkingStationTableName: scroll-parking-station-v3
+  timeIndexParkingStationTableName: scroll-time-index-parking-station-v3
+  markerTableName: scroll-marker-v3
+  #   scrollViewTableName: scroll-view-v3
+  #   scrollViewAuditUpdatesTableName: scroll-view-audit-update-v3
+  #   scrollViewAuditTimelineTableName: scroll-view-audit-timeline-v3
+  auditFetchBatchSize: 500
+
+elasticSearchConfig:
+  hosts:
+    - stg-foxtrot002.phonepe.nm2
+  cluster: scroll
+  indexType: entity
+  indexPrefix: scroll-v3-
+  indexMappingConfigServicePath: /v1/phonepe/scroll-elasticsearch-index-config/stage
+
+teflonConfig:
+  classPath: "com.phonepe.platform.scroll"
+  actorConfig:
+    prefetchCount: 1
+    concurrency: 3
+    prefix: scroll.actor
+    exchange: scroll.statement
+    retryConfig:
+      type: COUNT_LIMITED_EXPONENTIAL_BACKOFF
+      maxAttempts: 6
+      multipier: 10
+      maxTimeBetweenRetries: 10s
+
+requestProcessorConfig:
+  actorConfigs:
+    TAG_UPDATE:
+      prefetchCount: 1
+      concurrency: 5
+      prefix: scroll.actor
+      exchange: scroll.requests
+      retryConfig:
+        type: NO_RETRY
+    ATTACHMENT_ACK:
+      prefetchCount: 1
+      concurrency: 2
+      prefix: scroll.actor
+      exchange: scroll.attachment
+      retryConfig:
+        type: COUNT_LIMITED_EXPONENTIAL_BACKOFF
+        maxAttempts: 6
+        multipier: 100
+        maxTimeBetweenRetries: 20s
+    # FEED_ASYNC_STORE:
+    #   prefetchCount: 1
+    #   concurrency: 2
+    #   prefix: scroll.actor
+    #   exchange: scroll.feed.store
+    #   retryConfig:
+    #     type: COUNT_LIMITED_EXPONENTIAL_BACKOFF
+    #     maxAttempts: 6
+    #     multipier: 100
+    #     maxTimeBetweenRetries: 20s
+
+contentStoreConfig:
+  namespace: scroll
+  docStoreDownloadUrl: http://docstore.traefik.stg.phonepe.com/v1/documents/
+  callbackUrl: http://scroll.traefik.stg.phonepe.com/callback/v1/flipcast/ack
+  docStoreConfig:
+    environment: stage
+    zkEnabled: false
+    endpoint: http://docstore.traefik.stg.phonepe.com
+
+hystrixConfig:
+  defaultConfig:
+    threadPool:
+      timeout: 10000
+      concurrency: 32
+  commands:
+    - name: ProfileDetails.get
+      threadPool:
+        timeout: 4000
+        concurrency: 512
+        semaphoreIsolation: true
+    - name: QueryEngine.indexBulk
+      threadPool:
+        timeout: 100
+        concurrency: 32
+    - name: StoredTemplate.list
+      threadPool:
+        timeout: 30000
+        concurrency: 32
+
+kafkaConfig:
+  timeoutMs: 30000
+  callbackParallelism: 1
+  retryMs: 1000
+  retries: 3
+  blockingSleepMs: 1000
+  shutdownWaitTimeMs: 10000
+  allTopicConfig:
+    entityConfigMap:
+      notificationAndEntityConsumer:
+        topicName: "scroll_notification_entities_wal"
+        numPartitions: 3
+  allConsumerConfig:
+    entityConfigMap:
+      notificationAndEntityConsumer:
+        topicName: "scroll_notification_entities_wal"
+        groupName: "scroll_group_1"
+  producerConfig:
+    bootstrapServers: stg-hdpscroll001-stg-cloud010.phonepe.nm2:6667
+    acks: all
+    retries: 0
+    batchSize: 16384
+    lingerMs: 0
+    bufferMemory: 65536
+  consumerConfig:
+    bootstrapServers: stg-hdpscroll001-stg-cloud010.phonepe.nm2:6667
+    enableAutoCommit: false
+    autoCommitIntervalMs: 30000
+    autoOffsetReset: latest
+    pollTimeMs: 1000
+
+schemaService:
+  host: "http://schema-server.traefik.stg.phonepe.com:80"
+  keepAlive: 6000
+  connectTimeout: 60000
+  maxConnections: 5
+  zookeeper: false
+  environment: stage
+  service: schema-registry

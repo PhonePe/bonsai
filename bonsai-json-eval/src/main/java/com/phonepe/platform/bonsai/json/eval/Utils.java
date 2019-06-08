@@ -1,9 +1,13 @@
 package com.phonepe.platform.bonsai.json.eval;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * @author tushar.naik
  * @version 1.0  2018-11-20 - 00:42
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utils {
 
     public static String leftPad(String str, int size, char padChar) {
@@ -20,7 +24,7 @@ public class Utils {
         }
     }
 
-    private static String padding(int repeat, char padChar) throws IndexOutOfBoundsException {
+    private static String padding(int repeat, char padChar) {
         if (repeat < 0) {
             throw new IndexOutOfBoundsException("Cannot pad a negative amount: " + repeat);
         } else {

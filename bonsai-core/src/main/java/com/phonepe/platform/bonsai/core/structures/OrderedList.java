@@ -20,25 +20,25 @@ public class OrderedList<T extends Comparable<T>> extends LinkedList<T> {
         while (true) {
             if (!iterator.hasNext()) {
                 iterator.add(item);
-                return (true);
+                return true;
             }
             T listItem = iterator.next();
             if (listItem.compareTo(item) > 0) {
                 iterator.previous();
                 iterator.add(item);
-                return (true);
+                return true;
             }
         }
     }
 
     @Override
     public void addFirst(T t) {
-        throw new RuntimeException("addFirst not supported");
+        throw new UnsupportedOperationException("addFirst not supported");
     }
 
     @Override
     public void addLast(T t) {
-        throw new RuntimeException("AddLast not supported");
+        throw new UnsupportedOperationException("AddLast not supported");
     }
 
     @Override
@@ -48,11 +48,11 @@ public class OrderedList<T extends Comparable<T>> extends LinkedList<T> {
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
-        throw new RuntimeException("Adding at position not supported");
+        throw new UnsupportedOperationException("Adding at position not supported");
     }
 
     @Override
     public void add(int index, T element) {
-        throw new RuntimeException("Adding at position not supported");
+        throw new UnsupportedOperationException("Adding at position not supported");
     }
 }
