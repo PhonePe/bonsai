@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
  * @author tushar.naik
  * @version 1.0  05/09/18 - 1:56 PM
  */
-public class TreeUtils {
+public class TreeGenerationHelper {
 
     private static Random random = new Random();
 

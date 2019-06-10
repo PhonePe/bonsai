@@ -7,7 +7,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.Mapper;
 import com.phonepe.platform.bonsai.core.ObjectExtractor;
-import com.phonepe.platform.bonsai.core.TreeUtils;
+import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
 import com.phonepe.platform.bonsai.core.data.MapKnotData;
 import com.phonepe.platform.bonsai.core.data.MultiKnotData;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
@@ -44,7 +44,7 @@ public class BonsaiTreeTest {
                                                     .value(DataValue.builder().data("Data").build())
                                                     .build());
         bonsai.createMapping("mera_data", knot.getId());
-        TreeUtils.generateEdges(knot, bonsai, 10000);
+        TreeGenerationHelper.generateEdges(knot, bonsai, 10000);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
@@ -67,7 +67,7 @@ public class BonsaiTreeTest {
                                                     .value(DataValue.builder().data("Data").build())
                                                     .build());
         bonsai.createMapping("mera_data", knot.getId());
-        TreeUtils.generateEdges(knot, bonsai, 9);
+        TreeGenerationHelper.generateEdges(knot, bonsai, 9);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
@@ -90,7 +90,7 @@ public class BonsaiTreeTest {
                                                     .value(DataValue.builder().data("Data").build())
                                                     .build());
         bonsai.createMapping("mera_data", knot.getId());
-        TreeUtils.generateEdges(knot, bonsai, 11);
+        TreeGenerationHelper.generateEdges(knot, bonsai, 11);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
@@ -147,9 +147,9 @@ public class BonsaiTreeTest {
                                                                                             .getNode()));
 
         Assert.assertEquals(4, ((ListNode) (((ListNode) user1HomePageEvaluation.getNode()).getNodes()
-                                                                                       .get(0)
-                                                                                       .getNode())).getNodes()
-                                                                                                   .size());
+                                                                                          .get(0)
+                                                                                          .getNode())).getNodes()
+                                                                                                      .size());
 
         /* evaluate with context 2 */
         KeyNode user2HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
@@ -225,9 +225,9 @@ public class BonsaiTreeTest {
                                                                                             .getNode()));
 
         Assert.assertEquals(4, ((ListNode) (((ListNode) user1HomePageEvaluation.getNode()).getNodes()
-                                                                                       .get(0)
-                                                                                       .getNode())).getNodes()
-                                                                                                   .size());
+                                                                                          .get(0)
+                                                                                          .getNode())).getNodes()
+                                                                                                      .size());
 
         /* evaluate with context 2 */
         KeyNode user2HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
@@ -235,7 +235,7 @@ public class BonsaiTreeTest {
                                                                                 .build());
 
 
-        Assert.assertEquals("home_page_1", user2HomePageEvaluation.getKey() );
+        Assert.assertEquals("home_page_1", user2HomePageEvaluation.getKey());
         Assert.assertEquals(user2HomePageEvaluation.getNode().getId(), hpKnot.getId());
         Assert.assertTrue(NodeVisitors.isList(user2HomePageEvaluation.getNode()));
 
@@ -245,9 +245,9 @@ public class BonsaiTreeTest {
                                                                                             .getNode()));
 
         Assert.assertEquals(3, ((ListNode) (((ListNode) user2HomePageEvaluation.getNode()).getNodes()
-                                                                                       .get(0)
-                                                                                       .getNode())).getNodes()
-                                                                                                   .size());
+                                                                                          .get(0)
+                                                                                          .getNode())).getNodes()
+                                                                                                      .size());
 
         Assert.assertEquals((((ListNode) user2HomePageEvaluation.getNode()).getNodes()
                                                                            .get(0)
@@ -312,9 +312,9 @@ public class BonsaiTreeTest {
                                                                                            .getNode()));
 
         Assert.assertEquals(4, ((ListNode) (((MapNode) user1HomePageEvaluation.getNode()).getNodeMap()
-                                                                                      .get("w1")
-                                                                                      .getNode())).getNodes()
-                                                                                                  .size());
+                                                                                         .get("w1")
+                                                                                         .getNode())).getNodes()
+                                                                                                     .size());
     }
 
     @Test(expected = BonsaiError.class)
@@ -528,5 +528,13 @@ public class BonsaiTreeTest {
         Assert.assertEquals(widget_1.getTreeEdges().get(0).getTreeKnot().getTreeEdges().get(0)
                                     .getTreeKnot().getId(), innerKnot.getId());
 
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void testAddVariationNoEdge() {
+        bonsai.addVariation("someInvalidKnotId", Variation.builder()
+                                                          .filter(new EqualsFilter("$.gender", "female"))
+                                                          .knotId("asdf")
+                                                          .build());
     }
 }

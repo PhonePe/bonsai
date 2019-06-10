@@ -131,7 +131,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     public Edge addVariation(String knotId, Variation variation) {
         componentValidator.validate(variation);
         if (!knotStore.containsKnot(knotId)) {
-            return null; //todo change this
+            throw new BonsaiError(BonsaiErrorCode.KNOT_ABSENT);
         }
         Knot knot = knotStore.getKnot(knotId);
         if (knot.getEdges() == null) {
@@ -164,7 +164,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         Knot knot = knotStore.getKnot(knotId);
         Edge edge = edgeStore.getEdge(edgeId);
         if (edge == null) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "No edge found for edgeId:" + edgeId);
+            throw new BonsaiError(BonsaiErrorCode.EDGE_ABSENT, "No edge found for edgeId:" + edgeId);
         }
         edge.setFilters(filters);
 
@@ -178,7 +178,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     public Edge addEdgeFilters(String edgeId, List<Filter> filters) {
         Edge edge = edgeStore.getEdge(edgeId);
         if (edge == null) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "No edge found for edgeId:" + edgeId);
+            throw new BonsaiError(BonsaiErrorCode.EDGE_ABSENT, "No edge found for edgeId:" + edgeId);
         }
 //        edge.getFilters().addAll(filters);
         /* need to create a copy */

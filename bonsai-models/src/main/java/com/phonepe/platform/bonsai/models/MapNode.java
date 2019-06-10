@@ -17,8 +17,8 @@ import java.util.Map;
 public class MapNode extends Node {
     private Map<String, KeyNode> nodeMap;
 
-    public MapNode(String id, long version) {
-        super(NodeType.MAP, id, version);
+    public MapNode() {
+        super(NodeType.MAP, null, 0);
     }
 
     @Builder
