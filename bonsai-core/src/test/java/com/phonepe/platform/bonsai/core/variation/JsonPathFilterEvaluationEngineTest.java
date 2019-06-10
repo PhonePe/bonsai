@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.PerformanceEvaluator;
-import com.phonepe.platform.bonsai.core.TreeUtils;
+import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.vital.BonsaiBuilder;
 import com.phonepe.platform.bonsai.core.vital.BonsaiProperties;
@@ -36,12 +36,12 @@ public class JsonPathFilterEvaluationEngineTest {
                                                     .value(DataValue.builder().data("Data").build())
                                                     .build());
         bonsai.createMapping("mera_data", knot.getId());
-        TreeUtils.generateEdges(knot, bonsai, 10000);
+        TreeGenerationHelper.generateEdges(knot, bonsai, 10000);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
         Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals(((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString(), "Data9333");
+        Assert.assertEquals("Data9333", ((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString());
         System.out.println(evaluate);
     }
 
@@ -52,7 +52,7 @@ public class JsonPathFilterEvaluationEngineTest {
                                                     .value(DataValue.builder().data("Data").build())
                                                     .build());
         bonsai.createMapping("tera_data", knot.getId());
-        Timer performanceTreeCreation = new PerformanceEvaluator().evaluate(1, () -> TreeUtils.generateEdges(knot, bonsai, 1000));
+        Timer performanceTreeCreation = new PerformanceEvaluator().evaluate(1, () -> TreeGenerationHelper.generateEdges(knot, bonsai, 1000));
         System.out.println("time for treeCreation = " + performanceTreeCreation.getSnapshot().get99thPercentile());
 
         long start = System.currentTimeMillis();
@@ -60,6 +60,7 @@ public class JsonPathFilterEvaluationEngineTest {
                                                                 .documentContext(JsonPath.parse(ImmutableMap
                                                                                                         .of("E", Integer.MAX_VALUE)))
                                                                 .build());
+        System.out.println("evaluate1 = " + evaluate1);
         System.out.println("elapse:" + (System.currentTimeMillis() - start));
 
         Timer evaluate = new PerformanceEvaluator().evaluate(1000, () -> bonsai.evaluate("tera_data", Context.builder()

@@ -2,17 +2,17 @@ package com.phonepe.platform.bonsai.core;
 
 import com.phonepe.platform.bonsai.core.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
-import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.bonsai.core.vital.Context;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
+import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.query.dsl.Filter;
 
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is a multi level Forest implementation.
@@ -152,7 +152,7 @@ public interface Bonsai<C extends Context> {
      * @param edgeIds edge ids
      * @return mapping of id to edge
      */
-    LinkedHashMap<String, Edge> getAllEdges(List<String> edgeIds);
+    Map<String, Edge> getAllEdges(List<String> edgeIds);
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////

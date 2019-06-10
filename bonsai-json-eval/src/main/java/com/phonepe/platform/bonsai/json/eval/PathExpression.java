@@ -67,39 +67,42 @@ public class PathExpression {
             if (operation == null) {
                 List<Object> values = context.read(path, OBJECT_TYPE_REF);
                 List<Object> nonNullValues =
-                        values == null ? null : values.stream().filter(Objects::nonNull)
-                                                      .collect(Collectors.toList());
+                        values == null ? null : values.stream().filter(Objects::nonNull).collect(Collectors.toList());
                 if (nonNullValues == null || nonNullValues.isEmpty()) {
                     return null;
                 }
                 return new Pair<>(key, reValue(multivalued ? nonNullValues : nonNullValues.get(0)));
             } else {
-                List<Number> values = context.read(path, NUMBER_TYPE_REF);
-                if (values == null || values.isEmpty() || values.get(0) == null) {
-                    return null;
-                }
-                switch (operation) {
-                    case sum:
-                        return new Pair<>(key, reValue(getDoubleStream(values).sum()));
-                    case average:
-                        return new Pair<>(key, reValue(getDoubleStream(values).average().orElse(0)));
-                    case max:
-                        return new Pair<>(key, reValue(getDoubleStream(values).max().orElse(0)));
-                    case min:
-                        return new Pair<>(key, reValue(getDoubleStream(values).min().orElse(0)));
-                    case length:
-                        return new Pair<>(key, reValue(getDoubleStream(values).count()));
-                    case padTimestamp:
-                        return new Pair<>(key, Utils.leftPad(String.valueOf(values.get(0)), 20, '0'));
-                    case convertToDate:
-                        return new Pair<>(key, new Date(values.get(0).longValue()));
-                    default:
-                        throw new OperationNotSupportedException("Operation not supported: " + this.toString());
-                }
+                return numberOperation(context);
             }
         } catch (Exception e) {
-            log.error("Error while evaluating expression: " +  toString(), e);
+            log.error("Error while evaluating expression: " + toString(), e);
             return null;
+        }
+    }
+
+    private Pair<String, Object> numberOperation(DocumentContext context) throws OperationNotSupportedException {
+        List<Number> values = context.read(path, NUMBER_TYPE_REF);
+        if (values == null || values.isEmpty() || values.get(0) == null) {
+            return null;
+        }
+        switch (operation) {
+            case SUM:
+                return new Pair<>(key, reValue(getDoubleStream(values).sum()));
+            case OPERATION:
+                return new Pair<>(key, reValue(getDoubleStream(values).average().orElse(0)));
+            case MAX:
+                return new Pair<>(key, reValue(getDoubleStream(values).max().orElse(0)));
+            case MIN:
+                return new Pair<>(key, reValue(getDoubleStream(values).min().orElse(0)));
+            case LENGTH:
+                return new Pair<>(key, reValue(getDoubleStream(values).count()));
+            case PAD_TIMESTAMP:
+                return new Pair<>(key, Utils.leftPad(String.valueOf(values.get(0)), 20, '0'));
+            case CONVERT_TO_DATE:
+                return new Pair<>(key, new Date(values.get(0).longValue()));
+            default:
+                throw new OperationNotSupportedException("Operation not supported: " + this.toString());
         }
     }
 
@@ -112,100 +115,48 @@ public class PathExpression {
         Number value;
 
         enum Type {
-            add,
-            divide,
-            subtract,
-            multiply,
-            sqrt,
-            ceil,
-            floor,
-            pow
+            ADD,
+            DIVIDE,
+            SUBTRACT,
+            MULTIPLY,
+            SQRT,
+            CEIL,
+            FLOOR,
+            POW
         }
 
         public double reValue(Number initialValue) {
             switch (type) {
-                case add:
+                case ADD:
                     return initialValue.doubleValue() + value.doubleValue();
-                case divide:
+                case DIVIDE:
                     return initialValue.doubleValue() / value.doubleValue();
-                case subtract:
+                case SUBTRACT:
                     return initialValue.doubleValue() - value.doubleValue();
-                case multiply:
+                case MULTIPLY:
                     return initialValue.doubleValue() * value.doubleValue();
-                case sqrt:
+                case SQRT:
                     return Math.sqrt(initialValue.doubleValue());
-                case ceil:
+                case CEIL:
                     return Math.ceil(initialValue.doubleValue());
-                case floor:
+                case FLOOR:
                     return Math.floor(initialValue.doubleValue());
-                case pow:
+                case POW:
                     return Math.pow(initialValue.doubleValue(), value.doubleValue());
                 default:
-                    throw new RuntimeException("Adjustment not supported: " + this.toString());
+                    throw new UnsupportedOperationException("Adjustment not supported: " + this.toString());
             }
         }
     }
 
     public enum Operation {
-        sum,
-        average,
-        max,
-        min,
-        length,
-        padTimestamp,
-        convertToDate
-    }
-
-    public Pair<String, Object> evaluate(DocumentContext context) {
-        com.jayway.jsonpath.Filter filter = null;
-        if (filters != null && !filters.isEmpty()) {
-            filter = filters.stream()
-                            .map(k -> k.accept(new JsonPathFilterBuilder()))
-                            .reduce(com.jayway.jsonpath.Filter::or)
-                            .orElse(null);
-            if (!filters.stream().allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine(context)))) {
-                return null;
-            }
-        }
-        try {
-            if (operation == null) {
-                List<Object> values;
-                if (filter == null) {
-                    values = context.read(path, OBJECT_TYPE_REF);
-                } else {
-                    values = context.read(path, filter);
-                }
-                List<Object> nonNullValues =
-                        values == null ? null : values.stream().filter(Objects::nonNull)
-                                                      .collect(Collectors.toList());
-                if (nonNullValues == null || nonNullValues.isEmpty()) {
-                    return null;
-                }
-                return new Pair<>(key, reValue(multivalued ? nonNullValues : nonNullValues.get(0)));
-            } else {
-                List<Number> values = context.read(path, NUMBER_TYPE_REF);
-                if (values == null || values.isEmpty() || values.get(0) == null) {
-                    return null;
-                }
-                switch (operation) {
-                    case sum:
-                        return new Pair<>(key, reValue(getDoubleStream(values).sum()));
-                    case average:
-                        return new Pair<>(key, reValue(getDoubleStream(values).average().orElse(0)));
-                    case max:
-                        return new Pair<>(key, reValue(getDoubleStream(values).max().orElse(0)));
-                    case min:
-                        return new Pair<>(key, reValue(getDoubleStream(values).min().orElse(0)));
-                    case length:
-                        return new Pair<>(key, reValue(getDoubleStream(values).count()));
-                    default:
-                        throw new OperationNotSupportedException("Operation not supported: " + this.toString());
-                }
-            }
-        } catch (Exception e) {
-            log.error("Error while evaluating expression: " + this, toString(), e);
-            return null;
-        }
+        SUM,
+        OPERATION,
+        MAX,
+        MIN,
+        LENGTH,
+        PAD_TIMESTAMP,
+        CONVERT_TO_DATE
     }
 
     private DoubleStream getDoubleStream(List<Number> values) {
@@ -219,7 +170,7 @@ public class PathExpression {
         return reValue(((Number) oldValue).doubleValue());
     }
 
-    public double reValue(double oldValue) {
+    private double reValue(double oldValue) {
         if (adjustments == null || adjustments.isEmpty()) {
             return oldValue;
         }

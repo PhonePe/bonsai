@@ -37,7 +37,7 @@ public class InMemoryEdgeStore implements EdgeStore<String, Edge> {
     }
 
     @Override
-    public LinkedHashMap<String, Edge> getAllEdges(List<String> ids) {
+    public Map<String, Edge> getAllEdges(List<String> ids) {
         LinkedHashMap<String, Edge> resultMapping = new LinkedHashMap<>();
         for (String id : ids) {
             resultMapping.put(id, storage.get(id));

@@ -22,6 +22,7 @@ import java.util.stream.Stream;
  * @version 1.0  23/08/18 - 1:07 PM
  */
 public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
+    private static final String ERROR_FIELD_STR = "field:";
     private BonsaiProperties bonsaiProperties;
 
     public ComponentBonsaiTreeValidator(BonsaiProperties bonsaiProperties) {
@@ -99,23 +100,23 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
 
     private static <T> void checkNotNull(T reference, String fieldName) {
         if (reference == null) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "field:" + fieldName + " cannot be null");
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, ERROR_FIELD_STR + fieldName + " cannot be null");
         }
     }
 
     private static void checkNotNullOrEmpty(String reference, String fieldName) {
         if (Strings.isNullOrEmpty(reference)) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "field:" + fieldName + " cannot be null");
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, ERROR_FIELD_STR + fieldName + " cannot be null");
         }
     }
 
     private static <T> void checkNotNullOrEmpty(Collection<T> reference, String fieldName) {
         if (reference == null || reference.isEmpty()) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "field:" + fieldName + " cannot be null");
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, ERROR_FIELD_STR + fieldName + " cannot be null");
         }
     }
 
-    private static <T> void checkCondition(boolean condition, String errorReason) {
+    private static void checkCondition(boolean condition, String errorReason) {
         if (!condition) {
             throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, errorReason);
         }

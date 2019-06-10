@@ -16,8 +16,8 @@ import lombok.ToString;
 public class ValueNode extends Node {
     private Value value;
 
-    public ValueNode(String id, long version) {
-        super(NodeType.VALUE, id, version);
+    public ValueNode() {
+        super(NodeType.VALUE, null, 0);
     }
 
     @Builder

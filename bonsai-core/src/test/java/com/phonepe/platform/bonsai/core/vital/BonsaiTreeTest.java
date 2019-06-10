@@ -7,17 +7,17 @@ import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.Mapper;
 import com.phonepe.platform.bonsai.core.ObjectExtractor;
-import com.phonepe.platform.bonsai.core.TreeUtils;
+import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
 import com.phonepe.platform.bonsai.core.data.MapKnotData;
 import com.phonepe.platform.bonsai.core.data.MultiKnotData;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.models.*;
-import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
+import com.phonepe.platform.bonsai.models.*;
 import com.phonepe.platform.bonsai.models.value.DataValue;
+import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -44,12 +44,12 @@ public class BonsaiTreeTest {
                                                     .value(DataValue.builder().data("Data").build())
                                                     .build());
         bonsai.createMapping("mera_data", knot.getId());
-        TreeUtils.generateEdges(knot, bonsai, 10000);
+        TreeGenerationHelper.generateEdges(knot, bonsai, 10000);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
         Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals(((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString(), "Data9333");
+        Assert.assertEquals("Data9333", ((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString());
         System.out.println(evaluate);
     }
 
@@ -67,12 +67,12 @@ public class BonsaiTreeTest {
                                                     .value(DataValue.builder().data("Data").build())
                                                     .build());
         bonsai.createMapping("mera_data", knot.getId());
-        TreeUtils.generateEdges(knot, bonsai, 9);
+        TreeGenerationHelper.generateEdges(knot, bonsai, 9);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
         Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals(((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString(), "Data");
+        Assert.assertEquals("Data", ((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString());
         System.out.println(evaluate);
     }
 
@@ -90,12 +90,12 @@ public class BonsaiTreeTest {
                                                     .value(DataValue.builder().data("Data").build())
                                                     .build());
         bonsai.createMapping("mera_data", knot.getId());
-        TreeUtils.generateEdges(knot, bonsai, 11);
+        TreeGenerationHelper.generateEdges(knot, bonsai, 11);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
         Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals(((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString(), "Data9333");
+        Assert.assertEquals("Data9333", ((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString());
         System.out.println(evaluate);
     }
 
@@ -137,19 +137,19 @@ public class BonsaiTreeTest {
                                                                                 .build());
         System.out.println(Mapper.MAPPER.writeValueAsString(user1HomePageEvaluation));
 
-        Assert.assertEquals(user1HomePageEvaluation.getKey(), "home_page_1");
+        Assert.assertEquals("home_page_1", user1HomePageEvaluation.getKey());
         Assert.assertEquals(user1HomePageEvaluation.getNode().getId(), hpKnot.getId());
         Assert.assertTrue(NodeVisitors.isList(user1HomePageEvaluation.getNode()));
 
-        Assert.assertEquals(((ListNode) user1HomePageEvaluation.getNode()).getNodes().size(), 3);
+        Assert.assertEquals(3, ((ListNode) user1HomePageEvaluation.getNode()).getNodes().size());
         Assert.assertTrue(NodeVisitors.isList(((ListNode) user1HomePageEvaluation.getNode()).getNodes()
                                                                                             .get(0)
                                                                                             .getNode()));
 
-        Assert.assertEquals(((ListNode) (((ListNode) user1HomePageEvaluation.getNode()).getNodes()
-                                                                                       .get(0)
-                                                                                       .getNode())).getNodes()
-                                                                                                   .size(), 4);
+        Assert.assertEquals(4, ((ListNode) (((ListNode) user1HomePageEvaluation.getNode()).getNodes()
+                                                                                          .get(0)
+                                                                                          .getNode())).getNodes()
+                                                                                                      .size());
 
         /* evaluate with context 2 */
         KeyNode user2HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
@@ -157,19 +157,18 @@ public class BonsaiTreeTest {
                                                                                 .build());
 
 
-        Assert.assertEquals(user2HomePageEvaluation.getKey(), "home_page_1");
-        Assert.assertEquals(user2HomePageEvaluation.getNode().getId(), hpKnot.getId());
+        Assert.assertEquals("home_page_1", user2HomePageEvaluation.getKey());
+        Assert.assertEquals(hpKnot.getId(), user2HomePageEvaluation.getNode().getId());
         Assert.assertTrue(NodeVisitors.isList(user2HomePageEvaluation.getNode()));
 
-        Assert.assertEquals(((ListNode) user2HomePageEvaluation.getNode()).getNodes().size(), 3);
+        Assert.assertEquals(3, ((ListNode) user2HomePageEvaluation.getNode()).getNodes().size());
         Assert.assertTrue(NodeVisitors.isList(((ListNode) user2HomePageEvaluation.getNode()).getNodes()
                                                                                             .get(0)
                                                                                             .getNode()));
 
-        Assert.assertEquals(((ListNode) (((ListNode) user2HomePageEvaluation.getNode()).getNodes()
-                                                                                       .get(0)
-                                                                                       .getNode())).getNodes()
-                                                                                                   .size(), 3);
+        Assert.assertEquals(3, ((ListNode) (((ListNode) user2HomePageEvaluation.getNode()).getNodes()
+                                                                                          .get(0).getNode())).getNodes()
+                                                                                                             .size());
 
         Assert.assertEquals((((ListNode) user2HomePageEvaluation.getNode()).getNodes()
                                                                            .get(0)
@@ -216,19 +215,19 @@ public class BonsaiTreeTest {
                                                                                 .build());
         System.out.println(Mapper.MAPPER.writeValueAsString(user1HomePageEvaluation));
 
-        Assert.assertEquals(user1HomePageEvaluation.getKey(), "home_page_1");
-        Assert.assertEquals(user1HomePageEvaluation.getNode().getId(), hpKnot.getId());
+        Assert.assertEquals("home_page_1", user1HomePageEvaluation.getKey());
+        Assert.assertEquals(hpKnot.getId(), user1HomePageEvaluation.getNode().getId());
         Assert.assertTrue(NodeVisitors.isList(user1HomePageEvaluation.getNode()));
 
-        Assert.assertEquals(((ListNode) user1HomePageEvaluation.getNode()).getNodes().size(), 3);
+        Assert.assertEquals(3, ((ListNode) user1HomePageEvaluation.getNode()).getNodes().size());
         Assert.assertTrue(NodeVisitors.isList(((ListNode) user1HomePageEvaluation.getNode()).getNodes()
                                                                                             .get(0)
                                                                                             .getNode()));
 
-        Assert.assertEquals(((ListNode) (((ListNode) user1HomePageEvaluation.getNode()).getNodes()
-                                                                                       .get(0)
-                                                                                       .getNode())).getNodes()
-                                                                                                   .size(), 4);
+        Assert.assertEquals(4, ((ListNode) (((ListNode) user1HomePageEvaluation.getNode()).getNodes()
+                                                                                          .get(0)
+                                                                                          .getNode())).getNodes()
+                                                                                                      .size());
 
         /* evaluate with context 2 */
         KeyNode user2HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
@@ -236,19 +235,19 @@ public class BonsaiTreeTest {
                                                                                 .build());
 
 
-        Assert.assertEquals(user2HomePageEvaluation.getKey(), "home_page_1");
+        Assert.assertEquals("home_page_1", user2HomePageEvaluation.getKey());
         Assert.assertEquals(user2HomePageEvaluation.getNode().getId(), hpKnot.getId());
         Assert.assertTrue(NodeVisitors.isList(user2HomePageEvaluation.getNode()));
 
-        Assert.assertEquals(((ListNode) user2HomePageEvaluation.getNode()).getNodes().size(), 3);
+        Assert.assertEquals(3, ((ListNode) user2HomePageEvaluation.getNode()).getNodes().size());
         Assert.assertTrue(NodeVisitors.isList(((ListNode) user2HomePageEvaluation.getNode()).getNodes()
                                                                                             .get(0)
                                                                                             .getNode()));
 
-        Assert.assertEquals(((ListNode) (((ListNode) user2HomePageEvaluation.getNode()).getNodes()
-                                                                                       .get(0)
-                                                                                       .getNode())).getNodes()
-                                                                                                   .size(), 3);
+        Assert.assertEquals(3, ((ListNode) (((ListNode) user2HomePageEvaluation.getNode()).getNodes()
+                                                                                          .get(0)
+                                                                                          .getNode())).getNodes()
+                                                                                                      .size());
 
         Assert.assertEquals((((ListNode) user2HomePageEvaluation.getNode()).getNodes()
                                                                            .get(0)
@@ -303,19 +302,19 @@ public class BonsaiTreeTest {
                                                                                 .build());
         System.out.println(Mapper.MAPPER.writeValueAsString(user1HomePageEvaluation));
 
-        Assert.assertEquals(user1HomePageEvaluation.getKey(), "home_page_1");
-        Assert.assertEquals(user1HomePageEvaluation.getNode().getId(), homePageKnot.getId());
+        Assert.assertEquals("home_page_1", user1HomePageEvaluation.getKey());
+        Assert.assertEquals(homePageKnot.getId(), user1HomePageEvaluation.getNode().getId());
         Assert.assertTrue(NodeVisitors.isMap(user1HomePageEvaluation.getNode()));
 
-        Assert.assertEquals(((MapNode) user1HomePageEvaluation.getNode()).getNodeMap().size(), 4);
+        Assert.assertEquals(4, ((MapNode) user1HomePageEvaluation.getNode()).getNodeMap().size());
         Assert.assertTrue(NodeVisitors.isList(((MapNode) user1HomePageEvaluation.getNode()).getNodeMap()
                                                                                            .get("w1")
                                                                                            .getNode()));
 
-        Assert.assertEquals(((ListNode) (((MapNode) user1HomePageEvaluation.getNode()).getNodeMap()
-                                                                                      .get("w1")
-                                                                                      .getNode())).getNodes()
-                                                                                                  .size(), 4);
+        Assert.assertEquals(4, ((ListNode) (((MapNode) user1HomePageEvaluation.getNode()).getNodeMap()
+                                                                                         .get("w1")
+                                                                                         .getNode())).getNodes()
+                                                                                                     .size());
     }
 
     @Test(expected = BonsaiError.class)
@@ -397,7 +396,6 @@ public class BonsaiTreeTest {
     @Test(expected = BonsaiError.class)
     public void testCycleDependencyCheck() throws IOException {
         Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
-        Map userContext2 = new ObjectExtractor().getObject("userData2.json", Map.class);
         Knot homePageKnot = bonsai.createMapping("home_page_1", MultiKnotData.builder()
                                                                              .key("widget_1")
                                                                              .key("widget_2")
@@ -432,7 +430,6 @@ public class BonsaiTreeTest {
     @Test(expected = BonsaiError.class)
     public void testCycleDependencyCheckOnKeys() throws IOException {
         Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
-        Map userContext2 = new ObjectExtractor().getObject("userData2.json", Map.class);
         Knot homePageKnot = bonsai.createMapping("home_page_1", MultiKnotData.builder()
                                                                              .key("widget_1")
                                                                              .key("widget_2")
@@ -531,5 +528,13 @@ public class BonsaiTreeTest {
         Assert.assertEquals(widget_1.getTreeEdges().get(0).getTreeKnot().getTreeEdges().get(0)
                                     .getTreeKnot().getId(), innerKnot.getId());
 
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void testAddVariationNoEdge() {
+        bonsai.addVariation("someInvalidKnotId", Variation.builder()
+                                                          .filter(new EqualsFilter("$.gender", "female"))
+                                                          .knotId("asdf")
+                                                          .build());
     }
 }

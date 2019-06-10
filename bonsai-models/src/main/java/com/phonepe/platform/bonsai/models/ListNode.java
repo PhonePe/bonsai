@@ -14,8 +14,8 @@ import java.util.List;
 public class ListNode extends Node {
     private List<KeyNode> nodes;
 
-    public ListNode(String id, long version) {
-        super(NodeType.LIST, id, version);
+    public ListNode() {
+        super(NodeType.LIST, null, 0);
     }
 
     @Builder
