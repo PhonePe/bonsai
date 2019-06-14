@@ -16,6 +16,7 @@ import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.*;
+import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.bonsai.models.value.DataValue;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import org.junit.Assert;
@@ -31,10 +32,11 @@ import java.util.Map;
 public class BonsaiTreeTest {
 
     private Bonsai<Context> bonsai = BonsaiBuilder.builder()
-                                                  .withBonsaiProperties(BonsaiProperties
-                                                                                .builder()
-                                                                                .mutualExclusivitySettingTurnedOn(true)
-                                                                                .build())
+                                                  .withBonsaiProperties(
+                                                          BonsaiProperties
+                                                                  .builder()
+                                                                  .mutualExclusivitySettingTurnedOn(true)
+                                                                  .build())
                                                   .build();
 
 
@@ -475,10 +477,11 @@ public class BonsaiTreeTest {
                                                               .build());
         build.setKeys(Lists.newArrayList("ads"));
         System.out.println("widget_1 = " + widget_1);
-        widget_1 = bonsai.evaluate("widget_1", Context.builder()
-                                                      .documentContext(JsonPath.parse(Maps.newHashMap()))
-                                                      .build());
-        System.out.println("widget_1 = " + widget_1);
+        FlatTreeRepresentation widget = bonsai.evaluateFlat("widget_1", Context
+                .builder()
+                .documentContext(JsonPath.parse(Maps.newHashMap()))
+                .build());
+        System.out.println("widget = " + widget);
     }
 
 

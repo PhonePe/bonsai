@@ -9,6 +9,7 @@ import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.query.dsl.Filter;
 
 import java.util.List;
@@ -215,4 +216,6 @@ public interface Bonsai<C extends Context> {
      * @return {@link KeyNode} after evaluation
      */
     KeyNode evaluate(String key, C context);
+
+    FlatTreeRepresentation evaluateFlat(String key, C context);
 }

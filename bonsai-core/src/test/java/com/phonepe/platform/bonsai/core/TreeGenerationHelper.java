@@ -1,18 +1,14 @@
 package com.phonepe.platform.bonsai.core;
 
-import com.phonepe.platform.bonsai.core.data.MapKnotData;
-import com.phonepe.platform.bonsai.core.data.MultiKnotData;
-import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
+import com.phonepe.platform.bonsai.core.data.*;
 import com.phonepe.platform.bonsai.core.vital.Context;
-import com.phonepe.platform.query.dsl.general.EqualsFilter;
-import com.phonepe.platform.bonsai.core.data.KnotData;
-import com.phonepe.platform.bonsai.core.data.KnotDataVisitor;
-import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
+import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.models.value.DataValue;
 import com.phonepe.platform.bonsai.models.value.ReferenceValue;
 import com.phonepe.platform.bonsai.models.value.Value;
 import com.phonepe.platform.bonsai.models.value.ValueVisitor;
+import com.phonepe.platform.query.dsl.general.EqualsFilter;
 
 import java.util.Random;
 import java.util.stream.IntStream;

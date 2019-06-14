@@ -23,6 +23,7 @@ import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ListNode;
 import com.phonepe.platform.bonsai.models.MapNode;
 import com.phonepe.platform.bonsai.models.ValueNode;
+import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.query.dsl.FilterFieldIdentifier;
 
@@ -139,7 +140,9 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         }
 
         Edge edge = Edge.builder()
-                        .edgeIdentifier(new EdgeIdentifier(bonsaiIdGenerator.newEdgeId(), variation.getPriority()))
+                        .edgeIdentifier(new EdgeIdentifier(bonsaiIdGenerator.newEdgeId(),
+                                                           bonsaiIdGenerator.newEdgeNumber(knot.getEdges()),
+                                                           variation.getPriority()))
                         .knotId(variation.getKnotId())
                         .version(System.currentTimeMillis())
                         .filters(variation.getFilters())
@@ -328,6 +331,12 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                                           .build());
             }
         });
+    }
+
+    @Override
+    public FlatTreeRepresentation evaluateFlat(String key, C context) {
+        KeyNode evaluate = evaluate(key, context);
+        return TreeUtils.flatten(evaluate);
     }
 
     /**

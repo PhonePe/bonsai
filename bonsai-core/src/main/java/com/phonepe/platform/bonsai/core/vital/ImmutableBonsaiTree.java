@@ -10,6 +10,7 @@ import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.query.dsl.Filter;
 import lombok.AllArgsConstructor;
 
@@ -42,6 +43,11 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     @Override
     public KeyNode evaluate(String key, C context) {
         return bonsai.evaluate(key, context);
+    }
+
+    @Override
+    public FlatTreeRepresentation evaluateFlat(String key, C context) {
+        return bonsai.evaluateFlat(key, context);
     }
 
     @Override
