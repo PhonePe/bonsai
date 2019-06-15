@@ -4,6 +4,7 @@ stages:
   - build
   - test
   - deploy
+  - release
 
 variables:
   MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
@@ -31,3 +32,17 @@ deploy:
     - mvn $MAVEN_CLI_OPTS deploy -DskipTests
   only:
     - develop
+
+release:
+  stage: release
+  script:
+    - git remote set-url origin "git@gitlab.phonepe.com:${CI_PROJECT_PATH}.git"
+    - git checkout master
+    - git checkout develop
+    - mvn -U -Pdocker jgitflow:release-start jgitflow:release-finish
+    - git push --all
+    - git push --tags origin
+  when: manual
+  only:
+    refs:
+      - develop

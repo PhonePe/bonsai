@@ -2,6 +2,8 @@ package com.phonepe.platform.bonsai.models.model;
 
 import lombok.*;
 
+import java.util.List;
+
 /**
  * @author tushar.naik
  * @version 1.0  2019-06-11 - 01:03
@@ -13,6 +15,6 @@ import lombok.*;
 @ToString
 @Builder
 public class FlatNodeDetail {
-    private int[] path;
+    private List<Integer> path;
     private FlatNode flatNode;
 }

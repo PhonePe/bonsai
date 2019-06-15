@@ -350,7 +350,6 @@ public class BonsaiTreeTest {
         Assert.assertEquals(preferredKnot.getId(), preferentialEval.getNode().getId());
         Assert.assertEquals(((DataValue) ((ValuedKnotData) preferredKnot.getKnotData()).getValue()).getData(),
                             ((DataValue) ((ValueNode) preferentialEval.getNode()).getValue()).getData());
-
     }
 
     @Test(expected = BonsaiError.class)

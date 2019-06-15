@@ -44,7 +44,7 @@ class TreeUtils {
                                                                            .peek(k -> flatten(k, mapping))
                                                                            .map(KeyNode::getKey)
                                                                            .collect(Collectors.toList())))
-//                                          .path() todo
+                                          .path(keyNode.getEdgePath())
                                           .build());
                 return null;
             }
@@ -54,7 +54,7 @@ class TreeUtils {
                 mapping.put(keyNode.getKey(),
                             FlatNodeDetail.builder()
                                           .flatNode(new ValueFlatNode(valueNode.getValue()))
-//                                          .path() todo
+                                          .path(keyNode.getEdgePath())
                                           .build());
                 return null;
             }
@@ -73,7 +73,7 @@ class TreeUtils {
                                                                                  entry.getKey(),
                                                                                  entry.getValue().getKey()))
                                                                          .collect(MapEntry.mapCollector())))
-//                                          .path() todo
+                                          .path(keyNode.getEdgePath())
                                           .build());
                 return null;
             }
