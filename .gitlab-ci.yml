@@ -17,7 +17,7 @@ cache:
 compile:
   stage: build
   script:
-    - mvn $MAVEN_CLI_OPTS compile -Pquality_check
+    - mvn $MAVEN_CLI_OPTS compile
 
 test:
   stage: test
@@ -31,17 +31,3 @@ deploy:
     - mvn $MAVEN_CLI_OPTS deploy -DskipTests
   only:
     - develop
-
-release:
-  stage: release
-  script:
-    - git remote set-url origin "git@gitlab.phonepe.com:${CI_PROJECT_PATH}.git"
-    - git checkout master
-    - git checkout develop
-    - mvn -U -Pdocker jgitflow:release-start jgitflow:release-finish
-    - git push --all
-    - git push --tags origin
-  when: manual
-  only:
-    refs:
-      - develop
