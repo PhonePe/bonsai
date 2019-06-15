@@ -1,6 +1,7 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.phonepe.platform.bonsai.core.structures.MapEntry;
+import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.models.*;
 import com.phonepe.platform.bonsai.models.model.*;
 import lombok.AccessLevel;
@@ -15,12 +16,16 @@ import java.util.stream.Collectors;
  * @version 1.0  2019-06-11 - 01:15
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class TreeUtils {
+class TreeUtils {
 
-    public static FlatTreeRepresentation flatten(KeyNode keyNode) {
+    static FlatTreeRepresentation flatten(KeyNode keyNode) {
         Map<String, FlatNodeDetail> flatNodeDetailMap = new LinkedHashMap<>();
         flatten(keyNode, flatNodeDetailMap);
         return new FlatTreeRepresentation(keyNode.getKey(), flatNodeDetailMap);
+    }
+
+    static boolean isKnotDataOfSimilarType(Knot knot1, Knot knot2) {
+        return knot1.getKnotData().getClass().equals(knot2.getKnotData().getClass());
     }
 
     private static void flatten(KeyNode keyNode, Map<String, FlatNodeDetail> mapping) {

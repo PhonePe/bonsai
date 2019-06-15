@@ -5,6 +5,8 @@ import com.phonepe.platform.bonsai.core.structures.OrderedList;
 import com.phonepe.platform.bonsai.core.vital.blocks.EdgeIdentifier;
 import org.junit.Test;
 
+import java.util.Collections;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -66,9 +68,27 @@ public class OrderedListTest {
         assertEquals("123", edges.get(edges.size() - 1).getId());
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testOrderedListAddException() {
+    @Test(expected = UnsupportedOperationException.class)
+    public void testOrderedListAddFirstException() {
         OrderedList<EdgeIdentifier> edges = new OrderedList<>();
         edges.addFirst(new EdgeIdentifier("1", 1, 1));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testOrderedListAddLastException() {
+        OrderedList<EdgeIdentifier> edges = new OrderedList<>();
+        edges.addLast(new EdgeIdentifier("1", 1, 1));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testOrderedListAddAllException() {
+        OrderedList<EdgeIdentifier> edges = new OrderedList<>();
+        edges.addAll(2, Collections.emptyList());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testOrderedListAddException() {
+        OrderedList<EdgeIdentifier> edges = new OrderedList<>();
+        edges.add(2, new EdgeIdentifier("1", 1, 1));
     }
 }
