@@ -1,8 +1,6 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.Mapper;
@@ -14,7 +12,6 @@ import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
-import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.*;
 import com.phonepe.platform.bonsai.models.value.DataValue;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
@@ -31,10 +28,13 @@ import java.util.Map;
 public class BonsaiTreeTest {
 
     private Bonsai<Context> bonsai = BonsaiBuilder.builder()
-                                                  .withBonsaiProperties(BonsaiProperties
-                                                                                .builder()
-                                                                                .mutualExclusivitySettingTurnedOn(true)
-                                                                                .build())
+                                                  .withBonsaiProperties(
+                                                          BonsaiProperties
+                                                                  .builder()
+                                                                  .mutualExclusivitySettingTurnedOn(true)
+                                                                  .maxAllowedConditionsPerEdge(10)
+                                                                  .maxAllowedVariationsPerKnot(10)
+                                                                  .build())
                                                   .build();
 
 
@@ -287,10 +287,13 @@ public class BonsaiTreeTest {
                                                                      .build())
                                                      .build());
         /* there is no older mapping, hence it will return null */
-        Assert.assertNull(bonsai.createMapping("icon_3", icon3.getId()));
+        Knot icon_3 = bonsai.createMapping("icon_3", icon3.getId());
+        Assert.assertNull(icon_3);
 
         /* now mappings exist, hence it will return the older knot */
-        Assert.assertNotNull(bonsai.createMapping("icon_3", icon3.getId()));
+        Knot icon_3_1 = bonsai.createMapping("icon_3", icon3.getId());
+        Assert.assertNotNull(icon_3_1);
+        Assert.assertEquals(icon3, icon_3_1);
 
         Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
                                                                                .filter(new EqualsFilter("$.gender", "female"))
@@ -317,224 +320,130 @@ public class BonsaiTreeTest {
                                                                                                      .size());
     }
 
-    @Test(expected = BonsaiError.class)
-    public void testInvalidInput() {
-        bonsai.createMapping("home_page_1", MultiKnotData.builder()
-                                                         .key("widget_1")
-                                                         .key("widget_2")
-                                                         .key("widget_3")
-                                                         .build());
-        Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
-                                                                  .key("icon_3")
-                                                                  .key("icon_1")
-                                                                  .key("icon_4")
-                                                                  .build());
-        Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
-                                                                         .key("icon_1")
-                                                                         .key("icon_4")
-                                                                         .key("icon_2")
-                                                                         .key("icon_3")
-                                                                         .build());
-        Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
-                                                                               .knotId(femaleConditionKnot.getId())
-                                                                               .build()));
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void testInvalidInputNegativePriority() {
-        bonsai.createMapping("home_page_1", MultiKnotData.builder()
-                                                         .key("widget_1")
-                                                         .key("widget_2")
-                                                         .key("widget_3")
-                                                         .build());
-        Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
-                                                                  .key("icon_3")
-                                                                  .key("icon_1")
-                                                                  .key("icon_4")
-                                                                  .build());
-        Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
-                                                                         .key("icon_1")
-                                                                         .key("icon_4")
-                                                                         .key("icon_2")
-                                                                         .key("icon_3")
-                                                                         .build());
-        Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
-                                                                               .knotId(femaleConditionKnot.getId())
-                                                                               .filter(new EqualsFilter("$.gender", "female"))
-                                                                               .priority(-2)
-                                                                               .build()));
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void testPivotCheck() {
-        bonsai.createMapping("home_page_1", MultiKnotData.builder()
-                                                         .key("widget_1")
-                                                         .key("widget_2")
-                                                         .key("widget_3")
-                                                         .build());
-        Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
-                                                                  .key("icon_3")
-                                                                  .key("icon_1")
-                                                                  .key("icon_4")
-                                                                  .build());
-        Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
-                                                                         .key("icon_1")
-                                                                         .key("icon_4")
-                                                                         .key("icon_2")
-                                                                         .key("icon_3")
-                                                                         .build());
-        bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
-                                                          .filter(new EqualsFilter("$.gender", "female"))
-                                                          .knotId(femaleConditionKnot.getId())
-                                                          .build());
-        bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
-                                                          .filter(new EqualsFilter("$.someOtherPivot", "female"))
-                                                          .knotId(femaleConditionKnot.getId())
-                                                          .build());
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void testCycleDependencyCheck() throws IOException {
-        Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
-        Knot homePageKnot = bonsai.createMapping("home_page_1", MultiKnotData.builder()
-                                                                             .key("widget_1")
-                                                                             .key("widget_2")
-                                                                             .key("widget_3")
-                                                                             .build());
-        Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
-                                                                  .key("icon_3")
-                                                                  .key("icon_1")
-                                                                  .key("icon_4")
-                                                                  .build());
-        Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
-                                                                         .key("icon_1")
-                                                                         .key("icon_4")
-                                                                         .key("icon_2")
-                                                                         .key("icon_3")
-                                                                         .build());
-        Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
-                                                                               .filter(new EqualsFilter("$.gender", "female"))
-                                                                               .knotId(femaleConditionKnot.getId())
-                                                                               .build()));
-        Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
-                                                                               .filter(new EqualsFilter("$.gender", "male"))
-                                                                               .knotId(homePageKnot.getId())
-                                                                               .build()));
-
-        KeyNode user1HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
-                                                                                .documentContext(JsonPath.parse(userContext1))
-                                                                                .build());
-        System.out.println(Mapper.MAPPER.writeValueAsString(user1HomePageEvaluation));
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void testCycleDependencyCheckOnKeys() throws IOException {
-        Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
-        Knot homePageKnot = bonsai.createMapping("home_page_1", MultiKnotData.builder()
-                                                                             .key("widget_1")
-                                                                             .key("widget_2")
-                                                                             .key("widget_3")
-                                                                             .build());
-        Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
-                                                                  .key("icon_3")
-                                                                  .key("icon_1")
-                                                                  .key("icon_4")
-                                                                  .build());
-        Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
-                                                                         .key("icon_1")
-                                                                         .key("icon_4")
-                                                                         .key("icon_2")
-                                                                         .key("home_page_1")
-                                                                         .build());
-        Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
-                                                                               .filter(new EqualsFilter("$.gender", "female"))
-                                                                               .knotId(femaleConditionKnot.getId())
-                                                                               .build()));
-        Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
-                                                                               .filter(new EqualsFilter("$.gender", "male"))
-                                                                               .knotId(homePageKnot.getId())
-                                                                               .build()));
-
-        KeyNode user1HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
-                                                                                .documentContext(JsonPath.parse(userContext1))
-                                                                                .build());
-        System.out.println(Mapper.MAPPER.writeValueAsString(user1HomePageEvaluation));
-    }
-
     @Test
-    public void testSome() {
-        MultiKnotData build = MultiKnotData.builder()
-                                           .key("icon_1")
-                                           .key("icon_4")
-                                           .key("icon_2")
-                                           .key("home_page_1")
-                                           .build();
-        Knot widgetKnot1 = bonsai.createMapping("widget_1", build);
-        KeyNode widget_1 = bonsai.evaluate("widget_1", Context.builder()
-                                                              .documentContext(JsonPath.parse(Maps.newHashMap()))
-                                                              .build());
-        build.setKeys(Lists.newArrayList("ads"));
-        System.out.println("widget_1 = " + widget_1);
-        widget_1 = bonsai.evaluate("widget_1", Context.builder()
-                                                      .documentContext(JsonPath.parse(Maps.newHashMap()))
-                                                      .build());
-        System.out.println("widget_1 = " + widget_1);
+    public void testBonsaiPreferenceEvaluation() {
+        Knot l1 = bonsai.createKnot(ValuedKnotData.dataValue("L-1"));
+        bonsai.createMapping("baseKey", l1.getId());
+
+        Knot l21 = bonsai.createKnot(ValuedKnotData.dataValue("L-2-1"));
+
+        bonsai.addVariation(l1.getId(), Variation.builder()
+                                                 .filter(new EqualsFilter("$.gender", "female"))
+                                                 .knotId(l21.getId())
+                                                 .build());
+
+        KeyNode nonPreferencialEval = bonsai.evaluate("baseKey", Context.builder()
+                                                                        .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
+                                                                        .build());
+        Assert.assertEquals(l21.getId(), nonPreferencialEval.getNode().getId());
+        Assert.assertEquals("L-2-1", ((DataValue) ((ValueNode) nonPreferencialEval.getNode()).getValue()).getData());
+        Knot preferredKnot = Knot.builder()
+                                 .id("P1kaID")
+                                 .knotData(ValuedKnotData.dataValue("P-1"))
+                                 .build();
+        KeyNode preferentialEval = bonsai.evaluate
+                ("baseKey",
+                 Context.builder()
+                        .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
+                        .preferences(ImmutableMap.of("baseKey", preferredKnot))
+                        .build());
+        Assert.assertEquals(preferredKnot.getId(), preferentialEval.getNode().getId());
+        Assert.assertEquals(((DataValue) ((ValuedKnotData) preferredKnot.getKnotData()).getValue()).getData(),
+                            ((DataValue) ((ValueNode) preferentialEval.getNode()).getValue()).getData());
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void testBonsaiPreferenceEvaluationClassMismatchErrorExpected() {
+        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build());
+        bonsai.createMapping("l1", l1.getId());
+        Knot l21 = bonsai.createKnot(MultiKnotData.builder().key("l21w3").key("l21w4").build());
+        bonsai.addVariation(l1.getId(), Variation.builder()
+                                                 .filter(new EqualsFilter("$.gender", "female"))
+                                                 .knotId(l21.getId())
+                                                 .build());
+        Knot preferredKnot = Knot.builder()
+                                 .id("P1kaID")
+                                 .knotData(ValuedKnotData.dataValue("P-1"))
+                                 .build();
+        bonsai.evaluate("l1",
+                        Context.builder()
+                               .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
+                               .preferences(ImmutableMap.of("l1", preferredKnot))
+                               .build());
     }
 
 
     @Test
-    public void testGetCompleteTree() throws IOException {
-        Knot hpKnot = bonsai.createKnot(MultiKnotData.builder()
-                                                     .key("widget_1")
-                                                     .key("widget_2")
-                                                     .key("widget_3")
-                                                     .build());
+    public void testBonsaiPreferenceEvaluationRecursive() {
+        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").key("w3").build());
+        bonsai.createMapping("l1", l1.getId());
 
-        bonsai.createMapping("home_page_1", hpKnot.getId());
+        Knot l21 = bonsai.createKnot(MultiKnotData.builder().key("w3").key("w2").key("w1").build());
+        Knot l22 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w3").build());
 
-        Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
-                                                                  .key("icon_3")
-                                                                  .key("icon_1")
-                                                                  .key("icon_4")
-                                                                  .build());
+        bonsai.createMapping("l1", l1.getId());
 
-        Knot innerKnot = bonsai.createKnot(MultiKnotData.builder()
-                                                        .key("icon_3")
-                                                        .key("icon_1")
-                                                        .key("icon_4")
-                                                        .build());
+        bonsai.createMapping("w1", ValuedKnotData.dataValue("widget1"));
+        bonsai.createMapping("w2", ValuedKnotData.dataValue("widget2"));
+        bonsai.createMapping("w3", ValuedKnotData.dataValue("widget3"));
 
-        bonsai.addVariation(femaleConditionKnot.getId(), Variation.builder().knotId(innerKnot.getId())
-                                                                  .filter(new EqualsFilter("$.gender", "female"))
-                                                                  .build());
+        bonsai.addVariation(l1.getId(), Variation.builder()
+                                                 .filter(new EqualsFilter("$.gender", "female"))
+                                                 .knotId(l21.getId())
+                                                 .build());
 
-        Knot widgetKnot1 = bonsai.createKnot(MultiKnotData.builder()
-                                                          .key("icon_1")
-                                                          .key("icon_4")
-                                                          .key("icon_2")
-                                                          .key("icon_3")
-                                                          .build());
-        bonsai.createMapping("widget_1", widgetKnot1.getId());
-        Assert.assertNotNull(femaleConditionKnot);
-        bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
-                                                          .filter(new EqualsFilter("$.gender", "female"))
-                                                          .knotId(femaleConditionKnot.getId())
-                                                          .build());
-        TreeKnot widget_1 = bonsai.getCompleteTree("widget_1");
+        bonsai.addVariation(l1.getId(), Variation.builder()
+                                                 .filter(new EqualsFilter("$.gender", "male"))
+                                                 .knotId(l22.getId())
+                                                 .build());
 
-        System.out.println(Mapper.MAPPER.writeValueAsString(widget_1));
-        Assert.assertEquals(widget_1.getId(), widgetKnot1.getId());
-        Assert.assertEquals(widget_1.getTreeEdges().get(0).getTreeKnot().getId(), femaleConditionKnot.getId());
-        Assert.assertEquals(widget_1.getTreeEdges().get(0).getTreeKnot().getTreeEdges().get(0)
-                                    .getTreeKnot().getId(), innerKnot.getId());
+        KeyNode nonPreferencialEval = bonsai.evaluate("l1", Context.builder()
+                                                                   .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
+                                                                   .build());
+        Assert.assertEquals(l21.getId(), nonPreferencialEval.getNode().getId());
+        Knot preferredKnot = Knot.builder()
+                                 .id("P1kaID")
+                                 .knotData(MultiKnotData.builder().key("w3").key("w1").build())
+                                 .build();
+        KeyNode preferentialEval = bonsai.evaluate
+                ("l1",
+                 Context.builder()
+                        .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
+                        .preferences(ImmutableMap.of("l1", preferredKnot))
+                        .build());
+        Assert.assertEquals(preferredKnot.getId(), preferentialEval.getNode().getId());
+        Assert.assertEquals("widget3", ((DataValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+                .getNodes().get(0).getNode()).getValue()).getData());
+        Assert.assertEquals("widget1", ((DataValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+                .getNodes().get(1).getNode()).getValue()).getData());
+
+        /* since we are using KnotMergingConflictResolver, which will merge the remaining keys for MultiKnot */
+        Assert.assertEquals("widget2", ((DataValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+                .getNodes().get(2).getNode()).getValue()).getData());
+
+
+        /* now evaluate with a new value for widget1 */
+        preferentialEval = bonsai.evaluate
+                ("l1",
+                 Context.builder()
+                        .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
+                        .preferences(ImmutableMap.of("l1", preferredKnot,
+                                                     "w1", Knot.builder()
+                                                               .id("w1kaID")
+                                                               .knotData(ValuedKnotData.dataValue("newDataValue"))
+                                                               .build()))
+                        .build());
+        Assert.assertEquals(preferredKnot.getId(), preferentialEval.getNode().getId());
+        Assert.assertEquals("widget3", ((DataValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+                .getNodes().get(0).getNode()).getValue()).getData());
+
+        /* the value should be whatever we have set in preferences */
+        Assert.assertEquals("newDataValue", ((DataValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+                .getNodes().get(1).getNode()).getValue()).getData());
+
+        Assert.assertEquals("widget2", ((DataValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+                .getNodes().get(2).getNode()).getValue()).getData());
 
     }
 
-    @Test(expected = BonsaiError.class)
-    public void testAddVariationNoEdge() {
-        bonsai.addVariation("someInvalidKnotId", Variation.builder()
-                                                          .filter(new EqualsFilter("$.gender", "female"))
-                                                          .knotId("asdf")
-                                                          .build());
-    }
 }

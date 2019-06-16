@@ -12,6 +12,8 @@ public interface BonsaiTreeValidator {
 
     void validate(Knot knot);
 
+    void validate(Knot knot, Knot knot2);
+
     void validate(Edge edge);
 
     void validate(Context context);

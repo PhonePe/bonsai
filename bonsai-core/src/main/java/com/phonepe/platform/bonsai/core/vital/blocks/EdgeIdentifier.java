@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 @NoArgsConstructor
 public class EdgeIdentifier implements Comparable<EdgeIdentifier> {
     private String id;
+    private int number;
     private int priority;
 
     @Override

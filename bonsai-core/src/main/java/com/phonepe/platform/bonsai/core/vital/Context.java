@@ -1,7 +1,7 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.jayway.jsonpath.DocumentContext;
-import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,5 +16,5 @@ import java.util.Map;
 @Builder
 public class Context {
     private DocumentContext documentContext;
-    private Map<String, KeyNode> preferences;
+    private Map<String, Knot> preferences;
 }

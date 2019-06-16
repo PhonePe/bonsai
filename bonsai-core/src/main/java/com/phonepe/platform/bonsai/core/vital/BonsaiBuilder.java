@@ -2,6 +2,7 @@ package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.base.Preconditions;
 import com.phonepe.platform.bonsai.core.Bonsai;
+import com.phonepe.platform.bonsai.core.structures.ConflictResolver;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
@@ -27,6 +28,7 @@ public class BonsaiBuilder<C extends Context> {
     private VariationSelectorEngine<C> variationSelectorEngine;
     private BonsaiProperties bonsaiProperties;
     private BonsaiIdGenerator bonsaiIdGenerator;
+    private ConflictResolver<Knot> knotConflictResolver;
 
     public static <C extends Context> BonsaiBuilder<C> builder() {
         return new BonsaiBuilder<>();
@@ -62,11 +64,17 @@ public class BonsaiBuilder<C extends Context> {
         return this;
     }
 
+    public BonsaiBuilder<C> withKnotConflictResolver(ConflictResolver<Knot> knotConflictResolver) {
+        this.knotConflictResolver = knotConflictResolver;
+        return this;
+    }
+
     public Bonsai<C> build() {
         Preconditions.checkNotNull(bonsaiProperties, "bonsaiProperties cannot be null");
         keyTreeStore = keyTreeStore == null ? new InMemoryKeyTreeStore() : keyTreeStore;
         knotStore = knotStore == null ? new InMemoryKnotStore() : knotStore;
         edgeStore = edgeStore == null ? new InMemoryEdgeStore() : edgeStore;
+        knotConflictResolver = knotConflictResolver == null ? new KnotMergingConflictResolver() : knotConflictResolver;
         variationSelectorEngine = variationSelectorEngine == null ?
                 new VariationSelectorEngine<>() :
                 variationSelectorEngine;
@@ -86,6 +94,7 @@ public class BonsaiBuilder<C extends Context> {
             }
         } : bonsaiIdGenerator;
         return new BonsaiTree<>(keyTreeStore, knotStore, edgeStore, variationSelectorEngine,
-                                new ComponentBonsaiTreeValidator(bonsaiProperties), bonsaiProperties, bonsaiIdGenerator);
+                                new ComponentBonsaiTreeValidator(bonsaiProperties), bonsaiProperties, bonsaiIdGenerator,
+                                knotConflictResolver);
     }
 }

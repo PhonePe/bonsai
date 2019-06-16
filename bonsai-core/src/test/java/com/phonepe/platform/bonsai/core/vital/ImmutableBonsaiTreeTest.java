@@ -131,4 +131,27 @@ public class ImmutableBonsaiTreeTest {
                                                               .build());
         Assert.assertNotNull(k3);
     }
+
+    @Test(expected = BonsaiError.class)
+    public void testImmutableBonsaiTreesError3() {
+        Bonsai<Context> bonsai = BonsaiBuilder.builder()
+                                              .withBonsaiProperties(BonsaiProperties.builder().build())
+                                              .build();
+
+        Bonsai<Context> build = ImmutableBonsaiBuilder
+                .builder(bonsai)
+                .createKnot(Knot.builder()
+                                .id("k1")
+                                .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                                .version(123)
+                                .build())
+                .createKnot(Knot.builder()
+                                .id("k1")
+                                .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                                .version(123)
+                                .build())
+                .build();
+
+        build.createEdge(null);
+    }
 }

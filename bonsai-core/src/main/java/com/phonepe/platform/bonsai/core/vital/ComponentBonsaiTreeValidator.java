@@ -42,6 +42,16 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
     }
 
     @Override
+    public void validate(Knot knot, Knot knot2) {
+        if (!TreeUtils.isKnotDataOfSimilarType(knot, knot2)) {
+            throw new BonsaiError(BonsaiErrorCode.KNOT_RESOLUTION_ERROR,
+                                  String.format("knotData class mismatch rootKnot:%s variationKnot:%s",
+                                                knot.getKnotData().getClass(),
+                                                knot2.getKnotData().getClass()));
+        }
+    }
+
+    @Override
     public void validate(Edge edge) {
         checkNotNull(edge, "edge");
         checkNotNull(edge.getEdgeIdentifier(), "edge.identifier");

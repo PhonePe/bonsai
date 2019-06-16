@@ -7,13 +7,19 @@
     <groupId>com.phonepe.platform</groupId>
     <artifactId>bonsai</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.7</version>
+    <version>1.0.8-SNAPSHOT</version>
 
     <modules>
         <module>bonsai-core</module>
         <module>bonsai-models</module>
         <module>bonsai-json-eval</module>
     </modules>
+
+    <parent>
+        <groupId>com.phonepe</groupId>
+        <artifactId>pp-parent-pom</artifactId>
+        <version>0.20</version>
+    </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
