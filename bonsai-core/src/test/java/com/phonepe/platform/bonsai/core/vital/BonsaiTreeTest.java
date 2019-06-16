@@ -37,7 +37,6 @@ public class BonsaiTreeTest {
                                                                   .build())
                                                   .build();
 
-
     @Test(expected = BonsaiError.class)
     public void testBonsaiEdgeMaxCondition() {
         Knot knot = bonsai.createKnot(ValuedKnotData.builder()
