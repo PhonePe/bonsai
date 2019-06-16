@@ -42,6 +42,8 @@ release:
     - mvn $MAVEN_CLI_OPTS -U jgitflow:release-start jgitflow:release-finish
     - git push --all
     - git push --tags origin
+  tags:
+    - backend
   when: manual
   only:
     refs:
