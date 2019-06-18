@@ -1,7 +1,5 @@
 package com.phonepe.platform.bonsai.core.data;
 
-import com.phonepe.platform.bonsai.core.vital.KnotData;
-import com.phonepe.platform.bonsai.core.vital.KnotDataVisitor;
 import lombok.*;
 
 import java.util.List;
@@ -17,12 +15,12 @@ public class MultiKnotData extends KnotData {
     private List<String> keys;
 
     public MultiKnotData() {
-        super(DataType.MULTI_KNOT);
+        super(KnotDataType.MULTI_KNOT);
     }
 
     @Builder
     public MultiKnotData(@Singular List<String> keys) {
-        super(DataType.MULTI_KNOT);
+        super(KnotDataType.MULTI_KNOT);
         this.keys = keys;
     }
 

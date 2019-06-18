@@ -1,7 +1,5 @@
 package com.phonepe.platform.bonsai.core.data;
 
-import com.phonepe.platform.bonsai.core.vital.KnotData;
-import com.phonepe.platform.bonsai.core.vital.KnotDataVisitor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,12 +18,12 @@ public class MapKnotData extends KnotData {
     private Map<String, String> mapKeys;
 
     public MapKnotData() {
-        super(DataType.MAP_KNOT);
+        super(KnotDataType.MAP_KNOT);
     }
 
     @Builder
     public MapKnotData(Map<String, String> mapKeys) {
-        super(DataType.MAP_KNOT);
+        super(KnotDataType.MAP_KNOT);
         this.mapKeys = mapKeys;
     }
 

@@ -16,13 +16,18 @@ import lombok.ToString;
 public class ValueNode extends Node {
     private Value value;
 
-    public ValueNode(String id, long version) {
-        super(NodeType.VALUE, id, version);
+    public ValueNode() {
+        super(NodeType.VALUE, null, 0);
     }
 
     @Builder
     public ValueNode(String id, long version, Value value) {
         super(NodeType.VALUE, id, version);
         this.value = value;
+    }
+
+    @Override
+    public <T> T accept(NodeVisitor<T> nodeVisitor) {
+        return nodeVisitor.visit(this);
     }
 }

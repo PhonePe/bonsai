@@ -8,8 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author tushar.naik
  * @version 1.0  10/06/17 - 7:28 PM
  */
-class Mapper {
-    static final ObjectMapper MAPPER = new ObjectMapper();
+public class Mapper {
+
+    public static final ObjectMapper MAPPER = new ObjectMapper();
+
     static {
         MAPPER.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);

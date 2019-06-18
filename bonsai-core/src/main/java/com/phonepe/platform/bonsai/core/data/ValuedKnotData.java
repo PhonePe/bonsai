@@ -1,7 +1,6 @@
 package com.phonepe.platform.bonsai.core.data;
 
-import com.phonepe.platform.bonsai.core.vital.KnotData;
-import com.phonepe.platform.bonsai.core.vital.KnotDataVisitor;
+import com.phonepe.platform.bonsai.models.value.DataValue;
 import com.phonepe.platform.bonsai.models.value.Value;
 import lombok.Builder;
 import lombok.Data;
@@ -19,17 +18,21 @@ public class ValuedKnotData extends KnotData {
     private Value value;
 
     public ValuedKnotData() {
-        super(DataType.VALUED);
+        super(KnotDataType.VALUED);
     }
 
     @Builder
     public ValuedKnotData(Value value) {
-        super(DataType.VALUED);
+        super(KnotDataType.VALUED);
         this.value = value;
     }
 
     @Override
     public <T> T accept(KnotDataVisitor<T> knotDataVisitor) {
         return knotDataVisitor.visit(this);
+    }
+
+    public static ValuedKnotData dataValue(Object data) {
+        return new ValuedKnotData(new DataValue(data));
     }
 }

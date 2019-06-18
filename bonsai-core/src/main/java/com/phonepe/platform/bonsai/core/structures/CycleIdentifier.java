@@ -19,9 +19,9 @@ public class CycleIdentifier<T> {
         items = Sets.newHashSet();
     }
 
-    public void add(T item) throws BonsaiError {
+    public void add(T item) {
         if (items.contains(item)) {
-            throw new BonsaiError(BonsaiErrorCode.CYCLE_DETECTED);
+            throw new BonsaiError(BonsaiErrorCode.CYCLE_DETECTED, "Cycle identified at item:" + item);
         }
         items.add(item);
     }
