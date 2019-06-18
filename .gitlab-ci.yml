@@ -34,8 +34,6 @@ deploy:
   <<: *default_tag
   script:
     - mvn clean deploy -U -DskipTests
-  only:
-    - develop
 
 release:
   stage: release
