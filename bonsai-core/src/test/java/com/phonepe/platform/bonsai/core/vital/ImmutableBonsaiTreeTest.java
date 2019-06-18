@@ -49,7 +49,7 @@ public class ImmutableBonsaiTreeTest {
     }
 
     @Test
-    public void testImmutableBonsaiTrees() {
+    public void testImmutableBonsaiTreesOriginalShouldBeMutable() {
         Bonsai<Context> bonsai = BonsaiBuilder.builder()
                                               .withBonsaiProperties(BonsaiProperties.builder().build())
                                               .build();
@@ -68,11 +68,11 @@ public class ImmutableBonsaiTreeTest {
                                 .build())
                 .build();
 
-        immutable.createKnot(Knot.builder()
-                                 .id("k2")
-                                 .knotData(ValuedKnotData.dataValue("1"))
-                                 .version(123)
-                                 .build());
+        bonsai.createKnot(Knot.builder()
+                              .id("k2")
+                              .knotData(ValuedKnotData.dataValue("1"))
+                              .version(123)
+                              .build());
     }
 
     @Test(expected = BonsaiError.class)
@@ -201,7 +201,7 @@ public class ImmutableBonsaiTreeTest {
 
         Assert.assertNotNull(immutable.getKnot("k1"));
         Assert.assertEquals("3", ((DataValue) ((ValuedKnotData) immutable.getKnot("k1")
-                                                                        .getKnotData()).getValue()).getData());
+                                                                         .getKnotData()).getValue()).getData());
         Assert.assertNull(immutable.getKnot("k2"));
         Assert.assertNotNull(immutable.getEdge("e1"));
 
