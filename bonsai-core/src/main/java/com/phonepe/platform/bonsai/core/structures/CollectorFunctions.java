@@ -1,5 +1,6 @@
 package com.phonepe.platform.bonsai.core.structures;
 
+import com.phonepe.platform.bonsai.json.eval.Pair;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -17,14 +18,14 @@ import java.util.stream.Collectors;
 public class CollectorFunctions {
 
     public static <K, V> Collector<Pair<K, V>, ?, LinkedHashMap<K, V>> pairLinkedHashMapCollector() {
-        return Collectors.toMap(Pair::getK, Pair::getV, (k1, k2) -> k1, LinkedHashMap::new);
+        return Collectors.toMap(Pair::getKey, Pair::getValue, (k1, k2) -> k1, LinkedHashMap::new);
     }
 
     public static <K, V> Collector<Pair<K, V>, ?, Map<K, V>> pairMapCollector() {
-        return Collectors.toMap(Pair::getK, Pair::getV, (k1, k2) -> k1);
+        return Collectors.toMap(Pair::getKey, Pair::getValue, (k1, k2) -> k1);
     }
 
     public static <K, V> Collector<Pair<K, V>, ?, Map<K, V>> pairMapCollector(Supplier<Map<K, V>> mapSupplier) {
-        return Collectors.toMap(Pair::getK, Pair::getV, (k1, k2) -> k1, mapSupplier);
+        return Collectors.toMap(Pair::getKey, Pair::getValue, (k1, k2) -> k1, mapSupplier);
     }
 }
