@@ -1,6 +1,6 @@
 package com.phonepe.platform.bonsai.json.eval;
 
-import com.phonepe.platform.query.dsl.general.InFilter;
+import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,6 +11,6 @@ import org.junit.Test;
 public class JsonPathFilterBuilderTest {
     @Test
     public void testBuilder() {
-        Assert.assertNotNull(new JsonPathFilterBuilder().visit(new InFilter()));
+        Assert.assertNotNull(new JsonPathFilterBuilder().visit(new NotEqualsFilter("a", "b")));
     }
 }

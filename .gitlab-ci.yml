@@ -26,7 +26,7 @@ test:
   stage: test
   <<: *default_tag
   script:
-    - mvn clean test -U -Pquality_check
+    - mvn clean package -U -Pquality_check
     - cat bonsai-core/target/site/jacoco/index.html
 
 deploy:

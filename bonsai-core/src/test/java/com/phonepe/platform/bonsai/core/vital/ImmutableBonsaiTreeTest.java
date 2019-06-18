@@ -5,9 +5,13 @@ import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
+import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
+import com.phonepe.platform.bonsai.core.vital.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
+import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.value.DataValue;
+import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,46 +31,46 @@ public class ImmutableBonsaiTreeTest {
                 .builder(bonsai)
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                                .knotData(ValuedKnotData.dataValue("1"))
                                 .version(123)
                                 .build())
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                                .knotData(ValuedKnotData.dataValue("1"))
                                 .version(123)
                                 .build())
                 .build();
 
         build.createKnot(Knot.builder()
                              .id("k2")
-                             .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                             .knotData(ValuedKnotData.dataValue("1"))
                              .version(123)
                              .build());
     }
 
     @Test
-    public void testImmutableBonsaiTrees() {
+    public void testImmutableBonsaiTreesOriginalShouldBeMutable() {
         Bonsai<Context> bonsai = BonsaiBuilder.builder()
                                               .withBonsaiProperties(BonsaiProperties.builder().build())
                                               .build();
 
-        ImmutableBonsaiBuilder
+        Bonsai<Context> immutable = ImmutableBonsaiBuilder
                 .builder(bonsai)
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                                .knotData(ValuedKnotData.dataValue("1"))
                                 .version(123)
                                 .build())
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                                .knotData(ValuedKnotData.dataValue("1"))
                                 .version(123)
                                 .build())
                 .build();
 
         bonsai.createKnot(Knot.builder()
                               .id("k2")
-                              .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                              .knotData(ValuedKnotData.dataValue("1"))
                               .version(123)
                               .build());
     }
@@ -81,12 +85,12 @@ public class ImmutableBonsaiTreeTest {
                 .builder(bonsai)
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                                .knotData(ValuedKnotData.dataValue("1"))
                                 .version(123)
                                 .build())
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                                .knotData(ValuedKnotData.dataValue("1"))
                                 .version(123)
                                 .build())
                 .build();
@@ -104,13 +108,13 @@ public class ImmutableBonsaiTreeTest {
                 .builder(bonsai)
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                                .knotData(ValuedKnotData.dataValue("1"))
                                 .version(123)
                                 .build())
                 .createMapping("key1", "k1")
                 .createKnot(Knot.builder()
                                 .id("k2")
-                                .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                                .knotData(ValuedKnotData.dataValue("1"))
                                 .version(123)
                                 .build())
                 .createMapping("key2", "k2")
@@ -122,7 +126,7 @@ public class ImmutableBonsaiTreeTest {
 
         bonsai.createKnot(Knot.builder()
                               .id("k3")
-                              .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                              .knotData(ValuedKnotData.dataValue("1"))
                               .version(123)
                               .build());
         bonsai.createMapping("key3", "k3");
@@ -138,20 +142,68 @@ public class ImmutableBonsaiTreeTest {
                                               .withBonsaiProperties(BonsaiProperties.builder().build())
                                               .build();
 
-        Bonsai<Context> build = ImmutableBonsaiBuilder
+        Bonsai<Context> immutable = ImmutableBonsaiBuilder
                 .builder(bonsai)
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                                .knotData(ValuedKnotData.dataValue("1"))
                                 .version(123)
                                 .build())
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.builder().value(DataValue.builder().data("1").build()).build())
+                                .knotData(ValuedKnotData.dataValue("1"))
                                 .version(123)
                                 .build())
                 .build();
 
-        build.createEdge(null);
+        immutable.createEdge(null);
+    }
+
+
+    @Test
+    public void testImmutableBonsaiTreesCreateKnot() {
+        Bonsai<Context> bonsai = BonsaiBuilder.builder()
+                                              .withBonsaiProperties(BonsaiProperties.builder().build())
+                                              .build();
+
+        ImmutableBonsaiBuilder<Context> bonsaiBuilder = ImmutableBonsaiBuilder
+                .builder(bonsai)
+                .createKnot(Knot.builder()
+                                .id("k1")
+                                .knotData(ValuedKnotData.dataValue("1"))
+                                .version(123)
+                                .build())
+                .createKnot(Knot.builder()
+                                .id("k2")
+                                .knotData(ValuedKnotData.dataValue("d1"))
+                                .version(123)
+                                .build())
+                .createKnot(Knot.builder()
+                                .id("k3")
+                                .knotData(ValuedKnotData.dataValue("d3"))
+                                .version(123)
+                                .build())
+                .createKnot(ValuedKnotData.dataValue("2"));
+        bonsaiBuilder.updateKnotData("k1", ValuedKnotData.dataValue("3"));
+        bonsaiBuilder.deleteKnot("k2", false);
+        bonsaiBuilder.createEdge(Edge.builder()
+                                     .version(1)
+                                     .edgeIdentifier(new EdgeIdentifier("e1", 1, 1))
+                                     .filter(new NotEqualsFilter("$.data", "male"))
+                                     .knotId("k3").build());
+        bonsaiBuilder.addVariation("k1", Variation.builder()
+                                                  .knotId("k3")
+                                                  .filter(new NotEqualsFilter("$.data", "male"))
+                                                  .priority(1)
+                                                  .build());
+        Bonsai<Context> immutable = bonsaiBuilder.build();
+
+
+        Assert.assertNotNull(immutable.getKnot("k1"));
+        Assert.assertEquals("3", ((DataValue) ((ValuedKnotData) immutable.getKnot("k1")
+                                                                         .getKnotData()).getValue()).getData());
+        Assert.assertNull(immutable.getKnot("k2"));
+        Assert.assertNotNull(immutable.getEdge("e1"));
+
     }
 }
