@@ -23,6 +23,7 @@ import java.util.stream.Stream;
  */
 public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
     private static final String ERROR_FIELD_STR = "field:";
+    public static final String CANNOT_BE_NULL_STR = " cannot be null";
     private BonsaiProperties bonsaiProperties;
 
     public ComponentBonsaiTreeValidator(BonsaiProperties bonsaiProperties) {
@@ -110,19 +111,19 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
 
     private static <T> void checkNotNull(T reference, String fieldName) {
         if (reference == null) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, ERROR_FIELD_STR + fieldName + " cannot be null");
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, ERROR_FIELD_STR + fieldName + CANNOT_BE_NULL_STR);
         }
     }
 
     private static void checkNotNullOrEmpty(String reference, String fieldName) {
         if (Strings.isNullOrEmpty(reference)) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, ERROR_FIELD_STR + fieldName + " cannot be null");
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, ERROR_FIELD_STR + fieldName + CANNOT_BE_NULL_STR);
         }
     }
 
     private static <T> void checkNotNullOrEmpty(Collection<T> reference, String fieldName) {
         if (reference == null || reference.isEmpty()) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, ERROR_FIELD_STR + fieldName + " cannot be null");
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, ERROR_FIELD_STR + fieldName + CANNOT_BE_NULL_STR);
         }
     }
 

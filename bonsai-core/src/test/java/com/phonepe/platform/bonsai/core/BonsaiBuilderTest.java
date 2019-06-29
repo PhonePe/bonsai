@@ -2,6 +2,7 @@ package com.phonepe.platform.bonsai.core;
 
 import com.phonepe.platform.bonsai.core.vital.BonsaiBuilder;
 import com.phonepe.platform.bonsai.core.vital.BonsaiProperties;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -19,6 +20,7 @@ public class BonsaiBuilderTest {
     public void testBuildSuccess() {
         Bonsai build = BonsaiBuilder.builder()
                                     .withBonsaiProperties(BonsaiProperties.builder().build()).build();
+        Assert.assertNotNull(build);
     }
 
     @Test(expected = IllegalArgumentException.class)
