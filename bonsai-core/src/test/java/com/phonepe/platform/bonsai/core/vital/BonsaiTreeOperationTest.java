@@ -260,23 +260,19 @@ public class BonsaiTreeOperationTest {
     }
 
     @Test
-    public void testSome() {
+    public void testFlatEval() {
         MultiKnotData build = MultiKnotData.builder()
                                            .key("icon_1")
                                            .key("icon_4")
                                            .key("icon_2")
                                            .key("home_page_1")
                                            .build();
-        KeyNode widget_1 = bonsai.evaluate("widget_1", Context.builder()
-                                                              .documentContext(JsonPath.parse(Maps.newHashMap()))
-                                                              .build());
         build.setKeys(Lists.newArrayList("ads"));
-        System.out.println("widget_1 = " + widget_1);
         FlatTreeRepresentation widget = bonsai.evaluateFlat("widget_1", Context
                 .builder()
                 .documentContext(JsonPath.parse(Maps.newHashMap()))
                 .build());
-        System.out.println("widget = " + widget);
+        Assert.assertEquals("widget_1", widget.getRoot());
     }
 
     @Test

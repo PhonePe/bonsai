@@ -16,10 +16,7 @@ import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.Converters;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
-import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
-import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
-import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
-import com.phonepe.platform.bonsai.core.vital.provided.VariationSelectorEngine;
+import com.phonepe.platform.bonsai.core.vital.provided.*;
 import com.phonepe.platform.bonsai.json.eval.JsonPathSetup;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ListNode;
@@ -59,16 +56,15 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     private BonsaiIdGenerator bonsaiIdGenerator;
     private ConflictResolver<Knot> knotConflictResolver;
 
-    public BonsaiTree(KeyTreeStore<String, String> keyTreeStore,
-                      KnotStore<String, Knot> knotStore,
-                      EdgeStore<String, Edge> edgeStore,
+    public BonsaiTree(Stores<String, String, Knot, Edge> stores,
                       VariationSelectorEngine<C> variationSelectorEngine,
-                      ComponentBonsaiTreeValidator componentValidator, BonsaiProperties bonsaiProperties,
+                      ComponentBonsaiTreeValidator componentValidator,
+                      BonsaiProperties bonsaiProperties,
                       BonsaiIdGenerator bonsaiIdGenerator,
                       ConflictResolver<Knot> knotConflictResolver) {
-        this.keyTreeStore = keyTreeStore;
-        this.knotStore = knotStore;
-        this.edgeStore = edgeStore;
+        this.keyTreeStore = stores.getKeyTreeStore();
+        this.knotStore = stores.getKnotStore();
+        this.edgeStore = stores.getEdgeStore();
         this.variationSelectorEngine = variationSelectorEngine;
         this.componentValidator = componentValidator;
         this.bonsaiProperties = bonsaiProperties;

@@ -1,5 +1,6 @@
 package com.phonepe.platform.bonsai.core.vital;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
@@ -11,6 +12,7 @@ import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.value.DataValue;
+import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,6 +22,31 @@ import org.junit.Test;
  * @version 1.0  2018-10-04 - 16:21
  */
 public class ImmutableBonsaiTreeTest {
+
+    private Bonsai<Context> mutableBonsai = BonsaiBuilder.builder()
+                                                         .withBonsaiProperties(BonsaiProperties
+                                                                                       .builder()
+                                                                                       .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
+                                                                                       .mutualExclusivitySettingTurnedOn(false)
+                                                                                       .build())
+                                                         .build();
+    private Bonsai<Context> bonsai = ImmutableBonsaiBuilder
+            .builder(mutableBonsai)
+            .createKnot(Knot.builder()
+                            .id("k1")
+                            .knotData(ValuedKnotData.dataValue("1"))
+                            .version(123)
+                            .build())
+            .createMapping("key1", "k1")
+            .createKnot(Knot.builder()
+                            .id("k2")
+                            .knotData(ValuedKnotData.dataValue("1"))
+                            .version(123)
+                            .build())
+            .createMapping("key2", "k2")
+            .createMapping("key3", ValuedKnotData.dataValue("d2"))
+            .removeMapping("key3")
+            .build();
 
     @Test(expected = BonsaiError.class)
     public void testImmutableBonsaiTreesError() {
@@ -68,11 +95,12 @@ public class ImmutableBonsaiTreeTest {
                                 .build())
                 .build();
 
-        bonsai.createKnot(Knot.builder()
-                              .id("k2")
-                              .knotData(ValuedKnotData.dataValue("1"))
-                              .version(123)
-                              .build());
+        Knot k2 = bonsai.createKnot(Knot.builder()
+                                        .id("k1")
+                                        .knotData(ValuedKnotData.dataValue("2"))
+                                        .version(123)
+                                        .build());
+        Assert.assertNotNull(k2);
     }
 
     @Test(expected = BonsaiError.class)
@@ -205,5 +233,46 @@ public class ImmutableBonsaiTreeTest {
         Assert.assertNull(immutable.getKnot("k2"));
         Assert.assertNotNull(immutable.getEdge("e1"));
 
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void testAddingEdgeFilters() throws BonsaiError {
+        Edge edge1 = bonsai.addVariation("k1",
+                                         Variation.builder()
+                                                  .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
+                                                  .knotId("k2")
+                                                  .build());
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void testUpdateEdgeFilters() throws BonsaiError {
+        Edge edge = bonsai.updateEdgeFilters("k1", "e1",
+                                             Lists.newArrayList(new EqualsFilter("$.gender2", "female")));
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void testAddingEdgeFiltersNotAllowed() {
+        bonsai.addEdgeFilters("e1",
+                              Lists.newArrayList(new EqualsFilter("$.gender", "female2")));
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void testRemoveMapping() {
+        bonsai.removeMapping("e1");
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void testCreateMappingKnot() {
+        bonsai.createMapping("e1", ValuedKnotData.dataValue("asdf"));
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void testDeleteMappingKnot() {
+        bonsai.deleteKnot("e1", false);
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void testDeleteVariation() {
+        bonsai.deleteVariation("k1", "e1", false);
     }
 }

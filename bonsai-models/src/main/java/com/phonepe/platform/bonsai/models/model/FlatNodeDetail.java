@@ -17,4 +17,5 @@ import java.util.List;
 public class FlatNodeDetail {
     private List<Integer> path;
     private FlatNode flatNode;
+    private long version;
 }
