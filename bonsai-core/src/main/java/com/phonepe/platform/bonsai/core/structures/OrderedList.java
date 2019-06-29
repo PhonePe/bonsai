@@ -18,17 +18,20 @@ public class OrderedList<T extends Comparable<T>> extends LinkedList<T> {
     public boolean add(T item) {
         ListIterator<T> iterator = listIterator();
         while (true) {
+            boolean toBreak = false;
             if (!iterator.hasNext()) {
                 iterator.add(item);
-                return true;
-            }
-            T listItem = iterator.next();
-            if (listItem.compareTo(item) > 0) {
+                toBreak = true;
+            } else if (iterator.next().compareTo(item) > 0) {
                 iterator.previous();
                 iterator.add(item);
-                return true;
+                toBreak = true;
+            }
+            if (toBreak) {
+                break;
             }
         }
+        return true;
     }
 
     @Override
