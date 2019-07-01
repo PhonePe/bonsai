@@ -1,9 +1,12 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.collect.ImmutableList;
+import com.phonepe.platform.bonsai.core.data.MapKnotData;
+import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.EdgeIdentifier;
+import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.query.dsl.logical.AndFilter;
 import com.phonepe.platform.query.dsl.logical.OrFilter;
@@ -123,5 +126,40 @@ public class ComponentBonsaiTreeValidatorTest {
                                    .knotId("knotId1")
                                    .priority(1)
                                    .build());
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void validateKnotError() {
+        new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
+                                                         .mutualExclusivitySettingTurnedOn(true)
+                                                         .build())
+                .validate(Knot.builder()
+                              .id("k1")
+                              .version(1)
+                              .build());
+    }
+
+    @Test
+    public void validateKnotValid() {
+        new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
+                                                         .mutualExclusivitySettingTurnedOn(true)
+                                                         .build())
+                .validate(Knot.builder()
+                              .id("k1")
+                              .version(1)
+                              .knotData(new ValuedKnotData())
+                              .build());
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void validateKnotInValid() {
+        new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
+                                                         .mutualExclusivitySettingTurnedOn(true)
+                                                         .build())
+                .validate(Knot.builder()
+                              .id("k1")
+                              .version(1)
+                              .knotData(new MapKnotData())
+                              .build());
     }
 }

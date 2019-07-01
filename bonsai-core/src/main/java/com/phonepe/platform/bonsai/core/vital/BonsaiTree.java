@@ -16,10 +16,7 @@ import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.Converters;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
-import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
-import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
-import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
-import com.phonepe.platform.bonsai.core.vital.provided.VariationSelectorEngine;
+import com.phonepe.platform.bonsai.core.vital.provided.*;
 import com.phonepe.platform.bonsai.json.eval.JsonPathSetup;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ListNode;
@@ -59,16 +56,15 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     private BonsaiIdGenerator bonsaiIdGenerator;
     private ConflictResolver<Knot> knotConflictResolver;
 
-    public BonsaiTree(KeyTreeStore<String, String> keyTreeStore,
-                      KnotStore<String, Knot> knotStore,
-                      EdgeStore<String, Edge> edgeStore,
+    public BonsaiTree(Stores<String, String, Knot, Edge> stores,
                       VariationSelectorEngine<C> variationSelectorEngine,
-                      ComponentBonsaiTreeValidator componentValidator, BonsaiProperties bonsaiProperties,
+                      ComponentBonsaiTreeValidator componentValidator,
+                      BonsaiProperties bonsaiProperties,
                       BonsaiIdGenerator bonsaiIdGenerator,
                       ConflictResolver<Knot> knotConflictResolver) {
-        this.keyTreeStore = keyTreeStore;
-        this.knotStore = knotStore;
-        this.edgeStore = edgeStore;
+        this.keyTreeStore = stores.getKeyTreeStore();
+        this.knotStore = stores.getKnotStore();
+        this.edgeStore = stores.getEdgeStore();
         this.variationSelectorEngine = variationSelectorEngine;
         this.componentValidator = componentValidator;
         this.bonsaiProperties = bonsaiProperties;
@@ -312,15 +308,17 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             @Override
             public KeyNode visit(MultiKnotData multiKnotData) {
                 /* recursively evaluate the list of keys in MultiKnot */
+                List<String> keys = multiKnotData.getKeys();
+                List<KeyNode> nodes = keys != null
+                        ? keys.stream()
+                              .map(key -> evaluate(key, context))
+                              .collect(Collectors.toList())
+                        : null;
                 return new KeyNode(key,
                                    ListNode.builder()
                                            .id(knot.getId())
                                            .version(knot.getVersion())
-                                           .nodes(multiKnotData
-                                                          .getKeys()
-                                                          .stream()
-                                                          .map(key -> evaluate(key, context))
-                                                          .collect(Collectors.toList()))
+                                           .nodes(nodes)
                                            .build(),
                                    edgePath);
             }
@@ -328,16 +326,18 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             @Override
             public KeyNode visit(MapKnotData mapKnotData) {
                 /* recursively evaluate the keys withing the MapKnot data */
+                Map<String, String> mapKeys = mapKnotData.getMapKeys();
+                Map<String, KeyNode> nodeMap = mapKeys != null
+                        ? mapKeys.entrySet()
+                                 .stream()
+                                 .collect(Collectors.toMap(Map.Entry::getKey,
+                                                           entry -> evaluate(entry.getValue(), context)))
+                        : null;
                 return new KeyNode(key,
                                    MapNode.builder()
                                           .id(knot.getId())
                                           .version(knot.getVersion())
-                                          .nodeMap(mapKnotData
-                                                           .getMapKeys()
-                                                           .entrySet()
-                                                           .stream()
-                                                           .collect(Collectors.toMap(Map.Entry::getKey,
-                                                                                     entry -> evaluate(entry.getValue(), context))))
+                                          .nodeMap(nodeMap)
                                           .build(),
                                    edgePath);
             }

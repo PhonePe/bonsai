@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -33,5 +34,9 @@ public class MapEntry<K, V> {
      */
     public static <K, V> Collector<MapEntry<K, V>, ?, Map<K, V>> mapCollector() {
         return Collectors.toMap(MapEntry::getK, MapEntry::getV);
+    }
+
+    public static <K, V> Collector<MapEntry<K, V>, ?, Map<K, V>> mapCollector(Supplier<Map<K, V>> mapSupplier) {
+        return Collectors.toMap(MapEntry::getK, MapEntry::getV, (k1, k2) -> k1, mapSupplier);
     }
 }

@@ -52,6 +52,11 @@ public class BonsaiTreeTest {
         System.out.println(evaluate);
     }
 
+    @Test(expected = BonsaiError.class)
+    public void testBonsaiInvalidKnotCreation() {
+        bonsai.createMapping("mera_data", new MapKnotData());
+    }
+
     @Test
     public void testBonsaiEdgeMaxCondition2() {
         Bonsai<Context> bonsai = BonsaiBuilder.builder()

@@ -5,10 +5,7 @@ import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.structures.ConflictResolver;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
-import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
-import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
-import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
-import com.phonepe.platform.bonsai.core.vital.provided.VariationSelectorEngine;
+import com.phonepe.platform.bonsai.core.vital.provided.*;
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryEdgeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryKeyTreeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryKnotStore;
@@ -93,7 +90,7 @@ public class BonsaiBuilder<C extends Context> {
                 return UUID.randomUUID().toString();
             }
         } : bonsaiIdGenerator;
-        return new BonsaiTree<>(keyTreeStore, knotStore, edgeStore, variationSelectorEngine,
+        return new BonsaiTree<>(new Stores<>(keyTreeStore, knotStore, edgeStore), variationSelectorEngine,
                                 new ComponentBonsaiTreeValidator(bonsaiProperties), bonsaiProperties, bonsaiIdGenerator,
                                 knotConflictResolver);
     }
