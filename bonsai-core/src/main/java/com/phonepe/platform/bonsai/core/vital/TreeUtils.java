@@ -7,7 +7,9 @@ import com.phonepe.platform.bonsai.models.model.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -54,16 +56,17 @@ class TreeUtils {
         keyNode.getNode().accept(new NodeVisitor<Void>() {
             @Override
             public Void visit(ListNode listNode) {
+                List<KeyNode> nodes = listNode.getNodes();
+                List<String> flatNodes = nodes != null
+                        ? nodes.stream()
+                               .peek(k -> flatten(k, mapping)) // recursive action on every item in the list
+                               .map(KeyNode::getKey)
+                               .collect(Collectors.toList())
+                        : Collections.emptyList();
                 mapping.put(
                         keyNode.getKey(),
                         FlatNodeDetail.builder()
-                                      .flatNode(
-                                              new ListFlatNode(
-                                                      listNode.getNodes()
-                                                              .stream()
-                                                              .peek(k -> flatten(k, mapping)) // recursive action on every item in the list
-                                                              .map(KeyNode::getKey)
-                                                              .collect(Collectors.toList())))
+                                      .flatNode(new ListFlatNode(flatNodes))
                                       .path(keyNode.getEdgePath())
                                       .version(listNode.getVersion())
                                       .build());
@@ -83,19 +86,20 @@ class TreeUtils {
 
             @Override
             public Void visit(MapNode mapNode) {
+                Map<String, KeyNode> nodeMap = mapNode.getNodeMap();
+                Map<String, String> flatNodesMap = nodeMap != null
+                        ? nodeMap.entrySet()
+                                 .stream()
+                                 .peek(entry -> flatten(entry.getValue(), mapping))// recursive action on every item in the list
+                                 .map(entry -> MapEntry.of(
+                                         entry.getKey(),
+                                         entry.getValue().getKey()))
+                                 .collect(MapEntry.mapCollector())
+                        : null;
                 mapping.put(
                         keyNode.getKey(),
                         FlatNodeDetail.builder()
-                                      .flatNode(
-                                              new MapFlatNode(
-                                                      mapNode.getNodeMap()
-                                                             .entrySet()
-                                                             .stream()
-                                                             .peek(entry -> flatten(entry.getValue(), mapping))// recursive action on every item in the list
-                                                             .map(entry -> MapEntry.of(
-                                                                     entry.getKey(),
-                                                                     entry.getValue().getKey()))
-                                                             .collect(MapEntry.mapCollector())))
+                                      .flatNode(new MapFlatNode(flatNodesMap))
                                       .version(mapNode.getVersion())
                                       .path(keyNode.getEdgePath())
                                       .build());
