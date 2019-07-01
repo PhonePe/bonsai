@@ -13,6 +13,7 @@ import java.util.Map;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Builder
 public class FlatTreeRepresentation {
     private String root;
     private Map<String, FlatNodeDetail> flatNodeMapping;

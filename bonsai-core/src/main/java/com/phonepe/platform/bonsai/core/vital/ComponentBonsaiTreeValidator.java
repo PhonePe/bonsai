@@ -1,6 +1,7 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.base.Strings;
+import com.phonepe.platform.bonsai.core.data.*;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
@@ -35,6 +36,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
         checkNotNullOrEmpty(knot.getId(), "knot.id");
         checkNotNull(knot.getKnotData(), "knot.knotData");
         checkNotNull(knot.getKnotData().getKnotDataType(), "knot.knotData.knotDataType");
+        validate(knot.getKnotData());
         checkCondition(knot.getVersion() >= 0, "knot.version cannot be less than 0");
         if (knot.getEdges() != null && knot.getEdges().size() > bonsaiProperties.getMaxAllowedVariationsPerKnot()) {
             throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "variations exceed max allowed:" + bonsaiProperties.getMaxAllowedVariationsPerKnot());
@@ -43,6 +45,8 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
 
     @Override
     public void validate(Knot knot, Knot knot2) {
+        validate(knot.getKnotData());
+        validate(knot2.getKnotData());
         if (!TreeUtils.isKnotDataOfSimilarType(knot, knot2)) {
             throw new BonsaiError(BonsaiErrorCode.KNOT_RESOLUTION_ERROR,
                                   String.format("knotData class mismatch rootKnot:%s variationKnot:%s",
@@ -130,5 +134,26 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
         if (!condition) {
             throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, errorReason);
         }
+    }
+
+    private void validate(KnotData knotData) {
+        knotData.accept(new KnotDataVisitor<Void>() {
+            @Override
+            public Void visit(ValuedKnotData valuedKnotData) {
+                return null;
+            }
+
+            @Override
+            public Void visit(MultiKnotData multiKnotData) {
+                checkNotNull(multiKnotData.getKeys(), "knot.knotData.keys[]");
+                return null;
+            }
+
+            @Override
+            public Void visit(MapKnotData mapKnotData) {
+                checkNotNull(mapKnotData.getMapKeys(), "knot.knotData.mapKeys");
+                return null;
+            }
+        });
     }
 }

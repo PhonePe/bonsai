@@ -308,15 +308,17 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             @Override
             public KeyNode visit(MultiKnotData multiKnotData) {
                 /* recursively evaluate the list of keys in MultiKnot */
+                List<String> keys = multiKnotData.getKeys();
+                List<KeyNode> nodes = keys != null
+                        ? keys.stream()
+                              .map(key -> evaluate(key, context))
+                              .collect(Collectors.toList())
+                        : null;
                 return new KeyNode(key,
                                    ListNode.builder()
                                            .id(knot.getId())
                                            .version(knot.getVersion())
-                                           .nodes(multiKnotData
-                                                          .getKeys()
-                                                          .stream()
-                                                          .map(key -> evaluate(key, context))
-                                                          .collect(Collectors.toList()))
+                                           .nodes(nodes)
                                            .build(),
                                    edgePath);
             }
@@ -324,16 +326,18 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             @Override
             public KeyNode visit(MapKnotData mapKnotData) {
                 /* recursively evaluate the keys withing the MapKnot data */
+                Map<String, String> mapKeys = mapKnotData.getMapKeys();
+                Map<String, KeyNode> nodeMap = mapKeys != null
+                        ? mapKeys.entrySet()
+                                 .stream()
+                                 .collect(Collectors.toMap(Map.Entry::getKey,
+                                                           entry -> evaluate(entry.getValue(), context)))
+                        : null;
                 return new KeyNode(key,
                                    MapNode.builder()
                                           .id(knot.getId())
                                           .version(knot.getVersion())
-                                          .nodeMap(mapKnotData
-                                                           .getMapKeys()
-                                                           .entrySet()
-                                                           .stream()
-                                                           .collect(Collectors.toMap(Map.Entry::getKey,
-                                                                                     entry -> evaluate(entry.getValue(), context))))
+                                          .nodeMap(nodeMap)
                                           .build(),
                                    edgePath);
             }
