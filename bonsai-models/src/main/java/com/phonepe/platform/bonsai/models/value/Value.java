@@ -11,13 +11,19 @@ import lombok.Data;
 @Data
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "valueType")
 @JsonSubTypes({
-        @JsonSubTypes.Type(name = "DATA", value = DataValue.class),
-        @JsonSubTypes.Type(name = "REFERENCE", value = ReferenceValue.class)
+        @JsonSubTypes.Type(name = "NUMBER", value = NumberValue.class),
+        @JsonSubTypes.Type(name = "STRING", value = StringValue.class),
+        @JsonSubTypes.Type(name = "BOOLEAN", value = BooleanValue.class),
+        @JsonSubTypes.Type(name = "JSON", value = JsonValue.class),
+        @JsonSubTypes.Type(name = "BYTE", value = ByteValue.class)
 })
 public abstract class Value {
     public enum ValueType {
-        DATA,
-        REFERENCE
+        NUMBER,
+        STRING,
+        BOOLEAN,
+        JSON,
+        BYTE
     }
 
     private ValueType valueType;

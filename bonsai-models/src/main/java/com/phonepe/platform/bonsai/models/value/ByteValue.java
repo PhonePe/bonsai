@@ -1,28 +1,26 @@
 package com.phonepe.platform.bonsai.models.value;
 
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author tushar.naik
- * @version 1.0  27/07/18 - 2:33 AM
+ * @version 1.0  2019-07-01 - 16:42
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ReferenceValue extends Value {
-    private String reference;
+public class ByteValue extends Value{
+    @NotNull
+    private final byte[] value;
 
-    protected ReferenceValue() {
-        super(ValueType.REFERENCE);
-    }
-
-    @Builder
-    public ReferenceValue(String reference) {
-        super(ValueType.REFERENCE);
-        this.reference = reference;
+    public ByteValue(@NotNull @JsonProperty("value") byte[] value) {
+        super(ValueType.BYTE);
+        this.value = value;
     }
 
     @Override

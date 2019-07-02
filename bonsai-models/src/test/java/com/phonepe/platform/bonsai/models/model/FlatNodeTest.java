@@ -1,12 +1,11 @@
 package com.phonepe.platform.bonsai.models.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-
-import static org.junit.Assert.*;
 
 /**
  * @author tushar.naik
@@ -15,11 +14,13 @@ import static org.junit.Assert.*;
 public class FlatNodeTest {
     @Test
     public void name() throws IOException {
-        FlatNode flatNode = new ObjectMapper().readValue("{\n" +
+        ObjectMapper objectMapper = new ObjectMapper()
+                .registerModule(new ParameterNamesModule());
+        FlatNode flatNode = objectMapper.readValue("{\n" +
                                                                  "\t\"type\": \"VALUE\", \n" +
                                                                  "\t\"value\": {\n" +
-                                                                 "\t\t\"valueType\": \"DATA\",\n" +
-                                                                 "\t\t\"data\": 2\n" +
+                                                                 "\t\t\"valueType\": \"NUMBER\",\n" +
+                                                                 "\t\t\"value\": 2\n" +
                                                                  "\t}\n" +
                                                                  "}", FlatNode.class);
         Assert.assertEquals(FlatNode.FlatNodeType.VALUE, flatNode.getType());

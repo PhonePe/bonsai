@@ -17,19 +17,19 @@ public class KnotMergingConflictResolverTest {
     @Test
     public void testConflictResolution() {
         KnotMergingConflictResolver knotMergingConflictResolver = new KnotMergingConflictResolver();
-        Knot preferredKnot = Knot.builder().knotData(ValuedKnotData.dataValue("P1")).build();
-        Knot defaultKnot = Knot.builder().knotData(ValuedKnotData.dataValue("D1")).build();
+        Knot preferredKnot = Knot.builder().knotData(ValuedKnotData.stringValue("P1")).build();
+        Knot defaultKnot = Knot.builder().knotData(ValuedKnotData.stringValue("D1")).build();
         Knot knot = knotMergingConflictResolver.resolveConflict(preferredKnot, defaultKnot);
-        Assert.assertEquals(ValuedKnotData.dataValue("P1"), knot.getKnotData());
+        Assert.assertEquals(ValuedKnotData.stringValue("P1"), knot.getKnotData());
     }
 
     @Test(expected = BonsaiError.class)
     public void testConflictResolutionError() {
         KnotMergingConflictResolver knotMergingConflictResolver = new KnotMergingConflictResolver();
-        Knot preferredKnot = Knot.builder().knotData(ValuedKnotData.dataValue("P1")).build();
+        Knot preferredKnot = Knot.builder().knotData(ValuedKnotData.stringValue("P1")).build();
         Knot defaultKnot = Knot.builder().knotData(MultiKnotData.builder().build()).build();
         Knot knot = knotMergingConflictResolver.resolveConflict(preferredKnot, defaultKnot);
-        Assert.assertEquals(ValuedKnotData.dataValue("P1"), knot.getKnotData());
+        Assert.assertEquals(ValuedKnotData.stringValue("P1"), knot.getKnotData());
     }
 
     @Test(expected = BonsaiError.class)
@@ -38,7 +38,7 @@ public class KnotMergingConflictResolverTest {
         Knot preferredKnot = Knot.builder().knotData(MapKnotData.builder().build()).build();
         Knot defaultKnot = Knot.builder().knotData(MultiKnotData.builder().build()).build();
         Knot knot = knotMergingConflictResolver.resolveConflict(preferredKnot, defaultKnot);
-        Assert.assertEquals(ValuedKnotData.dataValue("P1"), knot.getKnotData());
+        Assert.assertEquals(ValuedKnotData.stringValue("P1"), knot.getKnotData());
     }
 
     @Test

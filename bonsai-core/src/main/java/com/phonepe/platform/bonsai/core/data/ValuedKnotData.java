@@ -1,7 +1,7 @@
 package com.phonepe.platform.bonsai.core.data;
 
-import com.phonepe.platform.bonsai.models.value.DataValue;
-import com.phonepe.platform.bonsai.models.value.Value;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.phonepe.platform.bonsai.models.value.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,7 +32,23 @@ public class ValuedKnotData extends KnotData {
         return knotDataVisitor.visit(this);
     }
 
-    public static ValuedKnotData dataValue(Object data) {
-        return new ValuedKnotData(new DataValue(data));
+    public static ValuedKnotData stringValue(String data) {
+        return new ValuedKnotData(new StringValue(data));
+    }
+
+    public static ValuedKnotData numberValue(Number data) {
+        return new ValuedKnotData(new NumberValue(data));
+    }
+
+    public static ValuedKnotData booleanValue(boolean data) {
+        return new ValuedKnotData(new BooleanValue(data));
+    }
+
+    public static ValuedKnotData byteValue(byte[] data) {
+        return new ValuedKnotData(new ByteValue(data));
+    }
+
+    public static ValuedKnotData jsonValue(JsonNode data) {
+        return new ValuedKnotData(new JsonValue(data));
     }
 }

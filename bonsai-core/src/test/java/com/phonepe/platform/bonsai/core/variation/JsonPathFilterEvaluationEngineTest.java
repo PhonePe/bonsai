@@ -13,7 +13,7 @@ import com.phonepe.platform.bonsai.core.vital.Context;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ValueNode;
-import com.phonepe.platform.bonsai.models.value.DataValue;
+import com.phonepe.platform.bonsai.models.value.StringValue;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,25 +32,21 @@ public class JsonPathFilterEvaluationEngineTest {
 
     @Test
     public void simpleTestingOfBonsai() {
-        Knot knot = bonsai.createKnot(ValuedKnotData.builder()
-                                                    .value(DataValue.builder().data("Data").build())
-                                                    .build());
+        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"));
         bonsai.createMapping("mera_data", knot.getId());
         TreeGenerationHelper.generateEdges(knot, bonsai, 10000);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
         Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals("Data9333", ((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString());
+        Assert.assertEquals("Data9333", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue().toString());
         System.out.println(evaluate);
     }
 
 
     @Test
     public void perfTestingOfBonsai() {
-        Knot knot = bonsai.createKnot(ValuedKnotData.builder()
-                                                    .value(DataValue.builder().data("Data").build())
-                                                    .build());
+        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"));
         bonsai.createMapping("tera_data", knot.getId());
         Timer performanceTreeCreation = new PerformanceEvaluator().evaluate(1, () -> TreeGenerationHelper.generateEdges(knot, bonsai, 1000));
         System.out.println("time for treeCreation = " + performanceTreeCreation.getSnapshot().get99thPercentile());

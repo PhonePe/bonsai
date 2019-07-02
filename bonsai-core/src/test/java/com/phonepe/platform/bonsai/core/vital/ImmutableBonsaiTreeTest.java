@@ -11,7 +11,7 @@ import com.phonepe.platform.bonsai.core.vital.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
 import com.phonepe.platform.bonsai.models.KeyNode;
-import com.phonepe.platform.bonsai.models.value.DataValue;
+import com.phonepe.platform.bonsai.models.value.StringValue;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
 import org.junit.Assert;
@@ -34,17 +34,17 @@ public class ImmutableBonsaiTreeTest {
             .builder(mutableBonsai)
             .createKnot(Knot.builder()
                             .id("k1")
-                            .knotData(ValuedKnotData.dataValue("1"))
+                            .knotData(ValuedKnotData.stringValue("1"))
                             .version(123)
                             .build())
             .createMapping("key1", "k1")
             .createKnot(Knot.builder()
                             .id("k2")
-                            .knotData(ValuedKnotData.dataValue("1"))
+                            .knotData(ValuedKnotData.stringValue("1"))
                             .version(123)
                             .build())
             .createMapping("key2", "k2")
-            .createMapping("key3", ValuedKnotData.dataValue("d2"))
+            .createMapping("key3", ValuedKnotData.stringValue("d2"))
             .removeMapping("key3")
             .build();
 
@@ -58,19 +58,19 @@ public class ImmutableBonsaiTreeTest {
                 .builder(bonsai)
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.dataValue("1"))
+                                .knotData(ValuedKnotData.numberValue(1))
                                 .version(123)
                                 .build())
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.dataValue("1"))
+                                .knotData(ValuedKnotData.numberValue(1))
                                 .version(123)
                                 .build())
                 .build();
 
         build.createKnot(Knot.builder()
                              .id("k2")
-                             .knotData(ValuedKnotData.dataValue("1"))
+                             .knotData(ValuedKnotData.numberValue(1))
                              .version(123)
                              .build());
     }
@@ -85,19 +85,19 @@ public class ImmutableBonsaiTreeTest {
                 .builder(bonsai)
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.dataValue("1"))
+                                .knotData(ValuedKnotData.stringValue("1"))
                                 .version(123)
                                 .build())
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.dataValue("1"))
+                                .knotData(ValuedKnotData.stringValue("1"))
                                 .version(123)
                                 .build())
                 .build();
 
         Knot k2 = bonsai.createKnot(Knot.builder()
                                         .id("k1")
-                                        .knotData(ValuedKnotData.dataValue("2"))
+                                        .knotData(ValuedKnotData.stringValue("2"))
                                         .version(123)
                                         .build());
         Assert.assertNotNull(k2);
@@ -113,12 +113,12 @@ public class ImmutableBonsaiTreeTest {
                 .builder(bonsai)
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.dataValue("1"))
+                                .knotData(ValuedKnotData.stringValue("1"))
                                 .version(123)
                                 .build())
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.dataValue("1"))
+                                .knotData(ValuedKnotData.stringValue("1"))
                                 .version(123)
                                 .build())
                 .build();
@@ -136,13 +136,13 @@ public class ImmutableBonsaiTreeTest {
                 .builder(bonsai)
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.dataValue("1"))
+                                .knotData(ValuedKnotData.stringValue("1"))
                                 .version(123)
                                 .build())
                 .createMapping("key1", "k1")
                 .createKnot(Knot.builder()
                                 .id("k2")
-                                .knotData(ValuedKnotData.dataValue("1"))
+                                .knotData(ValuedKnotData.stringValue("1"))
                                 .version(123)
                                 .build())
                 .createMapping("key2", "k2")
@@ -154,7 +154,7 @@ public class ImmutableBonsaiTreeTest {
 
         bonsai.createKnot(Knot.builder()
                               .id("k3")
-                              .knotData(ValuedKnotData.dataValue("1"))
+                              .knotData(ValuedKnotData.stringValue("1"))
                               .version(123)
                               .build());
         bonsai.createMapping("key3", "k3");
@@ -174,12 +174,12 @@ public class ImmutableBonsaiTreeTest {
                 .builder(bonsai)
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.dataValue("1"))
+                                .knotData(ValuedKnotData.stringValue("1"))
                                 .version(123)
                                 .build())
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.dataValue("1"))
+                                .knotData(ValuedKnotData.stringValue("1"))
                                 .version(123)
                                 .build())
                 .build();
@@ -198,21 +198,21 @@ public class ImmutableBonsaiTreeTest {
                 .builder(bonsai)
                 .createKnot(Knot.builder()
                                 .id("k1")
-                                .knotData(ValuedKnotData.dataValue("1"))
+                                .knotData(ValuedKnotData.stringValue("1"))
                                 .version(123)
                                 .build())
                 .createKnot(Knot.builder()
                                 .id("k2")
-                                .knotData(ValuedKnotData.dataValue("d1"))
+                                .knotData(ValuedKnotData.stringValue("d1"))
                                 .version(123)
                                 .build())
                 .createKnot(Knot.builder()
                                 .id("k3")
-                                .knotData(ValuedKnotData.dataValue("d3"))
+                                .knotData(ValuedKnotData.stringValue("d3"))
                                 .version(123)
                                 .build())
-                .createKnot(ValuedKnotData.dataValue("2"));
-        bonsaiBuilder.updateKnotData("k1", ValuedKnotData.dataValue("3"));
+                .createKnot(ValuedKnotData.stringValue("2"));
+        bonsaiBuilder.updateKnotData("k1", ValuedKnotData.stringValue("3"));
         bonsaiBuilder.deleteKnot("k2", false);
         bonsaiBuilder.createEdge(Edge.builder()
                                      .version(1)
@@ -228,8 +228,8 @@ public class ImmutableBonsaiTreeTest {
 
 
         Assert.assertNotNull(immutable.getKnot("k1"));
-        Assert.assertEquals("3", ((DataValue) ((ValuedKnotData) immutable.getKnot("k1")
-                                                                         .getKnotData()).getValue()).getData());
+        Assert.assertEquals("3", ((StringValue) ((ValuedKnotData) immutable.getKnot("k1")
+                                                                           .getKnotData()).getValue()).getValue());
         Assert.assertNull(immutable.getKnot("k2"));
         Assert.assertNotNull(immutable.getEdge("e1"));
 
@@ -263,7 +263,7 @@ public class ImmutableBonsaiTreeTest {
 
     @Test(expected = BonsaiError.class)
     public void testCreateMappingKnot() {
-        bonsai.createMapping("e1", ValuedKnotData.dataValue("asdf"));
+        bonsai.createMapping("e1", ValuedKnotData.stringValue("asdf"));
     }
 
     @Test(expected = BonsaiError.class)
