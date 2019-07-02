@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
+import com.phonepe.platform.bonsai.core.data.MapKnotData;
 import com.phonepe.platform.bonsai.core.data.MultiKnotData;
 import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
@@ -44,7 +45,8 @@ public class BonsaiTreeFlatEvalTest {
 
         bonsai.createMapping("w1", ValuedKnotData.stringValue("widget1"));
         bonsai.createMapping("w2", ValuedKnotData.stringValue("widget2"));
-        bonsai.createMapping("w3", ValuedKnotData.stringValue("widget3"));
+        bonsai.createMapping("w3", MapKnotData.builder().mapKeys(ImmutableMap.of("k1", "v1")).build());
+        bonsai.createMapping("v1", ValuedKnotData.stringValue("value1"));
 
         bonsai.addVariation(l1.getId(), Variation.builder()
                                                  .filter(new EqualsFilter("$.gender", "female"))
