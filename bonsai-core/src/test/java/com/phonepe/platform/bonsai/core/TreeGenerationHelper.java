@@ -1,8 +1,8 @@
 package com.phonepe.platform.bonsai.core;
 
 import com.phonepe.platform.bonsai.core.vital.Context;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
-import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.value.*;
 import com.phonepe.platform.bonsai.models.data.*;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;

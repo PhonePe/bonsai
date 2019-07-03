@@ -1,8 +1,8 @@
 package com.phonepe.platform.bonsai.core;
 
 import com.google.common.collect.Lists;
-import com.phonepe.platform.bonsai.core.structures.OrderedList;
-import com.phonepe.platform.bonsai.core.vital.blocks.EdgeIdentifier;
+import com.phonepe.platform.bonsai.models.structures.OrderedList;
+import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 import org.junit.Test;
 
 import java.util.Collections;

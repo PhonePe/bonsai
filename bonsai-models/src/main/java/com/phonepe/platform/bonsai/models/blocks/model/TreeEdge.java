@@ -1,7 +1,7 @@
-package com.phonepe.platform.bonsai.core.vital.blocks.model;
+package com.phonepe.platform.bonsai.models.blocks.model;
 
 import com.phonepe.platform.query.dsl.Filter;
-import com.phonepe.platform.bonsai.core.vital.blocks.EdgeIdentifier;
+import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

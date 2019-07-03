@@ -10,7 +10,7 @@ import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.vital.BonsaiBuilder;
 import com.phonepe.platform.bonsai.core.vital.BonsaiProperties;
 import com.phonepe.platform.bonsai.core.vital.Context;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ValueNode;
 import com.phonepe.platform.bonsai.models.value.StringValue;

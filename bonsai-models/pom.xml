@@ -33,5 +33,15 @@
             <version>${jackson.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.phonepe.platform</groupId>
+            <artifactId>query-dsl</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <artifactId>folios-condition-engine</artifactId>
+            <groupId>com.phonepe.folios</groupId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>

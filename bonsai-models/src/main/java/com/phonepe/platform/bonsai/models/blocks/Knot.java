@@ -1,33 +1,29 @@
-package com.phonepe.platform.bonsai.core.vital.blocks.model;
+package com.phonepe.platform.bonsai.models.blocks;
 
+import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import com.phonepe.platform.bonsai.models.data.KnotData;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
- * This is a recursive representation of the tree, without references
- *
  * @author tushar.naik
- * @version 1.0  10/07/18 - 2:38 PM
+ * @version 1.0  16/08/18 - 11:37 PM
  */
 @Data
+@ToString
 @NoArgsConstructor
-public class TreeKnot {
+public class Knot {
     private String id;
     private long version;
-    private List<TreeEdge> treeEdges;
     private KnotData knotData;
+    private OrderedList<EdgeIdentifier> edges;
 
     @Builder
-    public TreeKnot(String id, long version,
-                    List<TreeEdge> treeEdges, KnotData knotData) {
+    public Knot(String id, long version, OrderedList<EdgeIdentifier> edges, KnotData knotData) {
         this.id = id;
         this.version = version;
-        this.treeEdges = treeEdges;
+        this.edges = edges;
         this.knotData = knotData;
     }
 
@@ -35,12 +31,17 @@ public class TreeKnot {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TreeKnot treeKnot = (TreeKnot) o;
-        return Objects.equals(id, treeKnot.id);
+        Knot knot = (Knot) o;
+        return Objects.equals(id, knot.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public Knot updateVersion() {
+        this.version = System.currentTimeMillis();
+        return this;
     }
 }

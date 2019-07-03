@@ -3,13 +3,14 @@ package com.phonepe.platform.bonsai.core;
 import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.vital.Context;
-import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
-import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
-import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
-import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Variation;
+import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
+import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
+import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import com.phonepe.platform.query.dsl.Filter;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.Map;
  * This is a multi level Forest implementation.
  * This FOREST contains TREEs which consists of {@link Knot}s and {@link Edge}s
  * Every {@link Knot} in the tree is associated with a <String> Key
- * Knots contain {@link com.phonepe.platform.bonsai.core.structures.OrderedList} of edges, with some priority.
+ * Knots contain {@link OrderedList} of edges, with some priority.
  * Edges contain a {@link Knot}
  * The {@link Knot}s can, in turn, contain {@link KnotData}
  * KnotData can then point to:

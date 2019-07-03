@@ -1,6 +1,6 @@
 package com.phonepe.platform.bonsai.core.vital;
 
-import com.phonepe.platform.bonsai.core.vital.blocks.EdgeIdentifier;
+import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 
 import java.util.List;
 
