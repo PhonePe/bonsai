@@ -1,12 +1,12 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.base.Strings;
-import com.phonepe.platform.bonsai.core.data.*;
+import com.phonepe.platform.bonsai.models.data.*;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
-import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
-import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.query.dsl.FilterCounter;
 import com.phonepe.platform.query.dsl.FilterFieldIdentifier;
 

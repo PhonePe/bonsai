@@ -1,14 +1,14 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.phonepe.platform.bonsai.core.Bonsai;
-import com.phonepe.platform.bonsai.core.data.KnotData;
+import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
-import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
-import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
-import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
-import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Variation;
+import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
+import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.query.dsl.Filter;

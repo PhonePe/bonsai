@@ -1,13 +1,10 @@
 package com.phonepe.platform.bonsai.core;
 
-import com.phonepe.platform.bonsai.core.data.*;
 import com.phonepe.platform.bonsai.core.vital.Context;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
-import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
-import com.phonepe.platform.bonsai.models.value.DataValue;
-import com.phonepe.platform.bonsai.models.value.ReferenceValue;
-import com.phonepe.platform.bonsai.models.value.Value;
-import com.phonepe.platform.bonsai.models.value.ValueVisitor;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Variation;
+import com.phonepe.platform.bonsai.models.value.*;
+import com.phonepe.platform.bonsai.models.data.*;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 
 import java.util.Random;
@@ -61,14 +58,28 @@ public class TreeGenerationHelper {
                              .value(valuedKnotData.getValue()
                                                   .accept(new ValueVisitor<Value>() {
                                                       @Override
-                                                      public Value visit(DataValue dataValue) {
-                                                          return DataValue.builder()
-                                                                          .data(dataValue.getData().toString() + i)
-                                                                          .build();
+                                                      public Value visit(NumberValue numberValue) {
+                                                          return new NumberValue(numberValue.getValue()
+                                                                                            .doubleValue() + 1);
                                                       }
 
                                                       @Override
-                                                      public Value visit(ReferenceValue referenceValue) {
+                                                      public Value visit(StringValue stringValue) {
+                                                          return new StringValue(stringValue.getValue() + i);
+                                                      }
+
+                                                      @Override
+                                                      public Value visit(BooleanValue booleanValue) {
+                                                          return null;
+                                                      }
+
+                                                      @Override
+                                                      public Value visit(ByteValue byteValue) {
+                                                          return null;
+                                                      }
+
+                                                      @Override
+                                                      public Value visit(JsonValue jsonValue) {
                                                           return null;
                                                       }
                                                   }))

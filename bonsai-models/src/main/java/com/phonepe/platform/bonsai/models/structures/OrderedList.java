@@ -1,4 +1,4 @@
-package com.phonepe.platform.bonsai.core.structures;
+package com.phonepe.platform.bonsai.models.structures;
 
 import java.util.Collection;
 import java.util.LinkedList;

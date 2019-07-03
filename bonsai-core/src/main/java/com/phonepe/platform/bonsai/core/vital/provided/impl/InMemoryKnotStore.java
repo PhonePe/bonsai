@@ -2,7 +2,7 @@ package com.phonepe.platform.bonsai.core.vital.provided.impl;
 
 import com.google.common.collect.Maps;
 import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
 import lombok.AllArgsConstructor;
 
 import java.util.Map;

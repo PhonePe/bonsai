@@ -1,13 +1,13 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.collect.ImmutableList;
-import com.phonepe.platform.bonsai.core.data.MapKnotData;
-import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
+import com.phonepe.platform.bonsai.models.data.MapKnotData;
+import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
-import com.phonepe.platform.bonsai.core.vital.blocks.EdgeIdentifier;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
-import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
+import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.query.dsl.logical.AndFilter;
 import com.phonepe.platform.query.dsl.logical.OrFilter;
 import com.phonepe.platform.query.dsl.numeric.GreaterEqualFilter;

@@ -1,7 +1,7 @@
-package com.phonepe.platform.bonsai.core.vital.blocks.model;
+package com.phonepe.platform.bonsai.models.blocks.model;
 
-import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
 
 /**
  * @author tushar.naik

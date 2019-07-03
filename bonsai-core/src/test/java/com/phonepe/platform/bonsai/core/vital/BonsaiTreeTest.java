@@ -6,14 +6,14 @@ import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.Mapper;
 import com.phonepe.platform.bonsai.core.ObjectExtractor;
 import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
-import com.phonepe.platform.bonsai.core.data.MapKnotData;
-import com.phonepe.platform.bonsai.core.data.MultiKnotData;
-import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
+import com.phonepe.platform.bonsai.models.data.MapKnotData;
+import com.phonepe.platform.bonsai.models.data.MultiKnotData;
+import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
-import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.*;
-import com.phonepe.platform.bonsai.models.value.DataValue;
+import com.phonepe.platform.bonsai.models.value.StringValue;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,16 +39,14 @@ public class BonsaiTreeTest {
 
     @Test(expected = BonsaiError.class)
     public void testBonsaiEdgeMaxCondition() {
-        Knot knot = bonsai.createKnot(ValuedKnotData.builder()
-                                                    .value(DataValue.builder().data("Data").build())
-                                                    .build());
+        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"));
         bonsai.createMapping("mera_data", knot.getId());
         TreeGenerationHelper.generateEdges(knot, bonsai, 10000);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
         Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals("Data9333", ((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString());
+        Assert.assertEquals("Data9333", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue().toString());
         System.out.println(evaluate);
     }
 
@@ -67,16 +65,14 @@ public class BonsaiTreeTest {
                                                                             .build())
                                               .build();
 
-        Knot knot = bonsai.createKnot(ValuedKnotData.builder()
-                                                    .value(DataValue.builder().data("Data").build())
-                                                    .build());
+        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"));
         bonsai.createMapping("mera_data", knot.getId());
         TreeGenerationHelper.generateEdges(knot, bonsai, 9);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
         Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals("Data", ((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString());
+        Assert.assertEquals("Data", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue().toString());
         System.out.println(evaluate);
     }
 
@@ -90,16 +86,14 @@ public class BonsaiTreeTest {
                                                                             .build())
                                               .build();
 
-        Knot knot = bonsai.createKnot(ValuedKnotData.builder()
-                                                    .value(DataValue.builder().data("Data").build())
-                                                    .build());
+        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"));
         bonsai.createMapping("mera_data", knot.getId());
         TreeGenerationHelper.generateEdges(knot, bonsai, 11);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
         Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals("Data9333", ((DataValue) ((ValueNode) evaluate.getNode()).getValue()).getData().toString());
+        Assert.assertEquals("Data9333", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue().toString());
         System.out.println(evaluate);
     }
 
@@ -285,11 +279,7 @@ public class BonsaiTreeTest {
                                                           .build());
 
         bonsai.createMapping("widget_1", widgetKnot1.getId());
-        Knot icon3 = bonsai.createKnot(ValuedKnotData.builder()
-                                                     .value(DataValue.builder()
-                                                                     .data("This is some coool icon")
-                                                                     .build())
-                                                     .build());
+        Knot icon3 = bonsai.createKnot(ValuedKnotData.stringValue(("This is some coool icon")));
         /* there is no older mapping, hence it will return null */
         Knot icon_3 = bonsai.createMapping("icon_3", icon3.getId());
         Assert.assertNull(icon_3);
@@ -326,10 +316,10 @@ public class BonsaiTreeTest {
 
     @Test
     public void testBonsaiPreferenceEvaluation() {
-        Knot l1 = bonsai.createKnot(ValuedKnotData.dataValue("L-1"));
+        Knot l1 = bonsai.createKnot(ValuedKnotData.stringValue("L-1"));
         bonsai.createMapping("baseKey", l1.getId());
 
-        Knot l21 = bonsai.createKnot(ValuedKnotData.dataValue("L-2-1"));
+        Knot l21 = bonsai.createKnot(ValuedKnotData.stringValue("L-2-1"));
 
         bonsai.addVariation(l1.getId(), Variation.builder()
                                                  .filter(new EqualsFilter("$.gender", "female"))
@@ -340,10 +330,10 @@ public class BonsaiTreeTest {
                                                                         .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
                                                                         .build());
         Assert.assertEquals(l21.getId(), nonPreferencialEval.getNode().getId());
-        Assert.assertEquals("L-2-1", ((DataValue) ((ValueNode) nonPreferencialEval.getNode()).getValue()).getData());
+        Assert.assertEquals("L-2-1", ((StringValue) ((ValueNode) nonPreferencialEval.getNode()).getValue()).getValue());
         Knot preferredKnot = Knot.builder()
                                  .id("P1kaID")
-                                 .knotData(ValuedKnotData.dataValue("P-1"))
+                                 .knotData(ValuedKnotData.stringValue("P-1"))
                                  .build();
         KeyNode preferentialEval = bonsai.evaluate
                 ("baseKey",
@@ -352,8 +342,8 @@ public class BonsaiTreeTest {
                         .preferences(ImmutableMap.of("baseKey", preferredKnot))
                         .build());
         Assert.assertEquals(preferredKnot.getId(), preferentialEval.getNode().getId());
-        Assert.assertEquals(((DataValue) ((ValuedKnotData) preferredKnot.getKnotData()).getValue()).getData(),
-                            ((DataValue) ((ValueNode) preferentialEval.getNode()).getValue()).getData());
+        Assert.assertEquals(((StringValue) ((ValuedKnotData) preferredKnot.getKnotData()).getValue()).getValue(),
+                            ((StringValue) ((ValueNode) preferentialEval.getNode()).getValue()).getValue());
     }
 
     @Test(expected = BonsaiError.class)
@@ -367,7 +357,7 @@ public class BonsaiTreeTest {
                                                  .build());
         Knot preferredKnot = Knot.builder()
                                  .id("P1kaID")
-                                 .knotData(ValuedKnotData.dataValue("P-1"))
+                                 .knotData(ValuedKnotData.stringValue("P-1"))
                                  .build();
         bonsai.evaluate("l1",
                         Context.builder()
@@ -387,9 +377,9 @@ public class BonsaiTreeTest {
 
         bonsai.createMapping("l1", l1.getId());
 
-        bonsai.createMapping("w1", ValuedKnotData.dataValue("widget1"));
-        bonsai.createMapping("w2", ValuedKnotData.dataValue("widget2"));
-        bonsai.createMapping("w3", ValuedKnotData.dataValue("widget3"));
+        bonsai.createMapping("w1", ValuedKnotData.stringValue("widget1"));
+        bonsai.createMapping("w2", ValuedKnotData.stringValue("widget2"));
+        bonsai.createMapping("w3", ValuedKnotData.stringValue("widget3"));
 
         bonsai.addVariation(l1.getId(), Variation.builder()
                                                  .filter(new EqualsFilter("$.gender", "female"))
@@ -416,14 +406,14 @@ public class BonsaiTreeTest {
                         .preferences(ImmutableMap.of("l1", preferredKnot))
                         .build());
         Assert.assertEquals(preferredKnot.getId(), preferentialEval.getNode().getId());
-        Assert.assertEquals("widget3", ((DataValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
-                .getNodes().get(0).getNode()).getValue()).getData());
-        Assert.assertEquals("widget1", ((DataValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
-                .getNodes().get(1).getNode()).getValue()).getData());
+        Assert.assertEquals("widget3", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+                .getNodes().get(0).getNode()).getValue()).getValue());
+        Assert.assertEquals("widget1", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+                .getNodes().get(1).getNode()).getValue()).getValue());
 
         /* since we are using KnotMergingConflictResolver, which will merge the remaining keys for MultiKnot */
-        Assert.assertEquals("widget2", ((DataValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
-                .getNodes().get(2).getNode()).getValue()).getData());
+        Assert.assertEquals("widget2", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+                .getNodes().get(2).getNode()).getValue()).getValue());
 
 
         /* now evaluate with a new value for widget1 */
@@ -434,19 +424,19 @@ public class BonsaiTreeTest {
                         .preferences(ImmutableMap.of("l1", preferredKnot,
                                                      "w1", Knot.builder()
                                                                .id("w1kaID")
-                                                               .knotData(ValuedKnotData.dataValue("newDataValue"))
+                                                               .knotData(ValuedKnotData.stringValue("newStringValue"))
                                                                .build()))
                         .build());
         Assert.assertEquals(preferredKnot.getId(), preferentialEval.getNode().getId());
-        Assert.assertEquals("widget3", ((DataValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
-                .getNodes().get(0).getNode()).getValue()).getData());
+        Assert.assertEquals("widget3", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+                .getNodes().get(0).getNode()).getValue()).getValue());
 
         /* the value should be whatever we have set in preferences */
-        Assert.assertEquals("newDataValue", ((DataValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
-                .getNodes().get(1).getNode()).getValue()).getData());
+        Assert.assertEquals("newStringValue", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+                .getNodes().get(1).getNode()).getValue()).getValue());
 
-        Assert.assertEquals("widget2", ((DataValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
-                .getNodes().get(2).getNode()).getValue()).getData());
+        Assert.assertEquals("widget2", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+                .getNodes().get(2).getNode()).getValue()).getValue());
 
     }
 

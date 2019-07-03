@@ -2,7 +2,7 @@ package com.phonepe.platform.bonsai.core.vital.provided;
 
 import com.phonepe.folios.condition.engine.ConditionEngine;
 import com.phonepe.platform.bonsai.core.vital.Context;
-import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.json.eval.JsonPathFilterEvaluationEngine;
 
 /**

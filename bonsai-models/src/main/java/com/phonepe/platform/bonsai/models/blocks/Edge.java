@@ -1,4 +1,4 @@
-package com.phonepe.platform.bonsai.core.vital.blocks;
+package com.phonepe.platform.bonsai.models.blocks;
 
 import com.phonepe.folios.condition.engine.Condition;
 import com.phonepe.platform.query.dsl.Filter;

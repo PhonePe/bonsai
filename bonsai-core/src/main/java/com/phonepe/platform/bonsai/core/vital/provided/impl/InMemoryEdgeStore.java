@@ -1,7 +1,7 @@
 package com.phonepe.platform.bonsai.core.vital.provided.impl;
 
 import com.google.common.collect.Maps;
-import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
 import lombok.AllArgsConstructor;
 
