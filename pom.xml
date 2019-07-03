@@ -30,7 +30,6 @@
         <!--sonar settings-->
         <sonar.coverage.exclusions>
             **com/phonepe/platform/bonsai/core/structures/CollectorFunctions*,
-            **com/phonepe/platform/bonsai/models/**,
             **com/phonepe/platform/bonsai/json/eval/**
         </sonar.coverage.exclusions>
     </properties>

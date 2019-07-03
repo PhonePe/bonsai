@@ -3,7 +3,7 @@ package com.phonepe.platform.bonsai.core.vital;
 import com.google.common.collect.Sets;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
-import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
+import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import org.junit.Assert;
 import org.junit.Test;

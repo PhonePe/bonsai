@@ -6,7 +6,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.PerformanceEvaluator;
 import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
-import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
+import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.vital.BonsaiBuilder;
 import com.phonepe.platform.bonsai.core.vital.BonsaiProperties;
 import com.phonepe.platform.bonsai.core.vital.Context;

@@ -1,6 +1,6 @@
 package com.phonepe.platform.bonsai.core.vital.blocks.model;
 
-import com.phonepe.platform.bonsai.core.data.KnotData;
+import com.phonepe.platform.bonsai.models.data.KnotData;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

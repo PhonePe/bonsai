@@ -1,9 +1,9 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.collect.ImmutableMap;
-import com.phonepe.platform.bonsai.core.data.MapKnotData;
-import com.phonepe.platform.bonsai.core.data.MultiKnotData;
-import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
+import com.phonepe.platform.bonsai.models.data.MapKnotData;
+import com.phonepe.platform.bonsai.models.data.MultiKnotData;
+import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
 import org.junit.Assert;

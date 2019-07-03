@@ -3,7 +3,7 @@ package com.phonepe.platform.bonsai.core.vital;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.phonepe.platform.bonsai.core.Bonsai;
-import com.phonepe.platform.bonsai.core.data.*;
+import com.phonepe.platform.bonsai.models.data.*;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.platform.bonsai.core.structures.ConflictResolver;

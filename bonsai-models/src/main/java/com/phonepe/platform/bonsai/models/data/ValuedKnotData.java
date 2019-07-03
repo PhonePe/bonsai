@@ -1,4 +1,4 @@
-package com.phonepe.platform.bonsai.core.data;
+package com.phonepe.platform.bonsai.models.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.phonepe.platform.bonsai.models.value.*;
