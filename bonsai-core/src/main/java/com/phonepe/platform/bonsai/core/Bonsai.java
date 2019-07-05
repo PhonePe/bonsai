@@ -1,15 +1,16 @@
 package com.phonepe.platform.bonsai.core;
 
-import com.phonepe.platform.bonsai.core.data.KnotData;
+import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.vital.Context;
-import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
-import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
-import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
-import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Variation;
+import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
+import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
+import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import com.phonepe.platform.query.dsl.Filter;
 
 import java.util.List;
@@ -19,13 +20,13 @@ import java.util.Map;
  * This is a multi level Forest implementation.
  * This FOREST contains TREEs which consists of {@link Knot}s and {@link Edge}s
  * Every {@link Knot} in the tree is associated with a <String> Key
- * Knots contain {@link com.phonepe.platform.bonsai.core.structures.OrderedList} of edges, with some priority.
+ * Knots contain {@link OrderedList} of edges, with some priority.
  * Edges contain a {@link Knot}
  * The {@link Knot}s can, in turn, contain {@link KnotData}
  * KnotData can then point to:
- * - Some form of value {@link com.phonepe.platform.bonsai.core.data.ValuedKnotData}
- * - List of keys , which could point to {@link Knot}s in the Bonsai Tree {@link com.phonepe.platform.bonsai.core.data.MultiKnotData}
- * - bunch of mapped keys , which could point to {@link Knot}s in the Bonsai Tree {@link com.phonepe.platform.bonsai.core.data.MapKnotData}
+ * - Some form of value {@link com.phonepe.platform.bonsai.models.data.ValuedKnotData}
+ * - List of keys , which could point to {@link Knot}s in the Bonsai Tree {@link com.phonepe.platform.bonsai.models.data.MultiKnotData}
+ * - bunch of mapped keys , which could point to {@link Knot}s in the Bonsai Tree {@link com.phonepe.platform.bonsai.models.data.MapKnotData}
  *
  * @author tushar.naik
  * @version 1.0  27/07/18 - 2:54 AM
@@ -209,7 +210,7 @@ public interface Bonsai<C extends Context> {
      * The following will be done:
      * 1. get the Node for the key
      * 2. recursively traverse the Node, along the matching edges. Match of the edge, will be based on the condition.
-     * 3. also, follow the keys for {@link com.phonepe.platform.bonsai.core.data.MapKnotData}, {@link com.phonepe.platform.bonsai.core.data.MultiKnotData}
+     * 3. also, follow the keys for {@link com.phonepe.platform.bonsai.models.data.MapKnotData}, {@link com.phonepe.platform.bonsai.models.data.MultiKnotData}
      *
      * @param key     key to start evaluation
      * @param context context to be evaluated against

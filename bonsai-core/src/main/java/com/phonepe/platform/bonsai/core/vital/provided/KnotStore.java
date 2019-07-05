@@ -1,6 +1,6 @@
 package com.phonepe.platform.bonsai.core.vital.provided;
 
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
 
 /**
  * A store for knots

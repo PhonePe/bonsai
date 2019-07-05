@@ -3,7 +3,7 @@
     <parent>
         <artifactId>bonsai</artifactId>
         <groupId>com.phonepe.platform</groupId>
-        <version>1.0.10</version>
+        <version>1.0.11</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -54,12 +54,6 @@
         </dependency>
 
         <dependency>
-            <artifactId>folios-condition-engine</artifactId>
-            <groupId>com.phonepe.folios</groupId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -75,7 +69,12 @@
             <artifactId>metrics-core</artifactId>
             <version>${metrics.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-jackson</artifactId>
+            <version>1.3.12</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

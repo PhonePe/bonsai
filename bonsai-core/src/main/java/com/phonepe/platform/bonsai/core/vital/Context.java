@@ -1,7 +1,7 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.jayway.jsonpath.DocumentContext;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
 import lombok.Builder;
 import lombok.Data;
 

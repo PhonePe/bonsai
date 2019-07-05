@@ -1,0 +1,15 @@
+{
+  "type": "VALUE",
+  "value": {
+    "valueType": "JSON",
+    "value":  {
+      "some": "json",
+      "this": 123,
+      "shit": {
+        "is": [
+          "some", "array"
+        ]
+      }
+    }
+  }
+}

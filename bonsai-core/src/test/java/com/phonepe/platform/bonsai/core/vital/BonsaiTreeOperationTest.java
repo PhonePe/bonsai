@@ -7,19 +7,18 @@ import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.Mapper;
 import com.phonepe.platform.bonsai.core.ObjectExtractor;
-import com.phonepe.platform.bonsai.core.data.KnotDataVisitor;
-import com.phonepe.platform.bonsai.core.data.MapKnotData;
-import com.phonepe.platform.bonsai.core.data.MultiKnotData;
-import com.phonepe.platform.bonsai.core.data.ValuedKnotData;
+import com.phonepe.platform.bonsai.models.data.KnotDataVisitor;
+import com.phonepe.platform.bonsai.models.data.MapKnotData;
+import com.phonepe.platform.bonsai.models.data.MultiKnotData;
+import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.core.vital.blocks.Edge;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
-import com.phonepe.platform.bonsai.core.vital.blocks.Variation;
-import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeEdge;
-import com.phonepe.platform.bonsai.core.vital.blocks.model.TreeKnot;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Variation;
+import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
+import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
-import com.phonepe.platform.bonsai.models.value.DataValue;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import org.junit.Assert;
 import org.junit.Test;
@@ -61,11 +60,7 @@ public class BonsaiTreeOperationTest {
                                                           .build());
 
         bonsai.createMapping("widget_1", widgetKnot1.getId());
-        Knot icon3 = bonsai.createKnot(ValuedKnotData.builder()
-                                                     .value(DataValue.builder()
-                                                                     .data("This is some coool icon")
-                                                                     .build())
-                                                     .build());
+        Knot icon3 = bonsai.createKnot(ValuedKnotData.stringValue("This is some coool icon"));
         /* there is no older mapping, hence it will return null */
         Knot icon_3 = bonsai.createMapping("icon_3", icon3.getId());
         Assert.assertNull(icon_3);

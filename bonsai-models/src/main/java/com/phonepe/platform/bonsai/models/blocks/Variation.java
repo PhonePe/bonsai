@@ -1,4 +1,4 @@
-package com.phonepe.platform.bonsai.core.vital.blocks;
+package com.phonepe.platform.bonsai.models.blocks;
 
 import com.phonepe.platform.query.dsl.Filter;
 import lombok.*;

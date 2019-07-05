@@ -1,7 +1,7 @@
-package com.phonepe.platform.bonsai.core.vital.blocks;
+package com.phonepe.platform.bonsai.models.blocks;
 
-import com.phonepe.platform.bonsai.core.structures.OrderedList;
-import com.phonepe.platform.bonsai.core.data.KnotData;
+import com.phonepe.platform.bonsai.models.structures.OrderedList;
+import com.phonepe.platform.bonsai.models.data.KnotData;
 import lombok.*;
 
 import java.util.Objects;

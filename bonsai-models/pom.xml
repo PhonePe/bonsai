@@ -3,7 +3,7 @@
     <parent>
         <artifactId>bonsai</artifactId>
         <groupId>com.phonepe.platform</groupId>
-        <version>1.0.10</version>
+        <version>1.0.11</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -21,6 +21,27 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-parameter-names</artifactId>
+            <version>${jackson.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.phonepe.platform</groupId>
+            <artifactId>query-dsl</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <artifactId>folios-condition-engine</artifactId>
+            <groupId>com.phonepe.folios</groupId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 </project>

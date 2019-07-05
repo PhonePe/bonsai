@@ -1,7 +1,7 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.phonepe.platform.bonsai.core.structures.MapEntry;
-import com.phonepe.platform.bonsai.core.vital.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.*;
 import com.phonepe.platform.bonsai.models.model.*;
 import lombok.AccessLevel;
