@@ -29,6 +29,10 @@ public class ImmutableBonsaiBuilder<C extends Context> {
         return this;
     }
 
+    public Knot createKnotAndCapture(KnotData knotData) {
+        return bonsai.createKnot(knotData);
+    }
+
     public ImmutableBonsaiBuilder<C> createKnot(Knot knot) {
         bonsai.createKnot(knot);
         return this;
