@@ -34,6 +34,10 @@ public class ImmutableBonsaiBuilder<C extends Context> {
         return this;
     }
 
+    public Knot createKnotAndCapture(Knot knot) {
+        return bonsai.createKnot(knot);
+    }
+
     public ImmutableBonsaiBuilder<C> updateKnotData(String id, KnotData knotData) {
         bonsai.updateKnotData(id, knotData);
         return this;
@@ -54,6 +58,9 @@ public class ImmutableBonsaiBuilder<C extends Context> {
         return this;
     }
 
+    public Edge addVariationAndCapture(String knotId, Variation variation) {
+        return bonsai.addVariation(knotId, variation);
+    }
     public ImmutableBonsaiBuilder<C> updateEdgeFilters(String knotId, String edgeId,
                                                        List<Filter> filters) {
         bonsai.updateEdgeFilters(knotId, edgeId, filters);
@@ -87,6 +94,11 @@ public class ImmutableBonsaiBuilder<C extends Context> {
                                                    KnotData knotData) {
         bonsai.createMapping(key, knotData);
         return this;
+    }
+
+    public Knot createMappingAndCapture(String key,
+                                        KnotData knotData) {
+        return bonsai.createMapping(key, knotData);
     }
 
     public ImmutableBonsaiBuilder<C> removeMapping(String key) {
