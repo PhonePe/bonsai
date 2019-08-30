@@ -3,12 +3,16 @@ package com.phonepe.platform.bonsai.core.vital;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.phonepe.platform.bonsai.core.Bonsai;
-import com.phonepe.platform.bonsai.models.data.*;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.platform.bonsai.core.structures.ConflictResolver;
 import com.phonepe.platform.bonsai.core.structures.CycleIdentifier;
-import com.phonepe.platform.bonsai.models.structures.OrderedList;
+import com.phonepe.platform.bonsai.core.vital.provided.*;
+import com.phonepe.platform.bonsai.json.eval.JsonPathSetup;
+import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.models.ListNode;
+import com.phonepe.platform.bonsai.models.MapNode;
+import com.phonepe.platform.bonsai.models.ValueNode;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
@@ -16,15 +20,12 @@ import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.model.Converters;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
-import com.phonepe.platform.bonsai.core.vital.provided.*;
-import com.phonepe.platform.bonsai.json.eval.JsonPathSetup;
-import com.phonepe.platform.bonsai.models.KeyNode;
-import com.phonepe.platform.bonsai.models.ListNode;
-import com.phonepe.platform.bonsai.models.MapNode;
-import com.phonepe.platform.bonsai.models.ValueNode;
+import com.phonepe.platform.bonsai.models.data.*;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
+import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.query.dsl.FilterFieldIdentifier;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +46,7 @@ import java.util.stream.Stream;
  * @author tushar.naik
  * @version 1.0  11/07/18 - 2:09 PM
  */
+@Slf4j
 public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     private KeyTreeStore<String, String> keyTreeStore;
@@ -284,12 +286,14 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
         /* if key mapping doesn't contain the key, return an empty KeyNode */
         if (Strings.isNullOrEmpty(id)) {
+            log.warn("[evaluate] no knotId mapping found for key:" + key);
             return KeyNode.empty(key);
         }
 
         List<Integer> edgePath = Lists.newArrayList();
         Knot knot = getMatchingKnot(key, knotStore.getKnot(id), context, edgePath);
         if (knot == null) {
+            log.warn("[evaluate] knotId:" + id + " null for key:" + key);
             return KeyNode.empty(key, edgePath);
         }
 
