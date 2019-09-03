@@ -21,6 +21,8 @@ compile:
   <<: *default_tag
   script:
     - mvn -U compile
+  except:
+    - master
 
 test:
   stage: test
@@ -28,12 +30,16 @@ test:
   script:
     - mvn clean package -U -Pquality_check
     - cat bonsai-core/target/site/jacoco/index.html
+  except:
+    - master
 
 deploy:
   stage: deploy
   <<: *default_tag
   script:
     - mvn clean deploy -U -DskipTests
+  except:
+    - master
 
 release:
   stage: release
@@ -41,7 +47,9 @@ release:
   script:
     - git remote set-url origin "git@gitlab.phonepe.com:${CI_PROJECT_PATH}.git"
     - git checkout master
+    - git pull
     - git checkout develop
+    - git pull
     - mvn -U jgitflow:release-start jgitflow:release-finish
     - git push --all
     - git push --tags origin
