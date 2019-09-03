@@ -18,7 +18,7 @@ public class InMemoryEdgeStore implements EdgeStore<String, Edge> {
     private final Map<String, Edge> storage;
 
     public InMemoryEdgeStore() {
-        storage = Maps.newHashMap();
+        storage = Maps.newConcurrentMap();
     }
 
     @Override

@@ -15,7 +15,7 @@ public class InMemoryKeyTreeStore implements KeyTreeStore<String,String> {
     private final Map<String, String> storage;
 
     public InMemoryKeyTreeStore() {
-        this.storage = Maps.newHashMap();
+        this.storage = Maps.newConcurrentMap();
     }
 
     @Override

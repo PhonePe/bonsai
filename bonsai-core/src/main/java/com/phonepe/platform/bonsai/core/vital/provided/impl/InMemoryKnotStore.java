@@ -16,7 +16,7 @@ public class InMemoryKnotStore implements KnotStore<String, Knot> {
     private final Map<String, Knot> storage;
 
     public InMemoryKnotStore() {
-        this.storage = Maps.newHashMap();
+        this.storage = Maps.newConcurrentMap();
     }
 
     @Override
