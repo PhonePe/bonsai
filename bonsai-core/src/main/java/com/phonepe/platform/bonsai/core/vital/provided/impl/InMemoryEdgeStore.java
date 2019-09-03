@@ -1,8 +1,8 @@
 package com.phonepe.platform.bonsai.core.vital.provided.impl;
 
 import com.google.common.collect.Maps;
-import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
 import lombok.AllArgsConstructor;
 
 import java.util.LinkedHashMap;
@@ -18,22 +18,31 @@ public class InMemoryEdgeStore implements EdgeStore<String, Edge> {
     private final Map<String, Edge> storage;
 
     public InMemoryEdgeStore() {
-        storage = Maps.newHashMap();
+        storage = Maps.newConcurrentMap();
     }
 
     @Override
-    public Edge mapEdge(String s, Edge edge) {
-        return storage.put(s, edge);
+    public Edge mapEdge(String id, Edge edge) {
+        if (id == null) {
+            return null;
+        }
+        return storage.put(id, edge);
     }
 
     @Override
-    public Edge getEdge(String s) {
-        return storage.get(s);
+    public Edge getEdge(String id) {
+        if (id == null) {
+            return null;
+        }
+        return storage.get(id);
     }
 
     @Override
-    public Edge deleteEdge(String s) {
-        return storage.remove(s);
+    public Edge deleteEdge(String id) {
+        if (id == null) {
+            return null;
+        }
+        return storage.remove(id);
     }
 
     @Override
