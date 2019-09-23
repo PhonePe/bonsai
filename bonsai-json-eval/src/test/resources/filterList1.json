@@ -29,5 +29,10 @@
     "iterable": true,
     "field": "$.listData",
     "value": "text1"
+  },
+  {
+    "operator": "CONTAINS",
+    "field": "$.transaction",
+    "value": "id"
   }
 ]
