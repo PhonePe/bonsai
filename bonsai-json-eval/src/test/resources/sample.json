@@ -1,0 +1,12 @@
+{
+  "transaction": "tid01",
+  "success": true,
+  "data": {
+    "source": "u1",
+    "dest": "u2"
+  },
+  "listData": [
+    "text1",
+    "text2"
+  ]
+}
