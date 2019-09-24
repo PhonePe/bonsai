@@ -1,0 +1,38 @@
+[
+  {
+    "operator": "EQUALS",
+    "field": "$.transaction",
+    "value": "tid01"
+  },
+  {
+    "operator": "EQUALS",
+    "field": "$.transactio",
+    "value": "tid01"
+  },
+  {
+    "operator": "NOT_EQUALS",
+    "field": "$.transaction",
+    "value": "tid02"
+  },
+  {
+    "operator": "STRING_ENDS_WITH",
+    "field": "$.transaction",
+    "value": "01"
+  },
+  {
+    "operator": "STRING_STARTS_WITH",
+    "field": "$.transaction",
+    "value": "tid"
+  },
+  {
+    "operator": "CONTAINS",
+    "iterable": true,
+    "field": "$.listData",
+    "value": "text1"
+  },
+  {
+    "operator": "CONTAINS",
+    "field": "$.transaction",
+    "value": "id"
+  }
+]
