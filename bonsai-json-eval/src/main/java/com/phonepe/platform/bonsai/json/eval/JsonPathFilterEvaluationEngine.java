@@ -92,8 +92,8 @@ public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
     @Override
     public Boolean visit(InFilter filter) {
         List<Object> nonNullValues = nonNullValues(filter, OBJECT_TYPE_REF);
-        Set<Object> notIn = new HashSet<>(filter.getValues());
-        return isNotEmpty(nonNullValues) && nonNullValues.stream().anyMatch(notIn::contains);
+        Set<Object> valueSet = new HashSet<>(filter.getValues());
+        return isNotEmpty(nonNullValues) && nonNullValues.stream().anyMatch(valueSet::contains);
     }
 
     @Override
