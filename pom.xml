@@ -26,6 +26,7 @@
         <mockito.version>2.28.2</mockito.version>
         <jackson.version>2.9.9</jackson.version>
         <junit.version>4.12</junit.version>
+        <guava.version>28.1-jre</guava.version>
 
         <!--sonar settings-->
         <sonar.coverage.exclusions>
@@ -40,7 +41,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>24.0-jre</version>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -66,7 +67,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.12</version>
+                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

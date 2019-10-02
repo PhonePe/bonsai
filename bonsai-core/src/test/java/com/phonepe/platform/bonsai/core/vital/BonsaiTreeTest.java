@@ -6,15 +6,16 @@ import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.Mapper;
 import com.phonepe.platform.bonsai.core.ObjectExtractor;
 import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
+import com.phonepe.platform.bonsai.core.exception.BonsaiError;
+import com.phonepe.platform.bonsai.models.*;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.data.MapKnotData;
 import com.phonepe.platform.bonsai.models.data.MultiKnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
-import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.models.blocks.Knot;
-import com.phonepe.platform.bonsai.models.blocks.Variation;
-import com.phonepe.platform.bonsai.models.*;
 import com.phonepe.platform.bonsai.models.value.StringValue;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
+import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -46,7 +47,7 @@ public class BonsaiTreeTest {
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
         Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals("Data9333", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue().toString());
+        Assert.assertEquals("Data9333", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue());
         System.out.println(evaluate);
     }
 
@@ -93,8 +94,30 @@ public class BonsaiTreeTest {
                                                                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
                                                                .build());
         Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals("Data9333", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue().toString());
+        Assert.assertEquals("Data9333", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue()
+                                                                                                   .toString());
         System.out.println(evaluate);
+    }
+
+    @Test
+    public void testJsonPathEval() throws IOException {
+        Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
+        Knot level1 = bonsai.createMapping("test", ValuedKnotData.stringValue("1"));
+        Knot level21 = bonsai.createKnot(ValuedKnotData.stringValue("21"));
+        Knot level22 = bonsai.createKnot(ValuedKnotData.stringValue("22"));
+        bonsai.addVariation(level1.getId(), Variation.builder()
+                                                     .filter(EqualsFilter.builder().field("$.location.cityy")
+                                                                         .value(true).build())
+                                                     .knotId(level21.getId())
+                                                     .build());
+        bonsai.addVariation(level1.getId(), Variation.builder()
+                                                     .filter(NotEqualsFilter.builder().field("$.location.cityy")
+                                                                            .value(false).build())
+                                                     .knotId(level22.getId())
+                                                     .build());
+        bonsai.evaluate("test", Context.builder()
+                                       .documentContext(JsonPath.parse(userContext1))
+                                       .build());
     }
 
     @Test
