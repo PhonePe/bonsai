@@ -6,6 +6,7 @@ import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.query.dsl.FilterVisitor;
 import com.phonepe.platform.query.dsl.general.*;
 import com.phonepe.platform.query.dsl.logical.AndFilter;
+import com.phonepe.platform.query.dsl.logical.NotFilter;
 import com.phonepe.platform.query.dsl.logical.OrFilter;
 import com.phonepe.platform.query.dsl.numeric.*;
 import com.phonepe.platform.query.dsl.string.StringEndsWithFilter;
@@ -92,8 +93,8 @@ public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
     @Override
     public Boolean visit(InFilter filter) {
         List<Object> nonNullValues = nonNullValues(filter, OBJECT_TYPE_REF);
-        Set<Object> notIn = new HashSet<>(filter.getValues());
-        return isNotEmpty(nonNullValues) && nonNullValues.stream().anyMatch(notIn::contains);
+        Set<Object> valueSet = new HashSet<>(filter.getValues());
+        return isNotEmpty(nonNullValues) && nonNullValues.stream().anyMatch(valueSet::contains);
     }
 
     @Override
@@ -104,7 +105,7 @@ public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
 
     @Override
     public Boolean visit(EqualsFilter filter) {
-            return applyAllMatchFilter(filter, OBJECT_TYPE_REF, equalsFilter(filter));
+        return applyAllMatchFilter(filter, OBJECT_TYPE_REF, equalsFilter(filter));
     }
 
     @Override
@@ -120,6 +121,11 @@ public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
     @Override
     public Boolean visit(OrFilter orFilter) {
         return orFilter.getFilters().stream().anyMatch(k -> k.accept(this));
+    }
+
+    @Override
+    public Boolean visit(NotFilter notFilter) {
+        return !notFilter.getFilter().accept(this);
     }
 
     @Override
@@ -141,7 +147,6 @@ public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////  Helper Functions  /////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
     private <T> Boolean applyAllMatchFilter(Filter filter, TypeRef<List<T>> typeRef, Predicate<T> predicate) {
