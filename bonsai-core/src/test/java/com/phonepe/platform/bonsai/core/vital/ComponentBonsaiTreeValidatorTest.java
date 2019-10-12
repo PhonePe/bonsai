@@ -1,14 +1,16 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.collect.ImmutableList;
-import com.phonepe.platform.bonsai.models.data.MapKnotData;
-import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
+import com.phonepe.platform.bonsai.models.data.MapKnotData;
+import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
+import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.query.dsl.logical.AndFilter;
+import com.phonepe.platform.query.dsl.logical.NotFilter;
 import com.phonepe.platform.query.dsl.logical.OrFilter;
 import com.phonepe.platform.query.dsl.numeric.GreaterEqualFilter;
 import com.phonepe.platform.query.dsl.numeric.LessEqualFilter;
@@ -101,6 +103,17 @@ public class ComponentBonsaiTreeValidatorTest {
                                         .knotId("knotId1")
                                         .filter(new AndFilter(ImmutableList.of(new GreaterEqualFilter("field1", 123),
                                                                                new GreaterEqualFilter("field1", 121))))
+                                        .build());
+    }
+
+    @Test()
+    public void validateEdgeErrorOnInnerFiltersContainSameField2() {
+        componentValidator.validate(Edge.builder()
+                                        .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
+                                        .version(1)
+                                        .knotId("knotId1")
+                                        .filter(new EqualsFilter("field1", 100))
+                                        .filter(new NotFilter(new GreaterEqualFilter("field1", 123)))
                                         .build());
     }
 

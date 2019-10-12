@@ -538,7 +538,11 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                                                     knot.getId(), allFields));
             }
             if (!allFields.isEmpty() &&
-                    edge.getFilters().stream().anyMatch(filter -> !allFields.contains(filter.getField()))) {
+                    edge.getFilters()
+                        .stream()
+                        /* if any edge's filter's field, isn't part of the existing set, throw exception */
+                        .anyMatch(filter -> !allFields.contains(
+                                filter.accept(new FilterFieldIdentifier()).collect(Collectors.joining())))) {
                 throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR);
             }
         }
