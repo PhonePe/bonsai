@@ -50,5 +50,13 @@
       "field": "$.transaction",
       "value": "id"
     }
+  },
+  {
+    "operator": "NOT",
+    "filter": {
+      "operator": "EQUALS",
+      "field": "$.transaction",
+      "value": "id2"
+    }
   }
 ]

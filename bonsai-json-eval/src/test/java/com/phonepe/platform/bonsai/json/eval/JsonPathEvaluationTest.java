@@ -28,6 +28,6 @@ public class JsonPathEvaluationTest {
         long count = filters.stream()
                             .filter(filter -> filter.accept(eval))
                             .count();
-        Assert.assertEquals( 7, count);
+        Assert.assertEquals( 8, count);
     }
 }
