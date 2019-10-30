@@ -2,8 +2,12 @@ package com.phonepe.platform.bonsai.core.vital.provided;
 
 import com.phonepe.folios.condition.engine.ConditionEngine;
 import com.phonepe.platform.bonsai.core.vital.Context;
+import com.phonepe.platform.bonsai.json.eval.GenericFilterContext;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.json.eval.JsonPathFilterEvaluationEngine;
+
+
+import java.util.function.Function;
 
 /**
  * This is responsible for matching the {@link Edge}s filters against the {@link Context}
@@ -16,6 +20,16 @@ import com.phonepe.platform.bonsai.json.eval.JsonPathFilterEvaluationEngine;
  */
 public class VariationSelectorEngine<C extends Context> extends ConditionEngine<C, Edge> {
 
+    private final Function<GenericFilterContext, Boolean> genericFilterHandler;
+
+    public VariationSelectorEngine() {
+        this(genericFilterContext -> true);
+    }
+
+    public VariationSelectorEngine(Function<GenericFilterContext, Boolean> genericFilterHandler) {
+        this.genericFilterHandler = genericFilterHandler;
+    }
+
     @Override
     public Boolean match(C context, Edge edge) {
         /* in case no document context is passed, we will not match the edge's filters */
@@ -23,7 +37,7 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
             return false;
         }
         return edge.getFilters()
-                   .stream()
-                   .allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine(context.getDocumentContext())));
+                .stream()
+                .allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine(context.getDocumentContext(), genericFilterHandler)));
     }
 }

@@ -15,6 +15,7 @@ import com.phonepe.platform.query.dsl.string.StringStartsWithFilter;
 import lombok.AllArgsConstructor;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,8 @@ public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
     };
 
     private DocumentContext context;
+
+    private final Function<GenericFilterContext, Boolean> genericFilterHandler;
 
     @Override
     public Boolean visit(ContainsFilter filter) {
@@ -142,6 +145,12 @@ public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
     public Boolean visit(StringRegexMatchFilter filter) {
         /* todo create a small Pattern compiled cache, to avoid compile every time */
         return applyAllMatchFilter(filter, STRING_TYPE_REF, k -> k.matches(filter.getValue()));
+    }
+
+    @Override
+    public Boolean visit(GenericFilter filter) {
+        GenericFilterContext genericFilterContext = new GenericFilterContext(filter, context);
+        return genericFilterHandler.apply(genericFilterContext);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
