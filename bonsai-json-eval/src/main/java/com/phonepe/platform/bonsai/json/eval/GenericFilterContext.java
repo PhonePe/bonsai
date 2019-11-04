@@ -4,14 +4,12 @@ import com.jayway.jsonpath.DocumentContext;
 import com.phonepe.platform.query.dsl.general.GenericFilter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @author utsab.b on 30/10/19.
  */
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class GenericFilterContext {
     private GenericFilter genericFilter;
     private DocumentContext context;
