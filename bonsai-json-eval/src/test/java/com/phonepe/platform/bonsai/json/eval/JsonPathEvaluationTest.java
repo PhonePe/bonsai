@@ -22,7 +22,7 @@ public class JsonPathEvaluationTest {
     public void testJsonPathEval() throws IOException {
         JsonPathSetup.setup();
         Map object = objectExtractor.getObject("sample.json", Map.class);
-        JsonPathFilterEvaluationEngine eval = new JsonPathFilterEvaluationEngine(JsonPath.parse(object));
+        JsonPathFilterEvaluationEngine eval = new JsonPathFilterEvaluationEngine(JsonPath.parse(object), genericFilterContext -> true);
         List<Filter> filters = objectExtractor.getObject("filterList1.json", new TypeReference<List<Filter>>() {
         });
         long count = filters.stream()
