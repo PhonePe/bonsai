@@ -7,19 +7,21 @@ import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.Mapper;
 import com.phonepe.platform.bonsai.core.ObjectExtractor;
-import com.phonepe.platform.bonsai.models.data.KnotDataVisitor;
-import com.phonepe.platform.bonsai.models.data.MapKnotData;
-import com.phonepe.platform.bonsai.models.data.MultiKnotData;
-import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
+import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
-import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.models.data.KnotDataVisitor;
+import com.phonepe.platform.bonsai.models.data.MapKnotData;
+import com.phonepe.platform.bonsai.models.data.MultiKnotData;
+import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
+import com.phonepe.platform.query.dsl.general.GenericFilter;
+import com.phonepe.platform.query.dsl.logical.OrFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -189,6 +191,36 @@ public class BonsaiTreeOperationTest {
                                                           .filter(new EqualsFilter("$.someOtherPivot", "female"))
                                                           .knotId(femaleConditionKnot.getId())
                                                           .build());
+    }
+
+    @Test
+    public void testPivotCheck2() {
+        bonsai.createMapping("home_page_1", MultiKnotData.builder()
+                                                         .key("widget_1")
+                                                         .key("widget_2")
+                                                         .key("widget_3")
+                                                         .build());
+        Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
+                                                                  .key("icon_3")
+                                                                  .key("icon_1")
+                                                                  .key("icon_4")
+                                                                  .build());
+        Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
+                                                                         .key("icon_1")
+                                                                         .key("icon_4")
+                                                                         .key("icon_2")
+                                                                         .key("icon_3")
+                                                                         .build());
+        Edge female = bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
+                                                                        .filter(new EqualsFilter("$.gender", "female"))
+                                                                        .knotId(femaleConditionKnot.getId())
+                                                                        .build());
+        bonsai.updateEdgeFilters(widgetKnot1.getId(), female.getEdgeIdentifier().getId(),
+                                 Lists.newArrayList(OrFilter.builder()
+                                                            .filter(new EqualsFilter("$.gender", "female"))
+                                                            .filter(GenericFilter.builder().field("$.gender")
+                                                                                 .value("SDf")
+                                                                                 .build()).build()));
     }
 
     @Test(expected = BonsaiError.class)
