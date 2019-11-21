@@ -49,6 +49,8 @@ import java.util.stream.Stream;
 @Slf4j
 public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
+    private static final FilterFieldIdentifier FIELD_IDENTIFIER = new FilterFieldIdentifier();
+
     private KeyTreeStore<String, String> keyTreeStore;
     private KnotStore<String, Knot> knotStore;
     private EdgeStore<String, Edge> edgeStore;
@@ -528,7 +530,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                                             .stream()
                                             .flatMap(k -> k.getFilters()
                                                            .stream()
-                                                           .map(filter -> filter.accept(new FilterFieldIdentifier()))
+                                                           .map(filter -> filter.accept(FIELD_IDENTIFIER))
                                                            .reduce(Stream::concat)
                                                            .orElse(Stream.empty()))
                                             .collect(Collectors.toSet());
@@ -541,8 +543,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                     edge.getFilters()
                         .stream()
                         /* if any edge's filter's field, isn't part of the existing set, throw exception */
-                        .anyMatch(filter -> !allFields.contains(
-                                filter.accept(new FilterFieldIdentifier()).collect(Collectors.joining())))) {
+                        .anyMatch(filter -> !allFields.containsAll(
+                                filter.accept(FIELD_IDENTIFIER).collect(Collectors.toSet())))) {
                 throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR);
             }
         }

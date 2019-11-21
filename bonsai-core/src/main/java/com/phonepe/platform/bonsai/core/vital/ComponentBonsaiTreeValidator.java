@@ -24,6 +24,8 @@ import java.util.stream.Stream;
  */
 public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
     private static final String ERROR_FIELD_STR = "field:%s cannot be null";
+    private static final FilterFieldIdentifier FIELD_IDENTIFIER = new FilterFieldIdentifier();
+
     private BonsaiProperties bonsaiProperties;
 
     public ComponentBonsaiTreeValidator(BonsaiProperties bonsaiProperties) {
@@ -72,7 +74,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
         if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
             Set<String> allFields = edge.getFilters()
                                         .stream()
-                                        .map(filter -> filter.accept(new FilterFieldIdentifier()))
+                                        .map(filter -> filter.accept(FIELD_IDENTIFIER))
                                         .reduce(Stream::concat)
                                         .orElse(Stream.empty())
                                         .collect(Collectors.toSet());
@@ -102,7 +104,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
         if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
             Set<String> allFields = variation.getFilters()
                                              .stream()
-                                             .map(filter -> filter.accept(new FilterFieldIdentifier()))
+                                             .map(filter -> filter.accept(FIELD_IDENTIFIER))
                                              .reduce(Stream::concat)
                                              .orElse(Stream.empty())
                                              .collect(Collectors.toSet());
