@@ -44,6 +44,8 @@ public class BonsaiTreeEdgeOperationTest {
 
         Assert.assertEquals(2, edge.getFilters().size());
         Assert.assertEquals(2, bonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().size());
+        Assert.assertEquals("$.gender", bonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().get(0).getField());
+        Assert.assertEquals("$.gender2", bonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().get(1).getField());
     }
 
     @Test
