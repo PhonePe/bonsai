@@ -197,7 +197,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             throw new BonsaiError(BonsaiErrorCode.EDGE_ABSENT, "No edge found for edgeId:" + edgeId);
         }
         /* need to create a copy */
-        ArrayList<Filter> newFilters = new ArrayList<>(filters);
+        ArrayList<Filter> newFilters = new ArrayList<>(edge.getFilters());
         newFilters.addAll(filters);
         edge.setFilters(newFilters);
         componentValidator.validate(edge);
