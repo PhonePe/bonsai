@@ -195,6 +195,14 @@ public class BonsaiTreeOperationTest {
 
     @Test
     public void testPivotCheck2() {
+        Bonsai<Context> bonsai = BonsaiBuilder.builder()
+                                              .withBonsaiProperties(BonsaiProperties
+                                                                            .builder()
+                                                                            .maxAllowedConditionsPerEdge(10)
+                                                                            .maxAllowedVariationsPerKnot(10)
+                                                                            .mutualExclusivitySettingTurnedOn(true)
+                                                                            .build())
+                                              .build();
         bonsai.createMapping("home_page_1", MultiKnotData.builder()
                                                          .key("widget_1")
                                                          .key("widget_2")
@@ -215,12 +223,14 @@ public class BonsaiTreeOperationTest {
                                                                         .filter(new EqualsFilter("$.gender", "female"))
                                                                         .knotId(femaleConditionKnot.getId())
                                                                         .build());
-        bonsai.updateEdgeFilters(widgetKnot1.getId(), female.getEdgeIdentifier().getId(),
-                                 Lists.newArrayList(OrFilter.builder()
-                                                            .filter(new EqualsFilter("$.gender", "female"))
-                                                            .filter(GenericFilter.builder().field("$.gender")
-                                                                                 .value("SDf")
-                                                                                 .build()).build()));
+        Edge edge = bonsai.updateEdgeFilters(widgetKnot1.getId(), female.getEdgeIdentifier().getId(),
+                                             Lists.newArrayList(OrFilter.builder()
+                                                                        .filter(new EqualsFilter("$.gender", "female"))
+                                                                        .filter(GenericFilter.builder()
+                                                                                             .field("$.gender")
+                                                                                             .value("SDf")
+                                                                                             .build()).build()));
+        Assert.assertNotNull(edge);
     }
 
     @Test(expected = BonsaiError.class)

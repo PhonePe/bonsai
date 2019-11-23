@@ -182,6 +182,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             throw new BonsaiError(BonsaiErrorCode.EDGE_ABSENT, "No edge found for edgeId:" + edgeId);
         }
         edge.setFilters(filters);
+        componentValidator.validate(edge);
 
         /* if there is any edge with a different pivot (ie, condition is on a different field), in the inner layer, throw exception */
         validateConstraints(knot, edge);
@@ -522,31 +523,43 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     private void validateConstraints(Knot knot, Edge edge) {
         if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
-            Map<String, Edge> allEdges = edgeStore.getAllEdges(knot.getEdges()
-                                                                   .stream()
-                                                                   .map(EdgeIdentifier::getId)
-                                                                   .collect(Collectors.toList()));
-            Set<String> allFields = allEdges.values()
-                                            .stream()
-                                            .flatMap(k -> k.getFilters()
-                                                           .stream()
-                                                           .map(filter -> filter.accept(FIELD_IDENTIFIER))
-                                                           .reduce(Stream::concat)
-                                                           .orElse(Stream.empty()))
-                                            .collect(Collectors.toSet());
-            if (allFields.size() > 1) {
+            Map<String, Edge> allEdges = edgeStore.getAllEdges(
+                    knot.getEdges()
+                        .stream()
+                        .map(EdgeIdentifier::getId)
+                        .filter(e -> !edge.getEdgeIdentifier().getId().equals(e))// all edges that arent the current edge being added
+                        .collect(Collectors.toList()));
+            Set<String> existingEdgeFields = allEdges.values()
+                                                     .stream()
+                                                     .flatMap(k -> k.getFilters()
+                                                                    .stream()
+                                                                    .map(filter -> filter.accept(FIELD_IDENTIFIER))
+                                                                    .reduce(Stream::concat)
+                                                                    .orElse(Stream.empty()))
+                                                     .collect(Collectors.toSet());
+            if (existingEdgeFields.size() > 1) {
                 throw new BonsaiError(BonsaiErrorCode.INVALID_STATE,
                                       String.format("mutualExclusivitySettingTurnedOn but multiple fields exist for knot:%s fields:%s",
-                                                    knot.getId(), allFields));
+                                                    knot.getId(), existingEdgeFields));
             }
-            if (!allFields.isEmpty() &&
-                    edge.getFilters()
-                        .stream()
-                        /* if any edge's filter's field, isn't part of the existing set, throw exception */
-                        .anyMatch(filter -> !allFields.containsAll(
-                                filter.accept(FIELD_IDENTIFIER).collect(Collectors.toSet())))) {
-                throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR);
+            if (!existingEdgeFields.isEmpty() && anyFieldNotInExistingEdgeFields(edge, existingEdgeFields)) {
+
+                Set<String> edgeFields = edge.getFilters()
+                                             .stream()
+                                             /* if any edge's filter's field, isn't part of the existing set, throw exception */
+                                             .flatMap(filter -> filter.accept(FIELD_IDENTIFIER))
+                                             .collect(Collectors.toSet());
+                throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR,
+                                      "existing:" + existingEdgeFields + " new:" + edgeFields);
             }
         }
+    }
+
+    private boolean anyFieldNotInExistingEdgeFields(Edge edge, Set<String> allFields) {
+        return edge.getFilters()
+                   .stream()
+                   /* if any edge's filter's field, isn't part of the existing set, throw exception */
+                   .anyMatch(filter -> !allFields.containsAll(
+                           filter.accept(FIELD_IDENTIFIER).collect(Collectors.toSet())));
     }
 }
