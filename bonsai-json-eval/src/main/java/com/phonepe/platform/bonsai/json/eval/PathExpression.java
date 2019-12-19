@@ -89,7 +89,7 @@ public class PathExpression {
         switch (operation) {
             case SUM:
                 return new Pair<>(key, reValue(getDoubleStream(values).sum()));
-            case OPERATION:
+            case AVERAGE:
                 return new Pair<>(key, reValue(getDoubleStream(values).average().orElse(0)));
             case MAX:
                 return new Pair<>(key, reValue(getDoubleStream(values).max().orElse(0)));
@@ -151,7 +151,7 @@ public class PathExpression {
 
     public enum Operation {
         SUM,
-        OPERATION,
+        AVERAGE,
         MAX,
         MIN,
         LENGTH,

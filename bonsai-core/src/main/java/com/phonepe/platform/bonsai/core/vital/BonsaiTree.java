@@ -157,6 +157,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                                                            variation.getPriority()))
                         .knotId(variation.getKnotId())
                         .version(System.currentTimeMillis())
+                        .live(variation.getLive())
+                        .percentage(variation.getPercentage())
                         .filters(variation.getFilters())
                         .build();
 
