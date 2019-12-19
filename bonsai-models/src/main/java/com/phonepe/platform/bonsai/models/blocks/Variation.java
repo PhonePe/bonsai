@@ -23,4 +23,10 @@ public class Variation {
     private List<Filter> filters;
 
     private String knotId;
+    
+    /* these is a nullable field, hence we aren't using primitive type */
+    private Boolean live;
+
+    /* these is a nullable field, hence we aren't using primitive type */
+    private Float percentage;
 }
