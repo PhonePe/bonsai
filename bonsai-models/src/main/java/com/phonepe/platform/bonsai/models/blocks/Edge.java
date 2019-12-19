@@ -4,6 +4,7 @@ import com.phonepe.folios.condition.engine.Condition;
 import com.phonepe.platform.query.dsl.Filter;
 import lombok.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,7 +25,13 @@ public class Edge extends Condition {
     private List<Filter> filters;
 
     @Builder
-    public Edge(EdgeIdentifier edgeIdentifier, String knotId, long version, @Singular List<Filter> filters) {
+    public Edge(final EdgeIdentifier edgeIdentifier,
+                final String knotId,
+                final @Singular List<Filter> filters,
+                final long version,
+                final Boolean live,
+                final Float percentage) {
+        super(live == null ? true : live, percentage == null ? 100f : percentage, Collections.emptyMap());
         this.edgeIdentifier = edgeIdentifier;
         this.knotId = knotId;
         this.version = version;
