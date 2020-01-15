@@ -3,12 +3,16 @@ package com.phonepe.platform.bonsai.core.vital;
 import com.google.common.base.Preconditions;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.structures.ConflictResolver;
-import com.phonepe.platform.bonsai.models.blocks.Edge;
-import com.phonepe.platform.bonsai.models.blocks.Knot;
-import com.phonepe.platform.bonsai.core.vital.provided.*;
+import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
+import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
+import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
+import com.phonepe.platform.bonsai.core.vital.provided.Stores;
+import com.phonepe.platform.bonsai.core.vital.provided.VariationSelectorEngine;
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryEdgeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryKeyTreeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryKnotStore;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
 
 import java.util.UUID;
 
@@ -73,8 +77,8 @@ public class BonsaiBuilder<C extends Context> {
         edgeStore = edgeStore == null ? new InMemoryEdgeStore() : edgeStore;
         knotConflictResolver = knotConflictResolver == null ? new KnotMergingConflictResolver() : knotConflictResolver;
         variationSelectorEngine = variationSelectorEngine == null ?
-                new VariationSelectorEngine<>() :
-                variationSelectorEngine;
+                new VariationSelectorEngine<>() : variationSelectorEngine;
+        final ComponentBonsaiTreeValidator bonsaiTreeValidator = new ComponentBonsaiTreeValidator(bonsaiProperties);
         Preconditions.checkArgument(bonsaiProperties.getMaxAllowedConditionsPerEdge() > 0,
                                     "maxAllowedConditionsPerEdge cannot be < 1");
         Preconditions.checkArgument(bonsaiProperties.getMaxAllowedVariationsPerKnot() > 0,
@@ -90,8 +94,12 @@ public class BonsaiBuilder<C extends Context> {
                 return UUID.randomUUID().toString();
             }
         } : bonsaiIdGenerator;
-        return new BonsaiTree<>(new Stores<>(keyTreeStore, knotStore, edgeStore), variationSelectorEngine,
-                                new ComponentBonsaiTreeValidator(bonsaiProperties), bonsaiProperties, bonsaiIdGenerator,
-                                knotConflictResolver);
+        return new BonsaiTree<>(
+                new Stores<>(keyTreeStore, knotStore, edgeStore),
+                variationSelectorEngine,
+                bonsaiTreeValidator,
+                bonsaiProperties,
+                bonsaiIdGenerator,
+                knotConflictResolver);
     }
 }

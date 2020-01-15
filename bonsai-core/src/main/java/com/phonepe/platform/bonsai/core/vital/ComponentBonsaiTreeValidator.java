@@ -1,16 +1,25 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.base.Strings;
-import com.phonepe.platform.bonsai.models.data.*;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
+import com.phonepe.platform.bonsai.models.blocks.delta.EdgeDeltaOperation;
+import com.phonepe.platform.bonsai.models.blocks.delta.KeyMappingDeltaOperation;
+import com.phonepe.platform.bonsai.models.blocks.delta.KnotDeltaOperation;
+import com.phonepe.platform.bonsai.models.data.KnotData;
+import com.phonepe.platform.bonsai.models.data.KnotDataVisitor;
+import com.phonepe.platform.bonsai.models.data.MapKnotData;
+import com.phonepe.platform.bonsai.models.data.MultiKnotData;
+import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
+import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.query.dsl.FilterCounter;
 import com.phonepe.platform.query.dsl.FilterFieldIdentifier;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,14 +55,14 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
     }
 
     @Override
-    public void validate(Knot knot, Knot knot2) {
-        validate(knot.getKnotData());
-        validate(knot2.getKnotData());
-        if (!TreeUtils.isKnotDataOfSimilarType(knot, knot2)) {
+    public void validate(Knot existingKnot, Knot newKnot) {
+        validate(existingKnot.getKnotData());
+        validate(newKnot.getKnotData());
+        if (!TreeUtils.isKnotDataOfSimilarType(existingKnot, newKnot)) {
             throw new BonsaiError(BonsaiErrorCode.KNOT_RESOLUTION_ERROR,
                                   String.format("knotData class mismatch rootKnot:%s variationKnot:%s",
-                                                knot.getKnotData().getClass(),
-                                                knot2.getKnotData().getClass()));
+                                                existingKnot.getKnotData().getClass(),
+                                                newKnot.getKnotData().getClass()));
         }
     }
 
@@ -112,6 +121,63 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
                 throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR);
             }
         }
+    }
+
+    @Override
+    public void validate(final KeyMappingDeltaOperation keyMappingDeltaOperation) {
+        checkNotNull(keyMappingDeltaOperation, "keyMappingDeltaOperation : [Key to KnotId Mapping]");
+        checkNotNull(keyMappingDeltaOperation.getDeltaOperationType(), "keyMappingDeltaOperation.deltaOperationType");
+        checkNotNullOrEmpty(keyMappingDeltaOperation.getKeyId(), "keyMappingDeltaOperation.keyId");
+        checkNotNullOrEmpty(keyMappingDeltaOperation.getKnotId(), "keyMappingDeltaOperation.knotId");
+    }
+
+    @Override
+    public void validate(final KnotDeltaOperation knotDeltaOperation) {
+        checkNotNull(knotDeltaOperation, "knotDeltaOperation");
+        checkNotNull(knotDeltaOperation.getDeltaOperationType(), "knotDeltaOperation.deltaOperationType");
+
+        final Knot knot = knotDeltaOperation.getKnot();
+        checkNotNull(knot, "knotDeltaOperation.knot");
+        checkNotNullOrEmpty(knot.getId(), "knotDeltaOperation.knot.Id");
+        checkNotNull(knot.getKnotData(), "knotDeltaOperation.knot.knotData");
+        checkNotNull(knot.getKnotData().getKnotDataType(), "knotDeltaOperation.knot.knotData.knotDataType");
+        validate(knot.getKnotData());
+        // This condition will ensure, the edge has been added/modified.
+        checkCondition((0 == knot.getVersion()),
+                "The version of [delta knot] should be zero.");
+    }
+
+    @Override
+    public void validate(final EdgeDeltaOperation edgeDeltaOperation) {
+        checkNotNull(edgeDeltaOperation, "edgeDeltaOperation");
+        checkNotNull(edgeDeltaOperation.getDeltaOperationType(), "edgeDeltaOperation.deltaOperationType");
+
+        final Edge edge = edgeDeltaOperation.getEdge();
+        checkNotNull(edge, "edgeDeltaOperation.edge");
+        checkNotNull(edge.getEdgeIdentifier(), "edgeDeltaOperation.edge.edgeIdentifier");
+        checkNotNullOrEmpty(edge.getEdgeIdentifier().getId(), "edgeDeltaOperation.edge.edgeIdentifier.id");
+        // This check is important to make sure edge contains the mimimum details to connected child KnotId.
+        checkNotNullOrEmpty(edge.getKnotId(), "edgeDeltaOperation.edge.knotId");
+        checkCondition(edge.getEdgeIdentifier().getPriority() >= 0,
+                "edgeDeltaOperation.edge.priority should be more than 0");
+
+        final List<Filter> filters = edge.getFilters();
+        checkNotNullOrEmpty(filters, "edgeDeltaOperation.edge.filters");
+        checkCondition(filters.stream().mapToInt(k -> k.accept(new FilterCounter())).sum() <=
+                        bonsaiProperties.getMaxAllowedConditionsPerEdge(),
+                String.format("edgeDeltaOperation.edge.filters exceed max allowed count: %d.",
+                        bonsaiProperties.getMaxAllowedConditionsPerEdge()));
+        if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
+            final Set<String> allFields = filters.stream().map(filter -> filter.accept(new FilterFieldIdentifier()))
+                    .reduce(Stream::concat).orElse(Stream.empty()).collect(Collectors.toSet());
+            if (!allFields.isEmpty() && allFields.size() > 1) {
+                throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR,
+                        "fields are not mutually exclusive fields:" + allFields);
+            }
+        }
+        // This condition will ensure, the edge has been added/modified.
+        checkCondition((0 == edge.getVersion()),
+                "The version of [delta edge] should be zero.");
     }
 
     private static <T> void checkNotNull(T reference, String fieldName) {
