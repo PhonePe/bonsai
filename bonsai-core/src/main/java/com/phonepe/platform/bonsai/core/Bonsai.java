@@ -1,5 +1,6 @@
 package com.phonepe.platform.bonsai.core;
 
+import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
 import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.vital.Context;
@@ -203,6 +204,26 @@ public interface Bonsai<C extends Context> {
      * @return TreeKnot
      */
     TreeKnot getCompleteTree(String key);
+
+    /**
+     * This function is to validate and get the complete tree (including the pending updates)
+     * corresponding to given key and corresponding List of Deltas.
+     *
+     * @param key - name of the root node.
+     * @param deltaOperationList - List of Delta Data.
+     * @return TreeKnot - complete tree containing all the variation of root node.
+     */
+    TreeKnot getCompleteTreeWithDeltaOperations(String key, List<DeltaOperation> deltaOperationList);
+
+    /**
+     * This function is to permanently save new changes into tree(aerospike) for a given key
+     * and corresponding List of Deltas.
+     *
+     * @param key - name of the root node.
+     * @param deltaOperationList - List of Delta Data.
+     * @return TreeKnot - complete tree containing all the variation of root node.
+     */
+    TreeKnot applyDeltaOperations(String key, List<DeltaOperation> deltaOperationList);
 
     /**
      * Perform a full evaluation of the Key

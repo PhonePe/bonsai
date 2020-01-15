@@ -1,9 +1,17 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.phonepe.platform.bonsai.core.structures.MapEntry;
+import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.models.ListNode;
+import com.phonepe.platform.bonsai.models.MapNode;
+import com.phonepe.platform.bonsai.models.NodeVisitor;
+import com.phonepe.platform.bonsai.models.ValueNode;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
-import com.phonepe.platform.bonsai.models.*;
-import com.phonepe.platform.bonsai.models.model.*;
+import com.phonepe.platform.bonsai.models.model.FlatNodeDetail;
+import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
+import com.phonepe.platform.bonsai.models.model.ListFlatNode;
+import com.phonepe.platform.bonsai.models.model.MapFlatNode;
+import com.phonepe.platform.bonsai.models.model.ValueFlatNode;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

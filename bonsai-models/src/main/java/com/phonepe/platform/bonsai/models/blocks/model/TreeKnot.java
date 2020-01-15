@@ -23,8 +23,10 @@ public class TreeKnot {
     private KnotData knotData;
 
     @Builder
-    public TreeKnot(String id, long version,
-                    List<TreeEdge> treeEdges, KnotData knotData) {
+    public TreeKnot(final String id,
+                    final long version,
+                    final List<TreeEdge> treeEdges,
+                    final KnotData knotData) {
         this.id = id;
         this.version = version;
         this.treeEdges = treeEdges;
