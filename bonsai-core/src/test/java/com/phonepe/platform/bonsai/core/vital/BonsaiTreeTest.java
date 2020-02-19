@@ -7,7 +7,11 @@ import com.phonepe.platform.bonsai.core.Mapper;
 import com.phonepe.platform.bonsai.core.ObjectExtractor;
 import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.models.*;
+import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.models.ListNode;
+import com.phonepe.platform.bonsai.models.MapNode;
+import com.phonepe.platform.bonsai.models.NodeVisitors;
+import com.phonepe.platform.bonsai.models.ValueNode;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
@@ -31,11 +35,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author tushar.naik

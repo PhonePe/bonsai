@@ -94,7 +94,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         this.bonsaiProperties = bonsaiProperties;
         this.bonsaiIdGenerator = bonsaiIdGenerator;
         this.knotConflictResolver = knotConflictResolver;
-        this.deltaOperationVisitor = new TreeKnotDeltaOperationModifier(componentValidator);
+        this.deltaOperationVisitor = new TreeKnotDeltaOperationModifier(componentValidator, knotStore, edgeStore);
         this.deltaOperationVoidVisitor = new SaveDataOperationIntoStoreVisitorImpl(keyTreeStore, knotStore, edgeStore);
         JsonPathSetup.setup();
     }
