@@ -14,6 +14,14 @@ import java.util.Map;
  */
 public interface EdgeStore<I, E> {
     /**
+     * checks if id is present
+     *
+     * @param id key
+     * @return true if present
+     */
+    boolean containsEdge(I id);
+
+    /**
      * associate an edge with the id
      *
      * @param i    id

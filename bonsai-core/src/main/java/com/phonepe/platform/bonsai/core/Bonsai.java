@@ -39,6 +39,14 @@ public interface Bonsai<C extends Context> {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
+     * Function to check if the given knotId is present or not.
+     *
+     * @param knotId - Id of Knot.
+     * @return boolean response.
+     */
+    boolean containsKnot(String knotId);
+
+    /**
      * create a {@link Knot} out of the {@link KnotData}
      *
      * @param knotData some kind of data knot
@@ -84,6 +92,14 @@ public interface Bonsai<C extends Context> {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////  EDGE OPERATIONS  /////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Function to check if the given edgeId is present or not.
+     *
+     * @param edgeId - Id of Edge.
+     * @return boolean response.
+     */
+    boolean containsEdge(String edgeId);
 
     /**
      * create edge directly
@@ -161,6 +177,14 @@ public interface Bonsai<C extends Context> {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////  TREE OPERATIONS  //////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Function to check if the given key is present or not.
+     *
+     * @param key - key of a tree.
+     * @return boolean response.
+     */
+    boolean containsKey(String key);
 
     /**
      * map a key with a Knot

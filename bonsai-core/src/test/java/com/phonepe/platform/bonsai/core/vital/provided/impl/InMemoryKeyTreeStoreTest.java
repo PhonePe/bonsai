@@ -34,11 +34,12 @@ public class InMemoryKeyTreeStoreTest {
         final String returnedKnotId = inMemoryKeyTreeStore.createKeyTree(KEY_TWO, KNOT_ID_TWO);
         final boolean isKnotTwoIdPresent = inMemoryKeyTreeStore.containsKey(KEY_TWO);
         final boolean isKnotOneIdPresent = inMemoryKeyTreeStore.containsKey(KEY_ONE);
+        final boolean isKnotThreePresent = inMemoryKeyTreeStore.containsKey(null);
 
         assertNull("Previous copy of Returned KnotId should be null.", returnedKnotId);
         assertFalse("keyTwo:knotIdTwo should not be present in the map.", isKnotOneIdPresent);
         assertTrue("keyOne:knotIdOne should be present in the map.", isKnotTwoIdPresent);
-
+        assertFalse("Nothing should not be present in the map for null key.", isKnotThreePresent);
     }
 
     @Test

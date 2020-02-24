@@ -37,6 +37,11 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
+    public boolean containsKey(String key) {
+        return bonsai.containsKey(key);
+    }
+
+    @Override
     public Knot getKnot(String knotId) {
         return bonsai.getKnot(knotId);
     }
@@ -57,6 +62,11 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
+    public boolean containsKnot(String knotId) {
+        return bonsai.containsKnot(knotId);
+    }
+
+    @Override
     public Knot createKnot(KnotData knotData) {
         throw unsupportedOperationError();
     }
@@ -74,6 +84,11 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     @Override
     public TreeKnot deleteKnot(String knotId, boolean recursive) {
         throw unsupportedOperationError();
+    }
+
+    @Override
+    public boolean containsEdge(String edgeId) {
+        return bonsai.containsEdge(edgeId);
     }
 
     @Override

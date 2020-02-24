@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author - suraj.s
@@ -32,6 +34,19 @@ public class InMemoryEdgeStoreTest {
     @After
     public void tearDown() throws Exception {
         inMemoryEdgeStore = null;
+    }
+
+    @Test
+    public void given_inMemoryKeyTreeStore_when_checkingEdgePresenceInMemory_then_returnKnotId() {
+        final Edge edge = getAnEdge("E1");
+        inMemoryEdgeStore.mapEdge(edge.getEdgeIdentifier().getId(), edge);
+        final boolean isEdgeOnePresent = inMemoryEdgeStore.containsEdge("E1");
+        final boolean isEdgeTwoPresent = inMemoryEdgeStore.containsEdge("E2");
+        final boolean isEdgeThreePresent = inMemoryEdgeStore.containsEdge(null);
+
+        assertTrue(isEdgeOnePresent);
+        assertFalse(isEdgeTwoPresent);
+        assertFalse(isEdgeThreePresent);
     }
 
     @Test

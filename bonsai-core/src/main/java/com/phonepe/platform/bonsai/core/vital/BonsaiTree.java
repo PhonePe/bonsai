@@ -105,6 +105,11 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
+    public boolean containsKnot(String knotId) {
+        return knotStore.containsKnot(knotId);
+    }
+
+    @Override
     public Knot createKnot(KnotData knotData) {
         Knot knot = Knot.builder()
                         .id(bonsaiIdGenerator.newKnotId())
@@ -153,6 +158,11 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             return treeKnot;
         }
         return null;
+    }
+
+    @Override
+    public boolean containsEdge(String edgeId) {
+        return edgeStore.containsEdge(edgeId);
     }
 
     @Override
@@ -265,6 +275,11 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     public Map<String, Edge> getAllEdges(List<String> edgeIds) {
         return edgeStore.getAllEdges(edgeIds);
+    }
+
+    @Override
+    public boolean containsKey(String key) {
+        return keyTreeStore.containsKey(key);
     }
 
     @Override
