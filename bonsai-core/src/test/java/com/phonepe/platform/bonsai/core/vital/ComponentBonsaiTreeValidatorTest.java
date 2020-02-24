@@ -6,6 +6,7 @@ import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
+import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.models.data.MapKnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
@@ -15,6 +16,9 @@ import com.phonepe.platform.query.dsl.logical.OrFilter;
 import com.phonepe.platform.query.dsl.numeric.GreaterEqualFilter;
 import com.phonepe.platform.query.dsl.numeric.LessEqualFilter;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author tushar.naik
@@ -55,6 +59,23 @@ public class ComponentBonsaiTreeValidatorTest {
                                         .filter(new GreaterEqualFilter("field1", 123))
                                         .filter(new LessEqualFilter("field2", 123))
                                         .build());
+    }
+
+    @Test(expected = BonsaiError.class)
+    public void given_twoDifferentKnots_when_validating_then_throwBonsaiError() {
+        final Knot knotOne = Knot.builder()
+                .id("k1")
+                .version(1)
+                .knotData(ValuedKnotData.stringValue("string one"))
+                .build();
+        final Map<String, String> mapKeys = new HashMap<>();
+        mapKeys.put("key1", "key1");
+        final Knot knotTwo = Knot.builder()
+                .id("k2")
+                .version(3)
+                .knotData(MapKnotData.builder().mapKeys(mapKeys).build())
+                .build();
+        componentValidator.validate(knotOne, knotTwo);
     }
 
     @Test()

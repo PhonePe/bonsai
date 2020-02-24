@@ -60,6 +60,45 @@ public class ImmutableBonsaiTreeTest {
             .build();
 
     @Test
+    public void given_immutableBonsaiTree_when_checkingItems_then_returnValues() {
+        final Bonsai<Context> bonsai = BonsaiBuilder.builder()
+                .withBonsaiProperties(BonsaiProperties.builder().build())
+                .build();
+
+        final ImmutableBonsaiBuilder<Context> bonsaiBuilder = ImmutableBonsaiBuilder
+                .builder(bonsai)
+                .createKnot(Knot.builder()
+                        .id("k1")
+                        .knotData(ValuedKnotData.stringValue("1"))
+                        .version(123)
+                        .build())
+                .createKnot(Knot.builder()
+                        .id("k2")
+                        .knotData(ValuedKnotData.stringValue("d1"))
+                        .version(123)
+                        .build())
+                .createMapping("key1", "k1");
+        bonsaiBuilder.createEdge(Edge.builder()
+                .version(1)
+                .edgeIdentifier(new EdgeIdentifier("e1", 1, 1))
+                .filter(new NotEqualsFilter("$.data", "male"))
+                .knotId("k2").build());
+        final Bonsai<Context> immutable = bonsaiBuilder.build();
+
+        final boolean isKeyPresent = immutable.containsKey("key1");
+        final boolean isKnotOnePresent = immutable.containsKnot("k1");
+        final boolean isEdgeOnePresent = immutable.containsEdge("e1");
+        final boolean isKnotThreePresent = immutable.containsKnot("k3");
+        final boolean isEdgeThreePresent = immutable.containsEdge("e3");
+
+        Assert.assertTrue("key1 should be present.", isKeyPresent);
+        Assert.assertTrue("k1 should be present.", isKnotOnePresent);
+        Assert.assertTrue("e1 should be present.", isEdgeOnePresent);
+        Assert.assertFalse("k3 should be present.", isKnotThreePresent);
+        Assert.assertFalse("e3 should be present.", isEdgeThreePresent);
+    }
+
+    @Test
     public void given_immutableBonsaiTree_when_getEdge_then_returnEdge() {
         final Bonsai<Context> bonsai = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties.builder().build())

@@ -20,6 +20,9 @@ public class InMemoryKeyTreeStore implements KeyTreeStore<String, String> {
 
     @Override
     public boolean containsKey(String key) {
+        if (key == null) {
+            return false;
+        }
         return storage.containsKey(key);
     }
 
