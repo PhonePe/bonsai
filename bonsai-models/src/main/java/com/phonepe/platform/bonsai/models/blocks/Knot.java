@@ -1,8 +1,11 @@
 package com.phonepe.platform.bonsai.models.blocks;
 
-import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import com.phonepe.platform.bonsai.models.data.KnotData;
-import lombok.*;
+import com.phonepe.platform.bonsai.models.structures.OrderedList;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Objects;
 

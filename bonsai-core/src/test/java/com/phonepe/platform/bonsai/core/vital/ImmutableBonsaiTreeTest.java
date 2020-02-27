@@ -4,18 +4,18 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
+import com.phonepe.platform.bonsai.core.exception.BonsaiError;
+import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
+import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KnotDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
-import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.models.blocks.Edge;
-import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
-import com.phonepe.platform.bonsai.models.blocks.Knot;
-import com.phonepe.platform.bonsai.models.blocks.Variation;
-import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import com.phonepe.platform.bonsai.models.value.StringValue;
@@ -435,14 +435,8 @@ public class ImmutableBonsaiTreeTest {
 
     @Test(expected = BonsaiError.class)
     public void given_immutableBonsaiTree_when_updateEdgeFilters_then_throwBonsaiError() throws BonsaiError {
-        Edge edge = bonsai.updateEdgeFilters("k1", "e1",
-                Lists.newArrayList(new EqualsFilter("$.gender2", "female")));
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void given_immutableBonsaiTree_when_addEdgeFilters_then_throwBonsaiError() {
-        bonsai.addEdgeFilters("e1",
-                Lists.newArrayList(new EqualsFilter("$.gender", "female2")));
+        Edge edge = bonsai.updateVariation("k1", "e1",
+                                           Variation.builder().filters(Lists.newArrayList(new EqualsFilter("$.gender2", "female"))).build());
     }
 
     @Test(expected = BonsaiError.class)

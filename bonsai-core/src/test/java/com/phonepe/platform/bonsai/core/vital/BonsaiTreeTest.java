@@ -520,12 +520,7 @@ public class BonsaiTreeTest {
     @Test(expected = BonsaiError.class)
     public void given_bonsaiTree_when_updatingEdgeFilters_then_throwBonsaiError() {
         Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build());
-        bonsai.updateEdgeFilters(l1.getId(), "edgeId", new ArrayList<>());
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void given_bonsaiTree_when_addingEdgeFilters_then_throwBonsaiError() {
-        bonsai.addEdgeFilters("edgeId", new ArrayList<>());
+        bonsai.updateVariation(l1.getId(), "edgeId", Variation.builder().build());
     }
 
     @Test(expected = BonsaiError.class)

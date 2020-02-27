@@ -7,6 +7,7 @@ import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
+import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
@@ -31,7 +32,7 @@ public class ImmutableBonsaiBuilderTest {
     private ImmutableBonsaiBuilder<Context> immutableBonsaiBuilder;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mutableBonsaiTree = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties.builder()
                         .maxAllowedConditionsPerEdge(10)
@@ -125,24 +126,29 @@ public class ImmutableBonsaiBuilderTest {
         ImmutableBonsaiBuilder<Context> immutableBonsaiTreeBuilder = ImmutableBonsaiBuilder
                 .builder(mutableBonsaiTree);
 
+        OrderedList<EdgeIdentifier> edges = new OrderedList<>();
+        Edge e1Edge = Edge.builder()
+                         .edgeIdentifier(new EdgeIdentifier("E1", 1, 1))
+                         .filter(EqualsFilter.builder().field("fieldOne").value("valueOne").build())
+                         .version(1234)
+                         .knotId("K2")
+                         .build();
+        edges.add(e1Edge.getEdgeIdentifier());
+
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.createKnot(
                 Knot.builder()
                         .id("K1")
                         .knotData(ValuedKnotData.stringValue("K1 Data"))
+                        .edges(edges)
                         .version(123)
                         .build());
 
-        immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.createEdge(
-                Edge.builder()
-                        .edgeIdentifier(new EdgeIdentifier("E1", 1, 1))
-                        .filter(EqualsFilter.builder().field("fieldOne").value("valueOne").build())
-                        .version(1234)
-                        .knotId("K2")
-                        .build()
-        );
+        immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.createEdge(e1Edge);
 
-        final List<Filter> edgeFilters = Arrays.asList(NotEqualsFilter.builder().field("fieldOne").value("valueTwo").build());
-        immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.addEdgeFilters("E1", edgeFilters);
+        final List<Filter> edgeFilters = Arrays.asList(EqualsFilter.builder().field("fieldOne").value("valueOne").build(),
+                                                       NotEqualsFilter.builder().field("fieldOne").value("valueTwo").build());
+        final Variation updateVariation = Variation.builder().filters(edgeFilters).build();
+        immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.updateVariation("K1", "E1", updateVariation);
 
         final Bonsai<Context> immutableBonsaiTree = immutableBonsaiTreeBuilder.build();
 

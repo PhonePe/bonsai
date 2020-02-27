@@ -1,18 +1,17 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.phonepe.platform.bonsai.core.Bonsai;
-import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
-import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
+import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
+import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
-import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
-import com.phonepe.platform.query.dsl.Filter;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -27,37 +26,37 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     private Bonsai<C> bonsai;
 
     @Override
-    public Edge getEdge(String edgeId) {
+    public Edge getEdge(final String edgeId) {
         return bonsai.getEdge(edgeId);
     }
 
     @Override
-    public Map<String, Edge> getAllEdges(List<String> edgeIds) {
+    public Map<String, Edge> getAllEdges(final List<String> edgeIds) {
         return bonsai.getAllEdges(edgeIds);
     }
 
     @Override
-    public boolean containsKey(String key) {
+    public boolean containsKey(final String key) {
         return bonsai.containsKey(key);
     }
 
     @Override
-    public Knot getKnot(String knotId) {
+    public Knot getKnot(final String knotId) {
         return bonsai.getKnot(knotId);
     }
 
     @Override
-    public KeyNode evaluate(String key, C context) {
+    public KeyNode evaluate(final String key, final C context) {
         return bonsai.evaluate(key, context);
     }
 
     @Override
-    public FlatTreeRepresentation evaluateFlat(String key, C context) {
+    public FlatTreeRepresentation evaluateFlat(final String key, final C context) {
         return bonsai.evaluateFlat(key, context);
     }
 
     @Override
-    public String getMapping(String key) {
+    public String getMapping(final String key) {
         return bonsai.getMapping(key);
     }
 
@@ -67,22 +66,22 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public Knot createKnot(KnotData knotData) {
+    public Knot createKnot(final KnotData knotData) {
         throw unsupportedOperationError();
     }
 
     @Override
-    public Knot createKnot(Knot knot) {
+    public Knot createKnot(final Knot knot) {
         throw unsupportedOperationError();
     }
 
     @Override
-    public Knot updateKnotData(String knotId, KnotData knotData) {
+    public Knot updateKnotData(final String knotId, final KnotData knotData) {
         throw unsupportedOperationError();
     }
 
     @Override
-    public TreeKnot deleteKnot(String knotId, boolean recursive) {
+    public TreeKnot deleteKnot(final String knotId, final boolean recursive) {
         throw unsupportedOperationError();
     }
 
@@ -92,54 +91,47 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public Edge createEdge(Edge edge) {
+    public Edge createEdge(final Edge edge) {
         throw unsupportedOperationError();
     }
 
     @Override
-    public Edge addVariation(String knotId, Variation variation) {
+    public Edge addVariation(final String knotId, final Variation variation) {
         throw unsupportedOperationError();
     }
 
     @Override
-    public Edge updateEdgeFilters(String knotId, String edgeId,
-                                  List<Filter> filters) {
+    public Edge updateVariation(final String knotId, final String edgeId, final Variation updateVariation) {
         throw unsupportedOperationError();
     }
 
     @Override
-    public Edge addEdgeFilters(String edgeId,
-                               List<Filter> filters) {
+    public boolean unlinkVariation(final String knotId, final String edgeId) {
         throw unsupportedOperationError();
     }
 
     @Override
-    public boolean unlinkVariation(String knotId, String edgeId) {
+    public TreeEdge deleteVariation(final String knotId, final String edgeId, final boolean recursive) {
         throw unsupportedOperationError();
     }
 
     @Override
-    public TreeEdge deleteVariation(String knotId, String edgeId, boolean recursive) {
+    public Knot createMapping(final String key, final String knotId) {
         throw unsupportedOperationError();
     }
 
     @Override
-    public Knot createMapping(String key, String knotId) {
+    public Knot createMapping(final String key, final KnotData knotData) {
         throw unsupportedOperationError();
     }
 
     @Override
-    public Knot createMapping(String key, KnotData knotData) {
+    public Knot removeMapping(final String key) {
         throw unsupportedOperationError();
     }
 
     @Override
-    public Knot removeMapping(String key) {
-        throw unsupportedOperationError();
-    }
-
-    @Override
-    public TreeKnot getCompleteTree(String key) {
+    public TreeKnot getCompleteTree(final String key) {
         return bonsai.getCompleteTree(key);
     }
 

@@ -223,13 +223,13 @@ public class BonsaiTreeOperationTest {
                                                                         .filter(new EqualsFilter("$.gender", "female"))
                                                                         .knotId(femaleConditionKnot.getId())
                                                                         .build());
-        Edge edge = bonsai.updateEdgeFilters(widgetKnot1.getId(), female.getEdgeIdentifier().getId(),
-                                             Lists.newArrayList(OrFilter.builder()
+        Edge edge = bonsai.updateVariation(widgetKnot1.getId(), female.getEdgeIdentifier().getId(),
+                                           Variation.builder().filters(Lists.newArrayList(OrFilter.builder()
                                                                         .filter(new EqualsFilter("$.gender", "female"))
                                                                         .filter(GenericFilter.builder()
                                                                                              .field("$.gender")
                                                                                              .value("SDf")
-                                                                                             .build()).build()));
+                                                                                             .build()).build())).build());
         Assert.assertNotNull(edge);
     }
 
