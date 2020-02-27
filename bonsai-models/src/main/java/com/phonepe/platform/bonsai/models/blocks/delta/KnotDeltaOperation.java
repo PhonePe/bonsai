@@ -5,18 +5,22 @@ import com.phonepe.platform.bonsai.models.blocks.delta.type.DeltaOperationType;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVisitor;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVoidVisitor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class KnotDeltaOperation extends DeltaOperation {
 
     private Knot knot;
 
     public KnotDeltaOperation() {
-        super(DeltaOperationType.KNOT_DATA);
+        super(DeltaOperationType.KNOT_DELTA);
     }
 
     public KnotDeltaOperation(final Knot knot) {
-        super(DeltaOperationType.KNOT_DATA);
+        super(DeltaOperationType.KNOT_DELTA);
         this.knot = knot;
     }
 

@@ -36,7 +36,6 @@ import com.phonepe.platform.bonsai.models.data.MultiKnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.bonsai.models.structures.OrderedList;
-import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.query.dsl.FilterFieldIdentifier;
 import lombok.extern.slf4j.Slf4j;
 
@@ -101,6 +100,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     @Override
     public Knot createKnot(Knot knot) {
+        componentValidator.validate(knot);
         return knotStore.mapKnot(knot.getId(), knot);
     }
 
@@ -189,7 +189,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                                                            variation.getPriority()))
                         .knotId(variation.getKnotId())
                         .version(System.currentTimeMillis())
-                        .live(variation.getLive())
+                        .live(variation.isLive())
                         .percentage(variation.getPercentage())
                         .filters(variation.getFilters())
                         .build();
@@ -209,33 +209,28 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public Edge updateEdgeFilters(String knotId, String edgeId, List<Filter> filters) {
+    public Edge updateVariation(final String knotId, final String edgeId, final Variation variation) {
         Knot knot = knotStore.getKnot(knotId);
         Edge edge = edgeStore.getEdge(edgeId);
-        if (edge == null) {
-            throw new BonsaiError(BonsaiErrorCode.EDGE_ABSENT, "No edge found for edgeId:" + edgeId);
+        checkNull(edgeId, edge);
+        edge.setLive(variation.isLive());
+        edge.setPercentage(variation.getPercentage());
+        edge.setFilters(variation.getFilters());
+        edge.getEdgeIdentifier().setPriority(variation.getPriority());
+        if (!Strings.isNullOrEmpty(variation.getKnotId())) {
+            Knot variationKnot = knotStore.getKnot(variation.getKnotId());
+            componentValidator.validate(knot, variationKnot);
+            edge.setKnotId(variation.getKnotId());
         }
-        edge.setFilters(filters);
         componentValidator.validate(edge);
 
         /* if there is any edge with a different pivot (ie, condition is on a different field), in the inner layer, throw exception */
         validateConstraints(knot, edge);
 
-        return edgeStore.mapEdge(edgeId, edge.updateVersion());
-    }
+        /* check for circular loops */
+        checkForCycles(knot, edge);
 
-    @Override
-    public Edge addEdgeFilters(String edgeId, List<Filter> filters) {
-        Edge edge = edgeStore.getEdge(edgeId);
-        if (edge == null) {
-            throw new BonsaiError(BonsaiErrorCode.EDGE_ABSENT, "No edge found for edgeId:" + edgeId);
-        }
-        /* need to create a copy */
-        ArrayList<Filter> newFilters = new ArrayList<>(edge.getFilters());
-        newFilters.addAll(filters);
-        edge.setFilters(newFilters);
-        componentValidator.validate(edge);
-        return edgeStore.mapEdge(edgeId, edge);
+        return edgeStore.mapEdge(edgeId, edge.updateVersion());
     }
 
     @Override
@@ -259,6 +254,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     @Override
     public TreeEdge deleteVariation(String knotId, String edgeId, boolean recursive) {
         Edge edge = edgeStore.getEdge(edgeId);
+        checkNull(edgeId, edge);
         TreeEdge treeEdge = Converters.toTreeEdge(edge);
         if (recursive) {
             TreeKnot treeKnot = deleteKnot(edge.getKnotId(), true);
@@ -577,6 +573,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                                .stream()
                                .map(edge -> TreeEdge.builder()
                                                     .edgeIdentifier(edge.getEdgeIdentifier())
+                                                    .live(edge.isLive())
+                                                    .percentage(edge.getPercentage())
                                                     .filters(edge.getFilters())
                                                     .version(edge.getVersion())
                                                     .treeKnot(composeTreeKnot(edge.getKnotId()))
@@ -593,7 +591,9 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                     knot.getEdges()
                         .stream()
                         .map(EdgeIdentifier::getId)
-                        .filter(e -> !edge.getEdgeIdentifier().getId().equals(e))// all edges that arent the current edge being added
+                        .filter(e -> !edge.getEdgeIdentifier()
+                                          .getId()
+                                          .equals(e))// all edges that arent the current edge being added
                         .collect(Collectors.toList()));
             Set<String> existingEdgeFields = allEdges.values()
                                                      .stream()
@@ -618,6 +618,12 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                 throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR,
                                       "existing:" + existingEdgeFields + " new:" + edgeFields);
             }
+        }
+    }
+
+    private void checkNull(String edgeId, Edge edge) {
+        if (edge == null) {
+            throw new BonsaiError(BonsaiErrorCode.EDGE_ABSENT, "No edge found for edgeId:" + edgeId);
         }
     }
 

@@ -184,6 +184,8 @@ public class TreeKnotDeltaOperationModifier implements DeltaOperationVisitor<Tre
             if (edgeDeltaOperation.getEdge().getEdgeIdentifier().getId().equals(edgeIdentifier.getId())) {
                 treeEdge.setVersion(edgeDeltaOperation.getEdge().getVersion());
                 treeEdge.setFilters(edgeDeltaOperation.getEdge().getFilters());
+                treeEdge.setLive(edgeDeltaOperation.getEdge().isLive());
+                treeEdge.setPercentage(edgeDeltaOperation.getEdge().getPercentage());
 
                 final String childKnotId = edgeDeltaOperation.getEdge().getKnotId();
                 final Knot fetchedKnot = knotStore.getKnot(childKnotId);
