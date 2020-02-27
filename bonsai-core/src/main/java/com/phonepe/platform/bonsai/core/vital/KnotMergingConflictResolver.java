@@ -3,14 +3,14 @@ package com.phonepe.platform.bonsai.core.vital;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.phonepe.platform.bonsai.models.data.KnotDataVisitor;
-import com.phonepe.platform.bonsai.models.data.MapKnotData;
-import com.phonepe.platform.bonsai.models.data.MultiKnotData;
-import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.platform.bonsai.core.structures.ConflictResolver;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.data.KnotDataVisitor;
+import com.phonepe.platform.bonsai.models.data.MapKnotData;
+import com.phonepe.platform.bonsai.models.data.MultiKnotData;
+import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 
 import java.util.List;
 import java.util.Map;

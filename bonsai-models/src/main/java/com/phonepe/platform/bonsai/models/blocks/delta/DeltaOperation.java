@@ -14,9 +14,9 @@ import lombok.Data;
 @Data
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "deltaOperationType")
 @JsonSubTypes({
-        @JsonSubTypes.Type(name = "KEY_MAPPING_DATA", value = KeyMappingDeltaOperation.class),
-        @JsonSubTypes.Type(name = "KNOT_DATA", value = KnotDeltaOperation.class),
-        @JsonSubTypes.Type(name = "EDGE_DATA", value = EdgeDeltaOperation.class)
+        @JsonSubTypes.Type(name = "KEY_MAPPING_DELTA", value = KeyMappingDeltaOperation.class),
+        @JsonSubTypes.Type(name = "KNOT_DELTA", value = KnotDeltaOperation.class),
+        @JsonSubTypes.Type(name = "EDGE_DELTA", value = EdgeDeltaOperation.class)
 })
 public abstract class DeltaOperation {
 

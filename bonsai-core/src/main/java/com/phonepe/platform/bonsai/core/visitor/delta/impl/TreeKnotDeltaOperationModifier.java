@@ -1,9 +1,14 @@
 package com.phonepe.platform.bonsai.core.visitor.delta.impl;
 
+import com.google.common.base.Preconditions;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.platform.bonsai.core.vital.ComponentBonsaiTreeValidator;
+import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
+import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.delta.EdgeDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KeyMappingDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KnotDeltaOperation;
@@ -14,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -26,9 +32,19 @@ import java.util.stream.Collectors;
 public class TreeKnotDeltaOperationModifier implements DeltaOperationVisitor<TreeKnot> {
 
     private final ComponentBonsaiTreeValidator treeComponentValidator;
+    private final KnotStore<String, Knot> knotStore;
+    private final EdgeStore<String, Edge> edgeStore;
 
-    public TreeKnotDeltaOperationModifier(final ComponentBonsaiTreeValidator treeComponentValidator) {
+
+    public TreeKnotDeltaOperationModifier(final ComponentBonsaiTreeValidator treeComponentValidator,
+                                          final KnotStore<String, Knot> knotStore,
+                                          final EdgeStore<String, Edge> edgeStore) {
+        Preconditions.checkNotNull(treeComponentValidator, "treeComponentValidator should not be null.");
+        Preconditions.checkNotNull(knotStore, "KnotStore should not be null.");
+        Preconditions.checkNotNull(edgeStore, "EdgeStore should not be null.");
         this.treeComponentValidator = treeComponentValidator;
+        this.knotStore = knotStore;
+        this.edgeStore = edgeStore;
     }
 
     /**
@@ -93,12 +109,15 @@ public class TreeKnotDeltaOperationModifier implements DeltaOperationVisitor<Tre
                     ? new ArrayList<>() : knotDeltaOperation.getKnot().getEdges(); // If-else check to avoid error in loop.
             final List<TreeEdge> treeEdgeList = new ArrayList<>();
             for(EdgeIdentifier edgeIdentifier: edgeIdentifierList) {
-                TreeEdge treeEdge = TreeEdge.builder()
-                        .edgeIdentifier(edgeIdentifier)
-                        .build();
-                treeEdgeList.add(treeEdge);
+                final Edge fetchedEdge = edgeStore.getEdge(edgeIdentifier.getId());
+                if (fetchedEdge == null) {
+                    TreeEdge treeEdge = TreeEdge.builder()
+                            .edgeIdentifier(edgeIdentifier)
+                            .build();
+                    treeEdgeList.add(treeEdge);
+                }
             }
-
+            Optional.ofNullable(treeKnot.getTreeEdges()).ifPresent(treeEdgeList::addAll);
             treeKnot.setTreeEdges(treeEdgeList);
             treeKnot.setVersion(knotDeltaOperation.getKnot().getVersion());
             treeKnot.setKnotData(knotDeltaOperation.getKnot().getKnotData());
@@ -163,12 +182,19 @@ public class TreeKnotDeltaOperationModifier implements DeltaOperationVisitor<Tre
             final TreeEdge treeEdge = treeEdgeList.get(i);
             final EdgeIdentifier edgeIdentifier = treeEdge.getEdgeIdentifier();
             if (edgeDeltaOperation.getEdge().getEdgeIdentifier().getId().equals(edgeIdentifier.getId())) {
-                TreeKnot childTreeKnot = TreeKnot.builder()
-                        .id(edgeDeltaOperation.getEdge().getKnotId())
-                        .build();
-                treeEdge.setTreeKnot(childTreeKnot);
                 treeEdge.setVersion(edgeDeltaOperation.getEdge().getVersion());
                 treeEdge.setFilters(edgeDeltaOperation.getEdge().getFilters());
+                treeEdge.setLive(edgeDeltaOperation.getEdge().isLive());
+                treeEdge.setPercentage(edgeDeltaOperation.getEdge().getPercentage());
+
+                final String childKnotId = edgeDeltaOperation.getEdge().getKnotId();
+                final Knot fetchedKnot = knotStore.getKnot(childKnotId);
+                if (fetchedKnot == null) {
+                    final TreeKnot childTreeKnot = TreeKnot.builder()
+                            .id(edgeDeltaOperation.getEdge().getKnotId())
+                            .build();
+                    treeEdge.setTreeKnot(childTreeKnot);
+                }
                 return true;
             }
         }

@@ -61,10 +61,13 @@ public class SaveDataOperationIntoStoreVisitorImpl implements DeltaOperationVoid
         final List<EdgeIdentifier> edgeIdentifiers = knot.getEdges();
         if (edgeIdentifiers != null && !edgeIdentifiers.isEmpty()) {
             for(EdgeIdentifier edgeIdentifier : edgeIdentifiers) {
-                final Edge edge = Edge.builder()
-                        .edgeIdentifier(edgeIdentifier)
-                        .build();
-                edgeStore.mapEdge(edge.getEdgeIdentifier().getId(), edge);
+                final Edge fetchedEdge = edgeStore.getEdge(edgeIdentifier.getId());
+                if (fetchedEdge == null) {
+                    final Edge edge = Edge.builder()
+                            .edgeIdentifier(edgeIdentifier)
+                            .build();
+                    edgeStore.mapEdge(edge.getEdgeIdentifier().getId(), edge);
+                }
             }
         }
     }
@@ -81,8 +84,13 @@ public class SaveDataOperationIntoStoreVisitorImpl implements DeltaOperationVoid
 
         final String childKnotId = edge.getKnotId();
         if (childKnotId != null && !childKnotId.isEmpty()) {
-            final Knot childKnot = Knot.builder().id(childKnotId).build();
-            knotStore.mapKnot(childKnot.getId(), childKnot);
+            final Knot fetchedKnot = knotStore.getKnot(childKnotId);
+            if (fetchedKnot == null) {
+                final Knot childKnot = Knot.builder()
+                        .id(childKnotId)
+                        .build();
+                knotStore.mapKnot(childKnot.getId(), childKnot);
+            }
         }
     }
 }

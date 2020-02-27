@@ -7,7 +7,11 @@ import com.phonepe.platform.bonsai.core.Mapper;
 import com.phonepe.platform.bonsai.core.ObjectExtractor;
 import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.models.*;
+import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.models.ListNode;
+import com.phonepe.platform.bonsai.models.MapNode;
+import com.phonepe.platform.bonsai.models.NodeVisitors;
+import com.phonepe.platform.bonsai.models.ValueNode;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
@@ -31,11 +35,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author tushar.naik
@@ -517,12 +520,7 @@ public class BonsaiTreeTest {
     @Test(expected = BonsaiError.class)
     public void given_bonsaiTree_when_updatingEdgeFilters_then_throwBonsaiError() {
         Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build());
-        bonsai.updateEdgeFilters(l1.getId(), "edgeId", new ArrayList<>());
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void given_bonsaiTree_when_addingEdgeFilters_then_throwBonsaiError() {
-        bonsai.addEdgeFilters("edgeId", new ArrayList<>());
+        bonsai.updateVariation(l1.getId(), "edgeId", Variation.builder().build());
     }
 
     @Test(expected = BonsaiError.class)

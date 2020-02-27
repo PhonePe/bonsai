@@ -1,7 +1,7 @@
 package com.phonepe.platform.bonsai.models.blocks.model;
 
-import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
+import com.phonepe.platform.query.dsl.Filter;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,13 +22,21 @@ public class TreeEdge {
     private TreeKnot treeKnot;
     private long version;
     private List<Filter> filters;
+    private boolean live;
+    private float percentage;
 
     @Builder
-    public TreeEdge(EdgeIdentifier edgeIdentifier, TreeKnot treeKnot, long version,
-                    List<Filter> filters) {
+    public TreeEdge(final EdgeIdentifier edgeIdentifier,
+                    final TreeKnot treeKnot,
+                    final long version,
+                    final List<Filter> filters,
+                    final boolean live,
+                    final float percentage) {
         this.edgeIdentifier = edgeIdentifier;
         this.treeKnot = treeKnot;
         this.version = version;
         this.filters = filters;
+        this.live = live;
+        this.percentage = percentage;
     }
 }

@@ -22,6 +22,14 @@ public class InMemoryEdgeStore implements EdgeStore<String, Edge> {
     }
 
     @Override
+    public boolean containsEdge(String id) {
+        if (id == null) {
+            return false;
+        }
+        return storage.containsKey(id);
+    }
+
+    @Override
     public Edge mapEdge(String id, Edge edge) {
         if (id == null) {
             return null;

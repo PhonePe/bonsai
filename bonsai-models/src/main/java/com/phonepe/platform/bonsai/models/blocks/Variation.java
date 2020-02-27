@@ -25,8 +25,10 @@ public class Variation {
     private String knotId;
     
     /* these is a nullable field, hence we aren't using primitive type */
-    private Boolean live;
+    @Builder.Default
+    private boolean live = true;
 
     /* these is a nullable field, hence we aren't using primitive type */
-    private Float percentage;
+    @Builder.Default
+    private float percentage = 100.0f;
 }

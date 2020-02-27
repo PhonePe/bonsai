@@ -1,18 +1,17 @@
 package com.phonepe.platform.bonsai.core;
 
-import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
-import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.vital.Context;
+import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
+import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
-import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.bonsai.models.structures.OrderedList;
-import com.phonepe.platform.query.dsl.Filter;
 
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,14 @@ public interface Bonsai<C extends Context> {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////  KNOT OPERATIONS  //////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Function to check if the given knotId is present or not.
+     *
+     * @param knotId - Id of Knot.
+     * @return boolean response.
+     */
+    boolean containsKnot(String knotId);
 
     /**
      * create a {@link Knot} out of the {@link KnotData}
@@ -86,6 +93,14 @@ public interface Bonsai<C extends Context> {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
+     * Function to check if the given edgeId is present or not.
+     *
+     * @param edgeId - Id of Edge.
+     * @return boolean response.
+     */
+    boolean containsEdge(String edgeId);
+
+    /**
      * create edge directly
      *
      * @param edge edge
@@ -103,25 +118,15 @@ public interface Bonsai<C extends Context> {
     Edge addVariation(String knotId, Variation variation);
 
     /**
-     * update the edge with a new set of filters
+     * update the edge with new Variation components
      * needs to be a valid update id
      *
      * @param knotId  knot id to which the edge is associated with
      * @param edgeId  edge id to be updated
-     * @param filters filters set
-     * @return false if edge id wasnt present, or if edge wasnt updated
+     * @param variation updatedVariation to be added
+     * @return false if edge id wasn't present, or if edge wasn't updated
      */
-    Edge updateEdgeFilters(String knotId, String edgeId, List<Filter> filters);
-
-    /**
-     * add a bunch of filters to an edge.
-     * this method will append to the existing list of filters that already exist
-     *
-     * @param edgeId  edge id to which filters will be added to
-     * @param filters filters to be added
-     * @return false if edge wasnt updated
-     */
-    Edge addEdgeFilters(String edgeId, List<Filter> filters);
+    Edge updateVariation(String knotId, String edgeId, Variation variation);
 
     /**
      * remove the edge only (all {@link Knot}s that the {@link Edge} contains, will continue to exist, but will be disconnected from the main tree
@@ -161,6 +166,14 @@ public interface Bonsai<C extends Context> {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////  TREE OPERATIONS  //////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Function to check if the given key is present or not.
+     *
+     * @param key - key of a tree.
+     * @return boolean response.
+     */
+    boolean containsKey(String key);
 
     /**
      * map a key with a Knot

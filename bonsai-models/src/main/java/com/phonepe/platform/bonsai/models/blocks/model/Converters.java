@@ -10,17 +10,19 @@ import com.phonepe.platform.bonsai.models.blocks.Knot;
 public interface Converters {
     static TreeKnot toTreeKnot(Knot knot) {
         return TreeKnot.builder()
-                       .id(knot.getId())
-                       .knotData(knot.getKnotData())
-                       .version(knot.getVersion())
-                       .build();
+                .id(knot.getId())
+                .knotData(knot.getKnotData())
+                .version(knot.getVersion())
+                .build();
     }
 
     static TreeEdge toTreeEdge(Edge edge) {
         return TreeEdge.builder()
-                       .edgeIdentifier(edge.getEdgeIdentifier())
-                       .filters(edge.getFilters())
-                       .version(edge.getVersion())
-                       .build();
+                .edgeIdentifier(edge.getEdgeIdentifier())
+                .filters(edge.getFilters())
+                .version(edge.getVersion())
+                .live(edge.isLive())
+                .percentage(edge.getPercentage())
+                .build();
     }
 }

@@ -2,7 +2,12 @@ package com.phonepe.platform.bonsai.models.blocks;
 
 import com.phonepe.folios.condition.engine.Condition;
 import com.phonepe.platform.query.dsl.Filter;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Singular;
+import lombok.ToString;
 
 import java.util.Collections;
 import java.util.List;
