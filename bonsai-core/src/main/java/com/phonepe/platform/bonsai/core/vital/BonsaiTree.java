@@ -7,8 +7,8 @@ import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.platform.bonsai.core.structures.ConflictResolver;
 import com.phonepe.platform.bonsai.core.structures.CycleIdentifier;
-import com.phonepe.platform.bonsai.core.visitor.delta.impl.SaveDataOperationIntoStoreVisitorImpl;
-import com.phonepe.platform.bonsai.core.visitor.delta.impl.TreeKnotDeltaOperationModifier;
+import com.phonepe.platform.bonsai.core.visitor.delta.impl.SaveDataOperationIntoStoreVisitor;
+import com.phonepe.platform.bonsai.core.visitor.delta.impl.TreeKnotDeltaOperationModifierVisitor;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
@@ -76,8 +76,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     private final BonsaiProperties bonsaiProperties;
     private final BonsaiIdGenerator bonsaiIdGenerator;
     private final ConflictResolver<Knot> knotConflictResolver;
-    private final DeltaOperationVisitor<TreeKnot> deltaOperationVisitor;
-    private final DeltaOperationVoidVisitor deltaOperationVoidVisitor;
+    private final DeltaOperationVisitor<TreeKnot> treeKnotDeltaOperationModifier;
+    private final DeltaOperationVoidVisitor saveDataOperationIntoStore;
 
     public BonsaiTree(final Stores<String, String, Knot, Edge> stores,
                       final VariationSelectorEngine<C> variationSelectorEngine,
@@ -93,8 +93,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         this.bonsaiProperties = bonsaiProperties;
         this.bonsaiIdGenerator = bonsaiIdGenerator;
         this.knotConflictResolver = knotConflictResolver;
-        this.deltaOperationVisitor = new TreeKnotDeltaOperationModifier(componentValidator, knotStore, edgeStore);
-        this.deltaOperationVoidVisitor = new SaveDataOperationIntoStoreVisitorImpl(keyTreeStore, knotStore, edgeStore);
+        this.treeKnotDeltaOperationModifier = new TreeKnotDeltaOperationModifierVisitor(componentValidator, knotStore, edgeStore);
+        this.saveDataOperationIntoStore = new SaveDataOperationIntoStoreVisitor(keyTreeStore, knotStore, edgeStore);
         JsonPathSetup.setup();
     }
 
@@ -317,7 +317,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         TreeKnot treeKnot = composeTreeKnot(knotId);
 
         for (DeltaOperation deltaOperation : deltaOperationList) {
-            treeKnot = deltaOperation.addIntoTree(treeKnot, deltaOperationVisitor);
+            treeKnot = deltaOperation.accept(treeKnot, treeKnotDeltaOperationModifier);
         }
 
         return treeKnot;
@@ -330,8 +330,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         TreeKnot treeKnot = composeTreeKnot(knotId);
 
         for (DeltaOperation deltaOperation : deltaOperationList) {
-            treeKnot = deltaOperation.addIntoTree(treeKnot, deltaOperationVisitor);
-            deltaOperation.saveIntoDataStore(deltaOperationVoidVisitor);
+            treeKnot = deltaOperation.accept(treeKnot, treeKnotDeltaOperationModifier);
+            deltaOperation.accept(saveDataOperationIntoStore);
         }
 
         return treeKnot;

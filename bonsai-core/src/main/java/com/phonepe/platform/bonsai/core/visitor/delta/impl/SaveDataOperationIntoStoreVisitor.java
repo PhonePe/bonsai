@@ -21,14 +21,14 @@ import java.util.List;
  * @author - suraj.s
  * @date - 2019-11-25
  */
-public class SaveDataOperationIntoStoreVisitorImpl implements DeltaOperationVoidVisitor {
+public class SaveDataOperationIntoStoreVisitor implements DeltaOperationVoidVisitor {
     private final KeyTreeStore<String, String> keyTreeStore;
     private final KnotStore<String, Knot> knotStore;
     private final EdgeStore<String, Edge> edgeStore;
 
-    public SaveDataOperationIntoStoreVisitorImpl(final KeyTreeStore<String, String> keyTreeStore,
-                                                 final KnotStore<String, Knot> knotStore,
-                                                 final EdgeStore<String, Edge> edgeStore) {
+    public SaveDataOperationIntoStoreVisitor(final KeyTreeStore<String, String> keyTreeStore,
+                                             final KnotStore<String, Knot> knotStore,
+                                             final EdgeStore<String, Edge> edgeStore) {
         Preconditions.checkNotNull(keyTreeStore, "KeyTreeStore should not be null.");
         Preconditions.checkNotNull(knotStore, "KnotStore should not be null.");
         Preconditions.checkNotNull(edgeStore, "EdgeStore should not be null.");

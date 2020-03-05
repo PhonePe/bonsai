@@ -29,19 +29,19 @@ import static org.junit.Assert.*;
  * @author - suraj.s
  * @date - 2019-11-25
  */
-public class SaveDataOperationIntoStoreVisitorImplTest {
+public class SaveDataOperationIntoStoreVisitorTest {
 
     private KeyTreeStore<String, String> keyTreeStore;
     private KnotStore<String, Knot> knotStore;
     private EdgeStore<String, Edge> edgeStore;
-    private SaveDataOperationIntoStoreVisitorImpl storeVisitor;
+    private SaveDataOperationIntoStoreVisitor storeVisitor;
 
     @Before
     public void setUp() throws Exception {
         keyTreeStore = new InMemoryKeyTreeStore();
         knotStore = new InMemoryKnotStore();
         edgeStore = new InMemoryEdgeStore();
-        storeVisitor = new SaveDataOperationIntoStoreVisitorImpl(keyTreeStore, knotStore, edgeStore);
+        storeVisitor = new SaveDataOperationIntoStoreVisitor(keyTreeStore, knotStore, edgeStore);
     }
 
     @After
