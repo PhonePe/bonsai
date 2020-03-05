@@ -32,7 +32,7 @@ import static org.junit.Assert.assertNull;
  * @author - suraj.s
  * @date - 2019-11-20
  */
-public class TreeKnotDeltaOperationModifierTest {
+public class TreeKnotDeltaOperationModifierVisitorTest {
 
     private ComponentBonsaiTreeValidator treeComponentValidator;
 
@@ -40,7 +40,7 @@ public class TreeKnotDeltaOperationModifierTest {
 
     private EdgeStore<String, Edge> edgeStore;
 
-    private TreeKnotDeltaOperationModifier treeKnotModifierVisitor;
+    private TreeKnotDeltaOperationModifierVisitor treeKnotModifierVisitor;
 
     @Before
     public void setUp() throws Exception {
@@ -52,7 +52,7 @@ public class TreeKnotDeltaOperationModifierTest {
         treeComponentValidator = new ComponentBonsaiTreeValidator(bonsaiProperties);
         knotStore = new InMemoryKnotStore();
         edgeStore = new InMemoryEdgeStore();
-        treeKnotModifierVisitor = new TreeKnotDeltaOperationModifier(treeComponentValidator, knotStore, edgeStore);
+        treeKnotModifierVisitor = new TreeKnotDeltaOperationModifierVisitor(treeComponentValidator, knotStore, edgeStore);
     }
 
     @After

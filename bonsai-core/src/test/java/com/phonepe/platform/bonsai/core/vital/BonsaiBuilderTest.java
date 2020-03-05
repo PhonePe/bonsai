@@ -2,8 +2,6 @@ package com.phonepe.platform.bonsai.core.vital;
 
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.structures.ConflictResolver;
-import com.phonepe.platform.bonsai.core.visitor.delta.impl.SaveDataOperationIntoStoreVisitorImpl;
-import com.phonepe.platform.bonsai.core.visitor.delta.impl.TreeKnotDeltaOperationModifier;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
@@ -13,8 +11,6 @@ import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryKeyTreeStore
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryKnotStore;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
-import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVisitor;
-import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVoidVisitor;
 import org.junit.Test;
 
 import java.util.UUID;
