@@ -29,16 +29,16 @@ import java.util.stream.Collectors;
  * @date - 2019-10-15
  */
 @Slf4j
-public class TreeKnotDeltaOperationModifier implements DeltaOperationVisitor<TreeKnot> {
+public class TreeKnotDeltaOperationModifierVisitor implements DeltaOperationVisitor<TreeKnot> {
 
     private final ComponentBonsaiTreeValidator treeComponentValidator;
     private final KnotStore<String, Knot> knotStore;
     private final EdgeStore<String, Edge> edgeStore;
 
 
-    public TreeKnotDeltaOperationModifier(final ComponentBonsaiTreeValidator treeComponentValidator,
-                                          final KnotStore<String, Knot> knotStore,
-                                          final EdgeStore<String, Edge> edgeStore) {
+    public TreeKnotDeltaOperationModifierVisitor(final ComponentBonsaiTreeValidator treeComponentValidator,
+                                                 final KnotStore<String, Knot> knotStore,
+                                                 final EdgeStore<String, Edge> edgeStore) {
         Preconditions.checkNotNull(treeComponentValidator, "treeComponentValidator should not be null.");
         Preconditions.checkNotNull(knotStore, "KnotStore should not be null.");
         Preconditions.checkNotNull(edgeStore, "EdgeStore should not be null.");

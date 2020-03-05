@@ -27,12 +27,12 @@ public class EdgeDeltaOperation extends DeltaOperation {
     }
 
     @Override
-    public <T> T addIntoTree(T t, DeltaOperationVisitor<T> deltaOperationVisitor) {
+    public <T> T accept(T t, DeltaOperationVisitor<T> deltaOperationVisitor) {
         return deltaOperationVisitor.visit(t, this);
     }
 
     @Override
-    public void saveIntoDataStore(DeltaOperationVoidVisitor deltaOperationVoidVisitor) {
+    public void accept(DeltaOperationVoidVisitor deltaOperationVoidVisitor) {
         deltaOperationVoidVisitor.visit(this);
     }
 }

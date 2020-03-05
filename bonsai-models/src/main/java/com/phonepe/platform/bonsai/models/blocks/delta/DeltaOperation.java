@@ -26,7 +26,7 @@ public abstract class DeltaOperation {
         this.deltaOperationType = deltaOperationType;
     }
 
-    public abstract <T> T addIntoTree(T t, DeltaOperationVisitor<T> deltaOperationVisitor);
+    public abstract <T> T accept(T t, DeltaOperationVisitor<T> deltaOperationVisitor);
 
-    public abstract void saveIntoDataStore(DeltaOperationVoidVisitor deltaOperationVoidVisitor);
+    public abstract void accept(DeltaOperationVoidVisitor deltaOperationVoidVisitor);
 }
