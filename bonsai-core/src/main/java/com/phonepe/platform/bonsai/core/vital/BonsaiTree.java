@@ -294,6 +294,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     @Override
     public Knot createMapping(String key, KnotData knotData) {
+        checkMappingExistence(key);
         Knot createdKnot = createKnot(knotData);
         createMapping(key, createdKnot.getId());
         return createdKnot;
@@ -546,6 +547,14 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             return knotConflictResolver.resolveConflict(preferenceKnot, knot);
         }
         return knot;
+    }
+
+    private void checkMappingExistence(String key) {
+        final String existingMapping = getMapping(key);
+        if (existingMapping != null) {
+            throw new BonsaiError(BonsaiErrorCode.MAPPING_ALREADY_PRESENT, "knotId:" + existingMapping
+                    + " is already mapping with key:" + key + ". Consider updating the same");
+        }
     }
 
     private TreeKnot composeTreeKnot(String knotId) {
