@@ -1,6 +1,5 @@
 package com.phonepe.platform.bonsai.json.eval;
 
-import com.jayway.jsonpath.DocumentContext;
 import com.phonepe.platform.query.dsl.general.GenericFilter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +9,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class GenericFilterContext {
+public class GenericFilterContext<C extends JsonEvalContext> {
     private GenericFilter genericFilter;
-    private DocumentContext context;
+    private C context;
 }

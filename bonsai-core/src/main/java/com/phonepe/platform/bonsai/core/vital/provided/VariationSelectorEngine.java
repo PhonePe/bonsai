@@ -19,13 +19,13 @@ import java.util.function.Function;
  */
 public class VariationSelectorEngine<C extends Context> extends ConditionEngine<C, Edge> {
 
-    private final Function<GenericFilterContext, Boolean> genericFilterHandler;
+    private final Function<GenericFilterContext<C>, Boolean> genericFilterHandler;
 
     public VariationSelectorEngine() {
         this(genericFilterContext -> true);
     }
 
-    public VariationSelectorEngine(Function<GenericFilterContext, Boolean> genericFilterHandler) {
+    public VariationSelectorEngine(Function<GenericFilterContext<C>, Boolean> genericFilterHandler) {
         this.genericFilterHandler = genericFilterHandler;
     }
 
@@ -37,6 +37,6 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
         }
         return edge.getFilters()
                 .stream()
-                .allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine(context.getDocumentContext(), genericFilterHandler)));
+                .allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine<>(context, genericFilterHandler)));
     }
 }

@@ -1,20 +1,36 @@
 package com.phonepe.platform.bonsai.json.eval;
 
-import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
 import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.query.dsl.FilterVisitor;
-import com.phonepe.platform.query.dsl.general.*;
+import com.phonepe.platform.query.dsl.general.AnyFilter;
+import com.phonepe.platform.query.dsl.general.ContainsFilter;
+import com.phonepe.platform.query.dsl.general.EqualsFilter;
+import com.phonepe.platform.query.dsl.general.ExistsFilter;
+import com.phonepe.platform.query.dsl.general.GenericFilter;
+import com.phonepe.platform.query.dsl.general.InFilter;
+import com.phonepe.platform.query.dsl.general.MissingFilter;
+import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
+import com.phonepe.platform.query.dsl.general.NotInFilter;
 import com.phonepe.platform.query.dsl.logical.AndFilter;
 import com.phonepe.platform.query.dsl.logical.NotFilter;
 import com.phonepe.platform.query.dsl.logical.OrFilter;
-import com.phonepe.platform.query.dsl.numeric.*;
+import com.phonepe.platform.query.dsl.numeric.BetweenFilter;
+import com.phonepe.platform.query.dsl.numeric.GreaterEqualFilter;
+import com.phonepe.platform.query.dsl.numeric.GreaterThanFilter;
+import com.phonepe.platform.query.dsl.numeric.LessEqualFilter;
+import com.phonepe.platform.query.dsl.numeric.LessThanFilter;
+import com.phonepe.platform.query.dsl.numeric.NumericBinaryFilter;
 import com.phonepe.platform.query.dsl.string.StringEndsWithFilter;
 import com.phonepe.platform.query.dsl.string.StringRegexMatchFilter;
 import com.phonepe.platform.query.dsl.string.StringStartsWithFilter;
 import lombok.AllArgsConstructor;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -27,7 +43,7 @@ import java.util.stream.Collectors;
  * @version 1.0  29/09/17 - 1:08 PM
  */
 @AllArgsConstructor
-public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
+public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implements FilterVisitor<Boolean> {
 
     private static final TypeRef<List<Number>> NUMBER_TYPE_REF = new TypeRef<List<Number>>() {
     };
@@ -36,9 +52,9 @@ public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
     private static final TypeRef<List<Object>> OBJECT_TYPE_REF = new TypeRef<List<Object>>() {
     };
 
-    private DocumentContext context;
+    private final C context;
 
-    private final Function<GenericFilterContext, Boolean> genericFilterHandler;
+    private final Function<GenericFilterContext<C>, Boolean> genericFilterHandler;
 
     @Override
     public Boolean visit(ContainsFilter filter) {
@@ -89,7 +105,7 @@ public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
 
     @Override
     public Boolean visit(MissingFilter filter) {
-        List<Object> values = context.read(filter.getField(), OBJECT_TYPE_REF);
+        List<Object> values = context.documentContext().read(filter.getField(), OBJECT_TYPE_REF);
         return values == null || values.isEmpty() || values.stream().allMatch(Objects::isNull);
     }
 
@@ -102,7 +118,7 @@ public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
 
     @Override
     public Boolean visit(ExistsFilter filter) {
-        List<Object> values = context.read(filter.getField(), OBJECT_TYPE_REF);
+        List<Object> values = context.documentContext().read(filter.getField(), OBJECT_TYPE_REF);
         return isNotEmpty(values);
     }
 
@@ -149,7 +165,7 @@ public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
 
     @Override
     public Boolean visit(GenericFilter filter) {
-        GenericFilterContext genericFilterContext = new GenericFilterContext(filter, context);
+        GenericFilterContext<C> genericFilterContext = new GenericFilterContext<>(filter, context);
         return genericFilterHandler.apply(genericFilterContext);
     }
 
@@ -164,7 +180,7 @@ public class JsonPathFilterEvaluationEngine implements FilterVisitor<Boolean> {
     }
 
     private <T> List<T> nonNullValues(Filter filter, TypeRef<List<T>> typeRef) {
-        List<T> values = context.read(filter.getField(), typeRef);
+        List<T> values = context.documentContext().read(filter.getField(), typeRef);
         return values == null ? Collections.emptyList() : values.stream().filter(Objects::nonNull)
                                                                 .collect(Collectors.toList());
     }
