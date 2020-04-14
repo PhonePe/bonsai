@@ -3,6 +3,7 @@ package com.phonepe.platform.bonsai.models.blocks.delta;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.phonepe.platform.bonsai.models.blocks.delta.type.DeltaOperationType;
+import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationBiConsumerVisitor;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVisitor;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVoidVisitor;
 import lombok.Data;
@@ -26,7 +27,10 @@ public abstract class DeltaOperation {
         this.deltaOperationType = deltaOperationType;
     }
 
+    public abstract void accept(DeltaOperationVoidVisitor deltaOperationVoidVisitor);
+
     public abstract <T> T accept(T t, DeltaOperationVisitor<T> deltaOperationVisitor);
 
-    public abstract void accept(DeltaOperationVoidVisitor deltaOperationVoidVisitor);
+    public abstract <T, U> void accept(T t, U u, DeltaOperationBiConsumerVisitor<T, U> deltaOperationBiConsumerVisitor);
+
 }
