@@ -6,6 +6,7 @@ import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.delta.EdgeDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KeyMappingDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KnotDeltaOperation;
+import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
 
 /**
  * @author tushar.naik
@@ -64,4 +65,11 @@ public interface BonsaiTreeValidator {
      *                           a single edge and its corresponding child knotId.
      */
     void validate(EdgeDeltaOperation edgeDeltaOperation);
+
+
+    /**
+     * Function signature to validate given {@link TreeKnot} object.
+     * @param treeKnot - {@link TreeKnot} object, it contain an entire root knot with all its variation.
+     */
+    void validate(TreeKnot treeKnot);
 }

@@ -9,15 +9,19 @@ import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.delta.EdgeDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KeyMappingDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KnotDeltaOperation;
+import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
+import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.models.data.KnotDataVisitor;
 import com.phonepe.platform.bonsai.models.data.MapKnotData;
 import com.phonepe.platform.bonsai.models.data.MultiKnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
+import com.phonepe.platform.bonsai.models.value.Value;
 import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.query.dsl.FilterCounter;
 import com.phonepe.platform.query.dsl.FilterFieldIdentifier;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -178,6 +182,88 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
         // This condition will ensure, the edge has been added/modified.
         checkCondition((0 == edge.getVersion()),
                 "The version of [delta edge] should be zero.");
+    }
+
+    @Override
+    public void validate(final TreeKnot treeKnot) {
+        checkNotNull(treeKnot, "Root TreeKnot can't be null");
+        checkNotNull(treeKnot.getId(),"Root TreeKnot:Id can't be null");
+        checkNotNull(treeKnot.getKnotData(), "Root TreeKnot:KnotData can't be null");
+
+        final KnotData.KnotDataType rootKnotDataType = treeKnot.getKnotData().getKnotDataType();
+        Value.ValueType rootKnotValueType = Value.ValueType.BOOLEAN;
+        if (KnotData.KnotDataType.VALUED == rootKnotDataType) {
+            final ValuedKnotData valuedRootKnotData = (ValuedKnotData) treeKnot.getKnotData();
+            rootKnotValueType = valuedRootKnotData.getValue().getValueType();
+
+        }
+
+        traverseAndValidateTree(treeKnot, rootKnotDataType, rootKnotValueType);
+    }
+
+    private void traverseAndValidateTree(final TreeKnot treeKnot,
+                                         final KnotData.KnotDataType rootKnotDataType,
+                                         final Value.ValueType rootKnotValueType) {
+        checkNotNull(treeKnot, "TreeKnot can't be null");
+        checkNotNull(treeKnot.getId(),"TreeKnot:Id can't be null");
+        checkNotNull(treeKnot.getKnotData(), "TreeKnot:KnotData can't be null");
+
+        final KnotData knotData = treeKnot.getKnotData();
+        final KnotData.KnotDataType knotDataType = knotData.getKnotDataType();
+        checkCondition((rootKnotDataType == knotDataType),
+                String.format("Internal KnotDataType : [%s]  isn't same as Root KnotDataType : [%s].", knotDataType, rootKnotDataType));
+
+        if (KnotData.KnotDataType.VALUED == knotDataType) {
+            final ValuedKnotData valuedKnotData = (ValuedKnotData) treeKnot.getKnotData();
+            final Value.ValueType valueType = valuedKnotData.getValue().getValueType();
+            checkCondition((rootKnotValueType == valueType),
+                    String.format("Internal KnotValueType : [%s] isn't same as Root KnotValueType : [%s].", valueType, rootKnotValueType));
+        }
+
+        final List<TreeEdge> treeEdgeList =
+                ((treeKnot.getTreeEdges() == null) ? new ArrayList<>() : treeKnot.getTreeEdges());
+
+        /* Check validation on edges, especiall when mutual exclusive property is on. */
+        final List<Filter> allDirectFilters = new ArrayList<>();
+        for (TreeEdge treeEdge : treeEdgeList) {
+            final List<Filter> filters = treeEdge.getFilters();
+            checkNotNullOrEmpty(filters, "TreeEdge:Filters can't be empty");
+            checkCondition(filters.stream()
+                            .mapToInt(k -> k.accept(new FilterCounter()))
+                            .sum() <= bonsaiProperties.getMaxAllowedConditionsPerEdge(),
+                    String.format("TreeEdge:Filters exceed max allowed count: %d.",
+                            bonsaiProperties.getMaxAllowedConditionsPerEdge()));
+            if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
+                final Set<String> allFields = filters.stream()
+                        .map(filter -> filter.accept(new FilterFieldIdentifier()))
+                        .reduce(Stream::concat)
+                        .orElse(Stream.empty())
+                        .collect(Collectors.toSet());
+                if (!allFields.isEmpty() && allFields.size() > 1) {
+                    throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR,
+                            "fields are not mutually exclusive :" + allFields);
+                }
+            }
+            allDirectFilters.addAll(treeEdge.getFilters());
+        }
+
+        if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
+            final Set<String> allFields = allDirectFilters.stream()
+                    .map(filter -> filter.accept(new FilterFieldIdentifier()))
+                    .reduce(Stream::concat)
+                    .orElse(Stream.empty())
+                    .collect(Collectors.toSet());
+            if (!allFields.isEmpty() && allFields.size() > 1) {
+                throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR,
+                        "fields are not mutually exclusive at same edge-level : " + allFields);
+            }
+        }
+
+        /* Recursively Iterate */
+        for (TreeEdge treeEdge : treeEdgeList) {
+            final TreeKnot innerTreeKnot = treeEdge.getTreeKnot();
+            traverseAndValidateTree(innerTreeKnot, rootKnotDataType, rootKnotValueType);
+        }
     }
 
     private static <T> void checkNotNull(T reference, String fieldName) {
