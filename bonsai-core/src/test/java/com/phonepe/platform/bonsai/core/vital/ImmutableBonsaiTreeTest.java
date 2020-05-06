@@ -471,14 +471,11 @@ public class ImmutableBonsaiTreeTest {
 
     @Test
     public void given_immutableBonsaiTree_when_getCompleteTreeWithDeltaOperations_then_returnCompleteTree() {
-        final OrderedList<EdgeIdentifier> orderedList = new OrderedList<>();
-        orderedList.add(new EdgeIdentifier("E1", 1, 1));
-        orderedList.add(new EdgeIdentifier("E2", 2, 2));
 
         final List<DeltaOperation> deltaOperationList = Arrays.asList(
                 new KnotDeltaOperation(
                     Knot.builder()
-                            .edges(orderedList)
+                            .edges(null)
                             .id("k1")
                             .knotData(ValuedKnotData.stringValue("Value Changed"))
                             .build()
@@ -488,7 +485,6 @@ public class ImmutableBonsaiTreeTest {
         Assert.assertNotNull("TreeKnot should not be null for key1", treeKnot);
         Assert.assertEquals("Treeknot id should be : k1", "k1", treeKnot.getId());
         Assert.assertEquals(0, treeKnot.getVersion());
-        Assert.assertEquals("TreeKnot has 2 TreeEdge for key1", 2, treeKnot.getTreeEdges().size());
         Assert.assertNotNull("TreeKnot's KnotData should not be null", treeKnot.getKnotData());
     }
 
