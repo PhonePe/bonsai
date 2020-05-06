@@ -321,6 +321,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             treeKnot = deltaOperation.accept(treeKnot, treeKnotDeltaOperationModifier);
         }
 
+        componentValidator.validate(treeKnot);
         return treeKnot;
     }
 

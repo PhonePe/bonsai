@@ -8,11 +8,6 @@ stages:
   - deploy
   - release
 
-cache:
-  paths:
-    - .m2/repository/
-    - target/
-
 compile:
   stage: build
   <<: *default_tag
@@ -25,7 +20,7 @@ test:
   stage: test
   <<: *default_tag
   script:
-    - mvn clean package -U -Pquality_check
+    - mvn clean verify -U -Pquality_check
     - cat bonsai-core/target/site/jacoco/index.html
   except:
     - master
