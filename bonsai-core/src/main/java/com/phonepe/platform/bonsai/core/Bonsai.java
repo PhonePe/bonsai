@@ -121,8 +121,8 @@ public interface Bonsai<C extends Context> {
      * update the edge with new Variation components
      * needs to be a valid update id
      *
-     * @param knotId  knot id to which the edge is associated with
-     * @param edgeId  edge id to be updated
+     * @param knotId    knot id to which the edge is associated with
+     * @param edgeId    edge id to be updated
      * @param variation updatedVariation to be added
      * @return false if edge id wasn't present, or if edge wasn't updated
      */
@@ -219,10 +219,19 @@ public interface Bonsai<C extends Context> {
     TreeKnot getCompleteTree(String key);
 
     /**
+     * recursive function that creates the full tree (if not already present in the datastores) using the TreeKnot
+     * (missing nodes and edges will be deleted
+     *
+     * @param treeKnot tree knot
+     * @return root knot
+     */
+    Knot createCompleteTree(TreeKnot treeKnot);
+
+    /**
      * This function is to validate and get the complete tree (including the pending updates)
      * corresponding to given key and corresponding List of Deltas.
      *
-     * @param key - name of the root node.
+     * @param key                - name of the root node.
      * @param deltaOperationList - List of Delta Data.
      * @return TreeKnot - complete tree containing all the variation of root node.
      */
@@ -232,7 +241,7 @@ public interface Bonsai<C extends Context> {
      * This function is to permanently save new changes into tree(aerospike) for a given key
      * and corresponding List of Deltas.
      *
-     * @param key - name of the root node.
+     * @param key                - name of the root node.
      * @param deltaOperationList - List of Delta Data.
      * @return TreeKnot - complete tree containing all the variation of root node.
      */

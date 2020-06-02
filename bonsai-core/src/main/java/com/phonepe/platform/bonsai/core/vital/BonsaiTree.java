@@ -7,7 +7,6 @@ import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.platform.bonsai.core.structures.ConflictResolver;
 import com.phonepe.platform.bonsai.core.structures.CycleIdentifier;
-import com.phonepe.platform.bonsai.core.visitor.delta.impl.SaveDataOperationIntoStoreVisitor;
 import com.phonepe.platform.bonsai.core.visitor.delta.impl.TreeKnotDeltaOperationModifierVisitor;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
@@ -24,8 +23,8 @@ import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
+import com.phonepe.platform.bonsai.models.blocks.delta.KeyMappingDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVisitor;
-import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVoidVisitor;
 import com.phonepe.platform.bonsai.models.blocks.model.Converters;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
@@ -40,6 +39,7 @@ import com.phonepe.platform.query.dsl.FilterFieldIdentifier;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -77,7 +77,6 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     private final BonsaiIdGenerator bonsaiIdGenerator;
     private final ConflictResolver<Knot> knotConflictResolver;
     private final DeltaOperationVisitor<TreeKnot> treeKnotDeltaOperationModifier;
-    private final DeltaOperationVoidVisitor saveDataOperationIntoStore;
 
     public BonsaiTree(final Stores<String, String, Knot, Edge> stores,
                       final VariationSelectorEngine<C> variationSelectorEngine,
@@ -94,7 +93,6 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         this.bonsaiIdGenerator = bonsaiIdGenerator;
         this.knotConflictResolver = knotConflictResolver;
         this.treeKnotDeltaOperationModifier = new TreeKnotDeltaOperationModifierVisitor(componentValidator, knotStore, edgeStore);
-        this.saveDataOperationIntoStore = new SaveDataOperationIntoStoreVisitor(keyTreeStore, knotStore, edgeStore);
         JsonPathSetup.setup();
     }
 
@@ -306,9 +304,45 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
+    public Knot removeMapping(String key) {
+        return knotStore.getKnot(keyTreeStore.removeKeyTree(key));
+    }
+
+    @Override
     public TreeKnot getCompleteTree(String key) {
         String knotId = keyTreeStore.getKeyTree(key);
         return composeTreeKnot(knotId);
+    }
+
+    @Override
+    public Knot createCompleteTree(final TreeKnot treeKnot) {
+        if (treeKnot == null) {
+            return null;
+        }
+        final Knot knot = createOrUpdateKnotFromTreeKnot(treeKnot);
+
+        final Set<String> extraEdgeIds = knot.getEdges() != null ?
+                knot.getEdges().stream().map(EdgeIdentifier::getId).collect(Collectors.toSet()) :
+                new HashSet<>();
+
+        final String parentKnotId = knot.getId();
+
+        final List<TreeEdge> treeEdges = (treeKnot.getTreeEdges() == null) ? new ArrayList<>() : treeKnot.getTreeEdges();
+        treeKnot.setTreeEdges(treeEdges);
+        for (TreeEdge childTreeEdge : treeKnot.getTreeEdges()) {
+            /* remove edges which are also part of the treeknot being saved (they are not extra) */
+            extraEdgeIds.remove(childTreeEdge.getEdgeIdentifier().getId());
+
+            /* first create the inner knots completely ----> POST-ORDER recursion */
+            final Knot childKnot = createCompleteTree(childTreeEdge.getTreeKnot());
+
+            /* then create/update the edges if necessary, only if  */
+            if (childKnot != null) {
+                createOrUpdateEdgeFromTreeEdge(parentKnotId, childTreeEdge, childKnot);
+            }
+        }
+        extraEdgeIds.forEach(edgeId -> deleteVariation(parentKnotId, edgeId, true));
+        return knot;
     }
 
     @Override
@@ -328,20 +362,13 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     @Override
     public TreeKnot applyDeltaOperations(final String key,
                                          final List<DeltaOperation> deltaOperationList) {
-        final String knotId = keyTreeStore.getKeyTree(key);
-        TreeKnot treeKnot = composeTreeKnot(knotId);
-
-        for (DeltaOperation deltaOperation : deltaOperationList) {
-            treeKnot = deltaOperation.accept(treeKnot, treeKnotDeltaOperationModifier);
-            deltaOperation.accept(saveDataOperationIntoStore);
+        TreeKnot treeKnot = getCompleteTreeWithDeltaOperations(key, deltaOperationList);
+        Knot rootKnot = createCompleteTree(treeKnot);
+        if (!containsKey(key)) {
+            KeyMappingDeltaOperation keyMappingDeltaOperation = (KeyMappingDeltaOperation) deltaOperationList.get(0);
+            createMapping(keyMappingDeltaOperation.getKeyId(), rootKnot.getId());
         }
-
         return treeKnot;
-    }
-
-    @Override
-    public Knot removeMapping(String key) {
-        return knotStore.getKnot(keyTreeStore.removeKeyTree(key));
     }
 
     @Override
@@ -419,6 +446,33 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     public FlatTreeRepresentation evaluateFlat(String key, C context) {
         KeyNode evaluate = evaluate(key, context);
         return TreeUtils.flatten(evaluate);
+    }
+
+    private Knot createOrUpdateKnotFromTreeKnot(TreeKnot treeKnot) {
+        Knot knot = getKnot(treeKnot.getId());
+        if (knot != null) {
+            if (treeKnot.getVersion() != knot.getVersion()) {
+                knot = updateKnotData(treeKnot.getId(), treeKnot.getKnotData());
+            }
+        } else {
+            knot = createKnot(treeKnot.getKnotData());
+        }
+        return knot;
+    }
+
+    private void createOrUpdateEdgeFromTreeEdge(final String parentKnotId, final TreeEdge treeEdge,
+                                                final Knot treeCreatedKnot) {
+        final Edge edge = getEdge(treeEdge.getEdgeIdentifier().getId());
+        if (edge != null && treeEdge.getVersion() == edge.getVersion()) {
+            return;
+        }
+        final String childKnotId = treeCreatedKnot.getId();
+        if (edge != null) {
+            updateVariation(parentKnotId, treeEdge.getEdgeIdentifier().getId(),
+                            Converters.toVariation(childKnotId, treeEdge));
+        } else {
+            addVariation(parentKnotId, Converters.toVariation(childKnotId, treeEdge));
+        }
     }
 
     /**
