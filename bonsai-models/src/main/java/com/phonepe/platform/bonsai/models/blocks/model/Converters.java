@@ -2,6 +2,7 @@ package com.phonepe.platform.bonsai.models.blocks.model;
 
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Variation;
 
 /**
  * @author tushar.naik
@@ -24,5 +25,15 @@ public interface Converters {
                 .live(edge.isLive())
                 .percentage(edge.getPercentage())
                 .build();
+    }
+
+    static Variation toVariation(String childKnotId, TreeEdge treeEdge) {
+        return Variation.builder()
+                        .knotId(childKnotId)
+                        .filters(treeEdge.getFilters())
+                        .live(treeEdge.isLive())
+                        .percentage(treeEdge.getPercentage())
+                        .priority(treeEdge.getEdgeIdentifier().getPriority())
+                        .build();
     }
 }

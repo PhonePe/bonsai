@@ -12,16 +12,21 @@ import com.phonepe.platform.bonsai.models.ListNode;
 import com.phonepe.platform.bonsai.models.MapNode;
 import com.phonepe.platform.bonsai.models.NodeVisitors;
 import com.phonepe.platform.bonsai.models.ValueNode;
+import com.phonepe.platform.bonsai.models.blocks.Edge;
+import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
+import com.phonepe.platform.bonsai.models.blocks.delta.EdgeDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KeyMappingDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KnotDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
+import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.models.data.MapKnotData;
 import com.phonepe.platform.bonsai.models.data.MultiKnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
+import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import com.phonepe.platform.bonsai.models.value.StringValue;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
@@ -469,7 +474,7 @@ public class BonsaiTreeTest {
 
         final TreeKnot treeKnot = bonsai.applyDeltaOperations("key", deltaOperationList);
         final String knotViaKey = bonsai.getMapping("key");
-        final Knot knot = bonsai.getKnot("knotOne");
+        final Knot knot = bonsai.getKnot(knotViaKey);
 
         assertNotNull("TreeKnot should not be null.", treeKnot);
         assertEquals("The Id of TreeKnot should be : knotOne.", "knotOne", treeKnot.getId());
@@ -477,13 +482,510 @@ public class BonsaiTreeTest {
         assertEquals("There are zero edges connected to TreeKnot.", 0, treeKnot.getTreeEdges().size());
         assertNotNull("TreeKnot data should exist.", treeKnot.getKnotData());
         assertEquals("VALUED type KnotData should present.", "VALUED", treeKnot.getKnotData().getKnotDataType().toString());
-        assertEquals("InMemoryKeyTreeStore should not contain knotId for keyId : key", "knotOne", knotViaKey);
         assertNotNull("Knot should not be null.", knot);
-        assertEquals("The Id of Knot should be : knotOne.", "knotOne", knot.getId());
         assertNotEquals("The version of Knot should not be zero.", 0, knot.getVersion()); // This is main check.
         assertNull("There are zero edges connected to Knot.", knot.getEdges());
         assertNotNull("Knot data should exist.", knot.getKnotData());
         assertEquals("VALUED type KnotData should present.", "VALUED", knot.getKnotData().getKnotDataType().toString());
+    }
+
+    /**
+     * Adding the documentation to explain what we are trying to achieve here.
+     *
+     * 1. Add a new tree with KEY = "key"
+     *                          __________
+     *                         |  VALUED  |
+     *                         | Value::0 |
+     *                          ----------
+     * Now, validate it.
+     *
+     *
+     * 2. Add two variation to its
+     *
+     *                         __________
+     *                        |  VALUED  |
+     *                        | Value::0 |
+     *                         ----------
+     *       userId = U1     /            \ userId = U2
+     *        number = 1    /             \ number = 2
+     *                 ----------        ----------
+     *                |  VALUED  |      |  VALUED  |
+     *                | Value::1 |      | Value::2 |
+     *                 ----------        ----------
+     * Now, validate it.
+     *
+     *
+     * 3. Remove "Value::1" node and add third node.
+     *
+     *                         __________
+     *                        |  VALUED  |
+     *                        | Value::0 |
+     *                         ----------
+     *         userId != U5    /         \ userId = U2
+     *          number = 3    /          \ number = 2
+     *                    ----------      ----------
+     *                   |  VALUED  |    |  VALUED  |
+     *                   | Value::3 |    | Value::2 |
+     *                    ----------      ----------
+     * Now, validate its along with the new number '3' on the newest knot.
+     */
+    @Test
+    public void Given_BonsaiTreeAndDeltaOperationList_When_ApplyingDeltaOperationsOnTree_Then_SaveAndReturnFinalTreeKnot() {
+        // First Insertion
+        List<DeltaOperation> deltaOperationList = new ArrayList<>();
+        final KeyMappingDeltaOperation keyMappingDeltaOperation = KeyMappingDeltaOperation.builder()
+                .keyId("key")
+                .knotId("rootKnotId")
+                .build();
+        final Knot rootKnot = Knot.builder()
+                .id("rootKnotId")
+                .version(0)
+                .knotData(ValuedKnotData.stringValue("Value :: 0"))
+                .build();
+        KnotDeltaOperation rootKnotDeltaOperation = new KnotDeltaOperation(rootKnot);
+        deltaOperationList.add(keyMappingDeltaOperation);
+        deltaOperationList.add(rootKnotDeltaOperation);
+
+        TreeKnot fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList);
+
+        assertNotNull(fetchTreeKnot);
+        assertNotNull(fetchTreeKnot.getId());
+        assertEquals(0, fetchTreeKnot.getVersion());
+        assertNotNull(fetchTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, fetchTreeKnot.getKnotData().getKnotDataType());
+        assertEquals(0, fetchTreeKnot.getTreeEdges().size());
+
+        fetchTreeKnot = bonsai.getCompleteTree("key");
+
+        assertNotNull(fetchTreeKnot);
+        assertNotNull(fetchTreeKnot.getId());
+        assertNotEquals(0, fetchTreeKnot.getVersion());
+        assertNotNull(fetchTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, fetchTreeKnot.getKnotData().getKnotDataType());
+        assertNull(fetchTreeKnot.getTreeEdges());
+
+        // Second Insertion
+        final Knot firstKnot = Knot.builder()
+                .id("firstKnotId")
+                .version(0)
+                .knotData(ValuedKnotData.stringValue("Value :: 1"))
+                .build();
+        final KnotDeltaOperation firstKnotDeltaOperation = new KnotDeltaOperation(firstKnot);
+        final Edge firstEdge = Edge.builder()
+                .edgeIdentifier(new EdgeIdentifier("firstEdgeId", 1, 1))
+                .version(0)
+                .knotId("firstKnotId")
+                .filter(new EqualsFilter("userId", "U1"))
+                .build();
+        final EdgeDeltaOperation firstEdgeDeltaOperation = new EdgeDeltaOperation(firstEdge);
+        final Knot secondKnot = Knot.builder()
+                .id("secondKnotId")
+                .version(0)
+                .knotData(ValuedKnotData.stringValue("Value :: 2"))
+                .build();
+        final KnotDeltaOperation secondKnotDeltaOperation = new KnotDeltaOperation(secondKnot);
+        final Edge secondEdge = Edge.builder()
+                .edgeIdentifier(new EdgeIdentifier("secondEdgeId", 2, 2))
+                .version(0)
+                .knotId("secondKnotId")
+                .filter(new EqualsFilter("userId", "U2"))
+                .build();
+        final EdgeDeltaOperation secondEdgeDeltaOperation = new EdgeDeltaOperation(secondEdge);
+        final OrderedList<EdgeIdentifier> edgeIdentifierOrderedList = new OrderedList<>();
+        edgeIdentifierOrderedList.add(new EdgeIdentifier("firstEdgeId", 0, 1));
+        edgeIdentifierOrderedList.add(new EdgeIdentifier("secondEdgeId", 0, 2));
+        final Knot rootKnotModifiedOne = Knot.builder()
+                .id(fetchTreeKnot.getId())
+                .version(0)
+                .knotData(ValuedKnotData.stringValue("Value :: 0"))
+                .edges(edgeIdentifierOrderedList)
+                .build();
+        final KnotDeltaOperation rootKnotDeltaOperationModifiedOne = new KnotDeltaOperation(rootKnotModifiedOne);
+
+        deltaOperationList.clear();
+        deltaOperationList.add(rootKnotDeltaOperationModifiedOne);
+        deltaOperationList.add(secondEdgeDeltaOperation);
+        deltaOperationList.add(secondKnotDeltaOperation);
+        deltaOperationList.add(firstEdgeDeltaOperation);
+        deltaOperationList.add(firstKnotDeltaOperation);
+
+        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList);
+
+        assertNotNull(fetchTreeKnot);
+        assertNotNull(fetchTreeKnot.getId());
+        assertEquals(0, fetchTreeKnot.getVersion());
+        assertNotNull(fetchTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, fetchTreeKnot.getKnotData().getKnotDataType());
+        assertEquals(2, fetchTreeKnot.getTreeEdges().size());
+        TreeEdge firstTreeEdge = fetchTreeKnot.getTreeEdges().get(0);
+        TreeEdge secondTreeEdge = fetchTreeKnot.getTreeEdges().get(1);
+        assertNotNull(firstTreeEdge);
+        assertNotNull(firstTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(1, firstTreeEdge.getEdgeIdentifier().getNumber());
+        assertEquals(0, firstTreeEdge.getVersion());
+        assertEquals("userId", firstTreeEdge.getFilters().get(0).getField());
+        assertNotNull(secondTreeEdge);
+        assertNotNull(secondTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(2, secondTreeEdge.getEdgeIdentifier().getNumber());
+        assertEquals(0, secondTreeEdge.getVersion());
+        assertEquals("userId", secondTreeEdge.getFilters().get(0).getField());
+        TreeKnot firstTreeKnot = firstTreeEdge.getTreeKnot();
+        TreeKnot secondTreeKnot = secondTreeEdge.getTreeKnot();
+        assertNotNull(firstTreeKnot);
+        assertEquals("firstKnotId", firstTreeKnot.getId());
+        assertEquals(0, firstTreeKnot.getVersion());
+        assertNotNull(firstTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, firstTreeKnot.getKnotData().getKnotDataType());
+        assertNotNull(secondTreeKnot);
+        assertEquals("secondKnotId", secondTreeKnot.getId());
+        assertEquals(0, secondTreeKnot.getVersion());
+        assertNotNull(secondTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, secondTreeKnot.getKnotData().getKnotDataType());
+
+        fetchTreeKnot = bonsai.getCompleteTree("key");
+
+        assertNotNull(fetchTreeKnot);
+        assertNotNull(fetchTreeKnot.getId());
+        assertNotEquals(0, fetchTreeKnot.getVersion());
+        assertNotNull(fetchTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, fetchTreeKnot.getKnotData().getKnotDataType());
+        assertEquals(2, fetchTreeKnot.getTreeEdges().size());
+        firstTreeEdge = fetchTreeKnot.getTreeEdges().get(0);
+        String firstEdgeId = fetchTreeKnot.getTreeEdges().get(0).getEdgeIdentifier().getId();
+        secondTreeEdge = fetchTreeKnot.getTreeEdges().get(1);
+        String secondEdgeId = fetchTreeKnot.getTreeEdges().get(1).getEdgeIdentifier().getId();
+        assertNotNull(firstTreeEdge);
+        assertNotNull(firstTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(1, firstTreeEdge.getEdgeIdentifier().getNumber());
+        assertNotEquals(0, firstTreeEdge.getVersion());
+        assertEquals("userId", firstTreeEdge.getFilters().get(0).getField());
+        assertNotNull(secondTreeEdge);
+        assertNotNull(secondTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(2, secondTreeEdge.getEdgeIdentifier().getNumber());
+        assertNotEquals(0, secondTreeEdge.getVersion());
+        assertEquals("userId", secondTreeEdge.getFilters().get(0).getField());
+        firstTreeKnot = firstTreeEdge.getTreeKnot();
+        String firstKnotId = firstTreeEdge.getTreeKnot().getId();
+        secondTreeKnot = secondTreeEdge.getTreeKnot();
+        String secondKnotId = secondTreeEdge.getTreeKnot().getId();
+        assertNotNull(firstTreeKnot);
+        assertNotNull(firstTreeKnot.getId());
+        assertNotEquals(0, firstTreeKnot.getVersion());
+        assertNotNull(firstTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, firstTreeKnot.getKnotData().getKnotDataType());
+        assertNotNull(secondTreeKnot);
+        assertNotNull(secondTreeKnot.getId());
+        assertNotEquals(0, secondTreeKnot.getVersion());
+        assertNotNull(secondTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, secondTreeKnot.getKnotData().getKnotDataType());
+
+        // Third Insertion
+        final Knot thirdKnot = Knot.builder()
+                .id("thirdKnotId")
+                .version(0)
+                .knotData(ValuedKnotData.stringValue("Value :: 3"))
+                .build();
+        final KnotDeltaOperation thirdKnotDeltaOperation = new KnotDeltaOperation(thirdKnot);
+        final Edge thirdEdge = Edge.builder()
+                .edgeIdentifier(new EdgeIdentifier("thirdEdgeId", 0, 2))
+                .version(0)
+                .knotId("thirdKnotId")
+                .filter(new NotEqualsFilter("userId", "U5"))
+                .build();
+        final EdgeDeltaOperation thirdEdgeDeltaOperation = new EdgeDeltaOperation(thirdEdge);
+        final OrderedList<EdgeIdentifier> edgeIdentifiers = new OrderedList<>();
+        edgeIdentifiers.add(new EdgeIdentifier(secondEdgeId, 0, 2));
+        edgeIdentifiers.add(new EdgeIdentifier("thirdEdgeId", 0, 2));
+        final Knot rootKnotModifiedTwo = Knot.builder()
+                .id(fetchTreeKnot.getId())
+                .version(0)
+                .knotData(ValuedKnotData.stringValue("Value :: 0"))
+                .edges(edgeIdentifiers)
+                .build();
+        final KnotDeltaOperation rootKnotDeltaOperationModifiedTwo = new KnotDeltaOperation(rootKnotModifiedTwo);
+
+        deltaOperationList.clear();
+        deltaOperationList.add(rootKnotDeltaOperationModifiedTwo);
+        deltaOperationList.add(thirdEdgeDeltaOperation);
+        deltaOperationList.add(thirdKnotDeltaOperation);
+
+        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList);
+
+        assertNotNull(fetchTreeKnot);
+        assertNotNull(fetchTreeKnot.getId());
+        assertEquals(0, fetchTreeKnot.getVersion());
+        assertNotNull(fetchTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, fetchTreeKnot.getKnotData().getKnotDataType());
+        assertEquals(2, fetchTreeKnot.getTreeEdges().size());
+        firstTreeEdge = fetchTreeKnot.getTreeEdges().get(0);
+        firstEdgeId = fetchTreeKnot.getTreeEdges().get(0).getEdgeIdentifier().getId();
+        secondTreeEdge = fetchTreeKnot.getTreeEdges().get(1);
+        secondEdgeId = fetchTreeKnot.getTreeEdges().get(1).getEdgeIdentifier().getId();
+        assertNotNull(firstTreeEdge);
+        assertNotNull(firstTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(2, firstTreeEdge.getEdgeIdentifier().getNumber());
+        assertNotEquals(0, firstTreeEdge.getVersion());
+        assertEquals("userId", firstTreeEdge.getFilters().get(0).getField());
+        assertNotNull(secondTreeEdge);
+        assertNotNull(secondTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(4, secondTreeEdge.getEdgeIdentifier().getNumber());
+        assertEquals(0, secondTreeEdge.getVersion());
+        assertEquals("userId", secondTreeEdge.getFilters().get(0).getField());
+        firstTreeKnot = firstTreeEdge.getTreeKnot();
+        firstKnotId = firstTreeEdge.getTreeKnot().getId();
+        secondTreeKnot = secondTreeEdge.getTreeKnot();
+        secondKnotId = secondTreeEdge.getTreeKnot().getId();
+        assertNotNull(firstTreeKnot);
+        assertNotNull(firstTreeKnot.getId());
+        assertNotEquals(0, firstTreeKnot.getVersion());
+        assertNotNull(firstTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, firstTreeKnot.getKnotData().getKnotDataType());
+        assertNotNull(secondTreeKnot);
+        assertEquals("thirdKnotId", secondTreeKnot.getId());
+        assertEquals(0, secondTreeKnot.getVersion());
+        assertNotNull(secondTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, secondTreeKnot.getKnotData().getKnotDataType());
+
+        fetchTreeKnot = bonsai.getCompleteTree("key");
+
+        assertNotNull(fetchTreeKnot);
+        assertNotNull(fetchTreeKnot.getId());
+        assertNotEquals(0, fetchTreeKnot.getVersion());
+        assertNotNull(fetchTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, fetchTreeKnot.getKnotData().getKnotDataType());
+        assertEquals(2, fetchTreeKnot.getTreeEdges().size());
+        firstTreeEdge = fetchTreeKnot.getTreeEdges().get(0);
+        secondTreeEdge = fetchTreeKnot.getTreeEdges().get(1);
+        assertNotNull(firstTreeEdge);
+        assertNotNull(firstTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(2, firstTreeEdge.getEdgeIdentifier().getNumber());
+        assertNotEquals(0, firstTreeEdge.getVersion());
+        assertEquals("userId", firstTreeEdge.getFilters().get(0).getField());
+        assertNotNull(secondTreeEdge);
+        assertNotNull(secondTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(3, secondTreeEdge.getEdgeIdentifier().getNumber());
+        assertNotEquals(0, secondTreeEdge.getVersion());
+        assertEquals("userId", secondTreeEdge.getFilters().get(0).getField());
+        firstTreeKnot = firstTreeEdge.getTreeKnot();
+        secondTreeKnot = secondTreeEdge.getTreeKnot();
+        secondKnotId = secondTreeEdge.getTreeKnot().getId();
+        assertNotNull(firstTreeKnot);
+        assertEquals(firstKnotId, firstTreeKnot.getId());
+        assertNotEquals(0, firstTreeKnot.getVersion());
+        assertNotNull(firstTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, firstTreeKnot.getKnotData().getKnotDataType());
+        assertNotNull(secondTreeKnot);
+        assertEquals(secondKnotId, secondTreeKnot.getId());
+        assertNotEquals(0, secondTreeKnot.getVersion());
+        assertNotNull(secondTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, secondTreeKnot.getKnotData().getKnotDataType());
+    }
+
+    /**
+     * Adding the documentation to explain what we are trying to achieve here.
+     *
+     * 1. Add a new tree with KEY = "key" with its one variation
+     *
+     *                         __________
+     *                        |  VALUED  |
+     *                        | Value::0 |
+     *                         ----------
+     *       userId = U1     /
+     *        number = 1    /
+     *                 ----------
+     *                |  VALUED  |
+     *                | Value::1 |
+     *                 ----------
+     * Now, validate it.
+     *
+     *
+     * 2. Add "Value::2" node and check if any previous versions are not updating.
+     *
+     *                         __________
+     *                        |  VALUED  |
+     *                        | Value::0 |
+     *                         ----------
+     *         userId = U1     /         \ userId = U2
+     *          number = 1    /          \ number = 2
+     *                    ----------      ----------
+     *                   |  VALUED  |    |  VALUED  |
+     *                   | Value::1 |    | Value::2 |
+     *                    ----------      ----------
+     * Now, validate it.
+     */
+    @Test
+    public void Given_BonsaiTreeAndDeltaOperationList_When_ApplyingDeltaOperationsOnTree_Then_ReturnFinalTreeKnotAndVerifyEdgeVersioning() {
+        List<DeltaOperation> deltaOperationList = new ArrayList<>();
+        final Knot firstKnot = Knot.builder()
+                .id("firstKnotId")
+                .version(0)
+                .knotData(ValuedKnotData.stringValue("Value :: 1"))
+                .build();
+        final KnotDeltaOperation firstKnotDeltaOperation = new KnotDeltaOperation(firstKnot);
+        final Edge firstEdge = Edge.builder()
+                .edgeIdentifier(new EdgeIdentifier("firstEdgeId", 1, 1))
+                .version(0)
+                .knotId("firstKnotId")
+                .filter(new EqualsFilter("userId", "U1"))
+                .build();
+        final EdgeDeltaOperation firstEdgeDeltaOperation = new EdgeDeltaOperation(firstEdge);
+        final OrderedList<EdgeIdentifier> edgeIdentifierOrderedList = new OrderedList<>();
+        edgeIdentifierOrderedList.add(new EdgeIdentifier("firstEdgeId", 0, 1));
+        final KeyMappingDeltaOperation keyMappingDeltaOperation = KeyMappingDeltaOperation.builder()
+                .keyId("key")
+                .knotId("rootKnotId")
+                .build();
+        final Knot rootKnot = Knot.builder()
+                .id("rootKnotId")
+                .version(0)
+                .knotData(ValuedKnotData.stringValue("Value :: 0"))
+                .edges(edgeIdentifierOrderedList)
+                .build();
+        KnotDeltaOperation rootKnotDeltaOperation = new KnotDeltaOperation(rootKnot);
+        deltaOperationList.add(keyMappingDeltaOperation);
+        deltaOperationList.add(rootKnotDeltaOperation);
+        deltaOperationList.add(firstEdgeDeltaOperation);
+        deltaOperationList.add(firstKnotDeltaOperation);
+
+        TreeKnot fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList);
+
+        assertNotNull(fetchTreeKnot);
+        assertNotNull(fetchTreeKnot.getId());
+        assertEquals(0, fetchTreeKnot.getVersion());
+        assertNotNull(fetchTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, fetchTreeKnot.getKnotData().getKnotDataType());
+        assertEquals(1, fetchTreeKnot.getTreeEdges().size());
+        TreeEdge firstTreeEdge = fetchTreeKnot.getTreeEdges().get(0);
+        assertNotNull(firstTreeEdge);
+        assertNotNull(firstTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(1, firstTreeEdge.getEdgeIdentifier().getNumber());
+        assertEquals(0, firstTreeEdge.getVersion());
+        assertEquals("userId", firstTreeEdge.getFilters().get(0).getField());
+        TreeKnot firstTreeKnot = firstTreeEdge.getTreeKnot();
+        assertNotNull(firstTreeKnot);
+        assertEquals("firstKnotId", firstTreeKnot.getId());
+        assertEquals(0, firstTreeKnot.getVersion());
+        assertNotNull(firstTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, firstTreeKnot.getKnotData().getKnotDataType());
+
+        fetchTreeKnot = bonsai.getCompleteTree("key");
+
+        assertNotNull(fetchTreeKnot);
+        assertNotNull(fetchTreeKnot.getId());
+        assertNotEquals(0, fetchTreeKnot.getVersion());
+        assertNotNull(fetchTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, fetchTreeKnot.getKnotData().getKnotDataType());
+        assertEquals(1, fetchTreeKnot.getTreeEdges().size());
+        firstTreeEdge = fetchTreeKnot.getTreeEdges().get(0);
+        final long firstTreeEdgeVersion = firstTreeEdge.getVersion(); // Will be compared later.
+        assertNotNull(firstTreeEdge);
+        assertNotNull(firstTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(1, firstTreeEdge.getEdgeIdentifier().getNumber());
+        assertNotEquals(0, firstTreeEdge.getVersion());
+        assertEquals("userId", firstTreeEdge.getFilters().get(0).getField());
+        firstTreeKnot = firstTreeEdge.getTreeKnot();
+        final long firstTreeKnotVersion = firstTreeKnot.getVersion();
+        assertNotNull(firstTreeKnot);
+        assertNotNull(firstTreeKnot.getId());
+        assertNotEquals(0, firstTreeKnot.getVersion());
+        assertNotNull(firstTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, firstTreeKnot.getKnotData().getKnotDataType());
+
+        // Second knot inserted.
+        final Knot secondKnot = Knot.builder()
+                .id("secondKnotId")
+                .version(0)
+                .knotData(ValuedKnotData.stringValue("Value :: 2"))
+                .build();
+        final KnotDeltaOperation secondKnotDeltaOperation = new KnotDeltaOperation(secondKnot);
+        final Edge secondEdge = Edge.builder()
+                .edgeIdentifier(new EdgeIdentifier("secondEdgeId", 2, 2))
+                .version(0)
+                .knotId("secondKnotId")
+                .filter(new EqualsFilter("userId", "U2"))
+                .build();
+        final EdgeDeltaOperation secondEdgeDeltaOperation = new EdgeDeltaOperation(secondEdge);
+        final OrderedList<EdgeIdentifier> edgeIdentifiers = new OrderedList<>();
+        edgeIdentifiers.add(new EdgeIdentifier(firstTreeEdge.getEdgeIdentifier().getId(), 0, 1));
+        edgeIdentifiers.add(new EdgeIdentifier("secondEdgeId", 0, 1));
+        final Knot rootKnotModified = Knot.builder()
+                .id(fetchTreeKnot.getId())
+                .version(0)
+                .knotData(ValuedKnotData.stringValue("Value :: 0"))
+                .edges(edgeIdentifiers)
+                .build();
+        KnotDeltaOperation rootKnotDeltaOperationModified = new KnotDeltaOperation(rootKnotModified);
+
+        deltaOperationList.clear();
+        deltaOperationList.add(rootKnotDeltaOperationModified);
+        deltaOperationList.add(secondEdgeDeltaOperation);
+        deltaOperationList.add(secondKnotDeltaOperation);
+
+        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList);
+
+        assertNotNull(fetchTreeKnot);
+        assertNotNull(fetchTreeKnot.getId());
+        assertEquals(0, fetchTreeKnot.getVersion());
+        assertNotNull(fetchTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, fetchTreeKnot.getKnotData().getKnotDataType());
+        assertEquals(2, fetchTreeKnot.getTreeEdges().size());
+        firstTreeEdge = fetchTreeKnot.getTreeEdges().get(0);
+        TreeEdge secondTreeEdge = fetchTreeKnot.getTreeEdges().get(1);
+        assertNotNull(firstTreeEdge);
+        assertNotNull(firstTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(1, firstTreeEdge.getEdgeIdentifier().getNumber());
+        assertEquals(firstTreeEdgeVersion, firstTreeEdge.getVersion()); // This should be equal to its previous version.
+        assertEquals("userId", firstTreeEdge.getFilters().get(0).getField());
+        assertNotNull(secondTreeEdge);
+        assertNotNull(secondTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(3, secondTreeEdge.getEdgeIdentifier().getNumber());
+        assertEquals(0, secondTreeEdge.getVersion());
+        assertEquals("userId", secondTreeEdge.getFilters().get(0).getField());
+        firstTreeKnot = firstTreeEdge.getTreeKnot();
+        TreeKnot secondTreeKnot = secondTreeEdge.getTreeKnot();
+        assertNotNull(firstTreeKnot);
+        assertNotNull(firstTreeKnot.getId());
+        assertEquals(firstTreeKnotVersion, firstTreeKnot.getVersion()); // This should be equal to its previous version.
+        assertNotNull(firstTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, firstTreeKnot.getKnotData().getKnotDataType());
+        assertNotNull(secondTreeKnot);
+        assertEquals("secondKnotId", secondTreeKnot.getId());
+        assertEquals(0, secondTreeKnot.getVersion());
+        assertNotNull(secondTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, secondTreeKnot.getKnotData().getKnotDataType());
+
+        fetchTreeKnot = bonsai.getCompleteTree("key");
+
+        assertNotNull(fetchTreeKnot);
+        assertNotNull(fetchTreeKnot.getId());
+        assertNotNull(fetchTreeKnot.getVersion());
+        assertNotNull(fetchTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, fetchTreeKnot.getKnotData().getKnotDataType());
+        assertEquals(2, fetchTreeKnot.getTreeEdges().size());
+        firstTreeEdge = fetchTreeKnot.getTreeEdges().get(0);
+        secondTreeEdge = fetchTreeKnot.getTreeEdges().get(1);
+        assertNotNull(firstTreeEdge);
+        assertNotNull(firstTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(1, firstTreeEdge.getEdgeIdentifier().getNumber());
+        assertEquals(firstTreeEdgeVersion, firstTreeEdge.getVersion()); // This should be equal to its previous version.
+        assertEquals("userId", firstTreeEdge.getFilters().get(0).getField());
+        assertNotNull(secondTreeEdge);
+        assertNotNull(secondTreeEdge.getEdgeIdentifier().getId());
+        assertEquals(2, secondTreeEdge.getEdgeIdentifier().getNumber());
+        assertNotEquals(0, secondTreeEdge.getVersion());
+        assertEquals("userId", secondTreeEdge.getFilters().get(0).getField());
+        firstTreeKnot = firstTreeEdge.getTreeKnot();
+        secondTreeKnot = secondTreeEdge.getTreeKnot();
+        assertNotNull(firstTreeKnot);
+        assertNotNull(firstTreeKnot.getId());
+        assertEquals(firstTreeKnotVersion, firstTreeKnot.getVersion()); // This should be equal to its previous version.
+        assertNotNull(firstTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, firstTreeKnot.getKnotData().getKnotDataType());
+        assertNotNull(secondTreeKnot);
+        assertNotNull(secondTreeKnot.getId());
+        assertNotEquals(0, secondTreeKnot.getVersion());
+        assertNotNull(secondTreeKnot.getKnotData());
+        assertEquals(KnotData.KnotDataType.VALUED, secondTreeKnot.getKnotData().getKnotDataType());
     }
 
     @Test

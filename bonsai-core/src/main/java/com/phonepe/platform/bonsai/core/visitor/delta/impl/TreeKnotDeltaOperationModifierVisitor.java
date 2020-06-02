@@ -18,6 +18,7 @@ import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -108,16 +109,24 @@ public class TreeKnotDeltaOperationModifierVisitor implements DeltaOperationVisi
             final List<EdgeIdentifier> edgeIdentifierList = (knotDeltaOperation.getKnot().getEdges() == null)
                     ? new ArrayList<>() : knotDeltaOperation.getKnot().getEdges(); // If-else check to avoid error in loop.
             final List<TreeEdge> treeEdgeList = new ArrayList<>();
+            int edgeNumber = safeSize(treeKnot.getTreeEdges()) + 1;
             for(EdgeIdentifier edgeIdentifier: edgeIdentifierList) {
+                edgeIdentifier.setNumber(edgeNumber++);
                 final Edge fetchedEdge = edgeStore.getEdge(edgeIdentifier.getId());
+                TreeEdge treeEdge;
                 if (fetchedEdge == null) {
-                    TreeEdge treeEdge = TreeEdge.builder()
+                    treeEdge = TreeEdge.builder()
                             .edgeIdentifier(edgeIdentifier)
                             .build();
-                    treeEdgeList.add(treeEdge);
+                } else {
+                    treeEdge = treeKnot.getTreeEdges()
+                            .stream()
+                            .filter(treeEdgeSingle -> edgeIdentifier.getId().equals(treeEdgeSingle.getEdgeIdentifier().getId()))
+                            .findFirst()
+                            .get();
                 }
+                treeEdgeList.add(treeEdge);
             }
-            Optional.ofNullable(treeKnot.getTreeEdges()).ifPresent(treeEdgeList::addAll);
             treeKnot.setTreeEdges(treeEdgeList);
             treeKnot.setVersion(knotDeltaOperation.getKnot().getVersion());
             treeKnot.setKnotData(knotDeltaOperation.getKnot().getKnotData());
@@ -178,8 +187,7 @@ public class TreeKnotDeltaOperationModifierVisitor implements DeltaOperationVisi
         final List<TreeEdge> treeEdgeList = (treeKnot.getTreeEdges() != null) ?
                 treeKnot.getTreeEdges() : new ArrayList<>();
 
-        for (int i=0; i<treeEdgeList.size(); i++) {
-            final TreeEdge treeEdge = treeEdgeList.get(i);
+        for (final TreeEdge treeEdge : treeEdgeList) {
             final EdgeIdentifier edgeIdentifier = treeEdge.getEdgeIdentifier();
             if (edgeDeltaOperation.getEdge().getEdgeIdentifier().getId().equals(edgeIdentifier.getId())) {
                 treeEdge.setVersion(edgeDeltaOperation.getEdge().getVersion());
@@ -191,8 +199,8 @@ public class TreeKnotDeltaOperationModifierVisitor implements DeltaOperationVisi
                 final Knot fetchedKnot = knotStore.getKnot(childKnotId);
                 if (fetchedKnot == null) {
                     final TreeKnot childTreeKnot = TreeKnot.builder()
-                            .id(edgeDeltaOperation.getEdge().getKnotId())
-                            .build();
+                                                           .id(edgeDeltaOperation.getEdge().getKnotId())
+                                                           .build();
                     treeEdge.setTreeKnot(childTreeKnot);
                 }
                 return true;
@@ -214,6 +222,11 @@ public class TreeKnotDeltaOperationModifierVisitor implements DeltaOperationVisi
         }
 
         return isSuccessfullyInserted;
+    }
+
+
+    private static <T> int safeSize(Collection<T> treeEdges) {
+        return treeEdges == null ? 0 : treeEdges.size();
     }
 }
 

@@ -4,7 +4,7 @@ import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.delta.type.DeltaOperationType;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationBiConsumerVisitor;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVisitor;
-import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVoidVisitor;
+import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationUnaryVisitor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,8 +28,8 @@ public class EdgeDeltaOperation extends DeltaOperation {
     }
 
     @Override
-    public void accept(DeltaOperationVoidVisitor deltaOperationVoidVisitor) {
-        deltaOperationVoidVisitor.visit(this);
+    public <T> T accept(DeltaOperationUnaryVisitor<T> deltaOperationUnaryVisitor) {
+        return deltaOperationUnaryVisitor.visit(this);
     }
 
     @Override
