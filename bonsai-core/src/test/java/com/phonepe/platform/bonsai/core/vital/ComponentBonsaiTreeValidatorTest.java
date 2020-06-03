@@ -45,6 +45,7 @@ public class ComponentBonsaiTreeValidatorTest {
             = new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                                                                .mutualExclusivitySettingTurnedOn(true)
                                                                .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
+                                                               .maxAllowedVariationsPerKnot(Integer.MAX_VALUE)
                                                                .build());
 
     @Test(expected = BonsaiError.class)
@@ -786,6 +787,59 @@ public class ComponentBonsaiTreeValidatorTest {
         componentValidator.validate(treeKnotFirst);
 
         Assert.assertNotNull(treeKnotFirst);
+    }
+
+    @Test
+    public void Given_TwoInternalStringValuedKnotAndRootStringValuedKnot_When_ValidatingTreeKnotWithMutualExclusionOn_ThenThrowMaximumVaritionBonsaiError() {
+        final ValuedKnotData stringKnotDataOne = ValuedKnotData.builder()
+                .value(new StringValue("string value One"))
+                .build();
+        final TreeKnot internalTreeKnotOne = TreeKnot.builder()
+                .id("mapKnotId")
+                .knotData(stringKnotDataOne)
+                .build();
+        final List<Filter> filtersOne = new ArrayList<>();
+        filtersOne.add(new EqualsFilter("fieldOne","valueOne"));
+        final TreeEdge internalTreeEdgeOne = TreeEdge.builder()
+                .edgeIdentifier(new EdgeIdentifier("edgeIdOne", 1, 1))
+                .filters(filtersOne)
+                .treeKnot(internalTreeKnotOne)
+                .build();
+
+        final  ValuedKnotData stringKnotDataTwo = ValuedKnotData.builder()
+                .value(new StringValue("string value Two"))
+                .build();
+        final TreeKnot internalTreeKnotTwo = TreeKnot.builder()
+                .id("mapKnotId")
+                .knotData(stringKnotDataTwo)
+                .build();
+        final List<Filter> filtersTwo = new ArrayList<>();
+        filtersTwo.add(new EqualsFilter("fieldOne","valueTwo"));
+        final TreeEdge internalTreeEdgeTwo = TreeEdge.builder()
+                .edgeIdentifier(new EdgeIdentifier("edgeIdTwo", 2, 2))
+                .filters(filtersTwo)
+                .treeKnot(internalTreeKnotTwo)
+                .build();
+
+        final ValuedKnotData valuedKnotData = ValuedKnotData.builder()
+                .value(new StringValue("string value"))
+                .build();
+        final List<TreeEdge> treeEdges = new ArrayList<>();
+        treeEdges.add(internalTreeEdgeOne);
+        treeEdges.add(internalTreeEdgeTwo);
+        final TreeKnot rootTreeKnot = TreeKnot.builder()
+                .id("valuedKnotId")
+                .treeEdges(treeEdges)
+                .knotData(valuedKnotData)
+                .build();
+
+        try {
+            final ComponentBonsaiTreeValidator componentValidator =
+                    getComponentBonsaiTreeValidator(1, 3, true);
+            componentValidator.validate(rootTreeKnot);
+        } catch (BonsaiError e) {
+            Assert.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
+        }
     }
 
     private ComponentBonsaiTreeValidator getComponentBonsaiTreeValidator(final long maxAllowedVariationsPerKnot,

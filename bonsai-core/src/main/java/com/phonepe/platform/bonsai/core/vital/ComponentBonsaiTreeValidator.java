@@ -223,6 +223,10 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
         final List<TreeEdge> treeEdgeList =
                 ((treeKnot.getTreeEdges() == null) ? new ArrayList<>() : treeKnot.getTreeEdges());
 
+        checkCondition(treeEdgeList.size() <= bonsaiProperties.getMaxAllowedVariationsPerKnot(),
+                String.format("Number of variation of any knot can not exceed : %d",
+                        bonsaiProperties.getMaxAllowedVariationsPerKnot()));
+
         /* Check validation on edges, especiall when mutual exclusive property is on. */
         final List<Filter> allDirectFilters = new ArrayList<>();
         for (TreeEdge treeEdge : treeEdgeList) {
