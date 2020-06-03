@@ -113,19 +113,18 @@ public class TreeKnotDeltaOperationModifierVisitor implements DeltaOperationVisi
             for(EdgeIdentifier edgeIdentifier: edgeIdentifierList) {
                 edgeIdentifier.setNumber(edgeNumber++);
                 final Edge fetchedEdge = edgeStore.getEdge(edgeIdentifier.getId());
-                TreeEdge treeEdge;
                 if (fetchedEdge == null) {
-                    treeEdge = TreeEdge.builder()
+                    final TreeEdge treeEdge = TreeEdge.builder()
                             .edgeIdentifier(edgeIdentifier)
                             .build();
+                    treeEdgeList.add(treeEdge);
                 } else {
-                    treeEdge = treeKnot.getTreeEdges()
+                    treeKnot.getTreeEdges()
                             .stream()
                             .filter(treeEdgeSingle -> edgeIdentifier.getId().equals(treeEdgeSingle.getEdgeIdentifier().getId()))
                             .findFirst()
-                            .get();
+                            .ifPresent(treeEdgeList::add);
                 }
-                treeEdgeList.add(treeEdge);
             }
             treeKnot.setTreeEdges(treeEdgeList);
             treeKnot.setVersion(knotDeltaOperation.getKnot().getVersion());
