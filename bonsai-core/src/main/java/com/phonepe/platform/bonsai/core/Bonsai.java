@@ -231,21 +231,27 @@ public interface Bonsai<C extends Context> {
      * This function is to validate and get the complete tree (including the pending updates)
      * corresponding to given key and corresponding List of Deltas.
      *
-     * @param key                - name of the root node.
-     * @param deltaOperationList - List of Delta Data.
+     * @param key                - Name of the root node.
+     * @param deltaOperationList - List of Delta Operations.
+     * @param revertedDeltaOperationList - List of Delta Operations needed to revert the affect of deltaOperationList.
      * @return TreeKnot - complete tree containing all the variation of root node.
      */
-    TreeKnot getCompleteTreeWithDeltaOperations(String key, List<DeltaOperation> deltaOperationList);
+    TreeKnot getCompleteTreeWithDeltaOperations(String key,
+                                                List<DeltaOperation> deltaOperationList,
+                                                List<DeltaOperation> revertedDeltaOperationList);
 
     /**
      * This function is to permanently save new changes into tree(aerospike) for a given key
      * and corresponding List of Deltas.
      *
-     * @param key                - name of the root node.
+     * @param key                - Name of the root node.
      * @param deltaOperationList - List of Delta Data.
+     * @param revertedDeltaOperationList - List of Delta Operations needed to revert the affect of deltaOperationList.
      * @return TreeKnot - complete tree containing all the variation of root node.
      */
-    TreeKnot applyDeltaOperations(String key, List<DeltaOperation> deltaOperationList);
+    TreeKnot applyDeltaOperations(String key,
+                                  List<DeltaOperation> deltaOperationList,
+                                  List<DeltaOperation> revertedDeltaOperationList);
 
     /**
      * Perform a full evaluation of the Key

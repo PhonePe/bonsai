@@ -28,6 +28,7 @@ import com.phonepe.platform.bonsai.models.data.MultiKnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import com.phonepe.platform.bonsai.models.value.StringValue;
+import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
 import org.junit.After;
@@ -40,6 +41,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -452,7 +457,8 @@ public class BonsaiTreeTest {
         deltaOperationList.add(new KeyMappingDeltaOperation("key", "knotOne"));
         deltaOperationList.add(new KnotDeltaOperation(new Knot("knotOne", 0, null, ValuedKnotData.stringValue("Knot One Value"))));
 
-        final TreeKnot treeKnot = bonsai.getCompleteTreeWithDeltaOperations("key", deltaOperationList);
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        final TreeKnot treeKnot = bonsai.getCompleteTreeWithDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
         final String knotViaKey = bonsai.getMapping("key");
         final Knot knot = bonsai.getKnot("knotOne");
 
@@ -472,7 +478,8 @@ public class BonsaiTreeTest {
         deltaOperationList.add(new KeyMappingDeltaOperation("key", "knotOne"));
         deltaOperationList.add(new KnotDeltaOperation(new Knot("knotOne", 0, null, ValuedKnotData.stringValue("Knot One Value"))));
 
-        final TreeKnot treeKnot = bonsai.applyDeltaOperations("key", deltaOperationList);
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        final TreeKnot treeKnot = bonsai.applyDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
         final String knotViaKey = bonsai.getMapping("key");
         final Knot knot = bonsai.getKnot(knotViaKey);
 
@@ -546,7 +553,8 @@ public class BonsaiTreeTest {
         deltaOperationList.add(keyMappingDeltaOperation);
         deltaOperationList.add(rootKnotDeltaOperation);
 
-        TreeKnot fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList);
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        TreeKnot fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
 
         assertNotNull(fetchTreeKnot);
         assertNotNull(fetchTreeKnot.getId());
@@ -609,7 +617,8 @@ public class BonsaiTreeTest {
         deltaOperationList.add(firstEdgeDeltaOperation);
         deltaOperationList.add(firstKnotDeltaOperation);
 
-        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList);
+        revertDeltaOperationList.clear();
+        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
 
         assertNotNull(fetchTreeKnot);
         assertNotNull(fetchTreeKnot.getId());
@@ -709,7 +718,8 @@ public class BonsaiTreeTest {
         deltaOperationList.add(thirdEdgeDeltaOperation);
         deltaOperationList.add(thirdKnotDeltaOperation);
 
-        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList);
+        revertDeltaOperationList.clear();
+        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
 
         assertNotNull(fetchTreeKnot);
         assertNotNull(fetchTreeKnot.getId());
@@ -847,7 +857,8 @@ public class BonsaiTreeTest {
         deltaOperationList.add(firstEdgeDeltaOperation);
         deltaOperationList.add(firstKnotDeltaOperation);
 
-        TreeKnot fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList);
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        TreeKnot fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
 
         assertNotNull(fetchTreeKnot);
         assertNotNull(fetchTreeKnot.getId());
@@ -921,7 +932,8 @@ public class BonsaiTreeTest {
         deltaOperationList.add(secondEdgeDeltaOperation);
         deltaOperationList.add(secondKnotDeltaOperation);
 
-        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList);
+        revertDeltaOperationList.clear();
+        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
 
         assertNotNull(fetchTreeKnot);
         assertNotNull(fetchTreeKnot.getId());
@@ -986,6 +998,323 @@ public class BonsaiTreeTest {
         assertNotEquals(0, secondTreeKnot.getVersion());
         assertNotNull(secondTreeKnot.getKnotData());
         assertEquals(KnotData.KnotDataType.VALUED, secondTreeKnot.getKnotData().getKnotDataType());
+    }
+
+    /**
+     * Adding the documentation to explain what we are trying to achieve here.
+     *
+     * 1. Add a new tree with KEY = "key" with its two variations.
+     *
+     *                         __________
+     *                        |  VALUED  |
+     *                        | Value::0 |
+     *                         ----------
+     *         userId = U1     /         \ userId = U2
+     *          number = 1    /          \ number = 2
+     *                    ----------      ----------
+     *                   |  VALUED  |    |  VALUED  |
+     *                   | Value::1 |    | Value::2 |
+     *                    ----------      ----------
+     * Now, validate it and capture its revert DeltaOperation List (Let us call it RD1)
+     *
+     *
+     * 2. Add a new variation to under Value::1 knots, delete Value::2 knot and add new variation Value::3 under Value::0 knot.
+     *
+     *                         __________
+     *                        |  VALUED  |
+     *                        | Value::0 |
+     *                         ----------
+     *         userId = U1     /         \ userId = U3
+     *          number = 1    /          \ number = 3
+     *                    ----------      ----------
+     *                   |  VALUED  |    |  VALUED  |
+     *                   | Value::1 |    | Value::3 |
+     *                    ----------      ----------
+     *       profileId = P1    |
+     *         number = 1      |
+     *                    ----------
+     *                   |  VALUED  |
+     *                   | Value::4 |
+     *                    ----------
+     * Now, validate it and capture its revert DeltaOperation List (Let us call it RD2)
+     *
+     *
+     *3. Now apply the RD2 on the top-most snapshot and validate if it is equivalent to the first copy.
+     */
+    @Test
+    public void Given_BonsaiTreeAndDeltaOperationList_When_ApplyingDeltaOperationsOnTree_Then_ReturnFinalTreeKnotAndVerifyAndApplyRevertDeltaOperationList() {
+
+        final String knotIdOne = "knotIdOne";
+        final KnotData knotDataOne = ValuedKnotData.builder().value(new StringValue("Value::1")).build();
+        final Knot knotOne = Knot.builder()
+                .id(knotIdOne)
+                .version(0)
+                .knotData(knotDataOne)
+                .edges(null)
+                .build();
+        final KnotDeltaOperation knotDeltaOperationOne = new KnotDeltaOperation(knotOne);
+
+        final String knotIdTwo = "knotIdTwo";
+        final KnotData knotDataTwo = ValuedKnotData.stringValue("Value::2");
+        final Knot knotTwo = Knot.builder()
+                .id(knotIdTwo)
+                .version(0)
+                .knotData(knotDataTwo)
+                .edges(null)
+                .build();
+        final KnotDeltaOperation knotDeltaOperationTwo = new KnotDeltaOperation(knotTwo);
+
+        final EdgeIdentifier edgeIdentifierOne = new EdgeIdentifier("edgeOne", 1, 1);
+        final Filter filterOne = EqualsFilter.builder()
+                .field("userId")
+                .value("U1")
+                .build();
+        final Edge edgeOne = Edge.builder()
+                .edgeIdentifier(edgeIdentifierOne)
+                .version(0)
+                .filter(filterOne)
+                .knotId(knotIdOne)
+                .build();
+        final EdgeDeltaOperation edgeDeltaOperationOne = new EdgeDeltaOperation(edgeOne);
+
+        final EdgeIdentifier edgeIdentifierTwo = new EdgeIdentifier("edgeTwo", 2, 2);
+        final Filter filterTwo = EqualsFilter.builder()
+                .field("userId")
+                .value("U2")
+                .build();
+        final Edge edgeTwo = Edge.builder()
+                .edgeIdentifier(edgeIdentifierTwo)
+                .version(0)
+                .filter(filterTwo)
+                .knotId(knotIdTwo)
+                .build();
+        final EdgeDeltaOperation edgeDeltaOperationTwo = new EdgeDeltaOperation(edgeTwo);
+
+        final OrderedList<EdgeIdentifier> edgeIdentifierOrderedList = new OrderedList<>();
+        edgeIdentifierOrderedList.add(edgeIdentifierOne);
+        edgeIdentifierOrderedList.add(edgeIdentifierTwo);
+        final String knotIdZero = "knotIdZero";
+        final KnotData knotDataZero = ValuedKnotData.stringValue("Value::0");
+        final Knot knotZero = Knot.builder()
+                .id(knotIdZero)
+                .version(0)
+                .knotData(knotDataZero)
+                .edges(edgeIdentifierOrderedList)
+                .build();
+        final KnotDeltaOperation knotDeltaOperationZero = new KnotDeltaOperation(knotZero);
+
+        final KeyMappingDeltaOperation keyMappingDeltaOperation = new KeyMappingDeltaOperation("key", knotIdZero);
+
+        final List<DeltaOperation> firstInputDeltaOperationList = new ArrayList<>();
+        firstInputDeltaOperationList.add(keyMappingDeltaOperation);
+        firstInputDeltaOperationList.add(knotDeltaOperationZero);
+        firstInputDeltaOperationList.add(edgeDeltaOperationOne);
+        firstInputDeltaOperationList.add(edgeDeltaOperationTwo);
+        firstInputDeltaOperationList.add(knotDeltaOperationOne);
+        firstInputDeltaOperationList.add(knotDeltaOperationTwo);
+
+        final List<DeltaOperation> firstRevertDeltaOperationList = new ArrayList<>();
+        final TreeKnot firstTreeKnotSnapshot = bonsai.applyDeltaOperations("key", firstInputDeltaOperationList, firstRevertDeltaOperationList);
+
+        assertThat(firstTreeKnotSnapshot, is(notNullValue()));
+        assertThat(firstTreeKnotSnapshot.getId(), is(knotIdZero));
+        assertThat(firstTreeKnotSnapshot.getKnotData(), is(knotDataZero));
+        assertThat(firstTreeKnotSnapshot.getTreeEdges().size(), is(2));
+        TreeEdge fetchedTreeEdge = firstTreeKnotSnapshot.getTreeEdges().get(0);
+        assertThat(fetchedTreeEdge.getEdgeIdentifier(), is(edgeIdentifierOne));
+        assertThat(fetchedTreeEdge.getFilters().size(), is(1));
+        assertThat(fetchedTreeEdge.getFilters().get(0), is(filterOne));
+        TreeKnot fetchedTreeKnot = fetchedTreeEdge.getTreeKnot();
+        assertThat(fetchedTreeKnot.getId(), is(knotIdOne));
+        assertThat(fetchedTreeKnot.getKnotData(), is(knotDataOne));
+        assertThat(fetchedTreeKnot.getTreeEdges(), is(empty()));
+        fetchedTreeEdge = firstTreeKnotSnapshot.getTreeEdges().get(1);
+        assertThat(fetchedTreeEdge.getEdgeIdentifier(), is(edgeIdentifierTwo));
+        assertThat(fetchedTreeEdge.getFilters().size(), is(1));
+        assertThat(fetchedTreeEdge.getFilters().get(0), is(filterTwo));
+        fetchedTreeKnot = fetchedTreeEdge.getTreeKnot();
+        assertThat(fetchedTreeKnot.getId(), is(knotIdTwo));
+        assertThat(fetchedTreeKnot.getKnotData(), is(knotDataTwo));
+        assertThat(fetchedTreeKnot.getTreeEdges(), is(empty()));
+        assertThat(firstRevertDeltaOperationList.size(), is(0)); // This will be empty, because we are trying to create base image.
+
+
+        // Second insertion.
+        TreeKnot updatedIdTreeKnot = bonsai.getCompleteTree("key");
+        final String knotIdFour = "knotIdFour";
+        final KnotData knotDataFour = ValuedKnotData.builder().value(new StringValue("Value::4")).build();
+        final Knot knotFour = Knot.builder()
+                .id(knotIdFour)
+                .version(0)
+                .knotData(knotDataFour)
+                .edges(null)
+                .build();
+        final KnotDeltaOperation knotDeltaOperationFour = new KnotDeltaOperation(knotFour);
+
+        final String knotIdThree = "knotIdThree";
+        final KnotData knotDataThree = ValuedKnotData.builder().value(new StringValue("Value::3")).build();
+        final Knot knotThree = Knot.builder()
+                .id(knotIdThree)
+                .version(0)
+                .knotData(knotDataThree)
+                .edges(null)
+                .build();
+        final KnotDeltaOperation knotDeltaOperationThree = new KnotDeltaOperation(knotThree);
+
+        final EdgeIdentifier edgeIdentifierFour = new EdgeIdentifier("edgeFour", 1, 1);
+        final Filter filterFour = EqualsFilter.builder()
+                .field("profileId")
+                .value("P1")
+                .build();
+        final Edge edgeFour = Edge.builder()
+                .edgeIdentifier(edgeIdentifierFour)
+                .version(0)
+                .filter(filterFour)
+                .knotId(knotIdFour)
+                .build();
+        final EdgeDeltaOperation edgeDeltaOperationFour = new EdgeDeltaOperation(edgeFour);
+
+        final EdgeIdentifier edgeIdentifierThree = new EdgeIdentifier("edgeThree", 3, 3);
+        final Filter filterThree = EqualsFilter.builder()
+                .field("userId")
+                .value("U3")
+                .build();
+        final Edge edgeThree = Edge.builder()
+                .edgeIdentifier(edgeIdentifierThree)
+                .version(0)
+                .filter(filterThree)
+                .knotId(knotIdThree)
+                .build();
+        final EdgeDeltaOperation edgeDeltaOperationThree = new EdgeDeltaOperation(edgeThree);
+
+        final OrderedList<EdgeIdentifier> edgeIdentifiersInsideKnotOne = new OrderedList<>();
+        edgeIdentifiersInsideKnotOne.add(edgeIdentifierFour);
+        final String knotIdOneUpdated = updatedIdTreeKnot.getTreeEdges().get(0).getTreeKnot().getId();
+        final Knot knotOneUpdated = Knot.builder()
+                .id(knotIdOneUpdated)
+                .version(0)
+                .knotData(knotDataOne)
+                .edges(edgeIdentifiersInsideKnotOne)
+                .build();
+        final KnotDeltaOperation knotDeltaOperationOneUpdated = new KnotDeltaOperation(knotOneUpdated);
+
+        final OrderedList<EdgeIdentifier> edgeIdentifiersInsideKnotZero = new OrderedList<>();
+        final EdgeIdentifier edgeIdentifierOneUpdate = updatedIdTreeKnot.getTreeEdges().get(0).getEdgeIdentifier();
+        edgeIdentifiersInsideKnotZero.add(edgeIdentifierOneUpdate);
+        edgeIdentifiersInsideKnotZero.add(edgeIdentifierThree);
+        final KnotData knotDataZeroUpdated = ValuedKnotData.stringValue("Value::0");
+        final String knotIdZeroUpdated = updatedIdTreeKnot.getId();
+        final Knot knotZeroUpdated = Knot.builder()
+                .id(knotIdZeroUpdated)
+                .version(0)
+                .knotData(knotDataZeroUpdated)
+                .edges(edgeIdentifiersInsideKnotZero)
+                .build();
+        final KnotDeltaOperation knotDeltaOperationZeroUpdated = new KnotDeltaOperation(knotZeroUpdated);
+
+        final List<DeltaOperation> secondInputDeltaOperationList = new ArrayList<>();
+        secondInputDeltaOperationList.add(knotDeltaOperationZeroUpdated);
+        secondInputDeltaOperationList.add(edgeDeltaOperationThree);
+        secondInputDeltaOperationList.add(knotDeltaOperationThree);
+        secondInputDeltaOperationList.add(knotDeltaOperationOneUpdated);
+        secondInputDeltaOperationList.add(edgeDeltaOperationFour);
+        secondInputDeltaOperationList.add(knotDeltaOperationFour);
+
+        final List<DeltaOperation> secondRevertDeltaOperationList = new ArrayList<>();
+        final TreeKnot secondTreeKnotSnapshot = bonsai.applyDeltaOperations("key", secondInputDeltaOperationList, secondRevertDeltaOperationList);
+
+        // Add assert function here.
+        assertThat(secondTreeKnotSnapshot, is(notNullValue()));
+        assertThat(secondTreeKnotSnapshot.getId(), is(knotIdZeroUpdated));
+        assertThat(secondTreeKnotSnapshot.getKnotData(), is(knotDataZeroUpdated));
+        assertThat(secondTreeKnotSnapshot.getTreeEdges().size(), is(2));
+        fetchedTreeEdge = secondTreeKnotSnapshot.getTreeEdges().get(0);
+        assertThat(fetchedTreeEdge.getEdgeIdentifier(), is(edgeIdentifierOneUpdate));
+        assertThat(fetchedTreeEdge.getFilters().size(), is(1));
+        assertThat(fetchedTreeEdge.getFilters().get(0), is(filterOne));
+        fetchedTreeKnot = fetchedTreeEdge.getTreeKnot();
+        assertThat(fetchedTreeKnot.getId(), is(knotIdOneUpdated));
+        assertThat(fetchedTreeKnot.getKnotData(), is(knotDataOne));
+        assertThat(fetchedTreeKnot.getTreeEdges().size(), is(1));
+        fetchedTreeEdge = fetchedTreeKnot.getTreeEdges().get(0);
+        assertThat(fetchedTreeEdge.getEdgeIdentifier(), is(edgeIdentifierFour));
+        assertThat(fetchedTreeEdge.getFilters().size(), is(1));
+        assertThat(fetchedTreeEdge.getFilters().get(0), is(filterFour));
+        fetchedTreeKnot = fetchedTreeEdge.getTreeKnot();
+        assertThat(fetchedTreeKnot.getId(), is(knotIdFour));
+        assertThat(fetchedTreeKnot.getKnotData(), is(knotDataFour));
+        assertThat(fetchedTreeKnot.getTreeEdges(), is(empty()));
+        fetchedTreeEdge = secondTreeKnotSnapshot.getTreeEdges().get(1);
+        assertThat(fetchedTreeEdge.getEdgeIdentifier(), is(edgeIdentifierThree));
+        assertThat(fetchedTreeEdge.getFilters().size(), is(1));
+        assertThat(fetchedTreeEdge.getFilters().get(0), is(filterThree));
+        fetchedTreeKnot = fetchedTreeEdge.getTreeKnot();
+        assertThat(fetchedTreeKnot.getId(), is(knotIdThree));
+        assertThat(fetchedTreeKnot.getKnotData(), is(knotDataThree));
+        assertThat(fetchedTreeKnot.getTreeEdges(), is(empty()));
+
+        // Time to assert secondRevertDeltaOperationList
+        assertThat(secondRevertDeltaOperationList.size(), is(4));
+        KnotDeltaOperation fetchedKnotDeltaOperation = (KnotDeltaOperation) secondRevertDeltaOperationList.get(0);
+        Knot fetchedKnot = fetchedKnotDeltaOperation.getKnot();
+        assertThat(fetchedKnot.getId(), is(updatedIdTreeKnot.getId()));
+        assertThat(fetchedKnot.getKnotData(), is(updatedIdTreeKnot.getKnotData()));
+        EdgeDeltaOperation fetchedEdgeDeltaOperation = (EdgeDeltaOperation) secondRevertDeltaOperationList.get(1);
+        Edge fetchedEdge = fetchedEdgeDeltaOperation.getEdge();
+        assertThat(fetchedEdge.getEdgeIdentifier(), is(updatedIdTreeKnot.getTreeEdges().get(1).getEdgeIdentifier()));
+        assertThat(fetchedEdge.getFilters(), is(edgeTwo.getFilters()));
+        fetchedKnotDeltaOperation = (KnotDeltaOperation) secondRevertDeltaOperationList.get(2);
+        fetchedKnot = fetchedKnotDeltaOperation.getKnot();
+        assertThat(fetchedKnot.getId(), is(updatedIdTreeKnot.getTreeEdges().get(1).getTreeKnot().getId()));
+        assertThat(fetchedKnot.getKnotData(), is(knotTwo.getKnotData()));
+        assertThat(fetchedKnot.getEdges(), is(empty()));
+        fetchedKnotDeltaOperation = (KnotDeltaOperation) secondRevertDeltaOperationList.get(3);
+        fetchedKnot = fetchedKnotDeltaOperation.getKnot();
+        assertThat(fetchedKnot.getId(), is(knotIdOneUpdated));
+        assertThat(fetchedKnot.getKnotData(), is(knotOne.getKnotData()));
+        assertThat(fetchedKnot.getEdges(), is(empty()));
+
+        // Apply secondRevertDeltaOperationList on the latest tree image to get the firstTreeKnotSnapshot.
+        final List<DeltaOperation> thirdRevertDeltaOperationList = new ArrayList<>();
+        final TreeKnot thirdTreeKnotSnapshot = bonsai.applyDeltaOperations("key", secondRevertDeltaOperationList, thirdRevertDeltaOperationList);
+
+        assertThat(thirdTreeKnotSnapshot, is(notNullValue()));
+        assertThat(thirdTreeKnotSnapshot.getId(), is(knotIdZeroUpdated));
+        assertThat(thirdTreeKnotSnapshot.getTreeEdges().size(), is(2));
+        fetchedTreeEdge = thirdTreeKnotSnapshot.getTreeEdges().get(0);
+        assertThat(fetchedTreeEdge.getFilters().size(), is(1));
+        assertThat(fetchedTreeEdge.getFilters().get(0), is(filterOne));
+        fetchedTreeKnot = fetchedTreeEdge.getTreeKnot();
+        assertThat(fetchedTreeKnot.getId(), is(knotIdOneUpdated));
+        assertThat(fetchedTreeKnot.getKnotData(), is(knotDataOne));
+        assertThat(fetchedTreeKnot.getTreeEdges(), is(empty()));
+        fetchedTreeEdge = thirdTreeKnotSnapshot.getTreeEdges().get(1);
+        assertThat(fetchedTreeEdge.getFilters().size(), is(1));
+        assertThat(fetchedTreeEdge.getFilters().get(0), is(filterTwo));
+        fetchedTreeKnot = fetchedTreeEdge.getTreeKnot();
+        assertThat(fetchedTreeKnot.getKnotData(), is(knotDataTwo));
+        assertThat(fetchedTreeKnot.getTreeEdges(), is(empty()));
+
+        // Assert on thirdRevertDeltaOperationList
+        assertThat(thirdRevertDeltaOperationList.size(), is(6));
+        fetchedKnotDeltaOperation = (KnotDeltaOperation) thirdRevertDeltaOperationList.get(0);
+        assertThat(fetchedKnotDeltaOperation.getKnot().getKnotData(), is(knotDataZeroUpdated));
+        fetchedEdgeDeltaOperation = (EdgeDeltaOperation) thirdRevertDeltaOperationList.get(1);
+        assertThat(fetchedEdgeDeltaOperation.getEdge().getFilters().size(), is(1));
+        assertThat(fetchedEdgeDeltaOperation.getEdge().getFilters().get(0), is(filterThree));
+        fetchedKnotDeltaOperation = (KnotDeltaOperation) thirdRevertDeltaOperationList.get(2);
+        assertThat(fetchedKnotDeltaOperation.getKnot().getKnotData(), is(knotDataThree));
+        assertThat(fetchedKnotDeltaOperation.getKnot().getEdges(), is(empty()));
+        fetchedKnotDeltaOperation = (KnotDeltaOperation) thirdRevertDeltaOperationList.get(3);
+        assertThat(fetchedKnotDeltaOperation.getKnot().getId(), is(knotIdOneUpdated));
+        assertThat(fetchedKnotDeltaOperation.getKnot().getKnotData(), is(knotDataOne));
+        assertThat(fetchedKnotDeltaOperation.getKnot().getEdges().size(), is(1));
+        fetchedEdgeDeltaOperation = (EdgeDeltaOperation) thirdRevertDeltaOperationList.get(4);
+        assertThat(fetchedEdgeDeltaOperation.getEdge().getFilters().size(), is(1));
+        assertThat(fetchedEdgeDeltaOperation.getEdge().getFilters().get(0), is(filterFour));
+        fetchedKnotDeltaOperation = (KnotDeltaOperation) thirdRevertDeltaOperationList.get(5);
+        assertThat(fetchedKnotDeltaOperation.getKnot().getKnotData(), is(knotDataFour));
+        assertThat(fetchedKnotDeltaOperation.getKnot().getEdges(), is(empty()));
     }
 
     @Test

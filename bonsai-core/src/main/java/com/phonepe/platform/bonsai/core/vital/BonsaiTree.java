@@ -24,7 +24,7 @@ import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KeyMappingDeltaOperation;
-import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVisitor;
+import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationBiConsumerVisitor;
 import com.phonepe.platform.bonsai.models.blocks.model.Converters;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
@@ -76,7 +76,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     private final BonsaiProperties bonsaiProperties;
     private final BonsaiIdGenerator bonsaiIdGenerator;
     private final ConflictResolver<Knot> knotConflictResolver;
-    private final DeltaOperationVisitor<TreeKnot> treeKnotDeltaOperationModifier;
+    private final DeltaOperationBiConsumerVisitor<TreeKnot, List<DeltaOperation>> treeKnotDeltaOperationModifier;
 
     public BonsaiTree(final Stores<String, String, Knot, Edge> stores,
                       final VariationSelectorEngine<C> variationSelectorEngine,
@@ -92,7 +92,9 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         this.bonsaiProperties = bonsaiProperties;
         this.bonsaiIdGenerator = bonsaiIdGenerator;
         this.knotConflictResolver = knotConflictResolver;
-        this.treeKnotDeltaOperationModifier = new TreeKnotDeltaOperationModifierVisitor(componentValidator, knotStore, edgeStore);
+        this.treeKnotDeltaOperationModifier = new TreeKnotDeltaOperationModifierVisitor(
+                componentValidator, knotStore, edgeStore
+        );
         JsonPathSetup.setup();
     }
 
@@ -347,12 +349,13 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     @Override
     public TreeKnot getCompleteTreeWithDeltaOperations(final String key,
-                                                       final List<DeltaOperation> deltaOperationList) {
+                                                       final List<DeltaOperation> deltaOperationList,
+                                                       final List<DeltaOperation> revertedDeltaOperationList) {
         final String knotId = keyTreeStore.getKeyTree(key);
         TreeKnot treeKnot = composeTreeKnot(knotId);
 
         for (DeltaOperation deltaOperation : deltaOperationList) {
-            treeKnot = deltaOperation.accept(treeKnot, treeKnotDeltaOperationModifier);
+            treeKnot = deltaOperation.accept(treeKnot, revertedDeltaOperationList, treeKnotDeltaOperationModifier);
         }
 
         componentValidator.validate(treeKnot);
@@ -361,8 +364,9 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     @Override
     public TreeKnot applyDeltaOperations(final String key,
-                                         final List<DeltaOperation> deltaOperationList) {
-        TreeKnot treeKnot = getCompleteTreeWithDeltaOperations(key, deltaOperationList);
+                                         final List<DeltaOperation> deltaOperationList,
+                                         final List<DeltaOperation> revertedDeltaOperationList) {
+        TreeKnot treeKnot = getCompleteTreeWithDeltaOperations(key, deltaOperationList, revertedDeltaOperationList);
         Knot rootKnot = createCompleteTree(treeKnot);
         if (!containsKey(key)) {
             KeyMappingDeltaOperation keyMappingDeltaOperation = (KeyMappingDeltaOperation) deltaOperationList.get(0);

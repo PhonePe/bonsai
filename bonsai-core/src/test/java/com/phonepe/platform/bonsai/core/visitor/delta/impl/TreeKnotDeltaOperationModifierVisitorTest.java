@@ -10,6 +10,7 @@ import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryKnotStore;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.EdgeDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KeyMappingDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KnotDeltaOperation;
@@ -22,7 +23,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -67,7 +70,8 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
     public void given_treeKnotModifierVisitorImpl_when_addingKeyMappingDeltaOperationIntoTree_thenReturnTreeKnot() {
         final TreeKnot treeKnot = null;
         final KeyMappingDeltaOperation keyMappingDeltaData = new KeyMappingDeltaOperation("key", "knotId");
-        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(treeKnot, keyMappingDeltaData);
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(treeKnot, revertDeltaOperationList, keyMappingDeltaData);
 
         assertNotNull(returnedTreeKnot);
         assertEquals("knotId", returnedTreeKnot.getId());
@@ -86,7 +90,8 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                 .build();
         knotStore.mapKnot(knotK0.getId(), knotK0);
         final KeyMappingDeltaOperation keyMappingDeltaData = new KeyMappingDeltaOperation("key", "knotId");
-        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(treeKnot, keyMappingDeltaData);
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(treeKnot, revertDeltaOperationList, keyMappingDeltaData);
     }
 
     @Test
@@ -108,7 +113,8 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                         .edges(edges)
                         .build()
         );
-        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(treeKnot, knotDeltaData);
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(treeKnot, revertDeltaOperationList, knotDeltaData);
 
         assertNotNull(returnedTreeKnot);
         assertEquals("K0",returnedTreeKnot.getId());
@@ -213,7 +219,8 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                         .build()
         );
 
-        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(previousTreeKnot, knotDeltaData);
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(previousTreeKnot, revertDeltaOperationList, knotDeltaData);
 
         assertNotNull(returnedTreeKnot);
         assertEquals(0, returnedTreeKnot.getVersion());
@@ -361,8 +368,9 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                         .build()
         );
 
-        TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(previousTreeKnot, knotDeltaData);
-        returnedTreeKnot = treeKnotModifierVisitor.visit(returnedTreeKnot, edgeDeltaOperation);
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(previousTreeKnot, revertDeltaOperationList, knotDeltaData);
+        returnedTreeKnot = treeKnotModifierVisitor.visit(returnedTreeKnot, revertDeltaOperationList, edgeDeltaOperation);
 
         assertNotNull(returnedTreeKnot);
         assertEquals(0, returnedTreeKnot.getVersion());
@@ -425,7 +433,8 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                         .edges(edges)
                         .build()
         );
-        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(treeKnot, knotDeltaData);
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(treeKnot, revertDeltaOperationList, knotDeltaData);
 
         assertNotNull(returnedTreeKnot);
         assertEquals(0, returnedTreeKnot.getVersion());
@@ -446,7 +455,8 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                         .edges(edges)
                         .build()
         );
-        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(null, knotDeltaData);
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(null, revertDeltaOperationList, knotDeltaData);
     }
 
     @Test
@@ -520,7 +530,6 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
         knotStore.mapKnot(knotK2.getId(), knotK2);
         edgeStore.mapEdge(edgeE1.getEdgeIdentifier().getId(), edgeE1);
         edgeStore.mapEdge(edgeE2.getEdgeIdentifier().getId(), edgeE2);
-        edgeStore.mapEdge(edgeE3.getEdgeIdentifier().getId(), edgeE3);
 
         final EdgeDeltaOperation edgeDeltaData = new EdgeDeltaOperation(
                 Edge.builder()
@@ -530,7 +539,8 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                         .build()
         );
 
-        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(previousTreeKnot, edgeDeltaData);
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(previousTreeKnot, revertDeltaOperationList, edgeDeltaData);
 
         assertNotNull(returnedTreeKnot);
         assertEquals(0, returnedTreeKnot.getVersion());
@@ -588,7 +598,8 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                         .build()
         );
 
-        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(treeKnot, edgeDeltaData);
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(treeKnot, revertDeltaOperationList, edgeDeltaData);
 
         assertNotNull(returnedTreeKnot);
         assertEquals(0, returnedTreeKnot.getVersion());
@@ -606,6 +617,8 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                         .filters(Arrays.asList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
                         .build()
         );
-        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(null, edgeDeltaData);
+
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(null, revertDeltaOperationList, edgeDeltaData);
     }
 }

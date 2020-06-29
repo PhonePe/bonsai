@@ -142,13 +142,15 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
 
     @Override
     public TreeKnot getCompleteTreeWithDeltaOperations(final String key,
-                                                       final List<DeltaOperation> deltaOperationList) {
-        return bonsai.getCompleteTreeWithDeltaOperations(key, deltaOperationList);
+                                                       final List<DeltaOperation> deltaOperationList,
+                                                       final List<DeltaOperation> revertDeltaOperationList) {
+        return bonsai.getCompleteTreeWithDeltaOperations(key, deltaOperationList, revertDeltaOperationList);
     }
 
     @Override
     public TreeKnot applyDeltaOperations(final String key,
-                                         final List<DeltaOperation> deltaOperationList) {
+                                         final List<DeltaOperation> deltaOperationList,
+                                         final List<DeltaOperation> revertedDeltaOperationList) {
         throw unsupportedOperationError();
     }
 

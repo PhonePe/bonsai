@@ -2,8 +2,8 @@ package com.phonepe.platform.bonsai.models.blocks.delta;
 
 import com.phonepe.platform.bonsai.models.blocks.delta.type.DeltaOperationType;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationBiConsumerVisitor;
-import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVisitor;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationUnaryVisitor;
+import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVisitor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,7 +39,7 @@ public class KeyMappingDeltaOperation extends DeltaOperation {
     }
 
     @Override
-    public <T, U> void accept(T t, U u, DeltaOperationBiConsumerVisitor<T, U> deltaOperationBiConsumerVisitor) {
-        deltaOperationBiConsumerVisitor.visit(t, u, this);
+    public <T, U> T accept(T t, U u, DeltaOperationBiConsumerVisitor<T, U> deltaOperationBiConsumerVisitor) {
+        return deltaOperationBiConsumerVisitor.visit(t, u, this);
     }
 }

@@ -17,7 +17,6 @@ import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
-import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import com.phonepe.platform.bonsai.models.value.StringValue;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
@@ -481,7 +480,9 @@ public class ImmutableBonsaiTreeTest {
                             .build()
                 )
         );
-        final TreeKnot treeKnot = bonsai.getCompleteTreeWithDeltaOperations("key1", deltaOperationList);
+
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        final TreeKnot treeKnot = bonsai.getCompleteTreeWithDeltaOperations("key1", deltaOperationList, revertDeltaOperationList);
         Assert.assertNotNull("TreeKnot should not be null for key1", treeKnot);
         Assert.assertEquals("Treeknot id should be : k1", "k1", treeKnot.getId());
         Assert.assertEquals(0, treeKnot.getVersion());
@@ -490,6 +491,7 @@ public class ImmutableBonsaiTreeTest {
 
     @Test(expected = BonsaiError.class)
     public void given_immutableBonsaiTree_when_applyPendingUpdatesOnCompleteTree_then_throwBonsaiError() {
-        bonsai.applyDeltaOperations("key1", new ArrayList<>());
+        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+        bonsai.applyDeltaOperations("key1", new ArrayList<>(), revertDeltaOperationList);
     }
 }

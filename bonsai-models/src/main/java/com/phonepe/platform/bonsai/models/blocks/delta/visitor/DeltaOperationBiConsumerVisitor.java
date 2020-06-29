@@ -9,9 +9,9 @@ import com.phonepe.platform.bonsai.models.blocks.delta.KnotDeltaOperation;
  * @date - 2020-04-13
  */
 public interface DeltaOperationBiConsumerVisitor<T, U> {
-    void visit(T t, U u, KeyMappingDeltaOperation keyMappingDeltaOperation);
+    T visit(T t, U u, KeyMappingDeltaOperation keyMappingDeltaOperation);
 
-    void visit(T t, U u, KnotDeltaOperation knotDeltaOperation);
+    T visit(T t, U u, KnotDeltaOperation knotDeltaOperation);
 
-    void visit(T t, U u, EdgeDeltaOperation edgeDeltaOperation);
+    T visit(T t, U u, EdgeDeltaOperation edgeDeltaOperation);
 }
