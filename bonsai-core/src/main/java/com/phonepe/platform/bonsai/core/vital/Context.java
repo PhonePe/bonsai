@@ -1,5 +1,6 @@
 package com.phonepe.platform.bonsai.core.vital;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jayway.jsonpath.DocumentContext;
 import com.phonepe.platform.bonsai.json.eval.JsonEvalContext;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
@@ -18,6 +19,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 public class Context implements JsonEvalContext {
+    @JsonIgnore
     private DocumentContext documentContext;
     private Map<String, Knot> preferences;
 
