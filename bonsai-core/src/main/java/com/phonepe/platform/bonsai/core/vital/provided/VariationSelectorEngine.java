@@ -6,7 +6,7 @@ import com.phonepe.platform.bonsai.json.eval.GenericFilterContext;
 import com.phonepe.platform.bonsai.json.eval.JsonPathFilterEvaluationEngine;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * This is responsible for matching the {@link Edge}s filters against the {@link Context}
@@ -19,13 +19,13 @@ import java.util.function.Function;
  */
 public class VariationSelectorEngine<C extends Context> extends ConditionEngine<C, Edge> {
 
-    private final Function<GenericFilterContext<C>, Boolean> genericFilterHandler;
+    private final Predicate<GenericFilterContext<C>> genericFilterHandler;
 
     public VariationSelectorEngine() {
         this(genericFilterContext -> true);
     }
 
-    public VariationSelectorEngine(Function<GenericFilterContext<C>, Boolean> genericFilterHandler) {
+    public VariationSelectorEngine(Predicate<GenericFilterContext<C>> genericFilterHandler) {
         this.genericFilterHandler = genericFilterHandler;
     }
 
