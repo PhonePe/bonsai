@@ -13,7 +13,9 @@ import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.query.dsl.numeric.GreaterEqualFilter;
 import com.phonepe.platform.query.dsl.numeric.LessThanFilter;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -22,18 +24,33 @@ import org.junit.Test;
  */
 public class BonsaiTreeFlatEvalTest {
 
-    private Bonsai<Context> bonsai = BonsaiBuilder.builder()
-                                                  .withBonsaiProperties(
-                                                          BonsaiProperties
-                                                                  .builder()
-                                                                  .mutualExclusivitySettingTurnedOn(true)
-                                                                  .maxAllowedConditionsPerEdge(10)
-                                                                  .maxAllowedVariationsPerKnot(10)
-                                                                  .build())
-                                                  .build();
+    private Bonsai<Context> bonsai;
+
+    @Before
+    public void setUp() {
+        this.bonsai = BonsaiBuilder.builder()
+                .withBonsaiProperties(
+                        BonsaiProperties
+                                .builder()
+                                .mutualExclusivitySettingTurnedOn(true)
+                                .maxAllowedConditionsPerEdge(10)
+                                .maxAllowedVariationsPerKnot(10)
+                                .build())
+                .build();
+
+    }
+
+    @After
+    public void tearDown() {
+        this.bonsai = null;
+    }
 
     @Test
     public void testFlatEval() {
+        bonsai.createMapping("w1", ValuedKnotData.stringValue("widget1"));
+        bonsai.createMapping("w2", ValuedKnotData.stringValue("widget2"));
+        bonsai.createMapping("v1", ValuedKnotData.stringValue("value1"));
+        bonsai.createMapping("w3", MapKnotData.builder().mapKeys(ImmutableMap.of("k1", "v1")).build());
 
         Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").key("w3").build());
         bonsai.createMapping("l1", l1.getId());
@@ -42,12 +59,6 @@ public class BonsaiTreeFlatEvalTest {
         Knot l22 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w3").build());
 
         bonsai.createMapping("l1", l1.getId());
-
-        bonsai.createMapping("w1", ValuedKnotData.stringValue("widget1"));
-        bonsai.createMapping("w2", ValuedKnotData.stringValue("widget2"));
-        bonsai.createMapping("w3", MapKnotData.builder().mapKeys(ImmutableMap.of("k1", "v1")).build());
-        bonsai.createMapping("v1", ValuedKnotData.stringValue("value1"));
-
         bonsai.addVariation(l1.getId(), Variation.builder()
                                                  .filter(new EqualsFilter("$.gender", "female"))
                                                  .knotId(l21.getId())
