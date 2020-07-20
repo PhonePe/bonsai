@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -54,7 +53,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
 
     private final C context;
 
-    private final Function<GenericFilterContext<C>, Boolean> genericFilterHandler;
+    private final Predicate<GenericFilterContext<C>> genericFilterHandler;
 
     @Override
     public Boolean visit(ContainsFilter filter) {
@@ -165,8 +164,8 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
 
     @Override
     public Boolean visit(GenericFilter filter) {
-        GenericFilterContext<C> genericFilterContext = new GenericFilterContext<>(filter, context);
-        return genericFilterHandler.apply(genericFilterContext);
+        final GenericFilterContext<C> genericFilterContext = new GenericFilterContext<>(filter, context);
+        return genericFilterHandler.test(genericFilterContext);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
