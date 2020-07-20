@@ -45,7 +45,6 @@ public class TreeGenerationHelper {
                      });
                      Knot newlyCreatedKnot = bonsai.createKnot(accept);
                      bonsai.addVariation(knot.getId(), Variation.builder()
-//                                                                .id("E" + i + ":ED" + random.nextInt(99999))
                                                                 .filter(new EqualsFilter("E", i))
                                                                 .knotId(newlyCreatedKnot.getId())
                                                                 .build());
@@ -86,7 +85,8 @@ public class TreeGenerationHelper {
                              .build();
     }
 
-    public static Knot createTestKnot(Bonsai<Context> bonsai, String data) {
-        return bonsai.createKnot(MultiKnotData.builder().key(data).build());
+    public static Knot createTestKnot(Bonsai<Context> bonsai, String key) {
+        bonsai.createMapping(key, ValuedKnotData.stringValue("value"));
+        return bonsai.createKnot(MultiKnotData.builder().key(key).build());
     }
 }
