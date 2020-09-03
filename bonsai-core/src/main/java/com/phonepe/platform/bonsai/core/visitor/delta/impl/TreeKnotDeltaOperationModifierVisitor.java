@@ -223,6 +223,9 @@ public class TreeKnotDeltaOperationModifierVisitor implements
                 // To ensure if the existing setup is being updated/deleted.
                 if (edgeStore.containsEdge(treeEdge.getEdgeIdentifier().getId())) {
                     final Edge revertEdgeState = Converters.toEdge(treeEdge);
+                    if (revertEdgeState != null) {
+                        revertEdgeState.setVersion(0);
+                    }
                     final EdgeDeltaOperation revertEdgeDeltaOperation = new EdgeDeltaOperation(revertEdgeState);
                     revertDeltaOperation.add(revertEdgeDeltaOperation);
 
