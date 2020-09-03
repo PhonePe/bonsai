@@ -179,6 +179,7 @@ public class TreeKnotDeltaOperationModifierVisitor implements
     /**
      * Function to add {@link EdgeDeltaOperation} object into TreeKnot.
      * @param treeKnot - {@link TreeKnot} object.
+     * @param revertDeltaOperation - List of {@link DeltaOperation}; contains delta-operations to nullify the effects.
      * @param edgeDeltaOperation - {@link EdgeDeltaOperation} object; it contains all the data to represent a single edge and
      *                      its corresponding child knotId.
      * @return {@link TreeKnot} object.

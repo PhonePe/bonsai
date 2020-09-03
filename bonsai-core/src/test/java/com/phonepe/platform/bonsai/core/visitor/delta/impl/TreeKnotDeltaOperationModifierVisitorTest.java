@@ -1,6 +1,7 @@
 package com.phonepe.platform.bonsai.core.visitor.delta.impl;
 
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
+import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.platform.bonsai.core.vital.BonsaiProperties;
 import com.phonepe.platform.bonsai.core.vital.ComponentBonsaiTreeValidator;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
@@ -455,8 +456,14 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                         .edges(edges)
                         .build()
         );
-        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
-        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(null, revertDeltaOperationList, knotDeltaData);
+
+        try {
+            final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+            treeKnotModifierVisitor.visit(null, revertDeltaOperationList, knotDeltaData);
+        } catch (BonsaiError e) {
+            assertEquals(BonsaiErrorCode.TREE_DOES_NOT_EXIST, e.getErrorCode());
+            throw e;
+        }
     }
 
     @Test
@@ -618,7 +625,12 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                         .build()
         );
 
-        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
-        final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(null, revertDeltaOperationList, edgeDeltaData);
+        try {
+            final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
+            treeKnotModifierVisitor.visit(null, revertDeltaOperationList, edgeDeltaData);
+        } catch (BonsaiError e) {
+            assertEquals(BonsaiErrorCode.TREE_DOES_NOT_EXIST, e.getErrorCode());
+            throw e;
+        }
     }
 }
