@@ -4,6 +4,7 @@ import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
+import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.data.KnotData;
 
 /**
@@ -96,6 +97,11 @@ public class ImmutableBonsaiBuilder<C extends Context> {
 
     public ImmutableBonsaiBuilder<C> removeMapping(final String key) {
         bonsai.removeMapping(key);
+        return this;
+    }
+
+    public ImmutableBonsaiBuilder<C> addTree(final TreeKnot treeKnot) {
+        bonsai.createCompleteTree(treeKnot);
         return this;
     }
 
