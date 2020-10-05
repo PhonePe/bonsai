@@ -31,6 +31,6 @@ public abstract class DeltaOperation {
 
     public abstract <T> T accept(T t, DeltaOperationVisitor<T> deltaOperationVisitor);
 
-    public abstract <T, U> T accept(T t, U u, DeltaOperationBiConsumerVisitor<T, U> deltaOperationBiConsumerVisitor);
+    public abstract <T, U> void accept(T t, U u, DeltaOperationBiConsumerVisitor<T, U> deltaOperationBiConsumerVisitor);
 
 }

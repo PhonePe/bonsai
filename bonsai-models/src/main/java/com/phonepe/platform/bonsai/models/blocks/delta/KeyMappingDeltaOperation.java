@@ -39,7 +39,7 @@ public class KeyMappingDeltaOperation extends DeltaOperation {
     }
 
     @Override
-    public <T, U> T accept(T t, U u, DeltaOperationBiConsumerVisitor<T, U> deltaOperationBiConsumerVisitor) {
-        return deltaOperationBiConsumerVisitor.visit(t, u, this);
+    public <T, U> void accept(T t, U u, DeltaOperationBiConsumerVisitor<T, U> deltaOperationBiConsumerVisitor) {
+        deltaOperationBiConsumerVisitor.visit(t, u, this);
     }
 }

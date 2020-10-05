@@ -234,7 +234,7 @@ public interface Bonsai<C extends Context> {
      *
      * @param key                - Name of the root node.
      * @param deltaOperationList - List of Delta Operations.
-     * @return TreeKnot - complete tree containing all the variation of root node.
+     * @return DeltaOperationMetaData - object contains TreeKnot and revert-delta-operations.
      */
     DeltaOperationMetaData getCompleteTreeWithDeltaOperations(String key, List<DeltaOperation> deltaOperationList);
 
@@ -244,7 +244,7 @@ public interface Bonsai<C extends Context> {
      *
      * @param key                - Name of the root node.
      * @param deltaOperationList - List of Delta Data.
-     * @return TreeKnot - complete tree containing all the variation of root node.
+     * @return DeltaOperationMetaData - object contains TreeKnot and revert-delta-operations.
      */
     DeltaOperationMetaData applyDeltaOperations(String key, List<DeltaOperation> deltaOperationList);
 
