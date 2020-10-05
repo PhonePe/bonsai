@@ -13,6 +13,7 @@ import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
 import com.phonepe.platform.bonsai.core.vital.provided.Stores;
 import com.phonepe.platform.bonsai.core.vital.provided.VariationSelectorEngine;
 import com.phonepe.platform.bonsai.json.eval.JsonPathSetup;
+import com.phonepe.platform.bonsai.models.DeltaOperationMetaData;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ListNode;
 import com.phonepe.platform.bonsai.models.MapNode;
@@ -23,7 +24,7 @@ import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KeyMappingDeltaOperation;
-import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationBiConsumerVisitor;
+import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVisitor;
 import com.phonepe.platform.bonsai.models.blocks.model.Converters;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
@@ -75,7 +76,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     private final BonsaiProperties bonsaiProperties;
     private final BonsaiIdGenerator bonsaiIdGenerator;
     private final ConflictResolver<Knot> knotConflictResolver;
-    private final DeltaOperationBiConsumerVisitor<TreeKnot, List<DeltaOperation>> treeKnotDeltaOperationModifier;
+    private final DeltaOperationVisitor<DeltaOperationMetaData> treeKnotDeltaOperationModifier;
 
     public BonsaiTree(final Stores<String, String, Knot, Edge> stores,
                       final VariationSelectorEngine<C> variationSelectorEngine,
@@ -353,31 +354,31 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public TreeKnot getCompleteTreeWithDeltaOperations(final String key,
-                                                       final List<DeltaOperation> deltaOperationList,
-                                                       final List<DeltaOperation> revertedDeltaOperationList) {
+    public DeltaOperationMetaData getCompleteTreeWithDeltaOperations(final String key,
+                                                                     final List<DeltaOperation> deltaOperationList) {
         final String knotId = keyTreeStore.getKeyTree(key);
-        TreeKnot treeKnot = composeTreeKnot(knotId);
-
+        final TreeKnot initialTreeKnot = composeTreeKnot(knotId);
+        DeltaOperationMetaData metaData = DeltaOperationMetaData.builder()
+                                                                .treeKnot(initialTreeKnot)
+                                                                .build();
         for (DeltaOperation deltaOperation : deltaOperationList) {
-            treeKnot = deltaOperation.accept(treeKnot, revertedDeltaOperationList, treeKnotDeltaOperationModifier);
+            metaData = deltaOperation.accept(metaData, treeKnotDeltaOperationModifier);
         }
 
-        componentValidator.validate(treeKnot);
-        return treeKnot;
+        final TreeKnot modifiedTreeKnot = metaData.getTreeKnot();
+        componentValidator.validate(modifiedTreeKnot);
+        return metaData;
     }
 
     @Override
-    public TreeKnot applyDeltaOperations(final String key,
-                                         final List<DeltaOperation> deltaOperationList,
-                                         final List<DeltaOperation> revertedDeltaOperationList) {
-        TreeKnot treeKnot = getCompleteTreeWithDeltaOperations(key, deltaOperationList, revertedDeltaOperationList);
-        Knot rootKnot = createCompleteTree(treeKnot);
+    public DeltaOperationMetaData applyDeltaOperations(final String key, final List<DeltaOperation> deltaOperationList) {
+        final DeltaOperationMetaData metaData = getCompleteTreeWithDeltaOperations(key, deltaOperationList);
+        Knot rootKnot = createCompleteTree(metaData.getTreeKnot());
         if (!containsKey(key)) {
             KeyMappingDeltaOperation keyMappingDeltaOperation = (KeyMappingDeltaOperation) deltaOperationList.get(0);
             createMapping(keyMappingDeltaOperation.getKeyId(), rootKnot.getId());
         }
-        return treeKnot;
+        return metaData;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.platform.bonsai.core.vital.ComponentBonsaiTreeValidator;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
+import com.phonepe.platform.bonsai.models.DeltaOperationMetaData;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
@@ -13,7 +14,7 @@ import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.EdgeDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KeyMappingDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KnotDeltaOperation;
-import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationBiConsumerVisitor;
+import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVisitor;
 import com.phonepe.platform.bonsai.models.blocks.model.Converters;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
@@ -33,8 +34,7 @@ import java.util.stream.Collectors;
  * @date - 2019-10-15
  */
 @Slf4j
-public class TreeKnotDeltaOperationModifierVisitor implements
-        DeltaOperationBiConsumerVisitor<TreeKnot, List<DeltaOperation>> {
+public class TreeKnotDeltaOperationModifierVisitor implements DeltaOperationVisitor<DeltaOperationMetaData> {
 
     private final ComponentBonsaiTreeValidator treeComponentValidator;
     private final KnotStore<String, Knot> knotStore;
@@ -54,18 +54,21 @@ public class TreeKnotDeltaOperationModifierVisitor implements
 
     /**
      * Function to add {@link KeyMappingDeltaOperation} object into TreeKnot.
-     * @param treeKnot - {@link TreeKnot} object.
+     * @param metaData - {@link DeltaOperationMetaData} object contains TreeKnot and revert-delta-operations.
      * @param keyMappingDeltaOperation - {@link KeyMappingDeltaOperation} object; it contains key and knotId mapping.
      * @return {@link TreeKnot} object.
      */
     @Override
-    public TreeKnot visit(final TreeKnot treeKnot, final List<DeltaOperation> revertDeltaOperation,
-                          final KeyMappingDeltaOperation keyMappingDeltaOperation) {
+    public DeltaOperationMetaData visit(final DeltaOperationMetaData metaData,
+                                        final KeyMappingDeltaOperation keyMappingDeltaOperation) {
         treeComponentValidator.validate(keyMappingDeltaOperation);
 
-        if (treeKnot == null) {
-            return TreeKnot.builder()
+        if (metaData.getTreeKnot() == null) {
+            final TreeKnot treeKnot = TreeKnot.builder()
                     .id(keyMappingDeltaOperation.getKnotId())
+                    .build();
+            return DeltaOperationMetaData.builder()
+                    .treeKnot(treeKnot)
                     .build();
         } else {
             final String errorOutput = String.format("The tree with [Key : %s] and [KnotId : %s] already exist.",
@@ -77,21 +80,25 @@ public class TreeKnotDeltaOperationModifierVisitor implements
 
     /**
      * Function to add {@link KnotDeltaOperation} object into TreeKnot.
-     * @param treeKnot  - {@link TreeKnot} object.
+     * @param metaData - {@link DeltaOperationMetaData} object contains TreeKnot and revert-delta-operations.
      * @param knotDeltaOperation -  {@link KnotDeltaOperation} object; it contains all the data to represent a single knot and
      *                      its corresponding edgeIds.
      * @return {@link TreeKnot} object.
      */
     @Override
-    public TreeKnot visit(final TreeKnot treeKnot, final List<DeltaOperation> revertDeltaOperation,
-                          final KnotDeltaOperation knotDeltaOperation) {
+    public DeltaOperationMetaData visit(final DeltaOperationMetaData metaData,
+                                        final KnotDeltaOperation knotDeltaOperation) {
         treeComponentValidator.validate(knotDeltaOperation);
 
+        final TreeKnot treeKnot = metaData.getTreeKnot();
         if (treeKnot == null) {
             final String errorOutput = "Can't insert KnotDeltaOperation into non-existing tree.";
             log.error(errorOutput);
             throw new BonsaiError(BonsaiErrorCode.TREE_DOES_NOT_EXIST, errorOutput);
         }
+
+        final List<DeltaOperation> revertDeltaOperation = (metaData.getRevertedDeltaOperationList() != null)
+                ? metaData.getRevertedDeltaOperationList(): new ArrayList<>();
 
         boolean isSuccessfullyInserted = insertKnotDeltaDataIntoTreeKnot(treeKnot, revertDeltaOperation, knotDeltaOperation);
         if (!isSuccessfullyInserted) {
@@ -99,7 +106,9 @@ public class TreeKnotDeltaOperationModifierVisitor implements
             log.error(errorOutput);
         }
 
-        return treeKnot;
+        metaData.setTreeKnot(treeKnot);
+        metaData.setRevertedDeltaOperationList(revertDeltaOperation);
+        return metaData;
     }
 
     /**
@@ -178,22 +187,25 @@ public class TreeKnotDeltaOperationModifierVisitor implements
 
     /**
      * Function to add {@link EdgeDeltaOperation} object into TreeKnot.
-     * @param treeKnot - {@link TreeKnot} object.
-     * @param revertDeltaOperation - List of {@link DeltaOperation}; contains delta-operations to nullify the effects.
+     * @param metaData - {@link DeltaOperationMetaData} object contains TreeKnot and revert-delta-operations.
      * @param edgeDeltaOperation - {@link EdgeDeltaOperation} object; it contains all the data to represent a single edge and
      *                      its corresponding child knotId.
      * @return {@link TreeKnot} object.
      */
     @Override
-    public TreeKnot visit(final TreeKnot treeKnot, final List<DeltaOperation> revertDeltaOperation,
-                          final EdgeDeltaOperation edgeDeltaOperation) {
+    public DeltaOperationMetaData visit(final DeltaOperationMetaData metaData,
+                                        final EdgeDeltaOperation edgeDeltaOperation) {
         treeComponentValidator.validate(edgeDeltaOperation);
 
+        final TreeKnot treeKnot = metaData.getTreeKnot();
         if (treeKnot == null) {
             final String errorOutput = "Can't insert EdgeDeltaOperation into non-existing tree.";
             log.error(errorOutput);
             throw new BonsaiError(BonsaiErrorCode.TREE_DOES_NOT_EXIST, errorOutput);
         }
+
+        final List<DeltaOperation> revertDeltaOperation = (metaData.getRevertedDeltaOperationList() != null)
+                ? metaData.getRevertedDeltaOperationList() : new ArrayList<>();
 
         boolean isSuccessfullyInserted = insertEdgeDeltaDataIntoTreeKnot(treeKnot, revertDeltaOperation, edgeDeltaOperation);
         if (!isSuccessfullyInserted) {
@@ -201,7 +213,9 @@ public class TreeKnotDeltaOperationModifierVisitor implements
             log.error(errorOutput);
         }
 
-        return treeKnot;
+        metaData.setTreeKnot(treeKnot);
+        metaData.setRevertedDeltaOperationList(revertDeltaOperation);
+        return metaData;
     }
 
     /**

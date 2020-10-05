@@ -482,7 +482,7 @@ public class ImmutableBonsaiTreeTest {
         );
 
         final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
-        final TreeKnot treeKnot = bonsai.getCompleteTreeWithDeltaOperations("key1", deltaOperationList, revertDeltaOperationList);
+        final TreeKnot treeKnot = bonsai.getCompleteTreeWithDeltaOperations("key1", deltaOperationList).getTreeKnot();
         Assert.assertNotNull("TreeKnot should not be null for key1", treeKnot);
         Assert.assertEquals("Treeknot id should be : k1", "k1", treeKnot.getId());
         Assert.assertEquals(0, treeKnot.getVersion());
@@ -492,6 +492,6 @@ public class ImmutableBonsaiTreeTest {
     @Test(expected = BonsaiError.class)
     public void given_immutableBonsaiTree_when_applyPendingUpdatesOnCompleteTree_then_throwBonsaiError() {
         final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
-        bonsai.applyDeltaOperations("key1", new ArrayList<>(), revertDeltaOperationList);
+        bonsai.applyDeltaOperations("key1", new ArrayList<>());
     }
 }

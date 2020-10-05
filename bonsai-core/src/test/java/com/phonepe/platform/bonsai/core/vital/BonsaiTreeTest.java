@@ -8,6 +8,7 @@ import com.phonepe.platform.bonsai.core.ObjectExtractor;
 import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
+import com.phonepe.platform.bonsai.models.DeltaOperationMetaData;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ListNode;
 import com.phonepe.platform.bonsai.models.MapNode;
@@ -50,7 +51,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author tushar.naik
@@ -469,8 +469,7 @@ public class BonsaiTreeTest {
         deltaOperationList.add(new KeyMappingDeltaOperation("key", "knotOne"));
         deltaOperationList.add(new KnotDeltaOperation(new Knot("knotOne", 0, null, ValuedKnotData.stringValue("Knot One Value"))));
 
-        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
-        final TreeKnot treeKnot = bonsai.getCompleteTreeWithDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
+        final TreeKnot treeKnot = bonsai.getCompleteTreeWithDeltaOperations("key", deltaOperationList).getTreeKnot();
         final String knotViaKey = bonsai.getMapping("key");
         final Knot knot = bonsai.getKnot("knotOne");
 
@@ -490,8 +489,7 @@ public class BonsaiTreeTest {
         deltaOperationList.add(new KeyMappingDeltaOperation("key", "knotOne"));
         deltaOperationList.add(new KnotDeltaOperation(new Knot("knotOne", 0, null, ValuedKnotData.stringValue("Knot One Value"))));
 
-        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
-        final TreeKnot treeKnot = bonsai.applyDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
+        final TreeKnot treeKnot = bonsai.applyDeltaOperations("key", deltaOperationList).getTreeKnot();
         final String knotViaKey = bonsai.getMapping("key");
         final Knot knot = bonsai.getKnot(knotViaKey);
 
@@ -565,8 +563,7 @@ public class BonsaiTreeTest {
         deltaOperationList.add(keyMappingDeltaOperation);
         deltaOperationList.add(rootKnotDeltaOperation);
 
-        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
-        TreeKnot fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
+        TreeKnot fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList).getTreeKnot();
 
         assertNotNull(fetchTreeKnot);
         assertNotNull(fetchTreeKnot.getId());
@@ -629,8 +626,7 @@ public class BonsaiTreeTest {
         deltaOperationList.add(firstEdgeDeltaOperation);
         deltaOperationList.add(firstKnotDeltaOperation);
 
-        revertDeltaOperationList.clear();
-        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
+        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList).getTreeKnot();
 
         assertNotNull(fetchTreeKnot);
         assertNotNull(fetchTreeKnot.getId());
@@ -730,8 +726,7 @@ public class BonsaiTreeTest {
         deltaOperationList.add(thirdEdgeDeltaOperation);
         deltaOperationList.add(thirdKnotDeltaOperation);
 
-        revertDeltaOperationList.clear();
-        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
+        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList).getTreeKnot();
 
         assertNotNull(fetchTreeKnot);
         assertNotNull(fetchTreeKnot.getId());
@@ -869,8 +864,7 @@ public class BonsaiTreeTest {
         deltaOperationList.add(firstEdgeDeltaOperation);
         deltaOperationList.add(firstKnotDeltaOperation);
 
-        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
-        TreeKnot fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
+        TreeKnot fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList).getTreeKnot();
 
         assertNotNull(fetchTreeKnot);
         assertNotNull(fetchTreeKnot.getId());
@@ -944,8 +938,7 @@ public class BonsaiTreeTest {
         deltaOperationList.add(secondEdgeDeltaOperation);
         deltaOperationList.add(secondKnotDeltaOperation);
 
-        revertDeltaOperationList.clear();
-        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList, revertDeltaOperationList);
+        fetchTreeKnot = bonsai.applyDeltaOperations("key", deltaOperationList).getTreeKnot();
 
         assertNotNull(fetchTreeKnot);
         assertNotNull(fetchTreeKnot.getId());
@@ -1125,8 +1118,9 @@ public class BonsaiTreeTest {
         firstInputDeltaOperationList.add(knotDeltaOperationOne);
         firstInputDeltaOperationList.add(knotDeltaOperationTwo);
 
-        final List<DeltaOperation> firstRevertDeltaOperationList = new ArrayList<>();
-        final TreeKnot firstTreeKnotSnapshot = bonsai.applyDeltaOperations("key", firstInputDeltaOperationList, firstRevertDeltaOperationList);
+        DeltaOperationMetaData metaData = bonsai.applyDeltaOperations("key", firstInputDeltaOperationList);
+        final TreeKnot firstTreeKnotSnapshot = metaData.getTreeKnot();
+        final List<DeltaOperation> firstRevertDeltaOperationList = metaData.getRevertedDeltaOperationList();
 
         assertThat(firstTreeKnotSnapshot, is(notNullValue()));
         assertThat(firstTreeKnotSnapshot.getId(), is(knotIdZero));
@@ -1232,8 +1226,9 @@ public class BonsaiTreeTest {
         secondInputDeltaOperationList.add(edgeDeltaOperationFour);
         secondInputDeltaOperationList.add(knotDeltaOperationFour);
 
-        final List<DeltaOperation> secondRevertDeltaOperationList = new ArrayList<>();
-        final TreeKnot secondTreeKnotSnapshot = bonsai.applyDeltaOperations("key", secondInputDeltaOperationList, secondRevertDeltaOperationList);
+        metaData = bonsai.applyDeltaOperations("key", secondInputDeltaOperationList);
+        final TreeKnot secondTreeKnotSnapshot = metaData.getTreeKnot();
+        final List<DeltaOperation> secondRevertDeltaOperationList = metaData.getRevertedDeltaOperationList();
 
         // Add assert function here.
         assertThat(secondTreeKnotSnapshot, is(notNullValue()));
@@ -1287,8 +1282,9 @@ public class BonsaiTreeTest {
         assertThat(fetchedKnot.getEdges(), is(empty()));
 
         // Apply secondRevertDeltaOperationList on the latest tree image to get the firstTreeKnotSnapshot.
-        final List<DeltaOperation> thirdRevertDeltaOperationList = new ArrayList<>();
-        final TreeKnot thirdTreeKnotSnapshot = bonsai.applyDeltaOperations("key", secondRevertDeltaOperationList, thirdRevertDeltaOperationList);
+        metaData = bonsai.applyDeltaOperations("key", secondRevertDeltaOperationList);
+        final TreeKnot thirdTreeKnotSnapshot = metaData.getTreeKnot();
+        final List<DeltaOperation> thirdRevertDeltaOperationList = metaData.getRevertedDeltaOperationList();
 
         assertThat(thirdTreeKnotSnapshot, is(notNullValue()));
         assertThat(thirdTreeKnotSnapshot.getId(), is(knotIdZeroUpdated));
@@ -1535,5 +1531,4 @@ public class BonsaiTreeTest {
            throw e;
        }
     }
-
 }
