@@ -8,7 +8,7 @@ import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryEdgeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryKnotStore;
-import com.phonepe.platform.bonsai.models.DeltaOperationMetaData;
+import com.phonepe.platform.bonsai.models.TreeKnotState;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
@@ -34,7 +34,7 @@ import static org.junit.Assert.assertNull;
  * @author - suraj.s
  * @date - 2019-11-20
  */
-public class TreeKnotDeltaOperationModifierVisitorTest {
+public class TreeKnotStateDeltaOperationModifierVisitorTest {
 
     private ComponentBonsaiTreeValidator treeComponentValidator;
 
@@ -42,7 +42,7 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
 
     private EdgeStore<String, Edge> edgeStore;
 
-    private TreeKnotDeltaOperationModifierVisitor treeKnotModifierVisitor;
+    private TreeKnotStateDeltaOperationModifierVisitor treeKnotModifierVisitor;
 
     @Before
     public void setUp() throws Exception {
@@ -54,7 +54,7 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
         treeComponentValidator = new ComponentBonsaiTreeValidator(bonsaiProperties);
         knotStore = new InMemoryKnotStore();
         edgeStore = new InMemoryEdgeStore();
-        treeKnotModifierVisitor = new TreeKnotDeltaOperationModifierVisitor(treeComponentValidator, knotStore, edgeStore);
+        treeKnotModifierVisitor = new TreeKnotStateDeltaOperationModifierVisitor(treeComponentValidator, knotStore, edgeStore);
     }
 
     @After
@@ -68,7 +68,7 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
     @Test
     public void given_treeKnotModifierVisitorImpl_when_addingKeyMappingDeltaOperationIntoTree_thenReturnTreeKnot() {
         final TreeKnot treeKnot = null;
-        final DeltaOperationMetaData metaData = new DeltaOperationMetaData(treeKnot, null);
+        final TreeKnotState metaData = new TreeKnotState(treeKnot, null);
         final KeyMappingDeltaOperation keyMappingDeltaData = new KeyMappingDeltaOperation("key", "knotId");
         final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(metaData, keyMappingDeltaData).getTreeKnot();
 
@@ -84,7 +84,7 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
         final TreeKnot treeKnot = TreeKnot.builder()
                 .id("K0")
                 .build();
-        final DeltaOperationMetaData metaData = new DeltaOperationMetaData(treeKnot, null);
+        final TreeKnotState metaData = new TreeKnotState(treeKnot, null);
         final Knot knotK0 = Knot.builder()
                 .id("K0")
                 .build();
@@ -98,7 +98,7 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
         final TreeKnot treeKnot = TreeKnot.builder()
                 .id("K0")
                 .build();
-        final DeltaOperationMetaData metaData = new DeltaOperationMetaData(treeKnot, null);
+        final TreeKnotState metaData = new TreeKnotState(treeKnot, null);
         final Knot knotK0 = Knot.builder()
                 .id("K0")
                 .build();
@@ -160,7 +160,7 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                 .treeEdges(Arrays.asList(middleRightTreeEdge, middleLeftTreeEdge))
                 .knotData(ValuedKnotData.stringValue("Root Level Knot : K0"))
                 .build();
-        final DeltaOperationMetaData metaData = new DeltaOperationMetaData(previousTreeKnot, null);
+        final TreeKnotState metaData = new TreeKnotState(previousTreeKnot, null);
 
         /* Save knot & edge details into database.*/
         final Knot knotK3 = Knot.builder()
@@ -302,7 +302,7 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                 .treeEdges(Arrays.asList(middleRightTreeEdge, middleLeftTreeEdge))
                 .knotData(ValuedKnotData.stringValue("Root Level Knot : K0"))
                 .build();
-        final DeltaOperationMetaData metaData = new DeltaOperationMetaData(previousTreeKnot, null);
+        final TreeKnotState metaData = new TreeKnotState(previousTreeKnot, null);
 
         /* Save knot & edge details into database.*/
         final Knot knotK3 = Knot.builder()
@@ -418,7 +418,7 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
         final TreeKnot treeKnot = TreeKnot.builder()
                 .id("K0")
                 .build();
-        final DeltaOperationMetaData metaData = new DeltaOperationMetaData(treeKnot, null);
+        final TreeKnotState metaData = new TreeKnotState(treeKnot, null);
         final Knot knotK0 = Knot.builder()
                 .id("K0")
                 .build();
@@ -457,7 +457,7 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
         );
 
         try {
-            treeKnotModifierVisitor.visit(new DeltaOperationMetaData(null, null), knotDeltaData);
+            treeKnotModifierVisitor.visit(new TreeKnotState(null, null), knotDeltaData);
         } catch (BonsaiError e) {
             assertEquals(BonsaiErrorCode.TREE_DOES_NOT_EXIST, e.getErrorCode());
             throw e;
@@ -495,7 +495,7 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
                 .treeEdges(Arrays.asList(middleLeftTreeEdge, middleRightTreeEdge))
                 .knotData(ValuedKnotData.stringValue("Root Level Knot : K0"))
                 .build();
-        final DeltaOperationMetaData metaData = new DeltaOperationMetaData(previousTreeKnot, null);
+        final TreeKnotState metaData = new TreeKnotState(previousTreeKnot, null);
 
         /* Save knot & edge details into database.*/
         final Edge edgeE3 = Edge.builder()
@@ -591,7 +591,7 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
         final TreeKnot treeKnot = TreeKnot.builder()
                 .id("K0")
                 .build();
-        final DeltaOperationMetaData metaData = new DeltaOperationMetaData(treeKnot, null);
+        final TreeKnotState metaData = new TreeKnotState(treeKnot, null);
         final Knot knotK0 = Knot.builder()
                 .id("K0")
                 .build();
@@ -624,7 +624,7 @@ public class TreeKnotDeltaOperationModifierVisitorTest {
         );
 
         try {
-            treeKnotModifierVisitor.visit(new DeltaOperationMetaData(null, null), edgeDeltaData);
+            treeKnotModifierVisitor.visit(new TreeKnotState(null, null), edgeDeltaData);
         } catch (BonsaiError e) {
             assertEquals(BonsaiErrorCode.TREE_DOES_NOT_EXIST, e.getErrorCode());
             throw e;

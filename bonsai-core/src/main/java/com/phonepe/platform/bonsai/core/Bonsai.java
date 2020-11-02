@@ -2,7 +2,7 @@ package com.phonepe.platform.bonsai.core;
 
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.vital.Context;
-import com.phonepe.platform.bonsai.models.DeltaOperationMetaData;
+import com.phonepe.platform.bonsai.models.TreeKnotState;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
@@ -234,9 +234,9 @@ public interface Bonsai<C extends Context> {
      *
      * @param key                - Name of the root node.
      * @param deltaOperationList - List of Delta Operations.
-     * @return DeltaOperationMetaData - object contains TreeKnot and revert-delta-operations.
+     * @return TreeKnotState - object contains TreeKnot and revert-delta-operations.
      */
-    DeltaOperationMetaData getCompleteTreeWithDeltaOperations(String key, List<DeltaOperation> deltaOperationList);
+    TreeKnotState getCompleteTreeWithDeltaOperations(String key, List<DeltaOperation> deltaOperationList);
 
     /**
      * This function is to permanently save new changes into tree(aerospike) for a given key
@@ -244,9 +244,9 @@ public interface Bonsai<C extends Context> {
      *
      * @param key                - Name of the root node.
      * @param deltaOperationList - List of Delta Data.
-     * @return DeltaOperationMetaData - object contains TreeKnot and revert-delta-operations.
+     * @return TreeKnotState - object contains TreeKnot and revert-delta-operations.
      */
-    DeltaOperationMetaData applyDeltaOperations(String key, List<DeltaOperation> deltaOperationList);
+    TreeKnotState applyDeltaOperations(String key, List<DeltaOperation> deltaOperationList);
 
     /**
      * Perform a full evaluation of the Key

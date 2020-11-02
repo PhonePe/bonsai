@@ -8,7 +8,7 @@ import com.phonepe.platform.bonsai.core.ObjectExtractor;
 import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
-import com.phonepe.platform.bonsai.models.DeltaOperationMetaData;
+import com.phonepe.platform.bonsai.models.TreeKnotState;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ListNode;
 import com.phonepe.platform.bonsai.models.MapNode;
@@ -1118,9 +1118,9 @@ public class BonsaiTreeTest {
         firstInputDeltaOperationList.add(knotDeltaOperationOne);
         firstInputDeltaOperationList.add(knotDeltaOperationTwo);
 
-        DeltaOperationMetaData metaData = bonsai.applyDeltaOperations("key", firstInputDeltaOperationList);
+        TreeKnotState metaData = bonsai.applyDeltaOperations("key", firstInputDeltaOperationList);
         final TreeKnot firstTreeKnotSnapshot = metaData.getTreeKnot();
-        final List<DeltaOperation> firstRevertDeltaOperationList = metaData.getRevertedDeltaOperationList();
+        final List<DeltaOperation> firstRevertDeltaOperationList = metaData.getDeltaOperationsToPreviousState();
 
         assertThat(firstTreeKnotSnapshot, is(notNullValue()));
         assertThat(firstTreeKnotSnapshot.getId(), is(knotIdZero));
@@ -1228,7 +1228,7 @@ public class BonsaiTreeTest {
 
         metaData = bonsai.applyDeltaOperations("key", secondInputDeltaOperationList);
         final TreeKnot secondTreeKnotSnapshot = metaData.getTreeKnot();
-        final List<DeltaOperation> secondRevertDeltaOperationList = metaData.getRevertedDeltaOperationList();
+        final List<DeltaOperation> secondRevertDeltaOperationList = metaData.getDeltaOperationsToPreviousState();
 
         // Add assert function here.
         assertThat(secondTreeKnotSnapshot, is(notNullValue()));
@@ -1284,7 +1284,7 @@ public class BonsaiTreeTest {
         // Apply secondRevertDeltaOperationList on the latest tree image to get the firstTreeKnotSnapshot.
         metaData = bonsai.applyDeltaOperations("key", secondRevertDeltaOperationList);
         final TreeKnot thirdTreeKnotSnapshot = metaData.getTreeKnot();
-        final List<DeltaOperation> thirdRevertDeltaOperationList = metaData.getRevertedDeltaOperationList();
+        final List<DeltaOperation> thirdRevertDeltaOperationList = metaData.getDeltaOperationsToPreviousState();
 
         assertThat(thirdTreeKnotSnapshot, is(notNullValue()));
         assertThat(thirdTreeKnotSnapshot.getId(), is(knotIdZeroUpdated));

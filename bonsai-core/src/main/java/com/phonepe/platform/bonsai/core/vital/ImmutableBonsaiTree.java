@@ -3,7 +3,7 @@ package com.phonepe.platform.bonsai.core.vital;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
-import com.phonepe.platform.bonsai.models.DeltaOperationMetaData;
+import com.phonepe.platform.bonsai.models.TreeKnotState;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
@@ -142,14 +142,14 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public DeltaOperationMetaData getCompleteTreeWithDeltaOperations(final String key,
-                                                                     final List<DeltaOperation> deltaOperationList) {
+    public TreeKnotState getCompleteTreeWithDeltaOperations(final String key,
+                                                            final List<DeltaOperation> deltaOperationList) {
         return bonsai.getCompleteTreeWithDeltaOperations(key, deltaOperationList);
     }
 
     @Override
-    public DeltaOperationMetaData applyDeltaOperations(final String key,
-                                                       final List<DeltaOperation> deltaOperationList) {
+    public TreeKnotState applyDeltaOperations(final String key,
+                                              final List<DeltaOperation> deltaOperationList) {
         throw unsupportedOperationError();
     }
 

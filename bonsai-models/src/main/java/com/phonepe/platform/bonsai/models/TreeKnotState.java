@@ -20,7 +20,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeltaOperationMetaData {
+public class TreeKnotState {
     private TreeKnot treeKnot;
-    private List<DeltaOperation> revertedDeltaOperationList;
+    private List<DeltaOperation> deltaOperationsToPreviousState;
 }
