@@ -40,6 +40,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -467,7 +468,7 @@ public class BonsaiTreeTest {
     public void given_bonsaiTree_when_gettingCompleteTreeWithPendingUpdates_then_returnTreeKnot() {
         final List<DeltaOperation> deltaOperationList = new ArrayList<>();
         deltaOperationList.add(new KeyMappingDeltaOperation("key", "knotOne"));
-        deltaOperationList.add(new KnotDeltaOperation(new Knot("knotOne", 0, null, ValuedKnotData.stringValue("Knot One Value"))));
+        deltaOperationList.add(new KnotDeltaOperation(new Knot("knotOne", 0, null, ValuedKnotData.stringValue("Knot One Value"), new HashMap<>())));
 
         final TreeKnot treeKnot = bonsai.getCompleteTreeWithDeltaOperations("key", deltaOperationList).getTreeKnot();
         final String knotViaKey = bonsai.getMapping("key");
@@ -487,7 +488,7 @@ public class BonsaiTreeTest {
     public void given_bonsaiTree_when_applyingPendingUpdatesOnCompleteTree_then_returnTreeKnot() {
         final List<DeltaOperation> deltaOperationList = new ArrayList<>();
         deltaOperationList.add(new KeyMappingDeltaOperation("key", "knotOne"));
-        deltaOperationList.add(new KnotDeltaOperation(new Knot("knotOne", 0, null, ValuedKnotData.stringValue("Knot One Value"))));
+        deltaOperationList.add(new KnotDeltaOperation(new Knot("knotOne", 0, null, ValuedKnotData.stringValue("Knot One Value"), new HashMap<>())));
 
         final TreeKnot treeKnot = bonsai.applyDeltaOperations("key", deltaOperationList).getTreeKnot();
         final String knotViaKey = bonsai.getMapping("key");
@@ -1506,7 +1507,7 @@ public class BonsaiTreeTest {
                     .build());
             bonsai.updateKnotData(knotTwo.getId(), MapKnotData.builder()
                     .mapKeys(ImmutableMap.of("key", "keyOne"))
-                    .build());
+                    .build(), new HashMap<>());
         } catch (BonsaiError e) {
             Assert.assertEquals(BonsaiErrorCode.CYCLE_DETECTED, e.getErrorCode());
             throw e;
@@ -1525,10 +1526,83 @@ public class BonsaiTreeTest {
                 .knotId(knotTwo.getId())
                 .build());
        try {
-           bonsai.updateKnotData(knotThree.getId(), MapKnotData.builder().mapKeys(ImmutableMap.of("key", "keyOne")).build());
+           bonsai.updateKnotData(knotThree.getId(), MapKnotData.builder().mapKeys(ImmutableMap.of("key", "keyOne")).build(), new HashMap<>());
        } catch (BonsaiError e) {
            Assert.assertEquals(BonsaiErrorCode.CYCLE_DETECTED, e.getErrorCode());
            throw e;
        }
+    }
+
+    @Test
+    public void updatingPropertiesSuccessfully() {
+        bonsai.createMapping("key", ValuedKnotData.numberValue(1));
+        bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"));
+        Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build());
+
+        Assert.assertNull(knotOne.getProperties());
+
+        final Map <String, Object> properties = new HashMap<>();
+        final List<String> labels = new ArrayList<>();
+        labels.add("TestKnot");
+        labels.add("MultiKnot");
+        properties.put("Label", labels);
+
+        bonsai.updateKnotData(knotOne.getId(), knotOne.getKnotData(), properties);
+        knotOne = bonsai.getKnot(knotOne.getId());
+
+        Assert.assertTrue(knotOne.getProperties().containsValue(labels));
+    }
+
+    @Test
+    public void modifyingPropertiesSuccessfully() {
+        bonsai.createMapping("key", ValuedKnotData.numberValue(1));
+        bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"));
+        Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build());
+
+        Assert.assertNull(knotOne.getProperties());
+
+        final Map<String, Object> properties = new HashMap<>();
+        final List<String> labels = new ArrayList<>();
+        labels.add("TestKnot");
+        properties.put("Label", labels);
+
+        bonsai.updateKnotData(knotOne.getId(), knotOne.getKnotData(), properties);
+        knotOne = bonsai.getKnot(knotOne.getId());
+
+        Assert.assertTrue(knotOne.getProperties().containsValue(labels));
+
+        final List<String> newLabelList = new ArrayList<>(labels);
+        newLabelList.add("New label");
+        final Map<String, Object> updatedProperties = new HashMap<>();
+        updatedProperties.put("Label", newLabelList);
+
+        bonsai.updateKnotData(knotOne.getId(), knotOne.getKnotData(), updatedProperties);
+        knotOne = bonsai.getKnot(knotOne.getId());
+
+        Assert.assertTrue(knotOne.getProperties().containsValue(newLabelList));
+    }
+
+    @Test
+    public void updatingPropertiesWithNull() {
+        bonsai.createMapping("key", ValuedKnotData.numberValue(1));
+        bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"));
+        Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build());
+
+        Assert.assertNull(knotOne.getProperties());
+
+        final Map<String, Object> properties = new HashMap<>();
+        final List<String> labels = new ArrayList<>();
+        labels.add("TestKnot");
+        properties.put("Label", labels);
+
+        bonsai.updateKnotData(knotOne.getId(), knotOne.getKnotData(), properties);
+        knotOne = bonsai.getKnot(knotOne.getId());
+
+        Assert.assertTrue(knotOne.getProperties().containsValue(labels));
+
+        bonsai.updateKnotData(knotOne.getId(), knotOne.getKnotData(), null);
+        knotOne = bonsai.getKnot(knotOne.getId());
+
+        Assert.assertTrue(knotOne.getProperties().containsValue(labels));
     }
 }

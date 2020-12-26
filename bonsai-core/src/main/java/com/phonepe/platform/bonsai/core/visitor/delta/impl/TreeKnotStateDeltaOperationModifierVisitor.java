@@ -165,6 +165,7 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
             treeKnot.setTreeEdges(treeEdgeList);
             treeKnot.setVersion(knotDeltaOperation.getKnot().getVersion());
             treeKnot.setKnotData(knotDeltaOperation.getKnot().getKnotData());
+            treeKnot.setProperties(knotDeltaOperation.getKnot().getProperties());
             return true;
         }
 
@@ -252,6 +253,7 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
 
                 treeEdge.setVersion(edgeDeltaOperation.getEdge().getVersion());
                 treeEdge.setFilters(edgeDeltaOperation.getEdge().getFilters());
+                treeEdge.setProperties(edgeDeltaOperation.getEdge().getProperties());
                 treeEdge.setLive(edgeDeltaOperation.getEdge().isLive());
                 treeEdge.setPercentage(edgeDeltaOperation.getEdge().getPercentage());
 

@@ -75,9 +75,10 @@ public interface Bonsai<C extends Context> {
      *
      * @param knotId   knotId of the knot
      * @param knotData new data
+     * @param properties updated properties
      * @return older knot if some other data was present (on the knotId)
      */
-    Knot updateKnotData(String knotId, KnotData knotData);
+    Knot updateKnotData(String knotId, KnotData knotData, Map<String, Object> properties);
 
     /**
      * delete the knot and its associated edges

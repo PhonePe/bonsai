@@ -10,7 +10,9 @@ import lombok.Singular;
 import lombok.ToString;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An edge signifies a directional component of a Bonsai, which points to a single {@link Knot} id
@@ -30,13 +32,18 @@ public class Edge extends Condition {
     private List<Filter> filters;
 
     @Builder
-    public Edge(final EdgeIdentifier edgeIdentifier,
+    public Edge(final Boolean live,
+                final Float percentage,
+                final EdgeIdentifier edgeIdentifier,
                 final String knotId,
-                final @Singular List<Filter> filters,
                 final long version,
-                final Boolean live,
-                final Float percentage) {
-        super(live == null ? true : live, percentage == null ? 100f : percentage, Collections.emptyMap());
+                final @Singular List<Filter> filters,
+                final Map<String, Object> properties) {
+        super(
+                live == null ? true : live,
+                percentage == null ? 100f : percentage,
+                properties == null ? new HashMap<>() : properties
+        );
         this.edgeIdentifier = edgeIdentifier;
         this.knotId = knotId;
         this.version = version;

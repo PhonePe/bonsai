@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -21,13 +22,19 @@ public class Knot {
     private long version;
     private KnotData knotData;
     private OrderedList<EdgeIdentifier> edges;
+    private Map<String, Object> properties;
 
     @Builder
-    public Knot(String id, long version, OrderedList<EdgeIdentifier> edges, KnotData knotData) {
+    public Knot(final String id,
+                final long version,
+                final OrderedList<EdgeIdentifier> edges,
+                final KnotData knotData,
+                final Map<String, Object> properties) {
         this.id = id;
         this.version = version;
         this.edges = edges;
         this.knotData = knotData;
+        this.properties = properties;
     }
 
     @Override

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -21,16 +22,19 @@ public class TreeKnot {
     private long version;
     private List<TreeEdge> treeEdges;
     private KnotData knotData;
+    private Map<String, Object> properties;
 
     @Builder
     public TreeKnot(final String id,
                     final long version,
                     final List<TreeEdge> treeEdges,
-                    final KnotData knotData) {
+                    final KnotData knotData,
+                    final Map<String, Object> properties) {
         this.id = id;
         this.version = version;
         this.treeEdges = treeEdges;
         this.knotData = knotData;
+        this.properties = properties;
     }
 
     @Override
