@@ -7,6 +7,9 @@ import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.data.KnotData;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author tushar.naik
  * @version 1.0  2018-10-03 - 11:55
@@ -40,8 +43,8 @@ public class ImmutableBonsaiBuilder<C extends Context> {
         return bonsai.createKnot(knot);
     }
 
-    public ImmutableBonsaiBuilder<C> updateKnotData(final String id, final KnotData knotData) {
-        bonsai.updateKnotData(id, knotData);
+    public ImmutableBonsaiBuilder<C> updateKnotData(final String id, final KnotData knotData, final Map<String, Object> properties) {
+        bonsai.updateKnotData(id, knotData, properties);
         return this;
     }
 

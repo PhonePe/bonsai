@@ -15,6 +15,7 @@ import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import lombok.AllArgsConstructor;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +78,7 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public Knot updateKnotData(final String knotId, final KnotData knotData) {
+    public Knot updateKnotData(final String knotId, final KnotData knotData, final Map<String, Object> properties) {
         throw unsupportedOperationError();
     }
 

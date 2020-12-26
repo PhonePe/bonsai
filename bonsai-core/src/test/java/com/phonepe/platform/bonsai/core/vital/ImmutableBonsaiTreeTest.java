@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+
 
 /**
  * @author tushar.naik
@@ -239,7 +241,7 @@ public class ImmutableBonsaiTreeTest {
                 .documentContext(JsonPath.parse(Maps.newHashMap()))
                 .build());
 
-        Assert.assertNotNull("FlatTreeRepresentation should not be null for : key1 ",flatTree);
+        Assert.assertNotNull("FlatTreeRepresentation should not be null for : key1 ", flatTree);
     }
 
     @Test
@@ -248,7 +250,7 @@ public class ImmutableBonsaiTreeTest {
                 .documentContext(JsonPath.parse(Maps.newHashMap()))
                 .build());
 
-        Assert.assertNotNull("FlatTreeRepresentation should not be null for : key3 ",flatTree);
+        Assert.assertNotNull("FlatTreeRepresentation should not be null for : key3 ", flatTree);
     }
 
     @Test
@@ -322,7 +324,7 @@ public class ImmutableBonsaiTreeTest {
     public void given_immutableBonsaiTree_when_updateKnotData_then_throwBonsaiError() {
         final String knotId = "knotOne";
         final KnotData knotData = ValuedKnotData.stringValue("knotValue");
-        bonsai.updateKnotData(knotId, knotData);
+        bonsai.updateKnotData(knotId, knotData, new HashMap<>());
     }
 
     @Test(expected = BonsaiError.class)
@@ -400,7 +402,7 @@ public class ImmutableBonsaiTreeTest {
                                 .version(123)
                                 .build())
                 .createKnot(ValuedKnotData.stringValue("2"));
-        bonsaiBuilder.updateKnotData("k1", ValuedKnotData.stringValue("3"));
+        bonsaiBuilder.updateKnotData("k1", ValuedKnotData.stringValue("3"), new HashMap<>());
         bonsaiBuilder.deleteKnot("k2", false);
         bonsaiBuilder.createEdge(Edge.builder()
                                      .version(1)

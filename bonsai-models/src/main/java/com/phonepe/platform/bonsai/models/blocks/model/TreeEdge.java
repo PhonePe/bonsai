@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * An edge signifies a directional component of a Bonsai, which points to a single {@link TreeKnot}
@@ -22,6 +23,7 @@ public class TreeEdge {
     private TreeKnot treeKnot;
     private long version;
     private List<Filter> filters;
+    private Map<String, Object> properties;
     private boolean live;
     private float percentage;
 
@@ -30,12 +32,14 @@ public class TreeEdge {
                     final TreeKnot treeKnot,
                     final long version,
                     final List<Filter> filters,
+                    final Map<String, Object> properties,
                     final boolean live,
                     final float percentage) {
         this.edgeIdentifier = edgeIdentifier;
         this.treeKnot = treeKnot;
         this.version = version;
         this.filters = filters;
+        this.properties = properties;
         this.live = live;
         this.percentage = percentage;
     }

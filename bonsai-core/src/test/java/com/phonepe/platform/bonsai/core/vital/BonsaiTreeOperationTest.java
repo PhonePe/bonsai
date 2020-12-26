@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -121,7 +122,7 @@ public class BonsaiTreeOperationTest {
         MapKnotData newMapKnotData = MapKnotData.builder()
                                                 .mapKeys(ImmutableMap.of("w3", "widget_3"))
                                                 .build();
-        Knot previousKnot = bonsai.updateKnotData(homePageKnot.getId(), newMapKnotData);
+        Knot previousKnot = bonsai.updateKnotData(homePageKnot.getId(), newMapKnotData, new HashMap<>());
         Assert.assertEquals(homePageKnot, previousKnot);
         Knot updatedKnot = bonsai.getKnot(homePageKnot.getId());
         Assert.assertEquals(newMapKnotData, updatedKnot.getKnotData());
