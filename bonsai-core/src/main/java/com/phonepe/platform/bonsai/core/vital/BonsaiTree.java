@@ -128,9 +128,14 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public Knot updateKnotData(String knotId, KnotData knotData) {
+    public Knot updateKnotData(String knotId, KnotData knotData, Map<String, Object> properties) {
         Knot knot = knotStore.getKnot(knotId);
         knot.setKnotData(knotData);
+
+        /* Setting the properties, only if it non-null. otherwise, let the older copy stay. */
+        if (properties != null) {
+            knot.setProperties(properties);
+        }
 
         /* Validate the correctness and check for cycle. */
         componentValidator.validate(knot);
@@ -197,6 +202,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                         .version(System.currentTimeMillis())
                         .live(variation.isLive())
                         .percentage(variation.getPercentage())
+                        .properties(variation.getProperties())
                         .filters(variation.getFilters())
                         .build();
 
@@ -221,6 +227,12 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         checkNull(edgeId, edge);
         edge.setLive(variation.isLive());
         edge.setPercentage(variation.getPercentage());
+
+        /* Set the properties, only if it non-null. otherwise, let the older copy stay. */
+        if (variation.getProperties() != null) {
+            edge.setProperties(variation.getProperties());
+        }
+
         edge.setFilters(variation.getFilters());
         edge.getEdgeIdentifier().setPriority(variation.getPriority());
         if (!Strings.isNullOrEmpty(variation.getKnotId())) {
@@ -359,8 +371,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         final String knotId = keyTreeStore.getKeyTree(key);
         final TreeKnot initialTreeKnot = composeTreeKnot(knotId);
         TreeKnotState metaData = TreeKnotState.builder()
-                                                                .treeKnot(initialTreeKnot)
-                                                                .build();
+                                    .treeKnot(initialTreeKnot)
+                                    .build();
         for (DeltaOperation deltaOperation : deltaOperationList) {
             metaData = deltaOperation.accept(metaData, treeKnotDeltaOperationModifier);
         }
@@ -462,7 +474,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         Knot knot = getKnot(treeKnot.getId());
         if (knot != null) {
             if (treeKnot.getVersion() != knot.getVersion()) {
-                knot = updateKnotData(treeKnot.getId(), treeKnot.getKnotData());
+                knot = updateKnotData(treeKnot.getId(), treeKnot.getKnotData(), treeKnot.getProperties());
             }
         } else {
             knot = createKnot(treeKnot.getKnotData());
@@ -689,7 +701,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                 = TreeKnot.builder()
                           .id(knot.getId())
                           .version(knot.getVersion())
-                          .knotData(knot.getKnotData());
+                          .knotData(knot.getKnotData())
+                          .properties(knot.getProperties());
 
         if (knot.getEdges() != null) {
             List<TreeEdge> treeEdges
@@ -703,6 +716,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                                                     .live(edge.isLive())
                                                     .percentage(edge.getPercentage())
                                                     .filters(edge.getFilters())
+                                                    .properties(edge.getProperties())
                                                     .version(edge.getVersion())
                                                     .treeKnot(composeTreeKnot(edge.getKnotId()))
                                                     .build())

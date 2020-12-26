@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -85,7 +86,7 @@ public class ImmutableBonsaiBuilderTest {
                         .build());
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.createMapping("Key1", "K1");
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.updateKnotData(
-                "K1", ValuedKnotData.stringValue("New K1 Data"));
+                "K1", ValuedKnotData.stringValue("New K1 Data"), new HashMap<>());
 
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.createKnot(
                 Knot.builder()
@@ -95,7 +96,7 @@ public class ImmutableBonsaiBuilderTest {
                         .build());
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.createMapping("Key2", "K2");
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.updateKnotData(
-                "K2", ValuedKnotData.stringValue("New K2 Data"));
+                "K2", ValuedKnotData.stringValue("New K2 Data"), new HashMap<>());
 
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.addVariation("K1",
                 Variation.builder()

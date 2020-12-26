@@ -3,7 +3,9 @@ package com.phonepe.platform.bonsai.models.blocks;
 import com.phonepe.platform.query.dsl.Filter;
 import lombok.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This depicts a variation of a knot, given certain filter criteria
@@ -23,6 +25,9 @@ public class Variation {
     private List<Filter> filters;
 
     private String knotId;
+
+    @Builder.Default
+    private Map<String, Object> properties = new HashMap<>();
     
     /* these is a nullable field, hence we aren't using primitive type */
     @Builder.Default
