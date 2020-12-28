@@ -7,7 +7,6 @@ import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.data.KnotData;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,13 +24,13 @@ public class ImmutableBonsaiBuilder<C extends Context> {
         return new ImmutableBonsaiBuilder<>(bonsai);
     }
 
-    public ImmutableBonsaiBuilder<C> createKnot(final KnotData knotData) {
-        bonsai.createKnot(knotData);
+    public ImmutableBonsaiBuilder<C> createKnot(final KnotData knotData, final Map<String, Object> properties) {
+        bonsai.createKnot(knotData, properties);
         return this;
     }
 
-    public Knot createKnotAndCapture(final KnotData knotData) {
-        return bonsai.createKnot(knotData);
+    public Knot createKnotAndCapture(final KnotData knotData, final Map<String, Object> properties) {
+        return bonsai.createKnot(knotData, properties);
     }
 
     public ImmutableBonsaiBuilder<C> createKnot(final Knot knot) {
@@ -89,13 +88,13 @@ public class ImmutableBonsaiBuilder<C extends Context> {
         return this;
     }
 
-    public ImmutableBonsaiBuilder<C> createMapping(final String key, final KnotData knotData) {
-        bonsai.createMapping(key, knotData);
+    public ImmutableBonsaiBuilder<C> createMapping(final String key, final KnotData knotData, Map<String, Object> properties) {
+        bonsai.createMapping(key, knotData, properties);
         return this;
     }
 
-    public Knot createMappingAndCapture(final String key, final KnotData knotData) {
-        return bonsai.createMapping(key, knotData);
+    public Knot createMappingAndCapture(final String key, final KnotData knotData, Map<String, Object> properties) {
+        return bonsai.createMapping(key, knotData, properties);
     }
 
     public ImmutableBonsaiBuilder<C> removeMapping(final String key) {

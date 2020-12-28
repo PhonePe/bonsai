@@ -27,7 +27,7 @@ public class BonsaiTreeEdgeNumberTest {
 
     @Test
     public void testEdgeNumbering() {
-        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"));
+        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"), null);
         bonsai.createMapping("mera_data", knot.getId());
         TreeGenerationHelper.generateEdges(knot, bonsai, 9);
         Knot knot1 = bonsai.getKnot(knot.getId());

@@ -47,16 +47,16 @@ public class BonsaiTreeFlatEvalTest {
 
     @Test
     public void testFlatEval() {
-        bonsai.createMapping("w1", ValuedKnotData.stringValue("widget1"));
-        bonsai.createMapping("w2", ValuedKnotData.stringValue("widget2"));
-        bonsai.createMapping("v1", ValuedKnotData.stringValue("value1"));
-        bonsai.createMapping("w3", MapKnotData.builder().mapKeys(ImmutableMap.of("k1", "v1")).build());
+        bonsai.createMapping("w1", ValuedKnotData.stringValue("widget1"), null);
+        bonsai.createMapping("w2", ValuedKnotData.stringValue("widget2"), null);
+        bonsai.createMapping("v1", ValuedKnotData.stringValue("value1"), null);
+        bonsai.createMapping("w3", MapKnotData.builder().mapKeys(ImmutableMap.of("k1", "v1")).build(), null);
 
-        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").key("w3").build());
+        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").key("w3").build(), null);
         bonsai.createMapping("l1", l1.getId());
 
-        Knot l21 = bonsai.createKnot(MultiKnotData.builder().key("w3").key("w2").key("w1").build());
-        Knot l22 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w3").build());
+        Knot l21 = bonsai.createKnot(MultiKnotData.builder().key("w3").key("w2").key("w1").build(), null);
+        Knot l22 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w3").build(), null);
 
         bonsai.createMapping("l1", l1.getId());
         bonsai.addVariation(l1.getId(), Variation.builder()
@@ -90,8 +90,8 @@ public class BonsaiTreeFlatEvalTest {
 
         /* trying the same with another level */
 
-        Knot l31 = bonsai.createKnot(MultiKnotData.builder().key("w3").key("w2").key("w1").build());
-        Knot l41 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w3").build());
+        Knot l31 = bonsai.createKnot(MultiKnotData.builder().key("w3").key("w2").key("w1").build(), null);
+        Knot l41 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w3").build(), null);
 
         bonsai.addVariation(l22.getId(), Variation.builder()
                                                   .filter(new GreaterEqualFilter("$.age", 23))

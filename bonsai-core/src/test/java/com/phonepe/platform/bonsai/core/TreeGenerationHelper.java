@@ -43,7 +43,7 @@ public class TreeGenerationHelper {
                              return null;
                          }
                      });
-                     Knot newlyCreatedKnot = bonsai.createKnot(accept);
+                     Knot newlyCreatedKnot = bonsai.createKnot(accept, null);
                      bonsai.addVariation(knot.getId(), Variation.builder()
                                                                 .filter(new EqualsFilter("E", i))
                                                                 .knotId(newlyCreatedKnot.getId())
@@ -86,7 +86,7 @@ public class TreeGenerationHelper {
     }
 
     public static Knot createTestKnot(Bonsai<Context> bonsai, String key) {
-        bonsai.createMapping(key, ValuedKnotData.stringValue("value"));
-        return bonsai.createKnot(MultiKnotData.builder().key(key).build());
+        bonsai.createMapping(key, ValuedKnotData.stringValue("value"), null);
+        return bonsai.createKnot(MultiKnotData.builder().key(key).build(), null);
     }
 }
