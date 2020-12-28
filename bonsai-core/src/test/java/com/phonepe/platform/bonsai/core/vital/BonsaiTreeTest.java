@@ -82,9 +82,9 @@ public class BonsaiTreeTest {
     @Test
     public void given_bonsaiTree_when_evaluatingTree_then_returnKeyNode() throws IOException {
         Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
-        Knot level1 = bonsai.createMapping("test", ValuedKnotData.stringValue("1"));
-        Knot level21 = bonsai.createKnot(ValuedKnotData.stringValue("21"));
-        Knot level22 = bonsai.createKnot(ValuedKnotData.stringValue("22"));
+        Knot level1 = bonsai.createMapping("test", ValuedKnotData.stringValue("1"), null);
+        Knot level21 = bonsai.createKnot(ValuedKnotData.stringValue("21"), null);
+        Knot level22 = bonsai.createKnot(ValuedKnotData.stringValue("22"), null);
         bonsai.addVariation(level1.getId(), Variation.builder()
                                                      .filter(EqualsFilter.builder().field("$.location.cityy")
                                                                          .value(true).build())
@@ -107,23 +107,23 @@ public class BonsaiTreeTest {
         Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
         Map userContext2 = new ObjectExtractor().getObject("userData2.json", Map.class);
 
-        bonsai.createMapping("icon_1", ValuedKnotData.stringValue("1"));
-        bonsai.createMapping("icon_2", ValuedKnotData.stringValue("2"));
-        bonsai.createMapping("icon_3", ValuedKnotData.stringValue("3"));
-        bonsai.createMapping("icon_4", ValuedKnotData.stringValue("4"));
+        bonsai.createMapping("icon_1", ValuedKnotData.stringValue("1"), null);
+        bonsai.createMapping("icon_2", ValuedKnotData.stringValue("2"), null);
+        bonsai.createMapping("icon_3", ValuedKnotData.stringValue("3"), null);
+        bonsai.createMapping("icon_4", ValuedKnotData.stringValue("4"), null);
         Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
                 .key("icon_1")
                 .key("icon_4")
                 .key("icon_2")
                 .key("icon_3")
-                .build());
-        bonsai.createMapping("widget_2", ValuedKnotData.stringValue("widget_2"));
-        bonsai.createMapping("widget_3", ValuedKnotData.stringValue("widget_3"));
+                .build(), null);
+        bonsai.createMapping("widget_2", ValuedKnotData.stringValue("widget_2"), null);
+        bonsai.createMapping("widget_3", ValuedKnotData.stringValue("widget_3"), null);
         Knot hpKnot = bonsai.createKnot(MultiKnotData.builder()
                                                      .key("widget_1")
                                                      .key("widget_2")
                                                      .key("widget_3")
-                                                     .build());
+                                                     .build(), null);
 
         bonsai.createMapping("home_page_1", hpKnot.getId());
 
@@ -131,7 +131,7 @@ public class BonsaiTreeTest {
                                                                   .key("icon_3")
                                                                   .key("icon_1")
                                                                   .key("icon_4")
-                                                                  .build());
+                                                                  .build(), null);
         Assert.assertNotNull(femaleConditionKnot);
 
         Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
@@ -189,23 +189,23 @@ public class BonsaiTreeTest {
         Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
         Map userContext2 = new ObjectExtractor().getObject("userData2.json", Map.class);
 
-        bonsai.createMapping("icon_1", ValuedKnotData.stringValue("1"));
-        bonsai.createMapping("icon_2", ValuedKnotData.stringValue("2"));
-        bonsai.createMapping("icon_3", ValuedKnotData.stringValue("3"));
-        bonsai.createMapping("icon_4", ValuedKnotData.stringValue("4"));
+        bonsai.createMapping("icon_1", ValuedKnotData.stringValue("1"), null);
+        bonsai.createMapping("icon_2", ValuedKnotData.stringValue("2"), null);
+        bonsai.createMapping("icon_3", ValuedKnotData.stringValue("3"), null);
+        bonsai.createMapping("icon_4", ValuedKnotData.stringValue("4"), null);
         Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
                 .key("icon_1")
                 .key("icon_4")
                 .key("icon_2")
                 .key("icon_3")
-                .build());
-        bonsai.createMapping("widget_2", ValuedKnotData.stringValue("widget_2"));
-        bonsai.createMapping("widget_3", ValuedKnotData.stringValue("widget_3"));
+                .build(), null);
+        bonsai.createMapping("widget_2", ValuedKnotData.stringValue("widget_2"), null);
+        bonsai.createMapping("widget_3", ValuedKnotData.stringValue("widget_3"), null);
         Knot hpKnot = bonsai.createKnot(MultiKnotData.builder()
                                                      .key("widget_1")
                                                      .key("widget_2")
                                                      .key("widget_3")
-                                                     .build());
+                                                     .build(), null);
 
         bonsai.createMapping("home_page_1", hpKnot.getId());
 
@@ -213,7 +213,7 @@ public class BonsaiTreeTest {
                                                                   .key("icon_3")
                                                                   .key("icon_1")
                                                                   .key("icon_4")
-                                                                  .build());
+                                                                  .build(), null);
         Assert.assertNotNull(femaleConditionKnot);
 
         Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
@@ -271,9 +271,9 @@ public class BonsaiTreeTest {
     public void given_bonsaiTree_when_evaluatingTreeHeavilyWithMapKnot_then_returnKeyNode() throws IOException, BonsaiError {
         Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
 
-        bonsai.createMapping("icon_1", ValuedKnotData.stringValue("1"));
-        bonsai.createMapping("icon_2", ValuedKnotData.stringValue("2"));
-        Knot icon3 = bonsai.createKnot(ValuedKnotData.stringValue(("This is some coool icon")));
+        bonsai.createMapping("icon_1", ValuedKnotData.stringValue("1"), null);
+        bonsai.createMapping("icon_2", ValuedKnotData.stringValue("2"), null);
+        Knot icon3 = bonsai.createKnot(ValuedKnotData.stringValue(("This is some coool icon")), null);
         /* there is no older mapping, hence it will return null */
         Knot icon_3 = bonsai.createMapping("icon_3", icon3.getId());
         Assert.assertNull(icon_3);
@@ -282,28 +282,28 @@ public class BonsaiTreeTest {
         Knot icon_3_1 = bonsai.createMapping("icon_3", icon3.getId());
         Assert.assertNotNull(icon_3_1);
         Assert.assertEquals(icon3, icon_3_1);
-        bonsai.createMapping("icon_4", ValuedKnotData.stringValue("4"));
+        bonsai.createMapping("icon_4", ValuedKnotData.stringValue("4"), null);
         Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
                 .key("icon_1")
                 .key("icon_4")
                 .key("icon_2")
                 .key("icon_3")
-                .build());
-        bonsai.createMapping("widget_2", ValuedKnotData.stringValue("widget_2"));
-        bonsai.createMapping("widget_3", ValuedKnotData.stringValue("widget_3"));
-        bonsai.createMapping("widget_4", ValuedKnotData.stringValue("widget_4"));
+                .build(), null);
+        bonsai.createMapping("widget_2", ValuedKnotData.stringValue("widget_2"), null);
+        bonsai.createMapping("widget_3", ValuedKnotData.stringValue("widget_3"), null);
+        bonsai.createMapping("widget_4", ValuedKnotData.stringValue("widget_4"), null);
         Knot homePageKnot = bonsai.createKnot(MapKnotData.builder()
                                                          .mapKeys(ImmutableMap.of("w1", "widget_1",
                                                                                   "w2", "widget_2",
                                                                                   "w3", "widget_3",
                                                                                   "w4", "widget_4"))
-                                                         .build());
+                                                         .build(), null);
         Assert.assertNull(bonsai.createMapping("home_page_1", homePageKnot.getId()));
         Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
                                                                   .key("icon_3")
                                                                   .key("icon_1")
                                                                   .key("icon_4")
-                                                                  .build());
+                                                                  .build(), null);
         Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
                                                                                .filter(new EqualsFilter("$.gender", "female"))
                                                                                .knotId(femaleConditionKnot.getId())
@@ -331,10 +331,10 @@ public class BonsaiTreeTest {
 
     @Test
     public void given_bonsaiTree_when_evaluatingTree_then_returnPreferredKeyNode() {
-        Knot l1 = bonsai.createKnot(ValuedKnotData.stringValue("L-1"));
+        Knot l1 = bonsai.createKnot(ValuedKnotData.stringValue("L-1"), null);
         bonsai.createMapping("baseKey", l1.getId());
 
-        Knot l21 = bonsai.createKnot(ValuedKnotData.stringValue("L-2-1"));
+        Knot l21 = bonsai.createKnot(ValuedKnotData.stringValue("L-2-1"), null);
 
         bonsai.addVariation(l1.getId(), Variation.builder()
                                                  .filter(new EqualsFilter("$.gender", "female"))
@@ -363,15 +363,15 @@ public class BonsaiTreeTest {
 
     @Test
     public void given_bonsaiTree_when_evaluatingTree_then_returnRecursivePreferredKeyNode() {
-        bonsai.createMapping("w1", ValuedKnotData.stringValue("widget1"));
-        bonsai.createMapping("w2", ValuedKnotData.stringValue("widget2"));
-        bonsai.createMapping("w3", ValuedKnotData.stringValue("widget3"));
+        bonsai.createMapping("w1", ValuedKnotData.stringValue("widget1"), null);
+        bonsai.createMapping("w2", ValuedKnotData.stringValue("widget2"), null);
+        bonsai.createMapping("w3", ValuedKnotData.stringValue("widget3"), null);
 
-        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").key("w3").build());
+        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").key("w3").build(), null);
         bonsai.createMapping("l1", l1.getId());
 
-        Knot l21 = bonsai.createKnot(MultiKnotData.builder().key("w3").key("w2").key("w1").build());
-        Knot l22 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w3").build());
+        Knot l21 = bonsai.createKnot(MultiKnotData.builder().key("w3").key("w2").key("w1").build(), null);
+        Knot l22 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w3").build(), null);
 
         bonsai.createMapping("l1", l1.getId());
 
@@ -436,8 +436,8 @@ public class BonsaiTreeTest {
 
     @Test
     public void given_bonsaiTree_when_gettingCompleteTree_then_returnTreeKnot() {
-        final Knot knotOne = bonsai.createKnot(ValuedKnotData.stringValue("KnotOne"));
-        final Knot knotTwo = bonsai.createKnot(ValuedKnotData.stringValue("KnotTwo"));
+        final Knot knotOne = bonsai.createKnot(ValuedKnotData.stringValue("KnotOne"), null);
+        final Knot knotTwo = bonsai.createKnot(ValuedKnotData.stringValue("KnotTwo"), null);
         bonsai.createMapping("key", knotOne.getId());
         bonsai.addVariation(knotOne.getId(), Variation.builder()
                 .filter(new EqualsFilter("$.gender", "female"))
@@ -1334,7 +1334,7 @@ public class BonsaiTreeTest {
 
     @Test
     public void given_bonsaiTree_when_evaluatingWithOnlyKeyToKnotMapping_then_returnEmptyNotNullKeyNode() {
-        final Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Knot Data."));
+        final Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Knot Data."), null);
         bonsai.createMapping("key", knot.getId());
         bonsai.deleteKnot(knot.getId(), false);
 
@@ -1349,7 +1349,7 @@ public class BonsaiTreeTest {
 
     @Test(expected = BonsaiError.class)
     public void given_bonsaiTree_when_addingNonExistingVariation_then_throwBonsaiError() {
-        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build());
+        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build(), null);
         bonsai.createMapping("l1", l1.getId());
         bonsai.addVariation(l1.getId(), Variation.builder()
                 .filter(new EqualsFilter("$.gender", "female"))
@@ -1359,15 +1359,15 @@ public class BonsaiTreeTest {
 
     @Test(expected = BonsaiError.class)
     public void given_bonsaiTree_when_updatingEdgeFilters_then_throwBonsaiError() {
-        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build());
+        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build(), null);
         bonsai.updateVariation(l1.getId(), "edgeId", Variation.builder().build());
     }
 
     @Test(expected = BonsaiError.class)
     public void given_bonsaiTreeWithDissimilarKnotData_when_evaluatingTree_then_throwBonsaiError() {
-        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build());
+        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build(), null);
         bonsai.createMapping("l1", l1.getId());
-        Knot l21 = bonsai.createKnot(MultiKnotData.builder().key("l21w3").key("l21w4").build());
+        Knot l21 = bonsai.createKnot(MultiKnotData.builder().key("l21w3").key("l21w4").build(),  null);
         bonsai.addVariation(l1.getId(), Variation.builder()
                 .filter(new EqualsFilter("$.gender", "female"))
                 .knotId(l21.getId())
@@ -1385,7 +1385,7 @@ public class BonsaiTreeTest {
 
     @Test(expected = BonsaiError.class)
     public void given_bonsaiTree_when_evaluatingTreeWithOverShootingEdgesPerKnot_then_throwBonsaiError() {
-        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"));
+        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"), null);
         bonsai.createMapping("mera_data", knot.getId());
         TreeGenerationHelper.generateEdges(knot, bonsai, 10000);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
@@ -1398,7 +1398,7 @@ public class BonsaiTreeTest {
 
     @Test(expected = BonsaiError.class)
     public void given_bonsaiTree_when_createMappingWithWrongKnotData_then_throwBonsaiError() {
-        bonsai.createMapping("mera_data", new MapKnotData());
+        bonsai.createMapping("mera_data", new MapKnotData(), null);
     }
 
     @Test
@@ -1411,7 +1411,7 @@ public class BonsaiTreeTest {
                         .build())
                 .build();
 
-        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"));
+        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"), null);
         bonsai.createMapping("mera_data", knot.getId());
         TreeGenerationHelper.generateEdges(knot, bonsai, 10);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
@@ -1432,7 +1432,7 @@ public class BonsaiTreeTest {
                         .build())
                 .build();
 
-        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"));
+        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"), null);
         bonsai.createMapping("mera_data", knot.getId());
         TreeGenerationHelper.generateEdges(knot, bonsai, 11);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
@@ -1447,7 +1447,7 @@ public class BonsaiTreeTest {
     @Test(expected = BonsaiError.class)
     public void givenSelfCyclicMultiKnotDataWhenDetectingCycleOnBonsaiThenThrowException() {
         try {
-            bonsai.createMapping("key", MultiKnotData.builder().key("key").build());
+            bonsai.createMapping("key", MultiKnotData.builder().key("key").build(), null);
         } catch (BonsaiError e) {
             Assert.assertEquals(BonsaiErrorCode.KNOT_ABSENT, e.getErrorCode());
             throw e;
@@ -1457,7 +1457,7 @@ public class BonsaiTreeTest {
     @Test(expected = BonsaiError.class)
     public void givenSelfCyclicMapKnotDataWhenDetectingCycleOnBonsaiThenThrowException() {
         try {
-            bonsai.createMapping("key1", MapKnotData.builder().mapKeys(ImmutableMap.of("key", "key1")).build());
+            bonsai.createMapping("key1", MapKnotData.builder().mapKeys(ImmutableMap.of("key", "key1")).build(), null);
         } catch (BonsaiError e) {
             Assert.assertEquals(BonsaiErrorCode.KNOT_ABSENT, e.getErrorCode());
             throw e;
@@ -1466,7 +1466,7 @@ public class BonsaiTreeTest {
 
     @Test(expected = BonsaiError.class)
     public void givenCyclicInputWhenDetectingCycleOnBonsaiThenThrowException() {
-        final Knot knot = bonsai.createMapping("key", ValuedKnotData.stringValue("Value one"));
+        final Knot knot = bonsai.createMapping("key", ValuedKnotData.stringValue("Value one"), null);
 
         try {
             final Edge edge = bonsai.addVariation(knot.getId(), Variation.builder()
@@ -1480,8 +1480,8 @@ public class BonsaiTreeTest {
 
     @Test(expected = BonsaiError.class)
     public void givenCyclicInputWithValuedKnotsWhenDetectingCycleOnBonsaiThenThrowException() {
-        final Knot knotOne = bonsai.createMapping("key", ValuedKnotData.numberValue(0));
-        final Knot knotTwo = bonsai.createKnot(ValuedKnotData.numberValue(1));
+        final Knot knotOne = bonsai.createMapping("key", ValuedKnotData.numberValue(0), null);
+        final Knot knotTwo = bonsai.createKnot(ValuedKnotData.numberValue(1), null);
         final Edge edgeOne = bonsai.addVariation(knotOne.getId(), Variation.builder()
                 .filter(EqualsFilter.builder().field("field").value("value").build())
                 .knotId(knotTwo.getId()).build());
@@ -1498,13 +1498,13 @@ public class BonsaiTreeTest {
     @Test(expected = BonsaiError.class)
     public void givenCyclicInputInMapKnotWhenDetectingCycleOnBonsaiThenThrowException() {
         try {
-            bonsai.createMapping("keyThree", ValuedKnotData.numberValue(1));
+            bonsai.createMapping("keyThree", ValuedKnotData.numberValue(1), null);
             final Knot knotTwo = bonsai.createMapping("keyTwo", MapKnotData.builder()
                     .mapKeys(ImmutableMap.of("key", "keyThree"))
-                    .build());
+                    .build(), null);
             final Knot knotOne = bonsai.createMapping("keyOne", MapKnotData.builder()
                     .mapKeys(ImmutableMap.of("key", "keyTwo"))
-                    .build());
+                    .build(), null);
             bonsai.updateKnotData(knotTwo.getId(), MapKnotData.builder()
                     .mapKeys(ImmutableMap.of("key", "keyOne"))
                     .build(), new HashMap<>());
@@ -1516,11 +1516,11 @@ public class BonsaiTreeTest {
 
     @Test(expected = BonsaiError.class)
     public void givenTriangularInputVariationWhenDetectingCycleOnBonsaiThenSaveSuccessfully() {
-        bonsai.createMapping("key", ValuedKnotData.numberValue(1));
-        bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"));
-        final Knot knotThree = bonsai.createMapping("world", MapKnotData.builder().mapKeys(ImmutableMap.of("key", "key")).build());
-        final Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build());
-        final Knot knotTwo = bonsai.createKnot(MultiKnotData.builder().key("world").build());
+        bonsai.createMapping("key", ValuedKnotData.numberValue(1), null);
+        bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"), null);
+        final Knot knotThree = bonsai.createMapping("world", MapKnotData.builder().mapKeys(ImmutableMap.of("key", "key")).build(), null);
+        final Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build(), null);
+        final Knot knotTwo = bonsai.createKnot(MultiKnotData.builder().key("world").build(), null);
         bonsai.addVariation(knotOne.getId(), Variation.builder()
                 .filter(EqualsFilter.builder().field("field").value("value").build())
                 .knotId(knotTwo.getId())
@@ -1535,11 +1535,11 @@ public class BonsaiTreeTest {
 
     @Test
     public void updatingPropertiesSuccessfully() {
-        bonsai.createMapping("key", ValuedKnotData.numberValue(1));
-        bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"));
-        Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build());
+        bonsai.createMapping("key", ValuedKnotData.numberValue(1), null);
+        bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"), null);
+        Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build(), null);
 
-        Assert.assertNull(knotOne.getProperties());
+        Assert.assertEquals(0, knotOne.getProperties().size());
 
         final Map <String, Object> properties = new HashMap<>();
         final List<String> labels = new ArrayList<>();
@@ -1555,11 +1555,11 @@ public class BonsaiTreeTest {
 
     @Test
     public void modifyingPropertiesSuccessfully() {
-        bonsai.createMapping("key", ValuedKnotData.numberValue(1));
-        bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"));
-        Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build());
+        bonsai.createMapping("key", ValuedKnotData.numberValue(1), null);
+        bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"), null);
+        Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build(), null);
 
-        Assert.assertNull(knotOne.getProperties());
+        Assert.assertEquals(0, knotOne.getProperties().size());
 
         final Map<String, Object> properties = new HashMap<>();
         final List<String> labels = new ArrayList<>();
@@ -1584,11 +1584,11 @@ public class BonsaiTreeTest {
 
     @Test
     public void updatingPropertiesWithNull() {
-        bonsai.createMapping("key", ValuedKnotData.numberValue(1));
-        bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"));
-        Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build());
+        bonsai.createMapping("key", ValuedKnotData.numberValue(1), null);
+        bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"), null);
+        Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build(), null);
 
-        Assert.assertNull(knotOne.getProperties());
+        Assert.assertEquals(0, knotOne.getProperties().size());
 
         final Map<String, Object> properties = new HashMap<>();
         final List<String> labels = new ArrayList<>();

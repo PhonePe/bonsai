@@ -39,6 +39,7 @@ import com.phonepe.platform.query.dsl.FilterFieldIdentifier;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -110,15 +111,23 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public Knot createKnot(KnotData knotData) {
-        Knot knot = Knot.builder()
-                        .id(bonsaiIdGenerator.newKnotId())
-                        .knotData(knotData)
-                        .version(System.currentTimeMillis())
-                        .build();
+    public Knot createKnot(final KnotData knotData, Map<String, Object> properties) {
+        if (properties == null) {
+            properties = new HashMap<>();
+        }
+
+        final Knot knot = Knot.builder()
+                .id(bonsaiIdGenerator.newKnotId())
+                .knotData(knotData)
+                .properties(properties)
+                .version(System.currentTimeMillis())
+                .build();
+
         componentValidator.validate(knot);
         validateKnotData(knot);
+
         knotStore.mapKnot(knot.getId(), knot);
+
         return knot;
     }
 
@@ -311,9 +320,9 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public Knot createMapping(String key, KnotData knotData) {
+    public Knot createMapping(String key, KnotData knotData, Map<String, Object> properties) {
         checkMappingExistence(key);
-        Knot createdKnot = createKnot(knotData);
+        Knot createdKnot = createKnot(knotData, properties);
         createMapping(key, createdKnot.getId());
         return createdKnot;
     }
@@ -477,7 +486,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                 knot = updateKnotData(treeKnot.getId(), treeKnot.getKnotData(), treeKnot.getProperties());
             }
         } else {
-            knot = createKnot(treeKnot.getKnotData());
+            knot = createKnot(treeKnot.getKnotData(), treeKnot.getProperties());
         }
         return knot;
     }

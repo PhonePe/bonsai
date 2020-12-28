@@ -179,7 +179,7 @@ public class ImmutableBonsaiBuilderTest {
     @Test
     public void given_immutableBonsaiTree_when_creatingKnotAndCaptureWithKnotData_then_saveKnotAndReturnValueCorrespondingToKnotId() {
         final KnotData knotData = ValuedKnotData.stringValue("K1 Data");
-        final Knot capturedPreviousKnot = immutableBonsaiBuilder.createKnotAndCapture(knotData);
+        final Knot capturedPreviousKnot = immutableBonsaiBuilder.createKnotAndCapture(knotData, null);
         final Bonsai<Context> immutableBonsaiTree = immutableBonsaiBuilder.build();
         final Knot fetchedKnot = immutableBonsaiTree.getKnot(capturedPreviousKnot.getId());
 
@@ -190,7 +190,7 @@ public class ImmutableBonsaiBuilderTest {
     @Test
     public void given_immutableBonsaiTree_when_creatingMappingAndCaptureWithKnotData_then_saveKnotAndPreviousValueCorrespondingToKnotId() {
         final KnotData knotData = ValuedKnotData.stringValue("K1 Data");
-        final Knot capturedPreviousKnot = immutableBonsaiBuilder.createMappingAndCapture("key", knotData);
+        final Knot capturedPreviousKnot = immutableBonsaiBuilder.createMappingAndCapture("key", knotData, null);
         final Bonsai<Context> immutableBonsaiTree = immutableBonsaiBuilder.build();
         final Knot fetchedKnot = immutableBonsaiTree.getKnot(capturedPreviousKnot.getId());
 

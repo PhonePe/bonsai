@@ -56,7 +56,7 @@ public class ImmutableBonsaiTreeTest {
                             .version(123)
                             .build())
             .createMapping("key2", "k2")
-            .createMapping("key3", ValuedKnotData.stringValue("d2"))
+            .createMapping("key3", ValuedKnotData.stringValue("d2"), null)
             .removeMapping("key3")
             .build();
 
@@ -155,7 +155,7 @@ public class ImmutableBonsaiTreeTest {
                         .knotData(ValuedKnotData.stringValue("d3"))
                         .version(123)
                         .build())
-                .createKnot(ValuedKnotData.stringValue("2"));
+                .createKnot(ValuedKnotData.stringValue("2"), null);
         bonsaiBuilder.createEdge(Edge.builder()
                 .version(1)
                 .edgeIdentifier(new EdgeIdentifier("e1", 1, 1))
@@ -317,7 +317,7 @@ public class ImmutableBonsaiTreeTest {
     @Test(expected = BonsaiError.class)
     public void given_mutableBonsaiTree_when_createKnotWithKnotDataOnly_then_throwBonsaiError() {
         final KnotData knotData = ValuedKnotData.stringValue("knotValue");
-        bonsai.createKnot(knotData);
+        bonsai.createKnot(knotData, null);
     }
 
     @Test(expected = BonsaiError.class)
@@ -401,7 +401,7 @@ public class ImmutableBonsaiTreeTest {
                                 .knotData(ValuedKnotData.stringValue("d3"))
                                 .version(123)
                                 .build())
-                .createKnot(ValuedKnotData.stringValue("2"));
+                .createKnot(ValuedKnotData.stringValue("2"), null);
         bonsaiBuilder.updateKnotData("k1", ValuedKnotData.stringValue("3"), new HashMap<>());
         bonsaiBuilder.deleteKnot("k2", false);
         bonsaiBuilder.createEdge(Edge.builder()
@@ -452,7 +452,7 @@ public class ImmutableBonsaiTreeTest {
 
     @Test(expected = BonsaiError.class)
     public void given_immutableBonsaiTree_when_createMappingWithKeyE1_then_throwBonsaiError() {
-        bonsai.createMapping("e1", ValuedKnotData.stringValue("asdf"));
+        bonsai.createMapping("e1", ValuedKnotData.stringValue("asdf"), null);
     }
 
     @Test(expected = BonsaiError.class)
