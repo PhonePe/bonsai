@@ -32,7 +32,7 @@ public class JsonPathFilterEvaluationEngineTest {
 
     @Test
     public void simpleTestingOfBonsai() {
-        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"));
+        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"), null);
         bonsai.createMapping("mera_data", knot.getId());
         TreeGenerationHelper.generateEdges(knot, bonsai, 10000);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
@@ -46,7 +46,7 @@ public class JsonPathFilterEvaluationEngineTest {
 
     @Test
     public void perfTestingOfBonsai() {
-        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"));
+        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"), null);
         bonsai.createMapping("tera_data", knot.getId());
         Timer performanceTreeCreation = new PerformanceEvaluator().evaluate(1, () -> TreeGenerationHelper.generateEdges(knot, bonsai, 1000));
         System.out.println("time for treeCreation = " + performanceTreeCreation.getSnapshot().get99thPercentile());

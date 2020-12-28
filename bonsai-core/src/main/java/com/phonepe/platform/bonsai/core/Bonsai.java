@@ -50,9 +50,10 @@ public interface Bonsai<C extends Context> {
      * create a {@link Knot} out of the {@link KnotData}
      *
      * @param knotData some kind of data knot
+     * @param properties updated properties
      * @return created Knot with some id, version, etc
      */
-    Knot createKnot(KnotData knotData);
+    Knot createKnot(KnotData knotData, Map<String, Object> properties);
 
     /**
      * create a Knot directly
@@ -192,10 +193,11 @@ public interface Bonsai<C extends Context> {
      *
      * @param key      key to associate the Knot with
      * @param knotData data with which the Knot will be created
+     * @param properties updated properties
      * @return created knot
      * @throws BonsaiError if there are som sort of cycles while creating the knot
      */
-    Knot createMapping(String key, KnotData knotData);
+    Knot createMapping(String key, KnotData knotData, Map<String, Object> properties);
 
     /**
      * @param key key
