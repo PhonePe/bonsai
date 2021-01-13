@@ -140,10 +140,7 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
                         .stream()
                         .filter(treeEdge -> edgeIdentifierList.stream()
                                 .noneMatch(updatedEdge -> updatedEdge.getId().equals(treeEdge.getEdgeIdentifier().getId())))
-                        .forEach(treeEdge -> {
-                                log.info("insertKnotDeltaDataIntoTreeKnot : {}", treeEdge.getEdgeIdentifier());
-                                captureRevertTreeEdge(treeEdge, revertDeltaOperation);
-                        });
+                        .forEach(treeEdge -> captureRevertTreeEdge(treeEdge, revertDeltaOperation));
             }
 
             final List<TreeEdge> treeEdgeList = new ArrayList<>();
@@ -249,7 +246,6 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
 
                     // Capture in-case the link is directing to the new variation.
                     if (!treeEdge.getTreeKnot().getId().equals(edgeDeltaOperation.getEdge().getKnotId())) {
-                        log.info("insertEdgeDeltaDataIntoTreeKnot : {}", treeEdge.getEdgeIdentifier());
                         captureRevertTreeKnot(treeEdge.getTreeKnot(), revertDeltaOperation);
                     }
                 }
