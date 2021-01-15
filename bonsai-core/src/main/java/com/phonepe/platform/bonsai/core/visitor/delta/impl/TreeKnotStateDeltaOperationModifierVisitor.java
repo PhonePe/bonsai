@@ -138,9 +138,8 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
                 Optional.ofNullable(treeKnot.getTreeEdges())
                         .orElse(Collections.emptyList()) // To avoid NullPointerException.
                         .stream()
-                        .filter(treeEdge -> edgeIdentifierList
-                                .stream()
-                                .noneMatch(updatedEdge -> updatedEdge.getId() == treeEdge.getEdgeIdentifier().getId()))
+                        .filter(treeEdge -> edgeIdentifierList.stream()
+                                .noneMatch(updatedEdge -> updatedEdge.getId().equals(treeEdge.getEdgeIdentifier().getId())))
                         .forEach(treeEdge -> captureRevertTreeEdge(treeEdge, revertDeltaOperation));
             }
 
