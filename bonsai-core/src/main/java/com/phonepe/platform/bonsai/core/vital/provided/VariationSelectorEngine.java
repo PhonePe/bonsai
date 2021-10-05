@@ -46,7 +46,7 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
                    .allMatch(k -> {
                        final JsonPathFilterEvaluationEngine<C> filterVisitor = log.isTraceEnabled()
                                ? new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context, genericFilterHandler)
-                               : new JsonPathFilterEvaluationEngine<>(context, genericFilterHandler);
+                               : new JsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context, genericFilterHandler);
                        return k.accept(filterVisitor);
                    });
     }

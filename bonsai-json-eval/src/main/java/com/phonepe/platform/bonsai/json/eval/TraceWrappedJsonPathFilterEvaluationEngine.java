@@ -29,12 +29,9 @@ import java.util.function.Predicate;
 public class TraceWrappedJsonPathFilterEvaluationEngine<C extends JsonEvalContext>
         extends JsonPathFilterEvaluationEngine<C> {
 
-    private final String entityId;
-
     public TraceWrappedJsonPathFilterEvaluationEngine(String entityId, C context,
                                                       Predicate<GenericFilterContext<C>> genericFilterHandler) {
-        super(context, genericFilterHandler);
-        this.entityId = entityId;
+        super(entityId, context, genericFilterHandler);
     }
 
     @Override
@@ -178,6 +175,6 @@ public class TraceWrappedJsonPathFilterEvaluationEngine<C extends JsonEvalContex
     }
 
     private void trace(Filter filter, boolean result) {
-        log.trace("[bonsai][{}}][{}] eval result: {}", filter.getClass().getSimpleName(), entityId, result);
+        log.trace("[bonsai][{}}][{}] eval result: {}",   filter.getClass().getSimpleName(), entityId, result);
     }
 }
