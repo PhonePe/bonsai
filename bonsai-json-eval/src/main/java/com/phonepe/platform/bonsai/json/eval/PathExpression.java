@@ -76,7 +76,7 @@ public class PathExpression {
                 return numberOperation(context);
             }
         } catch (Exception e) {
-            log.error("Error while evaluating expression: " + toString(), e);
+            log.error("[bonsai] Error while evaluating expression: " + toString(), e);
             return null;
         }
     }

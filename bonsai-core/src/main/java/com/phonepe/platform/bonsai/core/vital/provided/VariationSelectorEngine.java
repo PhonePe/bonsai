@@ -4,7 +4,9 @@ import com.phonepe.folios.condition.engine.ConditionEngine;
 import com.phonepe.platform.bonsai.core.vital.Context;
 import com.phonepe.platform.bonsai.json.eval.GenericFilterContext;
 import com.phonepe.platform.bonsai.json.eval.JsonPathFilterEvaluationEngine;
+import com.phonepe.platform.bonsai.json.eval.TraceWrappedJsonPathFilterEvaluationEngine;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Predicate;
 
@@ -17,6 +19,7 @@ import java.util.function.Predicate;
  * @author tushar.naik
  * @version 1.0  13/07/18 - 11:43 AM
  */
+@Slf4j
 public class VariationSelectorEngine<C extends Context> extends ConditionEngine<C, Edge> {
 
     private final Predicate<GenericFilterContext<C>> genericFilterHandler;
@@ -33,10 +36,18 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
     public Boolean match(C context, Edge edge) {
         /* in case no document context is passed, we will not match the edge's filters */
         if (context.getDocumentContext() == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("[bonsai][match][{}] no document context", edge.getEdgeIdentifier().getId());
+            }
             return false;
         }
         return edge.getFilters()
-                .stream()
-                .allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine<>(context, genericFilterHandler)));
+                   .stream()
+                   .allMatch(k -> {
+                       final JsonPathFilterEvaluationEngine<C> filterVisitor = log.isTraceEnabled()
+                               ? new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context, genericFilterHandler)
+                               : new JsonPathFilterEvaluationEngine<>(context, genericFilterHandler);
+                       return k.accept(filterVisitor);
+                   });
     }
 }
