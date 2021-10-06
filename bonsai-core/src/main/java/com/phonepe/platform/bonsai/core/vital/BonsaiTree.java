@@ -409,7 +409,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     @Override
     public KeyNode evaluate(String key, C context) {
-        setMDCContext();
+        boolean isMDCContextSet = setMDCContext();
         componentValidator.validate(context);
 
         /* if the matching Knot is null, return empty */
@@ -428,7 +428,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             return KeyNode.empty(key, edgePath);
         }
 
-        return knot.getKnotData().accept(new KnotDataVisitor<KeyNode>() {
+        KeyNode result = knot.getKnotData().accept(new KnotDataVisitor<KeyNode>() {
             @Override
             public KeyNode visit(ValuedKnotData valuedKnotData) {
                 return new KeyNode(key,
@@ -477,21 +477,32 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                                    edgePath);
             }
         });
+        if (isMDCContextSet) {
+            removeMDCContext();
+        }
+        return result;
     }
+
     @Override
     public FlatTreeRepresentation evaluateFlat(String key, C context) {
         KeyNode evaluate = evaluate(key, context);
         return TreeUtils.flatten(evaluate);
     }
 
-    private void setMDCContext() {
+
+    private boolean setMDCContext() {
         String requestId = MDC.get(BonsaiConstants.EVALUATION_ID);
         if (requestId == null) {
             requestId = UUID.randomUUID().toString();
             MDC.put(BonsaiConstants.EVALUATION_ID, requestId);
+            return true;
         }
+        return false;
     }
 
+    private void removeMDCContext() {
+        MDC.remove(BonsaiConstants.EVALUATION_ID);
+    }
 
     private Knot createOrUpdateKnotFromTreeKnot(TreeKnot treeKnot) {
         Knot knot = getKnot(treeKnot.getId());
