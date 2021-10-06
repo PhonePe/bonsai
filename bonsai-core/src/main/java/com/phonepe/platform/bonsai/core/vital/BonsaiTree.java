@@ -410,77 +410,80 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     @Override
     public KeyNode evaluate(String key, C context) {
         boolean isMDCContextSet = setMDCContext();
-        componentValidator.validate(context);
 
-        /* if the matching Knot is null, return empty */
-        final String id = keyTreeStore.getKeyTree(key);
+        try {
+            componentValidator.validate(context);
 
-        /* if key mapping doesn't contain the key, return an empty KeyNode */
-        if (Strings.isNullOrEmpty(id)) {
-            log.warn("[bonsai][evaluate][{}] no knotId mapping found", key);
-            return KeyNode.empty(key);
-        }
+            /* if the matching Knot is null, return empty */
+            final String id = keyTreeStore.getKeyTree(key);
 
-        final List<Integer> edgePath = Lists.newArrayList();
-        final Knot knot = getMatchingKnot(key, knotStore.getKnot(id), context, edgePath);
-        if (knot == null) {
-            log.warn("[bonsai][evaluate][{}] knotId:{} is null", key, id);
-            return KeyNode.empty(key, edgePath);
-        }
-
-        KeyNode result = knot.getKnotData().accept(new KnotDataVisitor<KeyNode>() {
-            @Override
-            public KeyNode visit(ValuedKnotData valuedKnotData) {
-                return new KeyNode(key,
-                                   ValueNode.builder()
-                                            .id(knot.getId())
-                                            .version(knot.getVersion())
-                                            .value(valuedKnotData.getValue())
-                                            .build(),
-                                   edgePath);
+            /* if key mapping doesn't contain the key, return an empty KeyNode */
+            if (Strings.isNullOrEmpty(id)) {
+                log.warn("[bonsai][evaluate][{}] no knotId mapping found", key);
+                return KeyNode.empty(key);
             }
 
-            @Override
-            public KeyNode visit(MultiKnotData multiKnotData) {
-                /* recursively evaluate the list of keys in MultiKnot */
-                List<String> keys = multiKnotData.getKeys();
-                List<KeyNode> nodes = keys != null
-                        ? keys.stream()
-                              .map(key -> evaluate(key, context))
-                              .collect(Collectors.toList())
-                        : null;
-                return new KeyNode(key,
-                                   ListNode.builder()
-                                           .id(knot.getId())
-                                           .version(knot.getVersion())
-                                           .nodes(nodes)
-                                           .build(),
-                                   edgePath);
+            final List<Integer> edgePath = Lists.newArrayList();
+            final Knot knot = getMatchingKnot(key, knotStore.getKnot(id), context, edgePath);
+            if (knot == null) {
+                log.warn("[bonsai][evaluate][{}] knotId:{} is null", key, id);
+                return KeyNode.empty(key, edgePath);
             }
 
-            @Override
-            public KeyNode visit(MapKnotData mapKnotData) {
-                /* recursively evaluate the keys withing the MapKnot data */
-                Map<String, String> mapKeys = mapKnotData.getMapKeys();
-                Map<String, KeyNode> nodeMap = mapKeys != null
-                        ? mapKeys.entrySet()
-                                 .stream()
-                                 .collect(Collectors.toMap(Map.Entry::getKey,
-                                                           entry -> evaluate(entry.getValue(), context)))
-                        : null;
-                return new KeyNode(key,
-                                   MapNode.builder()
-                                          .id(knot.getId())
-                                          .version(knot.getVersion())
-                                          .nodeMap(nodeMap)
-                                          .build(),
-                                   edgePath);
+            return knot.getKnotData().accept(new KnotDataVisitor<KeyNode>() {
+                @Override
+                public KeyNode visit(ValuedKnotData valuedKnotData) {
+                    return new KeyNode(key,
+                                       ValueNode.builder()
+                                                .id(knot.getId())
+                                                .version(knot.getVersion())
+                                                .value(valuedKnotData.getValue())
+                                                .build(),
+                                       edgePath);
+                }
+
+                @Override
+                public KeyNode visit(MultiKnotData multiKnotData) {
+                    /* recursively evaluate the list of keys in MultiKnot */
+                    List<String> keys = multiKnotData.getKeys();
+                    List<KeyNode> nodes = keys != null
+                            ? keys.stream()
+                                  .map(key -> evaluate(key, context))
+                                  .collect(Collectors.toList())
+                            : null;
+                    return new KeyNode(key,
+                                       ListNode.builder()
+                                               .id(knot.getId())
+                                               .version(knot.getVersion())
+                                               .nodes(nodes)
+                                               .build(),
+                                       edgePath);
+                }
+
+                @Override
+                public KeyNode visit(MapKnotData mapKnotData) {
+                    /* recursively evaluate the keys withing the MapKnot data */
+                    Map<String, String> mapKeys = mapKnotData.getMapKeys();
+                    Map<String, KeyNode> nodeMap = mapKeys != null
+                            ? mapKeys.entrySet()
+                                     .stream()
+                                     .collect(Collectors.toMap(Map.Entry::getKey,
+                                                               entry -> evaluate(entry.getValue(), context)))
+                            : null;
+                    return new KeyNode(key,
+                                       MapNode.builder()
+                                              .id(knot.getId())
+                                              .version(knot.getVersion())
+                                              .nodeMap(nodeMap)
+                                              .build(),
+                                       edgePath);
+                }
+            });
+        } finally {
+            if (isMDCContextSet) {
+                removeMDCContext();
             }
-        });
-        if (isMDCContextSet) {
-            removeMDCContext();
         }
-        return result;
     }
 
     @Override
@@ -491,11 +494,15 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
 
     private boolean setMDCContext() {
-        String requestId = MDC.get(BonsaiConstants.EVALUATION_ID);
-        if (requestId == null) {
-            requestId = UUID.randomUUID().toString();
-            MDC.put(BonsaiConstants.EVALUATION_ID, requestId);
-            return true;
+        try {
+            String requestId = MDC.get(BonsaiConstants.EVALUATION_ID);
+            if (requestId == null) {
+                requestId = UUID.randomUUID().toString();
+                MDC.put(BonsaiConstants.EVALUATION_ID, requestId);
+                return true;
+            }
+        } catch (Exception e) {
+            log.error("Failed to set MDC context", e);
         }
         return false;
     }
