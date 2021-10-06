@@ -3,7 +3,7 @@ package com.phonepe.platform.bonsai.core.vital;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.phonepe.platform.bonsai.core.Bonsai;
-import com.phonepe.platform.bonsai.core.Constants;
+import com.phonepe.platform.bonsai.core.BonsaiConstants;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.platform.bonsai.core.structures.ConflictResolver;
@@ -485,10 +485,10 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     private void setMDCContext() {
-        String requestId = MDC.get(Constants.BONSAI_EVAL_ID);
+        String requestId = MDC.get(BonsaiConstants.EVALUATION_ID);
         if (requestId == null) {
             requestId = UUID.randomUUID().toString();
-            MDC.put(Constants.BONSAI_EVAL_ID, requestId);
+            MDC.put(BonsaiConstants.EVALUATION_ID, requestId);
         }
     }
 

@@ -2,7 +2,7 @@ package com.phonepe.platform.bonsai.core.vital;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jayway.jsonpath.DocumentContext;
-import com.phonepe.platform.bonsai.core.Constants;
+import com.phonepe.platform.bonsai.core.BonsaiConstants;
 import com.phonepe.platform.bonsai.json.eval.JsonEvalContext;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import lombok.AllArgsConstructor;
@@ -33,6 +33,6 @@ public class Context implements JsonEvalContext {
 
     @Override
     public String id() {
-        return MDC.get(Constants.BONSAI_EVAL_ID);
+        return MDC.get(BonsaiConstants.EVALUATION_ID);
     }
 }
