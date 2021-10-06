@@ -55,7 +55,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
 
     protected final String entityId;
 
-    private final C context;
+    protected final C context;
 
     private final Predicate<GenericFilterContext<C>> genericFilterHandler;
 
@@ -110,7 +110,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     public Boolean visit(MissingFilter filter) {
         List<Object> values = context.documentContext().read(filter.getField(), OBJECT_TYPE_REF);
         if (log.isTraceEnabled()) {
-            log.trace("[bonsai] filter:{} values:{} document:{}", filter.getField(), values, context.documentContext().toString());
+            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values, context.documentContext().toString());
         }
         return values == null || values.isEmpty() || values.stream().allMatch(Objects::isNull);
     }
@@ -126,7 +126,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     public Boolean visit(ExistsFilter filter) {
         List<Object> values = context.documentContext().read(filter.getField(), OBJECT_TYPE_REF);
         if (log.isTraceEnabled()) {
-            log.trace("[bonsai] filter:{} values:{} document:{}", filter.getField(), values, context.documentContext().toString());
+            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values, context.documentContext().toString());
         }
         return isNotEmpty(values);
     }
@@ -191,7 +191,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     private <T> List<T> nonNullValues(Filter filter, TypeRef<List<T>> typeRef) {
         List<T> values = context.documentContext().read(filter.getField(), typeRef);
         if (log.isTraceEnabled()) {
-            log.trace("[bonsai] filter:{} values:{} document:{}", filter.getField(), values, context.documentContext().toString());
+            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values, context.documentContext().toString());
         }
         return values == null ? Collections.emptyList() : values.stream().filter(Objects::nonNull)
                                                                 .collect(Collectors.toList());
