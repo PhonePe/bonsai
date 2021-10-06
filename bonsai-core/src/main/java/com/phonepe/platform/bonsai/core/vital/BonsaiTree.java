@@ -3,6 +3,7 @@ package com.phonepe.platform.bonsai.core.vital;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.phonepe.platform.bonsai.core.Bonsai;
+import com.phonepe.platform.bonsai.core.Constants;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.platform.bonsai.core.structures.ConflictResolver;
@@ -37,6 +38,7 @@ import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import com.phonepe.platform.query.dsl.FilterFieldIdentifier;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +48,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -406,6 +409,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     @Override
     public KeyNode evaluate(String key, C context) {
+        setMDCContext();
         componentValidator.validate(context);
 
         /* if the matching Knot is null, return empty */
@@ -474,12 +478,20 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             }
         });
     }
-
     @Override
     public FlatTreeRepresentation evaluateFlat(String key, C context) {
         KeyNode evaluate = evaluate(key, context);
         return TreeUtils.flatten(evaluate);
     }
+
+    private void setMDCContext() {
+        String requestId = MDC.get(Constants.BONSAI_EVAL_ID);
+        if (requestId == null) {
+            requestId = UUID.randomUUID().toString();
+            MDC.put(Constants.BONSAI_EVAL_ID, requestId);
+        }
+    }
+
 
     private Knot createOrUpdateKnotFromTreeKnot(TreeKnot treeKnot) {
         Knot knot = getKnot(treeKnot.getId());

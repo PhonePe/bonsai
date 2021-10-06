@@ -2,13 +2,15 @@ package com.phonepe.platform.bonsai.core.vital;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jayway.jsonpath.DocumentContext;
+import com.phonepe.platform.bonsai.core.Constants;
 import com.phonepe.platform.bonsai.json.eval.JsonEvalContext;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.slf4j.MDC;
 
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * A simple Context for evaluation
@@ -17,27 +19,12 @@ import java.util.UUID;
  * @version 1.0  27/07/18 - 12:42 AM
  */
 @Data
+@Builder
+@AllArgsConstructor
 public class Context implements JsonEvalContext {
     @JsonIgnore
     private DocumentContext documentContext;
     private Map<String, Knot> preferences;
-    private String id = UUID.randomUUID().toString();
-
-    @Builder
-    public Context(DocumentContext documentContext,
-                   Map<String, Knot> preferences) {
-        this.documentContext = documentContext;
-        this.preferences = preferences;
-    }
-
-    @Builder(buildMethodName = "_builder")
-    public Context(final DocumentContext documentContext,
-                   final Map<String, Knot> preferences,
-                   final String id) {
-        this.documentContext = documentContext;
-        this.preferences = preferences;
-        this.id = id;
-    }
 
     @Override
     public DocumentContext documentContext() {
@@ -46,6 +33,6 @@ public class Context implements JsonEvalContext {
 
     @Override
     public String id() {
-        return id;
+        return MDC.get(Constants.BONSAI_EVAL_ID);
     }
 }
