@@ -30,6 +30,15 @@ public class Context implements JsonEvalContext {
         this.preferences = preferences;
     }
 
+    @Builder(buildMethodName = "_builder")
+    public Context(final DocumentContext documentContext,
+                   final Map<String, Knot> preferences,
+                   final String id) {
+        this.documentContext = documentContext;
+        this.preferences = preferences;
+        this.id = id;
+    }
+
     @Override
     public DocumentContext documentContext() {
         return documentContext;
