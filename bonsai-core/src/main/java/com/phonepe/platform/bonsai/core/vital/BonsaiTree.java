@@ -676,7 +676,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     private Knot getMatchingKnot(final String key, final Knot knot, final C context, List<Integer> path) {
         if (knot == null) {
             if (log.isDebugEnabled()) {
-                log.debug("[bonsai][getMatchingKnot][{}][{}] no knot", key, context.id());
+                log.debug("[bonsai][getMatchingKnot][{}][{}] no knot", context.id(), key);
             }
             return null;
         }
@@ -684,7 +684,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         if (edgeIdentifiers == null || edgeIdentifiers.isEmpty()) {
             /* base condition for the recursion */
             if (log.isDebugEnabled()) {
-                log.debug("[bonsai][getMatchingKnot][{}][{}] no edges", key, context.id());
+                log.debug("[bonsai][getMatchingKnot][{}][{}] no edges", context.id(), key);
             }
             return knotPreferenceCheck(key, knot, context);
         }
@@ -696,7 +696,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         if (!conditionSatisfyingEdge.isPresent()) {
             /* base condition for the recursion */
             if (log.isDebugEnabled()) {
-                log.debug("[bonsai][getMatchingKnot][{}][{}] no edge satisfies conditions", key, context.id());
+                log.debug("[bonsai][getMatchingKnot][{}][{}] no edge satisfies conditions", context.id(), key);
             }
             return knotPreferenceCheck(key, knot, context);
         }
@@ -705,7 +705,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         Knot rhsKnot = knotStore.getKnot(edge.getKnotId());
         path.add(edge.getEdgeIdentifier().getNumber());
         if (log.isDebugEnabled()) {
-            log.debug("[bonsai][getMatchingKnot][{}][{}] edge condition satisfied: {}, knot: {} ", key, context.id(),
+            log.debug("[bonsai][getMatchingKnot][{}][{}] edge condition satisfied: {}, knot: {} ", context.id(), key,
                       edge.getEdgeIdentifier().getId(), rhsKnot.getId());
         }
 
