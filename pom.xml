@@ -51,7 +51,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.google.guava</groupId>
-                <artifactId>gfuava</artifactId>
+                <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
             <dependency>
