@@ -10,10 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @author tushar.naik
- * @version 1.0  2019-05-19 - 12:41
- */
 public interface Converters {
 
     /**
@@ -100,17 +96,17 @@ public interface Converters {
      * Static function to convert TreeEdge object into its corresponding Variation object.
      *
      * @param childKnotId - child knotId
-     * @param treeEdge - {@link TreeEdge} object.
+     * @param treeEdge    - {@link TreeEdge} object.
      * @return - converted Variation object.
      */
     static Variation toVariation(String childKnotId, TreeEdge treeEdge) {
         return Variation.builder()
-                        .knotId(childKnotId)
-                        .filters(treeEdge.getFilters())
-                        .live(treeEdge.isLive())
-                        .percentage(treeEdge.getPercentage())
-                        .properties(treeEdge.getProperties())
-                        .priority(treeEdge.getEdgeIdentifier().getPriority())
-                        .build();
+                .knotId(childKnotId)
+                .filters(treeEdge.getFilters())
+                .live(treeEdge.isLive())
+                .percentage(treeEdge.getPercentage())
+                .properties(treeEdge.getProperties())
+                .priority(treeEdge.getEdgeIdentifier().getPriority())
+                .build();
     }
 }

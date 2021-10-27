@@ -11,19 +11,15 @@ import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @author tushar.naik
- * @version 1.0  23/08/18 - 12:57 PM
- */
 public class BonsaiTreeEdgeOperationTest {
 
     private Bonsai<Context> bonsai = BonsaiBuilder.builder()
-                                                  .withBonsaiProperties(BonsaiProperties
-                                                                                .builder()
-                                                                                .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
-                                                                                .mutualExclusivitySettingTurnedOn(false)
-                                                                                .build())
-                                                  .build();
+            .withBonsaiProperties(BonsaiProperties
+                    .builder()
+                    .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
+                    .mutualExclusivitySettingTurnedOn(false)
+                    .build())
+            .build();
 
     @Test
     public void testAddingEdgeFilters() throws BonsaiError {
@@ -34,17 +30,17 @@ public class BonsaiTreeEdgeOperationTest {
 
         /* checking multiple additions */
         Edge edge1 = bonsai.addVariation(knot1.getId(),
-                                         Variation.builder()
-                                                  .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
-                                                  .knotId(knot2.getId())
-                                                  .build());
+                Variation.builder()
+                        .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
+                        .knotId(knot2.getId())
+                        .build());
 
         Edge edge = bonsai.updateVariation(knot1.getId(),
-                                           edge1.getEdgeIdentifier().getId(),
-                                           Variation.builder()
-                                                    .filter(new EqualsFilter("$.gender", "female"))
-                                                    .filter(new EqualsFilter("$.gender2", "female"))
-                                                    .build());
+                edge1.getEdgeIdentifier().getId(),
+                Variation.builder()
+                        .filter(new EqualsFilter("$.gender", "female"))
+                        .filter(new EqualsFilter("$.gender2", "female"))
+                        .build());
 
         Assert.assertEquals(2, edge.getFilters().size());
         Assert.assertEquals(2, bonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().size());
@@ -61,15 +57,15 @@ public class BonsaiTreeEdgeOperationTest {
 
         /* checking multiple additions */
         Edge edge1 = bonsai.addVariation(knot1.getId(),
-                                         Variation.builder()
-                                                  .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
-                                                  .knotId(knot2.getId())
-                                                  .build());
+                Variation.builder()
+                        .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
+                        .knotId(knot2.getId())
+                        .build());
 
         Edge edge = bonsai.updateVariation(knot1.getId(), edge1.getEdgeIdentifier().getId(),
-                                           Variation.builder()
-                                                    .filters(Lists.newArrayList(new EqualsFilter("$.gender2", "female")))
-                                                    .build());
+                Variation.builder()
+                        .filters(Lists.newArrayList(new EqualsFilter("$.gender2", "female")))
+                        .build());
 
         Assert.assertEquals(1, edge.getFilters().size());
         Assert.assertEquals(1, bonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().size());
@@ -78,11 +74,11 @@ public class BonsaiTreeEdgeOperationTest {
     @Test(expected = BonsaiError.class)
     public void testAddingEdgeFiltersNotAllowed() {
         Bonsai<Context> bonsai = BonsaiBuilder.builder()
-                                              .withBonsaiProperties(BonsaiProperties
-                                                                            .builder()
-                                                                            .mutualExclusivitySettingTurnedOn(false)
-                                                                            .build())
-                                              .build();
+                .withBonsaiProperties(BonsaiProperties
+                        .builder()
+                        .mutualExclusivitySettingTurnedOn(false)
+                        .build())
+                .build();
         Knot knot1 = TreeGenerationHelper.createTestKnot(bonsai, "knot1");
         Knot knot2 = TreeGenerationHelper.createTestKnot(bonsai, "knot2");
 
@@ -90,27 +86,27 @@ public class BonsaiTreeEdgeOperationTest {
 
         /* checking multiple additions */
         Edge edge1 = bonsai.addVariation(knot1.getId(),
-                                         Variation.builder()
-                                                  .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
-                                                  .knotId(knot2.getId())
-                                                  .build());
+                Variation.builder()
+                        .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
+                        .knotId(knot2.getId())
+                        .build());
 
         Edge edge = bonsai.updateVariation(knot1.getId(),
-                                           edge1.getEdgeIdentifier().getId(),
-                                           Variation.builder().filters(Lists.newArrayList(
-                                                   new EqualsFilter("$.gender", "female"),
-                                                   new EqualsFilter("$.gender", "female2")))
-                                                    .build());
+                edge1.getEdgeIdentifier().getId(),
+                Variation.builder().filters(Lists.newArrayList(
+                                new EqualsFilter("$.gender", "female"),
+                                new EqualsFilter("$.gender", "female2")))
+                        .build());
     }
 
     @Test
     public void testUpdateEdgeFiltersAllowed() throws BonsaiError {
         Bonsai<Context> bonsai = BonsaiBuilder.builder()
-                                              .withBonsaiProperties(BonsaiProperties
-                                                                            .builder()
-                                                                            .mutualExclusivitySettingTurnedOn(false)
-                                                                            .build())
-                                              .build();
+                .withBonsaiProperties(BonsaiProperties
+                        .builder()
+                        .mutualExclusivitySettingTurnedOn(false)
+                        .build())
+                .build();
         Knot knot1 = TreeGenerationHelper.createTestKnot(bonsai, "knot1");
         Knot knot2 = TreeGenerationHelper.createTestKnot(bonsai, "knot2");
 
@@ -118,13 +114,13 @@ public class BonsaiTreeEdgeOperationTest {
 
         /* checking multiple additions */
         Edge edge1 = bonsai.addVariation(knot1.getId(),
-                                         Variation.builder()
-                                                  .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
-                                                  .knotId(knot2.getId())
-                                                  .build());
+                Variation.builder()
+                        .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
+                        .knotId(knot2.getId())
+                        .build());
 
         Edge edge = bonsai.updateVariation(knot1.getId(), edge1.getEdgeIdentifier().getId(),
-                                           Variation.builder().filters(Lists.newArrayList(new EqualsFilter("$.gender2", "female")))
+                Variation.builder().filters(Lists.newArrayList(new EqualsFilter("$.gender2", "female")))
                         .build());
 
         Assert.assertEquals(1, edge.getFilters().size());
@@ -134,12 +130,12 @@ public class BonsaiTreeEdgeOperationTest {
     @Test
     public void testUpdateEdgeFiltersNotAllowed() throws BonsaiError {
         Bonsai<Context> bonsai = BonsaiBuilder.builder()
-                                              .withBonsaiProperties(BonsaiProperties
-                                                                            .builder()
-                                                                            .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
-                                                                            .mutualExclusivitySettingTurnedOn(true)
-                                                                            .build())
-                                              .build();
+                .withBonsaiProperties(BonsaiProperties
+                        .builder()
+                        .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
+                        .mutualExclusivitySettingTurnedOn(true)
+                        .build())
+                .build();
         Knot knot1 = TreeGenerationHelper.createTestKnot(bonsai, "knot1");
         Knot knot2 = TreeGenerationHelper.createTestKnot(bonsai, "knot2");
 
@@ -147,13 +143,13 @@ public class BonsaiTreeEdgeOperationTest {
 
         /* checking multiple additions */
         Edge edge1 = bonsai.addVariation(knot1.getId(),
-                                         Variation.builder()
-                                                  .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
-                                                  .knotId(knot2.getId())
-                                                  .build());
+                Variation.builder()
+                        .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
+                        .knotId(knot2.getId())
+                        .build());
 
         Edge edge = bonsai.updateVariation(knot1.getId(), edge1.getEdgeIdentifier().getId(),
-                                           Variation.builder().filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
+                Variation.builder().filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
                         .build());
 
         Assert.assertEquals(1, edge.getFilters().size());

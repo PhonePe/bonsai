@@ -7,8 +7,6 @@ import com.phonepe.platform.bonsai.models.blocks.Knot;
  *
  * @param <I> id
  * @param <K> knot
- * @author tushar.naik
- * @version 1.0  16/08/18 - 1:25 AM
  */
 public interface KnotStore<I, K> {
     /**

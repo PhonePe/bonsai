@@ -10,10 +10,6 @@ import lombok.ToString;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * @author tushar.naik
- * @version 1.0  16/08/18 - 11:37 PM
- */
 @Data
 @ToString
 @NoArgsConstructor

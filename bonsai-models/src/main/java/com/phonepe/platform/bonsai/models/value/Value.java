@@ -4,10 +4,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 
-/**
- * @author tushar.naik
- * @version 1.0  27/07/18 - 2:33 AM
- */
 @Data
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "valueType")
 @JsonSubTypes({
@@ -18,14 +14,6 @@ import lombok.Data;
         @JsonSubTypes.Type(name = "BYTE", value = ByteValue.class)
 })
 public abstract class Value {
-    public enum ValueType {
-        NUMBER,
-        STRING,
-        BOOLEAN,
-        JSON,
-        BYTE
-    }
-
     private ValueType valueType;
 
     protected Value(ValueType valueType) {
@@ -33,4 +21,12 @@ public abstract class Value {
     }
 
     public abstract <T> T accept(ValueVisitor<T> valueVisitor);
+
+    public enum ValueType {
+        NUMBER,
+        STRING,
+        BOOLEAN,
+        JSON,
+        BYTE
+    }
 }

@@ -10,7 +10,6 @@ import lombok.Data;
 
 /**
  * An abstract class holds the details of kind of input given to chimera-bulk-input/output APIs used for tree formation.
- * @author suraj.s
  */
 @Data
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "deltaOperationType")

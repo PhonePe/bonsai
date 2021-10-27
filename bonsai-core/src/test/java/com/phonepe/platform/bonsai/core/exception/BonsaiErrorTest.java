@@ -4,10 +4,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author - suraj.s
- * @date - 2019-11-21
- */
 public class BonsaiErrorTest {
 
     @Test

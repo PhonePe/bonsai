@@ -1,16 +1,17 @@
 package com.phonepe.platform.bonsai.models.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.phonepe.platform.bonsai.models.value.*;
+import com.phonepe.platform.bonsai.models.value.BooleanValue;
+import com.phonepe.platform.bonsai.models.value.ByteValue;
+import com.phonepe.platform.bonsai.models.value.JsonValue;
+import com.phonepe.platform.bonsai.models.value.NumberValue;
+import com.phonepe.platform.bonsai.models.value.StringValue;
+import com.phonepe.platform.bonsai.models.value.Value;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-/**
- * @author tushar.naik
- * @version 1.0  27/07/18 - 12:34 AM
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -25,11 +26,6 @@ public class ValuedKnotData extends KnotData {
     public ValuedKnotData(Value value) {
         super(KnotDataType.VALUED);
         this.value = value;
-    }
-
-    @Override
-    public <T> T accept(KnotDataVisitor<T> knotDataVisitor) {
-        return knotDataVisitor.visit(this);
     }
 
     public static ValuedKnotData stringValue(String data) {
@@ -50,5 +46,10 @@ public class ValuedKnotData extends KnotData {
 
     public static ValuedKnotData jsonValue(JsonNode data) {
         return new ValuedKnotData(new JsonValue(data));
+    }
+
+    @Override
+    public <T> T accept(KnotDataVisitor<T> knotDataVisitor) {
+        return knotDataVisitor.visit(this);
     }
 }

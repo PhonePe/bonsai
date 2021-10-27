@@ -21,10 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author tushar.naik
- * @version 1.0  2019-06-11 - 01:15
- */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class TreeUtils {
 
@@ -67,28 +63,28 @@ class TreeUtils {
                 List<KeyNode> nodes = listNode.getNodes();
                 List<String> flatNodes = nodes != null
                         ? nodes.stream()
-                               .peek(k -> flatten(k, mapping)) // recursive action on every item in the list
-                               .map(KeyNode::getKey)
-                               .collect(Collectors.toList())
+                        .peek(k -> flatten(k, mapping)) // recursive action on every item in the list
+                        .map(KeyNode::getKey)
+                        .collect(Collectors.toList())
                         : Collections.emptyList();
                 mapping.put(
                         keyNode.getKey(),
                         FlatNodeDetail.builder()
-                                      .flatNode(new ListFlatNode(flatNodes))
-                                      .path(keyNode.getEdgePath())
-                                      .version(listNode.getVersion())
-                                      .build());
+                                .flatNode(new ListFlatNode(flatNodes))
+                                .path(keyNode.getEdgePath())
+                                .version(listNode.getVersion())
+                                .build());
                 return null;
             }
 
             @Override
             public Void visit(ValueNode valueNode) {
                 mapping.put(keyNode.getKey(),
-                            FlatNodeDetail.builder()
-                                          .flatNode(new ValueFlatNode(valueNode.getValue()))
-                                          .path(keyNode.getEdgePath())
-                                          .version(valueNode.getVersion())
-                                          .build());
+                        FlatNodeDetail.builder()
+                                .flatNode(new ValueFlatNode(valueNode.getValue()))
+                                .path(keyNode.getEdgePath())
+                                .version(valueNode.getVersion())
+                                .build());
                 return null;
             }
 
@@ -97,20 +93,20 @@ class TreeUtils {
                 Map<String, KeyNode> nodeMap = mapNode.getNodeMap();
                 Map<String, String> flatNodesMap = nodeMap != null
                         ? nodeMap.entrySet()
-                                 .stream()
-                                 .peek(entry -> flatten(entry.getValue(), mapping))// recursive action on every item in the list
-                                 .map(entry -> MapEntry.of(
-                                         entry.getKey(),
-                                         entry.getValue().getKey()))
-                                 .collect(MapEntry.mapCollector())
+                        .stream()
+                        .peek(entry -> flatten(entry.getValue(), mapping))// recursive action on every item in the list
+                        .map(entry -> MapEntry.of(
+                                entry.getKey(),
+                                entry.getValue().getKey()))
+                        .collect(MapEntry.mapCollector())
                         : null;
                 mapping.put(
                         keyNode.getKey(),
                         FlatNodeDetail.builder()
-                                      .flatNode(new MapFlatNode(flatNodesMap))
-                                      .version(mapNode.getVersion())
-                                      .path(keyNode.getEdgePath())
-                                      .build());
+                                .flatNode(new MapFlatNode(flatNodesMap))
+                                .version(mapNode.getVersion())
+                                .path(keyNode.getEdgePath())
+                                .build());
                 return null;
             }
         });

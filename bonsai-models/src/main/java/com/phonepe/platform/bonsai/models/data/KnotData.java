@@ -5,10 +5,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 import lombok.Getter;
 
-/**
- * @author tushar.naik
- * @version 1.0  12/07/18 - 3:41 PM
- */
 @Data
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "knotDataType")
 @JsonSubTypes({
@@ -17,6 +13,14 @@ import lombok.Getter;
         @JsonSubTypes.Type(name = "MAP_KNOT", value = MapKnotData.class)
 })
 public abstract class KnotData {
+
+    private KnotDataType knotDataType;
+
+    protected KnotData(KnotDataType knotDataType) {
+        this.knotDataType = knotDataType;
+    }
+
+    public abstract <T> T accept(KnotDataVisitor<T> knotDataVisitor);
 
     public enum KnotDataType {
         VALUED(false),
@@ -30,12 +34,4 @@ public abstract class KnotData {
             this.isDeReferenced = isDeReferenced;
         }
     }
-
-    private KnotDataType knotDataType;
-
-    protected KnotData(KnotDataType knotDataType) {
-        this.knotDataType = knotDataType;
-    }
-
-    public abstract <T> T accept(KnotDataVisitor<T> knotDataVisitor);
 }

@@ -3,27 +3,23 @@ package com.phonepe.platform.bonsai.core.vital;
 import com.google.common.collect.Sets;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
-import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Set;
 
-/**
- * @author tushar.naik
- * @version 1.0  2019-06-14 - 15:48
- */
 public class BonsaiTreeEdgeNumberTest {
 
     private Bonsai<Context> bonsai = BonsaiBuilder.builder()
-                                                  .withBonsaiProperties(
-                                                          BonsaiProperties
-                                                                  .builder()
-                                                                  .mutualExclusivitySettingTurnedOn(true)
-                                                                  .maxAllowedVariationsPerKnot(10)
-                                                                  .build())
-                                                  .build();
+            .withBonsaiProperties(
+                    BonsaiProperties
+                            .builder()
+                            .mutualExclusivitySettingTurnedOn(true)
+                            .maxAllowedVariationsPerKnot(10)
+                            .build())
+            .build();
 
     @Test
     public void testEdgeNumbering() {

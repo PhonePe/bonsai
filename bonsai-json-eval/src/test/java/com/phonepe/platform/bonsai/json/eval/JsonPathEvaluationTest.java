@@ -10,10 +10,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author tushar.naik
- * @version 1.0  23/09/19 - 7:39 PM
- */
 public class JsonPathEvaluationTest {
 
     private final ObjectExtractor objectExtractor = new ObjectExtractor();
@@ -27,8 +23,8 @@ public class JsonPathEvaluationTest {
         List<Filter> filters = objectExtractor.getObject("filterList1.json", new TypeReference<List<Filter>>() {
         });
         long count = filters.stream()
-                            .filter(filter -> filter.accept(eval))
-                            .count();
+                .filter(filter -> filter.accept(eval))
+                .count();
         Assert.assertEquals(8, count);
     }
 
@@ -41,8 +37,8 @@ public class JsonPathEvaluationTest {
         List<Filter> filters = objectExtractor.getObject("filterList1.json", new TypeReference<List<Filter>>() {
         });
         long count = filters.stream()
-                            .filter(filter -> filter.accept(eval))
-                            .count();
+                .filter(filter -> filter.accept(eval))
+                .count();
         Assert.assertEquals(8, count);
     }
 }

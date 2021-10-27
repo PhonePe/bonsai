@@ -11,9 +11,6 @@ import java.util.stream.Collectors;
 
 /**
  * Use this in the streaming functions
- *
- * @author tushar.naik
- * @version 1.0  2019-04-16 - 22:50
  */
 @Data
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

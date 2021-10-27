@@ -63,9 +63,6 @@ import java.util.stream.Stream;
  * <p>
  * Key mappings represent the tree
  * Id mappings are for quick lookups on ids.
- *
- * @author tushar.naik
- * @version 1.0  11/07/18 - 2:09 PM
  */
 @Slf4j
 public class BonsaiTree<C extends Context> implements Bonsai<C> {
@@ -120,11 +117,11 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         }
 
         final Knot knot = Knot.builder()
-                              .id(bonsaiIdGenerator.newKnotId())
-                              .knotData(knotData)
-                              .properties(properties)
-                              .version(System.currentTimeMillis())
-                              .build();
+                .id(bonsaiIdGenerator.newKnotId())
+                .knotData(knotData)
+                .properties(properties)
+                .version(System.currentTimeMillis())
+                .build();
 
         componentValidator.validate(knot);
         validateKnotData(knot);
@@ -166,9 +163,9 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                 //todo optimize and handle failures
                 Map<String, Edge> allEdges = edgeStore
                         .getAllEdges(knot.getEdges()
-                                         .stream()
-                                         .map(EdgeIdentifier::getId)
-                                         .collect(Collectors.toList()));
+                                .stream()
+                                .map(EdgeIdentifier::getId)
+                                .collect(Collectors.toList()));
                 List<TreeEdge> collectedTreeEdges = allEdges
                         .values()
                         .stream()
@@ -207,16 +204,16 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         componentValidator.validate(knot, variationKnot);
 
         Edge edge = Edge.builder()
-                        .edgeIdentifier(new EdgeIdentifier(bonsaiIdGenerator.newEdgeId(),
-                                                           bonsaiIdGenerator.newEdgeNumber(knot.getEdges()),
-                                                           variation.getPriority()))
-                        .knotId(variation.getKnotId())
-                        .version(System.currentTimeMillis())
-                        .live(variation.isLive())
-                        .percentage(variation.getPercentage())
-                        .properties(variation.getProperties())
-                        .filters(variation.getFilters())
-                        .build();
+                .edgeIdentifier(new EdgeIdentifier(bonsaiIdGenerator.newEdgeId(),
+                        bonsaiIdGenerator.newEdgeNumber(knot.getEdges()),
+                        variation.getPriority()))
+                .knotId(variation.getKnotId())
+                .version(System.currentTimeMillis())
+                .live(variation.isLive())
+                .percentage(variation.getPercentage())
+                .properties(variation.getProperties())
+                .filters(variation.getFilters())
+                .build();
 
         /* if there is any edge with a different pivot (ie, condition is on a different field), in the inner layer, throw exception */
         validateConstraints(knot, edge);
@@ -267,7 +264,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     public boolean unlinkVariation(String knotId, String edgeId) {
         Knot knot = knotStore.getKnot(knotId);
         knot.setEdges(knot.getEdges().stream().filter(eid -> !eid.getId().equals(edgeId))
-                          .collect(Collectors.toCollection(OrderedList::new)));
+                .collect(Collectors.toCollection(OrderedList::new)));
 
         componentValidator.validate(knot);
 
@@ -385,8 +382,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         final String knotId = keyTreeStore.getKeyTree(key);
         final TreeKnot initialTreeKnot = composeTreeKnot(knotId);
         TreeKnotState metaData = TreeKnotState.builder()
-                                              .treeKnot(initialTreeKnot)
-                                              .build();
+                .treeKnot(initialTreeKnot)
+                .build();
         for (DeltaOperation deltaOperation : deltaOperationList) {
             metaData = deltaOperation.accept(metaData, treeKnotDeltaOperationModifier);
         }
@@ -434,12 +431,12 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                 @Override
                 public KeyNode visit(ValuedKnotData valuedKnotData) {
                     return new KeyNode(key,
-                                       ValueNode.builder()
-                                                .id(knot.getId())
-                                                .version(knot.getVersion())
-                                                .value(valuedKnotData.getValue())
-                                                .build(),
-                                       edgePath);
+                            ValueNode.builder()
+                                    .id(knot.getId())
+                                    .version(knot.getVersion())
+                                    .value(valuedKnotData.getValue())
+                                    .build(),
+                            edgePath);
                 }
 
                 @Override
@@ -448,16 +445,16 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                     List<String> keys = multiKnotData.getKeys();
                     List<KeyNode> nodes = keys != null
                             ? keys.stream()
-                                  .map(key -> evaluate(key, context))
-                                  .collect(Collectors.toList())
+                            .map(key -> evaluate(key, context))
+                            .collect(Collectors.toList())
                             : null;
                     return new KeyNode(key,
-                                       ListNode.builder()
-                                               .id(knot.getId())
-                                               .version(knot.getVersion())
-                                               .nodes(nodes)
-                                               .build(),
-                                       edgePath);
+                            ListNode.builder()
+                                    .id(knot.getId())
+                                    .version(knot.getVersion())
+                                    .nodes(nodes)
+                                    .build(),
+                            edgePath);
                 }
 
                 @Override
@@ -466,17 +463,17 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                     Map<String, String> mapKeys = mapKnotData.getMapKeys();
                     Map<String, KeyNode> nodeMap = mapKeys != null
                             ? mapKeys.entrySet()
-                                     .stream()
-                                     .collect(Collectors.toMap(Map.Entry::getKey,
-                                                               entry -> evaluate(entry.getValue(), context)))
+                            .stream()
+                            .collect(Collectors.toMap(Map.Entry::getKey,
+                                    entry -> evaluate(entry.getValue(), context)))
                             : null;
                     return new KeyNode(key,
-                                       MapNode.builder()
-                                              .id(knot.getId())
-                                              .version(knot.getVersion())
-                                              .nodeMap(nodeMap)
-                                              .build(),
-                                       edgePath);
+                            MapNode.builder()
+                                    .id(knot.getId())
+                                    .version(knot.getVersion())
+                                    .nodeMap(nodeMap)
+                                    .build(),
+                            edgePath);
                 }
             });
         } finally {
@@ -532,7 +529,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         final String childKnotId = treeCreatedKnot.getId();
         if (edge != null) {
             updateVariation(parentKnotId, treeEdge.getEdgeIdentifier().getId(),
-                            Converters.toVariation(childKnotId, treeEdge));
+                    Converters.toVariation(childKnotId, treeEdge));
         } else {
             addVariation(parentKnotId, Converters.toVariation(childKnotId, treeEdge));
         }
@@ -570,13 +567,13 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             final String internalKnotId = keyTreeStore.getKeyTree(key);
             if (internalKnotId == null || internalKnotId.isEmpty()) {
                 throw new BonsaiError(BonsaiErrorCode.KNOT_ABSENT,
-                                      String.format("%s is not present in our ecosystem", key));
+                        String.format("%s is not present in our ecosystem", key));
             }
 
             final Knot internalKnot = knotStore.getKnot(internalKnotId);
             if (internalKnot == null) {
                 throw new BonsaiError(BonsaiErrorCode.KNOT_ABSENT,
-                                      String.format("%s is not present in our ecosystem", key));
+                        String.format("%s is not present in our ecosystem", key));
             }
         });
     }
@@ -642,23 +639,23 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             @Override
             public Void visit(final MultiKnotData multiKnotData) {
                 multiKnotData.getKeys().stream()
-                             .map(keyTreeStore::getKeyTree)
-                             .map(knotStore::getKnot)
-                             .filter(Objects::nonNull)
-                             .forEach(internalKnot -> checkForCycles(internalKnot, initialKnotId));
+                        .map(keyTreeStore::getKeyTree)
+                        .map(knotStore::getKnot)
+                        .filter(Objects::nonNull)
+                        .forEach(internalKnot -> checkForCycles(internalKnot, initialKnotId));
                 return null;
             }
 
             @Override
             public Void visit(final MapKnotData mapKnotData) {
                 mapKnotData.getMapKeys()
-                           .values()
-                           .stream()
-                           .filter(Objects::nonNull)
-                           .map(keyTreeStore::getKeyTree)
-                           .map(knotStore::getKnot)
-                           .filter(Objects::nonNull)
-                           .forEach(internalKnot -> checkForCycles(internalKnot, initialKnotId));
+                        .values()
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .map(keyTreeStore::getKeyTree)
+                        .map(knotStore::getKnot)
+                        .filter(Objects::nonNull)
+                        .forEach(internalKnot -> checkForCycles(internalKnot, initialKnotId));
                 return null;
             }
         });
@@ -689,9 +686,9 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             return knotPreferenceCheck(key, knot, context);
         }
         List<Edge> edges = new ArrayList<>(edgeStore.getAllEdges(edgeIdentifiers.stream()
-                                                                                .map(EdgeIdentifier::getId)
-                                                                                .collect(Collectors.toList()))
-                                                    .values());
+                        .map(EdgeIdentifier::getId)
+                        .collect(Collectors.toList()))
+                .values());
         Optional<Edge> conditionSatisfyingEdge = variationSelectorEngine.match(context, edges);
         if (!conditionSatisfyingEdge.isPresent()) {
             /* base condition for the recursion */
@@ -706,7 +703,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         path.add(edge.getEdgeIdentifier().getNumber());
         if (log.isDebugEnabled()) {
             log.debug("[bonsai][getMatchingKnot][{}][{}] edge condition satisfied: {}, knot: {} ", context.id(), key,
-                      edge.getEdgeIdentifier().getId(), rhsKnot.getId());
+                    edge.getEdgeIdentifier().getId(), rhsKnot.getId());
         }
 
         /* recursion happening here */
@@ -757,28 +754,28 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
         TreeKnot.TreeKnotBuilder profoundKnotBuilder
                 = TreeKnot.builder()
-                          .id(knot.getId())
-                          .version(knot.getVersion())
-                          .knotData(knot.getKnotData())
-                          .properties(knot.getProperties());
+                .id(knot.getId())
+                .version(knot.getVersion())
+                .knotData(knot.getKnotData())
+                .properties(knot.getProperties());
 
         if (knot.getEdges() != null) {
             List<TreeEdge> treeEdges
                     = edgeStore.getAllEdges(knot.getEdges().stream()
-                                                .map(EdgeIdentifier::getId)
-                                                .collect(Collectors.toList()))
-                               .values()
-                               .stream()
-                               .map(edge -> TreeEdge.builder()
-                                                    .edgeIdentifier(edge.getEdgeIdentifier())
-                                                    .live(edge.isLive())
-                                                    .percentage(edge.getPercentage())
-                                                    .filters(edge.getFilters())
-                                                    .properties(edge.getProperties())
-                                                    .version(edge.getVersion())
-                                                    .treeKnot(composeTreeKnot(edge.getKnotId()))
-                                                    .build())
-                               .collect(Collectors.toList());
+                            .map(EdgeIdentifier::getId)
+                            .collect(Collectors.toList()))
+                    .values()
+                    .stream()
+                    .map(edge -> TreeEdge.builder()
+                            .edgeIdentifier(edge.getEdgeIdentifier())
+                            .live(edge.isLive())
+                            .percentage(edge.getPercentage())
+                            .filters(edge.getFilters())
+                            .properties(edge.getProperties())
+                            .version(edge.getVersion())
+                            .treeKnot(composeTreeKnot(edge.getKnotId()))
+                            .build())
+                    .collect(Collectors.toList());
             profoundKnotBuilder.treeEdges(treeEdges);
         }
         return profoundKnotBuilder.build();
@@ -788,34 +785,34 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
             Map<String, Edge> allEdges = edgeStore.getAllEdges(
                     knot.getEdges()
-                        .stream()
-                        .map(EdgeIdentifier::getId)
-                        .filter(e -> !edge.getEdgeIdentifier()
-                                          .getId()
-                                          .equals(e))// all edges that arent the current edge being added
-                        .collect(Collectors.toList()));
+                            .stream()
+                            .map(EdgeIdentifier::getId)
+                            .filter(e -> !edge.getEdgeIdentifier()
+                                    .getId()
+                                    .equals(e))// all edges that arent the current edge being added
+                            .collect(Collectors.toList()));
             Set<String> existingEdgeFields = allEdges.values()
-                                                     .stream()
-                                                     .flatMap(k -> k.getFilters()
-                                                                    .stream()
-                                                                    .map(filter -> filter.accept(FIELD_IDENTIFIER))
-                                                                    .reduce(Stream::concat)
-                                                                    .orElse(Stream.empty()))
-                                                     .collect(Collectors.toSet());
+                    .stream()
+                    .flatMap(k -> k.getFilters()
+                            .stream()
+                            .map(filter -> filter.accept(FIELD_IDENTIFIER))
+                            .reduce(Stream::concat)
+                            .orElse(Stream.empty()))
+                    .collect(Collectors.toSet());
             if (existingEdgeFields.size() > 1) {
                 throw new BonsaiError(BonsaiErrorCode.INVALID_STATE,
-                                      String.format("mutualExclusivitySettingTurnedOn but multiple fields exist for knot:%s fields:%s",
-                                                    knot.getId(), existingEdgeFields));
+                        String.format("mutualExclusivitySettingTurnedOn but multiple fields exist for knot:%s fields:%s",
+                                knot.getId(), existingEdgeFields));
             }
             if (!existingEdgeFields.isEmpty() && anyFieldNotInExistingEdgeFields(edge, existingEdgeFields)) {
 
                 Set<String> edgeFields = edge.getFilters()
-                                             .stream()
-                                             /* if any edge's filter's field, isn't part of the existing set, throw exception */
-                                             .flatMap(filter -> filter.accept(FIELD_IDENTIFIER))
-                                             .collect(Collectors.toSet());
+                        .stream()
+                        /* if any edge's filter's field, isn't part of the existing set, throw exception */
+                        .flatMap(filter -> filter.accept(FIELD_IDENTIFIER))
+                        .collect(Collectors.toSet());
                 throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR,
-                                      "existing:" + existingEdgeFields + " new:" + edgeFields);
+                        "existing:" + existingEdgeFields + " new:" + edgeFields);
             }
         }
     }
@@ -828,9 +825,9 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
     private boolean anyFieldNotInExistingEdgeFields(Edge edge, Set<String> allFields) {
         return edge.getFilters()
-                   .stream()
-                   /* if any edge's filter's field, isn't part of the existing set, throw exception */
-                   .anyMatch(filter -> !allFields.containsAll(
-                           filter.accept(FIELD_IDENTIFIER).collect(Collectors.toSet())));
+                .stream()
+                /* if any edge's filter's field, isn't part of the existing set, throw exception */
+                .anyMatch(filter -> !allFields.containsAll(
+                        filter.accept(FIELD_IDENTIFIER).collect(Collectors.toSet())));
     }
 }

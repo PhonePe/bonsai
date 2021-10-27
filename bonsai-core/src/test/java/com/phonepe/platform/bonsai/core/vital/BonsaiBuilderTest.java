@@ -17,16 +17,12 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * @author tushar.naik
- * @version 1.0  19/09/18 - 2:52 PM
- */
 public class BonsaiBuilderTest {
 
     @Test
     public void given_bonsaiBuilder_when_buildingBonsaiWithLeastRequiredParameters_then_returnBonsaiTree() {
         final Bonsai bonsaiTree = BonsaiBuilder.builder()
-                                               .withBonsaiProperties(BonsaiProperties.builder().build()).build();
+                .withBonsaiProperties(BonsaiProperties.builder().build()).build();
         assertNotNull(bonsaiTree);
     }
 
@@ -50,15 +46,15 @@ public class BonsaiBuilderTest {
         };
         final ConflictResolver<Knot> knotConflictResolver = new KnotMergingConflictResolver();
         final Bonsai bonsaiTree = BonsaiBuilder.builder()
-                                               .withKeyTreeStore(keyTreeStore)
-                                               .withKnotStore(knotStore)
-                                               .withEdgeStore(edgeStore)
-                                               .withVariationSelectorEngine(variationSelectorEngine)
-                                               .withBonsaiProperties(bonsaiProperties)
-                                               .withBonsaiIdGenerator(bonsaiIdGenerator)
-                                               .withKnotConflictResolver(knotConflictResolver)
-                                               .withBonsaiProperties(BonsaiProperties.builder().build())
-                                               .build();
+                .withKeyTreeStore(keyTreeStore)
+                .withKnotStore(knotStore)
+                .withEdgeStore(edgeStore)
+                .withVariationSelectorEngine(variationSelectorEngine)
+                .withBonsaiProperties(bonsaiProperties)
+                .withBonsaiIdGenerator(bonsaiIdGenerator)
+                .withKnotConflictResolver(knotConflictResolver)
+                .withBonsaiProperties(BonsaiProperties.builder().build())
+                .build();
 
         assertNotNull(bonsaiTree);
     }
@@ -71,18 +67,18 @@ public class BonsaiBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void given_bonsaiBuilder_when_buildingBonsaiWithZeroConditionsPerEdge_then_throwIllegalArgumentException() {
         final Bonsai bonsaiTree = BonsaiBuilder.builder()
-                                               .withBonsaiProperties(BonsaiProperties.builder()
-                                                                                     .maxAllowedConditionsPerEdge(0)
-                                                                                     .build())
-                                               .build();
+                .withBonsaiProperties(BonsaiProperties.builder()
+                        .maxAllowedConditionsPerEdge(0)
+                        .build())
+                .build();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void given_bonsaiBuilder_when_buildingBonsaiWithZeroVariationsPerKnot_then_throwIllegalArgumentException() {
         final Bonsai bonsaiTree = BonsaiBuilder.builder()
-                                               .withBonsaiProperties(BonsaiProperties.builder()
-                                                                                     .maxAllowedVariationsPerKnot(0)
-                                                                                     .build())
-                                               .build();
+                .withBonsaiProperties(BonsaiProperties.builder()
+                        .maxAllowedVariationsPerKnot(0)
+                        .build())
+                .build();
     }
 }

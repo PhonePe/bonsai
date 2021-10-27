@@ -9,46 +9,42 @@ import org.junit.Test;
 
 import java.util.List;
 
-/**
- * @author tushar.naik
- * @version 1.0  2019-06-17 - 17:43
- */
 public class PathExpressionTest {
 
     @Test
     public void testJsonPath() throws Exception {
         JsonPathSetup.setup();
         DocumentContext parse = JsonPath.parse("{\n" +
-                                                       "  \"t\": [\n" +
-                                                       "    {\n" +
-                                                       "      \"price\": 1,\n" +
-                                                       "      \"name\": \"anton\"\n" +
-                                                       "    },\n" +
-                                                       "    {\n" +
-                                                       "      \"price\": 10,\n" +
-                                                       "      \"name\": \"anaton\"\n" +
-                                                       "    },\n" +
-                                                       "    {\n" +
-                                                       "      \"price\": 120,\n" +
-                                                       "      \"name\": \"aanton\"\n" +
-                                                       "    },\n" +
-                                                       "    {\n" +
-                                                       "      \"price\": 10,\n" +
-                                                       "      \"name\": \"aaanton\"\n" +
-                                                       "    }\n" +
-                                                       "  ]\n" +
-                                                       "}");
+                "  \"t\": [\n" +
+                "    {\n" +
+                "      \"price\": 1,\n" +
+                "      \"name\": \"anton\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"price\": 10,\n" +
+                "      \"name\": \"anaton\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"price\": 120,\n" +
+                "      \"name\": \"aanton\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"price\": 10,\n" +
+                "      \"name\": \"aaanton\"\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}");
 
         val read = parse.read("$.t[*].price", new TypeRef<List<Integer>>() {
-        })
-                        .stream()
-                        .mapToInt(Integer::intValue)
-                        .sum();
+                })
+                .stream()
+                .mapToInt(Integer::intValue)
+                .sum();
         val read2 = parse.read("$.t[*].price", new TypeRef<List<Integer>>() {
-        })
-                         .stream()
-                         .mapToInt(Integer::intValue)
-                         .sum();
+                })
+                .stream()
+                .mapToInt(Integer::intValue)
+                .sum();
         Assert.assertEquals(141, read);
         Assert.assertEquals(141, read2);
 

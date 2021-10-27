@@ -14,9 +14,6 @@ import java.util.Map;
 
 /**
  * A simple Context for evaluation
- *
- * @author tushar.naik
- * @version 1.0  27/07/18 - 12:42 AM
  */
 @Data
 @Builder

@@ -4,11 +4,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.data.MapKnotData;
 import com.phonepe.platform.bonsai.models.data.MultiKnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
-import com.phonepe.platform.bonsai.models.blocks.Knot;
-import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.query.dsl.numeric.GreaterEqualFilter;
@@ -18,10 +18,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @author tushar.naik
- * @version 1.0  2019-06-15 - 23:51
- */
 public class BonsaiTreeFlatEvalTest {
 
     private Bonsai<Context> bonsai;
@@ -60,31 +56,31 @@ public class BonsaiTreeFlatEvalTest {
 
         bonsai.createMapping("l1", l1.getId());
         bonsai.addVariation(l1.getId(), Variation.builder()
-                                                 .filter(new EqualsFilter("$.gender", "female"))
-                                                 .knotId(l21.getId())
-                                                 .build());
+                .filter(new EqualsFilter("$.gender", "female"))
+                .knotId(l21.getId())
+                .build());
 
         bonsai.addVariation(l1.getId(), Variation.builder()
-                                                 .filter(new EqualsFilter("$.gender", "male"))
-                                                 .knotId(l22.getId())
-                                                 .build());
+                .filter(new EqualsFilter("$.gender", "male"))
+                .knotId(l22.getId())
+                .build());
 
         FlatTreeRepresentation flatEval = bonsai.evaluateFlat(
                 "l1", Context.builder()
-                             .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
-                             .build());
+                        .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
+                        .build());
         Assert.assertEquals(ImmutableList.of(1), flatEval.getFlatNodeMapping().get("l1").getPath());
 
         flatEval = bonsai.evaluateFlat(
                 "l1", Context.builder()
-                             .documentContext(JsonPath.parse(ImmutableMap.of("gender", "male")))
-                             .build());
+                        .documentContext(JsonPath.parse(ImmutableMap.of("gender", "male")))
+                        .build());
         Assert.assertEquals(ImmutableList.of(2), flatEval.getFlatNodeMapping().get("l1").getPath());
 
         flatEval = bonsai.evaluateFlat(
                 "l1", Context.builder()
-                             .documentContext(JsonPath.parse(ImmutableMap.of("gender", "xmale")))
-                             .build());
+                        .documentContext(JsonPath.parse(ImmutableMap.of("gender", "xmale")))
+                        .build());
         Assert.assertEquals(ImmutableList.of(), flatEval.getFlatNodeMapping().get("l1").getPath());
 
 
@@ -94,23 +90,23 @@ public class BonsaiTreeFlatEvalTest {
         Knot l41 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w3").build(), null);
 
         bonsai.addVariation(l22.getId(), Variation.builder()
-                                                  .filter(new GreaterEqualFilter("$.age", 23))
-                                                  .knotId(l31.getId())
-                                                  .build());
+                .filter(new GreaterEqualFilter("$.age", 23))
+                .knotId(l31.getId())
+                .build());
 
         bonsai.addVariation(l31.getId(), Variation.builder()
-                                                  .filter(new LessThanFilter("$.cars", 5))
-                                                  .knotId(l41.getId())
-                                                  .build());
+                .filter(new LessThanFilter("$.cars", 5))
+                .knotId(l41.getId())
+                .build());
 
 
         flatEval = bonsai.evaluateFlat(
                 "l1", Context.builder()
-                             .documentContext(JsonPath.parse(ImmutableMap.of("gender", "male",
-                                                                             "age", 35,
-                                                                             "cars", 1
-                                                                            )))
-                             .build());
+                        .documentContext(JsonPath.parse(ImmutableMap.of("gender", "male",
+                                "age", 35,
+                                "cars", 1
+                        )))
+                        .build());
         Assert.assertEquals(ImmutableList.of(2, 1, 1), flatEval.getFlatNodeMapping().get("l1").getPath());
     }
 }
