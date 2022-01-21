@@ -103,7 +103,7 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public boolean unlinkVariation(final String knotId, final String edgeId) {
+    public void unlinkVariation(final String knotId, final String edgeId) {
         throw unsupportedOperationError();
     }
 

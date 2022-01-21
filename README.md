@@ -21,7 +21,7 @@
 Bonsai is a tree data structure
 
 1. Allows you to create key to Knot mappings
-2. Knots are full fledged trees (Knots with Variations)
+2. Knots are full-fledged trees (Knots with Variations)
 3. Knots may recursively contain keys (which in-turn maps to other Knots)
 4. Evaluate Keys on a Context
 

@@ -132,9 +132,8 @@ public interface Bonsai<C extends Context> {
      * remove the edge only (all {@link Knot}s that the {@link Edge} contains, will continue to exist, but will be disconnected from the main tree
      *
      * @param edgeId edge id to be removed
-     * @return true if it was successfully removed
      */
-    boolean unlinkVariation(String knotId, String edgeId);
+    void unlinkVariation(String knotId, String edgeId);
 
     /**
      * delete the variation that is mapped to a knot

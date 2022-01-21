@@ -261,7 +261,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public boolean unlinkVariation(String knotId, String edgeId) {
+    public void unlinkVariation(String knotId, String edgeId) {
         Knot knot = knotStore.getKnot(knotId);
         knot.setEdges(knot.getEdges().stream().filter(eid -> !eid.getId().equals(edgeId))
                 .collect(Collectors.toCollection(OrderedList::new)));
@@ -270,7 +270,6 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
         knotStore.mapKnot(knotId, knot);
         edgeStore.deleteEdge(edgeId);
-        return true;
     }
 
     @Override
