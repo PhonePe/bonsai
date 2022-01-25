@@ -25,6 +25,7 @@ import com.phonepe.platform.query.dsl.string.StringEndsWithFilter;
 import com.phonepe.platform.query.dsl.string.StringRegexMatchFilter;
 import com.phonepe.platform.query.dsl.string.StringStartsWithFilter;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
  * @author tushar.naik
  * @version 1.0  29/09/17 - 1:08 PM
  */
+@Slf4j
 @AllArgsConstructor
 public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implements FilterVisitor<Boolean> {
 
@@ -51,7 +53,9 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     private static final TypeRef<List<Object>> OBJECT_TYPE_REF = new TypeRef<List<Object>>() {
     };
 
-    private final C context;
+    protected final String entityId;
+
+    protected final C context;
 
     private final Predicate<GenericFilterContext<C>> genericFilterHandler;
 
@@ -105,6 +109,9 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     @Override
     public Boolean visit(MissingFilter filter) {
         List<Object> values = context.documentContext().read(filter.getField(), OBJECT_TYPE_REF);
+        if (log.isTraceEnabled()) {
+            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values, context.documentContext().toString());
+        }
         return values == null || values.isEmpty() || values.stream().allMatch(Objects::isNull);
     }
 
@@ -118,6 +125,9 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     @Override
     public Boolean visit(ExistsFilter filter) {
         List<Object> values = context.documentContext().read(filter.getField(), OBJECT_TYPE_REF);
+        if (log.isTraceEnabled()) {
+            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values, context.documentContext().toString());
+        }
         return isNotEmpty(values);
     }
 
@@ -180,6 +190,9 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
 
     private <T> List<T> nonNullValues(Filter filter, TypeRef<List<T>> typeRef) {
         List<T> values = context.documentContext().read(filter.getField(), typeRef);
+        if (log.isTraceEnabled()) {
+            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values, context.documentContext().toString());
+        }
         return values == null ? Collections.emptyList() : values.stream().filter(Objects::nonNull)
                                                                 .collect(Collectors.toList());
     }

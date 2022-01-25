@@ -56,7 +56,8 @@ public class PathExpression {
 
     public Pair<String, Object> eval(DocumentContext context) {
         if (filters != null && !filters.isEmpty() &&
-                !filters.stream().allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine<>(()->context, genericFilterContext -> true)))) {
+                !filters.stream()
+                        .allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine<>(key, () -> context, genericFilterContext -> true)))) {
             return null;
         }
         if (value != null) {
@@ -76,7 +77,7 @@ public class PathExpression {
                 return numberOperation(context);
             }
         } catch (Exception e) {
-            log.error("Error while evaluating expression: " + toString(), e);
+            log.error("[bonsai] Error while evaluating expression: " + toString(), e);
             return null;
         }
     }
