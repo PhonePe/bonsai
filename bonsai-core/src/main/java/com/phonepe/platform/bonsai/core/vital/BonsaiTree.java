@@ -428,7 +428,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
             return knot.getKnotData().accept(new KnotDataVisitor<KeyNode>() {
                 @Override
-                public KeyNode visit(finalValuedKnotData valuedKnotData) {
+                public KeyNode visit(final ValuedKnotData valuedKnotData) {
                     return new KeyNode(key,
                             ValueNode.builder()
                                     .id(knot.getId())
@@ -439,10 +439,10 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                 }
 
                 @Override
-                public KeyNode visit(finalMultiKnotData multiKnotData) {
+                public KeyNode visit(final MultiKnotData multiKnotData) {
                     /* recursively evaluate the list of keys in MultiKnot */
-                    finalList<String> keys = multiKnotData.getKeys();
-                    finalList<KeyNode> nodes = keys != null
+                    final List<String> keys = multiKnotData.getKeys();
+                    final List<KeyNode> nodes = keys != null
                             ? keys.stream()
                             .map(key -> evaluate(key, context))
                             .collect(Collectors.toList())
@@ -457,10 +457,10 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                 }
 
                 @Override
-                public KeyNode visit(finalMapKnotData mapKnotData) {
+                public KeyNode visit(final MapKnotData mapKnotData) {
                     /* recursively evaluate the keys withing the MapKnot data */
-                    finalMap<String, String> mapKeys = mapKnotData.getMapKeys();
-                    finalMap<String, KeyNode> nodeMap = mapKeys != null
+                    final Map<String, String> mapKeys = mapKnotData.getMapKeys();
+                    final Map<String, KeyNode> nodeMap = mapKeys != null
                             ? mapKeys.entrySet()
                             .stream()
                             .collect(Collectors.toMap(Map.Entry::getKey,
