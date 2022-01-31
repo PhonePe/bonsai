@@ -39,8 +39,8 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
             return false;
         }
         return edge.getFilters()
-                .stream()
-                .allMatch(k -> {
+                   .stream()
+                   .allMatch(k -> {
                     final JsonPathFilterEvaluationEngine<C> filterVisitor = log.isTraceEnabled()
                             ? new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context, genericFilterHandler)
                             : new JsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context, genericFilterHandler);
