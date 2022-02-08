@@ -3,8 +3,8 @@ package com.phonepe.platform.bonsai.core.vital;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
-import com.phonepe.platform.bonsai.models.TreeKnotState;
 import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.models.TreeKnotState;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
@@ -18,10 +18,6 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author tushar.naik
- * @version 1.0  2018-10-03 - 11:55
- */
 @AllArgsConstructor
 public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     private Bonsai<C> bonsai;
@@ -107,7 +103,7 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     @Override
-    public boolean unlinkVariation(final String knotId, final String edgeId) {
+    public void unlinkVariation(final String knotId, final String edgeId) {
         throw unsupportedOperationError();
     }
 

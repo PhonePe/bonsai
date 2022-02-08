@@ -18,9 +18,6 @@ import java.util.Set;
 
 /**
  * This is used to resolve conflicts when choosing between preferenceMap Knot and the Knot from the KnotStore
- *
- * @author tushar.naik
- * @version 1.0  2019-06-15 - 20:37
  */
 public class KnotMergingConflictResolver implements ConflictResolver<Knot> {
 
@@ -34,16 +31,16 @@ public class KnotMergingConflictResolver implements ConflictResolver<Knot> {
         }
         if (!TreeUtils.isKnotDataOfSimilarType(preferredKnot, defaultKnot)) {
             throw new BonsaiError(BonsaiErrorCode.KNOT_RESOLUTION_ERROR,
-                                  String.format("class mismatch preferredKnot:%s defaultKnot%s",
-                                                preferredKnot.getClass(), defaultKnot.getClass()));
+                    String.format("class mismatch preferredKnot:%s defaultKnot%s",
+                            preferredKnot.getClass(), defaultKnot.getClass()));
         }
         return preferredKnot.getKnotData().accept(new KnotDataVisitor<Knot>() {
             @Override
             public Knot visit(ValuedKnotData valuedKnotData) {
                 return Knot.builder()
-                           .knotData(preferredKnot.getKnotData())
-                           .id(preferredKnot.getId())
-                           .version(preferredKnot.getVersion()).build();
+                        .knotData(preferredKnot.getKnotData())
+                        .id(preferredKnot.getId())
+                        .version(preferredKnot.getVersion()).build();
             }
 
             @Override
@@ -56,9 +53,9 @@ public class KnotMergingConflictResolver implements ConflictResolver<Knot> {
                         .filter(k -> !dedup.contains(k))
                         .forEach(mergedMultiKnotKey::add);
                 return Knot.builder()
-                           .knotData(new MultiKnotData(mergedMultiKnotKey))
-                           .id(preferredKnot.getId())
-                           .version(preferredKnot.getVersion()).build();
+                        .knotData(new MultiKnotData(mergedMultiKnotKey))
+                        .id(preferredKnot.getId())
+                        .version(preferredKnot.getVersion()).build();
             }
 
             @Override
@@ -66,9 +63,9 @@ public class KnotMergingConflictResolver implements ConflictResolver<Knot> {
                 Map<String, String> mergedMapKey = Maps.newHashMap(mapKnotData.getMapKeys());
                 mergedMapKey.putAll(((MapKnotData) defaultKnot.getKnotData()).getMapKeys());
                 return Knot.builder()
-                           .knotData(new MapKnotData(mergedMapKey))
-                           .id(preferredKnot.getId())
-                           .version(preferredKnot.getVersion()).build();
+                        .knotData(new MapKnotData(mergedMapKey))
+                        .id(preferredKnot.getId())
+                        .version(preferredKnot.getVersion()).build();
             }
         });
     }

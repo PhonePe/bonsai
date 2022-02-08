@@ -6,29 +6,25 @@ import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.PerformanceEvaluator;
 import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
-import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.core.vital.BonsaiBuilder;
 import com.phonepe.platform.bonsai.core.vital.BonsaiProperties;
 import com.phonepe.platform.bonsai.core.vital.Context;
-import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ValueNode;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
+import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.models.value.StringValue;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @author tushar.naik
- * @version 1.0  19/09/18 - 2:49 PM
- */
 public class JsonPathFilterEvaluationEngineTest {
     private Bonsai<Context> bonsai = BonsaiBuilder.builder()
-                                                  .withBonsaiProperties(BonsaiProperties
-                                                                                .builder()
-                                                                                .mutualExclusivitySettingTurnedOn(true)
-                                                                                .maxAllowedVariationsPerKnot(Integer.MAX_VALUE)
-                                                                                .build())
-                                                  .build();
+            .withBonsaiProperties(BonsaiProperties
+                    .builder()
+                    .mutualExclusivitySettingTurnedOn(true)
+                    .maxAllowedVariationsPerKnot(Integer.MAX_VALUE)
+                    .build())
+            .build();
 
     @Test
     public void simpleTestingOfBonsai() {
@@ -36,8 +32,8 @@ public class JsonPathFilterEvaluationEngineTest {
         bonsai.createMapping("mera_data", knot.getId());
         TreeGenerationHelper.generateEdges(knot, bonsai, 10000);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
-                                                               .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
-                                                               .build());
+                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
+                .build());
         Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
         Assert.assertEquals("Data9333", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue().toString());
         System.out.println(evaluate);
@@ -53,16 +49,16 @@ public class JsonPathFilterEvaluationEngineTest {
 
         long start = System.currentTimeMillis();
         KeyNode evaluate1 = bonsai.evaluate("tera_data", Context.builder()
-                                                                .documentContext(JsonPath.parse(ImmutableMap
-                                                                                                        .of("E", Integer.MAX_VALUE)))
-                                                                .build());
+                .documentContext(JsonPath.parse(ImmutableMap
+                        .of("E", Integer.MAX_VALUE)))
+                .build());
         System.out.println("evaluate1 = " + evaluate1);
         System.out.println("elapse:" + (System.currentTimeMillis() - start));
 
         Timer evaluate = new PerformanceEvaluator().evaluate(1000, () -> bonsai.evaluate("tera_data", Context.builder()
-                                                                                                             .documentContext(JsonPath.parse(ImmutableMap
-                                                                                                                                                     .of("E", Integer.MAX_VALUE)))
-                                                                                                             .build()));
+                .documentContext(JsonPath.parse(ImmutableMap
+                        .of("E", Integer.MAX_VALUE)))
+                .build()));
         if (evaluate.getSnapshot().getMean() / 1_000_000 > 100) {
             Assert.fail("Evaluation is taking more than 100ms");
         }

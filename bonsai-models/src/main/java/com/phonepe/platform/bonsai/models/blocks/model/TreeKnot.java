@@ -11,9 +11,6 @@ import java.util.Objects;
 
 /**
  * This is a recursive representation of the tree, without references
- *
- * @author tushar.naik
- * @version 1.0  10/07/18 - 2:38 PM
  */
 @Data
 @NoArgsConstructor

@@ -38,9 +38,6 @@ import java.util.stream.Collectors;
 /**
  * This is a Json path based filter evaluator
  * A filter predicate visitor that will apply the filter, and tell whether it is true or false
- *
- * @author tushar.naik
- * @version 1.0  29/09/17 - 1:08 PM
  */
 @Slf4j
 @AllArgsConstructor
@@ -194,7 +191,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
             log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values, context.documentContext().json());
         }
         return values == null ? Collections.emptyList() : values.stream().filter(Objects::nonNull)
-                                                                .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     private Predicate<Number> lessThan(NumericBinaryFilter filter) {

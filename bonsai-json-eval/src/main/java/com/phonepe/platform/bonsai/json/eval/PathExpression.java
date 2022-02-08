@@ -15,10 +15,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
-/**
- * @author tushar.naik
- * @version 1.0  26/05/17 - 6:59 PM
- */
 @Data
 @NoArgsConstructor
 @Slf4j
@@ -107,59 +103,6 @@ public class PathExpression {
         }
     }
 
-    public static class Adjustment {
-
-        @JsonProperty
-        Type type;
-
-        @JsonProperty
-        Number value;
-
-        enum Type {
-            ADD,
-            DIVIDE,
-            SUBTRACT,
-            MULTIPLY,
-            SQRT,
-            CEIL,
-            FLOOR,
-            POW
-        }
-
-        public double reValue(Number initialValue) {
-            switch (type) {
-                case ADD:
-                    return initialValue.doubleValue() + value.doubleValue();
-                case DIVIDE:
-                    return initialValue.doubleValue() / value.doubleValue();
-                case SUBTRACT:
-                    return initialValue.doubleValue() - value.doubleValue();
-                case MULTIPLY:
-                    return initialValue.doubleValue() * value.doubleValue();
-                case SQRT:
-                    return Math.sqrt(initialValue.doubleValue());
-                case CEIL:
-                    return Math.ceil(initialValue.doubleValue());
-                case FLOOR:
-                    return Math.floor(initialValue.doubleValue());
-                case POW:
-                    return Math.pow(initialValue.doubleValue(), value.doubleValue());
-                default:
-                    throw new UnsupportedOperationException("Adjustment not supported: " + this.toString());
-            }
-        }
-    }
-
-    public enum Operation {
-        SUM,
-        AVERAGE,
-        MAX,
-        MIN,
-        LENGTH,
-        PAD_TIMESTAMP,
-        CONVERT_TO_DATE
-    }
-
     private DoubleStream getDoubleStream(List<Number> values) {
         return values.stream().mapToDouble(Number::doubleValue);
     }
@@ -188,5 +131,58 @@ public class PathExpression {
                 ", adjustments:'" + adjustments + '\'' +
                 ", operation:" + operation +
                 ']';
+    }
+
+    public enum Operation {
+        SUM,
+        AVERAGE,
+        MAX,
+        MIN,
+        LENGTH,
+        PAD_TIMESTAMP,
+        CONVERT_TO_DATE
+    }
+
+    public static class Adjustment {
+
+        @JsonProperty
+        Type type;
+
+        @JsonProperty
+        Number value;
+
+        public double reValue(Number initialValue) {
+            switch (type) {
+                case ADD:
+                    return initialValue.doubleValue() + value.doubleValue();
+                case DIVIDE:
+                    return initialValue.doubleValue() / value.doubleValue();
+                case SUBTRACT:
+                    return initialValue.doubleValue() - value.doubleValue();
+                case MULTIPLY:
+                    return initialValue.doubleValue() * value.doubleValue();
+                case SQRT:
+                    return Math.sqrt(initialValue.doubleValue());
+                case CEIL:
+                    return Math.ceil(initialValue.doubleValue());
+                case FLOOR:
+                    return Math.floor(initialValue.doubleValue());
+                case POW:
+                    return Math.pow(initialValue.doubleValue(), value.doubleValue());
+                default:
+                    throw new UnsupportedOperationException("Adjustment not supported: " + this.toString());
+            }
+        }
+
+        enum Type {
+            ADD,
+            DIVIDE,
+            SUBTRACT,
+            MULTIPLY,
+            SQRT,
+            CEIL,
+            FLOOR,
+            POW
+        }
     }
 }

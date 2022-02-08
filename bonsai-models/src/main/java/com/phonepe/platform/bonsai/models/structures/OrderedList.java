@@ -8,9 +8,6 @@ import java.util.ListIterator;
  * An ordered list of elements, where ordering is maintained based on the comparable element
  * Adding elements at a position isn't allowed
  * This will ensure that all elements that are added are in a specific order
- *
- * @author tushar.naik
- * @version 1.0  20/07/18 - 5:15 PM
  */
 public class OrderedList<T extends Comparable<T>> extends LinkedList<T> {
 

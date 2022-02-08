@@ -29,9 +29,6 @@ import java.util.stream.Collectors;
 
 /**
  * This class is the default implementation of trying and adding Delta's operation on given TreeKnot.
- *
- * @author - suraj.s
- * @date - 2019-10-15
  */
 @Slf4j
 public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperationVisitor<TreeKnotState> {
@@ -52,9 +49,14 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
         this.edgeStore = edgeStore;
     }
 
+    private static <T> int safeSize(Collection<T> treeEdges) {
+        return treeEdges == null ? 0 : treeEdges.size();
+    }
+
     /**
      * Function to add {@link KeyMappingDeltaOperation} object into TreeKnot.
-     * @param metaData - {@link TreeKnotState} object contains TreeKnot and revert-delta-operations.
+     *
+     * @param metaData                 - {@link TreeKnotState} object contains TreeKnot and revert-delta-operations.
      * @param keyMappingDeltaOperation - {@link KeyMappingDeltaOperation} object; it contains key and knotId mapping.
      * @return {@link TreeKnot} object.
      */
@@ -80,9 +82,10 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
 
     /**
      * Function to add {@link KnotDeltaOperation} object into TreeKnot.
-     * @param metaData - {@link TreeKnotState} object contains TreeKnot and revert-delta-operations.
+     *
+     * @param metaData           - {@link TreeKnotState} object contains TreeKnot and revert-delta-operations.
      * @param knotDeltaOperation -  {@link KnotDeltaOperation} object; it contains all the data to represent a single knot and
-     *                      its corresponding edgeIds.
+     *                           its corresponding edgeIds.
      * @return {@link TreeKnot} object.
      */
     @Override
@@ -98,7 +101,7 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
         }
 
         final List<DeltaOperation> deltaOperationsToPreviousState = (metaData.getDeltaOperationsToPreviousState() != null)
-                ? metaData.getDeltaOperationsToPreviousState(): new ArrayList<>();
+                ? metaData.getDeltaOperationsToPreviousState() : new ArrayList<>();
 
         boolean isSuccessfullyInserted = insertKnotDeltaDataIntoTreeKnot(treeKnot, deltaOperationsToPreviousState, knotDeltaOperation);
         if (!isSuccessfullyInserted) {
@@ -113,9 +116,10 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
 
     /**
      * Recursive function to add new knot into TreeKnot.
-     * @param treeKnot - In-memory TreeKnot which stores entire details related to the tree.
+     *
+     * @param treeKnot             - In-memory TreeKnot which stores entire details related to the tree.
      * @param revertDeltaOperation - List of Delta Operations needed to revert the collective changes being carried out.
-     * @param knotDeltaOperation - {@link KnotDeltaOperation} object, stores the details of knot is to be added into TreeKnot.
+     * @param knotDeltaOperation   - {@link KnotDeltaOperation} object, stores the details of knot is to be added into TreeKnot.
      * @return true, if successfully inserted or false, if not.
      */
     private boolean insertKnotDeltaDataIntoTreeKnot(final TreeKnot treeKnot,
@@ -145,7 +149,7 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
 
             final List<TreeEdge> treeEdgeList = new ArrayList<>();
             int edgeNumber = safeSize(treeKnot.getTreeEdges()) + 1;
-            for(EdgeIdentifier edgeIdentifier: edgeIdentifierList) {
+            for (EdgeIdentifier edgeIdentifier : edgeIdentifierList) {
                 edgeIdentifier.setNumber(edgeNumber++);
                 final Edge fetchedEdge = edgeStore.getEdge(edgeIdentifier.getId());
                 if (fetchedEdge == null) {
@@ -171,15 +175,15 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
         if (treeKnot.getTreeEdges() == null || treeKnot.getTreeEdges().isEmpty()) {
             return false;
         } else {
-           final List<TreeKnot> childrenTreeKnots = treeKnot.getTreeEdges()
-                   .stream()
-                   .filter(treeEdge -> treeEdge.getTreeKnot() != null)
-                   .map(TreeEdge::getTreeKnot)
-                   .collect(Collectors.toList());
+            final List<TreeKnot> childrenTreeKnots = treeKnot.getTreeEdges()
+                    .stream()
+                    .filter(treeEdge -> treeEdge.getTreeKnot() != null)
+                    .map(TreeEdge::getTreeKnot)
+                    .collect(Collectors.toList());
 
-           for(int i=0; !isSuccessfullyInserted && i<childrenTreeKnots.size(); i++) {
-               isSuccessfullyInserted = insertKnotDeltaDataIntoTreeKnot(childrenTreeKnots.get(i), revertDeltaOperation, knotDeltaOperation);
-           }
+            for (int i = 0; !isSuccessfullyInserted && i < childrenTreeKnots.size(); i++) {
+                isSuccessfullyInserted = insertKnotDeltaDataIntoTreeKnot(childrenTreeKnots.get(i), revertDeltaOperation, knotDeltaOperation);
+            }
         }
 
         return isSuccessfullyInserted;
@@ -187,9 +191,10 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
 
     /**
      * Function to add {@link EdgeDeltaOperation} object into TreeKnot.
-     * @param metaData - {@link TreeKnotState} object contains TreeKnot and revert-delta-operations.
+     *
+     * @param metaData           - {@link TreeKnotState} object contains TreeKnot and revert-delta-operations.
      * @param edgeDeltaOperation - {@link EdgeDeltaOperation} object; it contains all the data to represent a single edge and
-     *                      its corresponding child knotId.
+     *                           its corresponding child knotId.
      * @return {@link TreeKnot} object.
      */
     @Override
@@ -220,9 +225,10 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
 
     /**
      * Recursive function to add edge into TreeKnot.
-     * @param treeKnot - In-memory TreeKnot which stores entire details related to the tree.
+     *
+     * @param treeKnot             - In-memory TreeKnot which stores entire details related to the tree.
      * @param revertDeltaOperation - List of Delta Operations needed to revert the collective changes being carried out.
-     * @param edgeDeltaOperation - {@link EdgeDeltaOperation} object, stores the details of edge is to be added into TreeKnot.
+     * @param edgeDeltaOperation   - {@link EdgeDeltaOperation} object, stores the details of edge is to be added into TreeKnot.
      * @return true, if successfully inserted or false, if not.
      */
     private boolean insertEdgeDeltaDataIntoTreeKnot(final TreeKnot treeKnot,
@@ -260,8 +266,8 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
                 final Knot fetchedKnot = knotStore.getKnot(childKnotId);
                 if (fetchedKnot == null) {
                     final TreeKnot childTreeKnot = TreeKnot.builder()
-                                                           .id(edgeDeltaOperation.getEdge().getKnotId())
-                                                           .build();
+                            .id(edgeDeltaOperation.getEdge().getKnotId())
+                            .build();
                     treeEdge.setTreeKnot(childTreeKnot);
                 }
                 return true;
@@ -277,7 +283,7 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
                     .map(TreeEdge::getTreeKnot)
                     .collect(Collectors.toList());
 
-            for(int i=0; !isSuccessfullyInserted && i<childrenTreeKnots.size(); i++) {
+            for (int i = 0; !isSuccessfullyInserted && i < childrenTreeKnots.size(); i++) {
                 isSuccessfullyInserted = insertEdgeDeltaDataIntoTreeKnot(childrenTreeKnots.get(i), revertDeltaOperation, edgeDeltaOperation);
             }
         }
@@ -301,16 +307,12 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
         if (revertKnot != null) {
             revertKnot.setVersion(0);
         }
-        final KnotDeltaOperation revertKnotDeltaOperation =  new KnotDeltaOperation(revertKnot);
+        final KnotDeltaOperation revertKnotDeltaOperation = new KnotDeltaOperation(revertKnot);
         revertDeltaOperation.add(revertKnotDeltaOperation);
 
         Optional.ofNullable(treeKnot.getTreeEdges())
                 .orElse(Collections.emptyList()) // To avoid NullPointerException.
                 .forEach(treeEdge -> captureRevertTreeEdge(treeEdge, revertDeltaOperation));
-    }
-
-    private static <T> int safeSize(Collection<T> treeEdges) {
-        return treeEdges == null ? 0 : treeEdges.size();
     }
 }
 

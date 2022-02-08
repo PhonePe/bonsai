@@ -7,10 +7,8 @@ import java.util.Map;
  * A store for edges
  * All operations related to edges will reside here
  *
- * @param <I>    id
+ * @param <I> id
  * @param <E> edge (could be a reference too
- * @author tushar.naik
- * @version 1.0  16/08/18 - 1:26 AM
  */
 public interface EdgeStore<I, E> {
 
@@ -24,7 +22,7 @@ public interface EdgeStore<I, E> {
 
     /**
      * associate an edge with the id
-
+     *
      * @param i    id
      * @param edge edge to be associated
      * @return the previous value associated with <tt>id</tt>, or <tt>null</tt> if there was no mapping for <tt>id</tt>.

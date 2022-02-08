@@ -6,10 +6,6 @@ import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
-/**
- * @author tushar.naik
- * @version 1.0  22/08/18 - 5:34 PM
- */
 @AllArgsConstructor
 public class InMemoryKeyTreeStore implements KeyTreeStore<String, String> {
     private final Map<String, String> storage;

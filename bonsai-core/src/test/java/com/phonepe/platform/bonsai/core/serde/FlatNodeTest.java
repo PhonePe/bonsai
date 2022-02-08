@@ -12,10 +12,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-/**
- * @author tushar.naik
- * @version 1.0  2019-06-17 - 17:43
- */
 public class FlatNodeTest {
     private ObjectExtractor objectExtractor = new ObjectExtractor();
 

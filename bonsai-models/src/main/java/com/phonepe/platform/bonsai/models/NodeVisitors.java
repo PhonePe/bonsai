@@ -3,10 +3,6 @@ package com.phonepe.platform.bonsai.models;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-/**
- * @author tushar.naik
- * @version 1.0  23/08/18 - 3:36 AM
- */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class NodeVisitors {
 

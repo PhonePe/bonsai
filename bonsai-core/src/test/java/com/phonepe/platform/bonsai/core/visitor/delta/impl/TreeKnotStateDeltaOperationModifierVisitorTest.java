@@ -30,10 +30,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-/**
- * @author - suraj.s
- * @date - 2019-11-20
- */
 public class TreeKnotStateDeltaOperationModifierVisitorTest {
 
     private ComponentBonsaiTreeValidator treeComponentValidator;
@@ -116,7 +112,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
         final TreeKnot returnedTreeKnot = treeKnotModifierVisitor.visit(metaData, knotDeltaData).getTreeKnot();
 
         assertNotNull(returnedTreeKnot);
-        assertEquals("K0",returnedTreeKnot.getId());
+        assertEquals("K0", returnedTreeKnot.getId());
         assertEquals(0, returnedTreeKnot.getVersion());
         assertEquals(2, returnedTreeKnot.getTreeEdges().size());
         assertEquals("E1", returnedTreeKnot.getTreeEdges().get(0).getEdgeIdentifier().getId());

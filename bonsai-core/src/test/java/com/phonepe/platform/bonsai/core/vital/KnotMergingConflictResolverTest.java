@@ -1,20 +1,16 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.collect.ImmutableMap;
+import com.phonepe.platform.bonsai.core.exception.BonsaiError;
+import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.data.MapKnotData;
 import com.phonepe.platform.bonsai.models.data.MultiKnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
-import com.phonepe.platform.bonsai.core.exception.BonsaiError;
-import com.phonepe.platform.bonsai.models.blocks.Knot;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @author tushar.naik
- * @version 1.0  2019-06-15 - 20:42
- */
 public class KnotMergingConflictResolverTest {
     private KnotMergingConflictResolver knotMergingConflictResolver;
 

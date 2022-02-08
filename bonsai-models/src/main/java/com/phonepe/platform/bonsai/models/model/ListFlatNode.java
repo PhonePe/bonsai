@@ -6,10 +6,6 @@ import lombok.ToString;
 
 import java.util.List;
 
-/**
- * @author tushar.naik
- * @version 1.0  2019-06-11 - 00:57
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

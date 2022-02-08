@@ -9,10 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author tushar.naik
- * @version 1.0  22/08/18 - 5:34 PM
- */
 @AllArgsConstructor
 public class InMemoryEdgeStore implements EdgeStore<String, Edge> {
     private final Map<String, Edge> storage;

@@ -4,10 +4,7 @@ import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 
 import java.util.List;
 
-/**
- * @author tushar.naik
- * @version 1.0  17/09/18 - 9:02 PM
- */
+
 public interface BonsaiIdGenerator {
     String newEdgeId();
 

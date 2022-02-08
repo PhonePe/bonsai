@@ -9,13 +9,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-/**
- * POJO class, contains MetaData around DeltaOperations.
- *
- * @author - suraj.s
- * @version - 1.0
- * @since - 05-10-2020
- */
 @Data
 @Builder
 @NoArgsConstructor

@@ -2,8 +2,8 @@ package com.phonepe.platform.bonsai.core;
 
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.vital.Context;
-import com.phonepe.platform.bonsai.models.TreeKnotState;
 import com.phonepe.platform.bonsai.models.KeyNode;
+import com.phonepe.platform.bonsai.models.TreeKnotState;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
@@ -28,9 +28,6 @@ import java.util.Map;
  * - Some form of value {@link com.phonepe.platform.bonsai.models.data.ValuedKnotData}
  * - List of keys , which could point to {@link Knot}s in the Bonsai Tree {@link com.phonepe.platform.bonsai.models.data.MultiKnotData}
  * - bunch of mapped keys , which could point to {@link Knot}s in the Bonsai Tree {@link com.phonepe.platform.bonsai.models.data.MapKnotData}
- *
- * @author tushar.naik
- * @version 1.0  27/07/18 - 2:54 AM
  */
 public interface Bonsai<C extends Context> {
 
@@ -49,7 +46,7 @@ public interface Bonsai<C extends Context> {
     /**
      * create a {@link Knot} out of the {@link KnotData}
      *
-     * @param knotData some kind of data knot
+     * @param knotData   some kind of data knot
      * @param properties updated properties
      * @return created Knot with some id, version, etc
      */
@@ -74,8 +71,8 @@ public interface Bonsai<C extends Context> {
     /**
      * update the data associated with a {@link Knot}
      *
-     * @param knotId   knotId of the knot
-     * @param knotData new data
+     * @param knotId     knotId of the knot
+     * @param knotData   new data
      * @param properties updated properties
      * @return older knot if some other data was present (on the knotId)
      */
@@ -135,9 +132,8 @@ public interface Bonsai<C extends Context> {
      * remove the edge only (all {@link Knot}s that the {@link Edge} contains, will continue to exist, but will be disconnected from the main tree
      *
      * @param edgeId edge id to be removed
-     * @return true if it was successfully removed
      */
-    boolean unlinkVariation(String knotId, String edgeId);
+    void unlinkVariation(String knotId, String edgeId);
 
     /**
      * delete the variation that is mapped to a knot
@@ -191,8 +187,8 @@ public interface Bonsai<C extends Context> {
     /**
      * create create a Knot out of the knot data, and then create a mapping between the key and the newly created knot
      *
-     * @param key      key to associate the Knot with
-     * @param knotData data with which the Knot will be created
+     * @param key        key to associate the Knot with
+     * @param knotData   data with which the Knot will be created
      * @param properties updated properties
      * @return created knot
      * @throws BonsaiError if there are som sort of cycles while creating the knot

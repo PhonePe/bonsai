@@ -1,13 +1,13 @@
 package com.phonepe.platform.bonsai.models;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Singular;
+import lombok.ToString;
 
 import java.util.List;
 
-/**
- * @author tushar.naik
- * @version 1.0  27/07/18 - 2:10 AM
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

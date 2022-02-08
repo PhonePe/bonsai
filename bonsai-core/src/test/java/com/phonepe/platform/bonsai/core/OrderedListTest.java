@@ -1,18 +1,14 @@
 package com.phonepe.platform.bonsai.core;
 
 import com.google.common.collect.Lists;
-import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
+import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import org.junit.Test;
 
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author tushar.naik
- * @version 1.0  30/07/18 - 2:45 PM
- */
 public class OrderedListTest {
 
     @Test
@@ -52,11 +48,11 @@ public class OrderedListTest {
         edges.add(new EdgeIdentifier("-1", 1, -1));
 
         edges.addAll(Lists.newArrayList(new EdgeIdentifier("A4", 1, 4),
-                                        new EdgeIdentifier("A1", 1, 1),
-                                        new EdgeIdentifier("A3", 1, 3),
-                                        new EdgeIdentifier("A2", 1, 2),
-                                        new EdgeIdentifier("A5", 1, 5),
-                                        new EdgeIdentifier("A6", 1, 6)));
+                new EdgeIdentifier("A1", 1, 1),
+                new EdgeIdentifier("A3", 1, 3),
+                new EdgeIdentifier("A2", 1, 2),
+                new EdgeIdentifier("A5", 1, 5),
+                new EdgeIdentifier("A6", 1, 6)));
 
         assertEquals(-1, edges.get(0).getPriority());
         assertEquals("-1", edges.get(0).getId());

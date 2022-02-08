@@ -15,9 +15,9 @@ public class VariationSelectorEngineTest {
     public void testWhenNoContextThenVariationSelectionReturnsFalse() {
         Optional<Edge> match = new VariationSelectorEngine<>()
                 .match(new Context(null, Maps.newHashMap()),
-                       Collections.singletonList(Edge.builder()
-                                                     .edgeIdentifier(new EdgeIdentifier())
-                                                     .build()));
+                        Collections.singletonList(Edge.builder()
+                                .edgeIdentifier(new EdgeIdentifier())
+                                .build()));
         Assert.assertFalse(match.isPresent());
 
     }

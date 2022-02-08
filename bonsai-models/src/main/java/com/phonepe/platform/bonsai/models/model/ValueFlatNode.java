@@ -5,10 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-/**
- * @author tushar.naik
- * @version 1.0  2019-06-11 - 00:55
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

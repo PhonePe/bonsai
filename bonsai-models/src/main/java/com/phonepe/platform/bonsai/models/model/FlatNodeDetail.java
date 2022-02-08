@@ -1,13 +1,14 @@
 package com.phonepe.platform.bonsai.models.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
-/**
- * @author tushar.naik
- * @version 1.0  2019-06-11 - 01:03
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

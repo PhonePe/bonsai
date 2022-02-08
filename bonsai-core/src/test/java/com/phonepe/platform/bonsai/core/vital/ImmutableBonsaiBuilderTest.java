@@ -23,10 +23,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-/**
- * @author - suraj.s
- * @date - 2019-11-21
- */
 public class ImmutableBonsaiBuilderTest {
 
     private Bonsai<Context> mutableBonsaiTree;
@@ -129,11 +125,11 @@ public class ImmutableBonsaiBuilderTest {
 
         OrderedList<EdgeIdentifier> edges = new OrderedList<>();
         Edge e1Edge = Edge.builder()
-                         .edgeIdentifier(new EdgeIdentifier("E1", 1, 1))
-                         .filter(EqualsFilter.builder().field("fieldOne").value("valueOne").build())
-                         .version(1234)
-                         .knotId("K2")
-                         .build();
+                .edgeIdentifier(new EdgeIdentifier("E1", 1, 1))
+                .filter(EqualsFilter.builder().field("fieldOne").value("valueOne").build())
+                .version(1234)
+                .knotId("K2")
+                .build();
         edges.add(e1Edge.getEdgeIdentifier());
 
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.createKnot(
@@ -147,7 +143,7 @@ public class ImmutableBonsaiBuilderTest {
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.createEdge(e1Edge);
 
         final List<Filter> edgeFilters = Arrays.asList(EqualsFilter.builder().field("fieldOne").value("valueOne").build(),
-                                                       NotEqualsFilter.builder().field("fieldOne").value("valueTwo").build());
+                NotEqualsFilter.builder().field("fieldOne").value("valueTwo").build());
         final Variation updateVariation = Variation.builder().filters(edgeFilters).build();
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.updateVariation("K1", "E1", updateVariation);
 
