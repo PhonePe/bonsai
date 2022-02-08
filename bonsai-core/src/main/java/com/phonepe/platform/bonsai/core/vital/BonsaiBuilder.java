@@ -18,9 +18,6 @@ import java.util.UUID;
 
 /**
  * Use this builder to build the Bonsai Tree
- *
- * @author tushar.naik
- * @version 1.0  19/09/18 - 12:10 PM
  */
 public class BonsaiBuilder<C extends Context> {
     private KeyTreeStore<String, String> keyTreeStore;
@@ -80,9 +77,9 @@ public class BonsaiBuilder<C extends Context> {
                 new VariationSelectorEngine<>() : variationSelectorEngine;
         final ComponentBonsaiTreeValidator bonsaiTreeValidator = new ComponentBonsaiTreeValidator(bonsaiProperties);
         Preconditions.checkArgument(bonsaiProperties.getMaxAllowedConditionsPerEdge() > 0,
-                                    "maxAllowedConditionsPerEdge cannot be < 1");
+                "maxAllowedConditionsPerEdge cannot be < 1");
         Preconditions.checkArgument(bonsaiProperties.getMaxAllowedVariationsPerKnot() > 0,
-                                    "maxAllowedVariationsPerKnot cannot be < 1");
+                "maxAllowedVariationsPerKnot cannot be < 1");
         bonsaiIdGenerator = bonsaiIdGenerator == null ? new BonsaiIdGenerator() {
             @Override
             public String newEdgeId() {

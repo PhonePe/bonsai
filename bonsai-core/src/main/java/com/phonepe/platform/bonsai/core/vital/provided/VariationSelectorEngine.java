@@ -15,9 +15,6 @@ import java.util.function.Predicate;
  * We are using the {@link JsonPathFilterEvaluationEngine} to evaluate if all {@link com.phonepe.platform.query.dsl.Filter}s
  * present in the {@link Edge} are true
  * If so, this {@link Edge} will return true, ie, the Context satisfies the {@link Edge}s criteria
- *
- * @author tushar.naik
- * @version 1.0  13/07/18 - 11:43 AM
  */
 @Slf4j
 public class VariationSelectorEngine<C extends Context> extends ConditionEngine<C, Edge> {
@@ -44,10 +41,10 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
         return edge.getFilters()
                    .stream()
                    .allMatch(k -> {
-                       final JsonPathFilterEvaluationEngine<C> filterVisitor = log.isTraceEnabled()
-                               ? new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context, genericFilterHandler)
-                               : new JsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context, genericFilterHandler);
-                       return k.accept(filterVisitor);
-                   });
+                    final JsonPathFilterEvaluationEngine<C> filterVisitor = log.isTraceEnabled()
+                            ? new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context, genericFilterHandler)
+                            : new JsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context, genericFilterHandler);
+                    return k.accept(filterVisitor);
+                });
     }
 }

@@ -4,10 +4,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 
-/**
- * @author tushar.naik
- * @version 1.0  2019-06-11 - 00:52
- */
 @Data
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 @JsonSubTypes({
@@ -16,11 +12,6 @@ import lombok.Data;
         @JsonSubTypes.Type(name = "MAP", value = MapFlatNode.class)
 })
 public abstract class FlatNode {
-    public enum FlatNodeType {
-        VALUE,
-        LIST,
-        MAP
-    }
     private FlatNodeType type;
 
     public FlatNode(FlatNodeType type) {
@@ -28,4 +19,10 @@ public abstract class FlatNode {
     }
 
     public abstract <T> T accept(FlatNodeVisitor<T> visitor);
+
+    public enum FlatNodeType {
+        VALUE,
+        LIST,
+        MAP
+    }
 }

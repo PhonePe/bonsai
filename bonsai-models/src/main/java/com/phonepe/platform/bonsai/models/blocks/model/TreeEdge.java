@@ -12,9 +12,6 @@ import java.util.Map;
 /**
  * An edge signifies a directional component of a Bonsai, which points to a single {@link TreeKnot}
  * It is part of a {@link TreeKnot}
- *
- * @author tushar.naik
- * @version 1.0  10/07/18 - 2:41 PM
  */
 @Data
 @NoArgsConstructor

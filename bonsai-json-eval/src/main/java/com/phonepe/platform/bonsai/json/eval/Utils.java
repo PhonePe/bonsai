@@ -3,10 +3,6 @@ package com.phonepe.platform.bonsai.json.eval;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-/**
- * @author tushar.naik
- * @version 1.0  2018-11-20 - 00:42
- */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utils {
 

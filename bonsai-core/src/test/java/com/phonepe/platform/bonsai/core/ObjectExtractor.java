@@ -3,26 +3,14 @@ package com.phonepe.platform.bonsai.core;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Preconditions;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 
-/**
- * @author tushar.naik
- * @version 1.0  03/11/17 - 3:24 PM
- */
 public class ObjectExtractor {
-
-    public <T> T getObject(String resource, Class<T> clazz) throws IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        String read = read(classLoader.getResourceAsStream(resource));
-        return Mapper.MAPPER.readValue(read, clazz);
-    }
-
-    public <T> T getObject(String resource, TypeReference<T> typeReference) throws IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        String read = read(classLoader.getResourceAsStream(resource));
-        return Mapper.MAPPER.readValue(read, typeReference);
-    }
 
     private static String read(InputStream source) throws IOException {
         return read(new InputStreamReader(source, Charset.forName("UTF-8")));
@@ -44,5 +32,17 @@ public class ObjectExtractor {
         } finally {
             source.close();
         }
+    }
+
+    public <T> T getObject(String resource, Class<T> clazz) throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        String read = read(classLoader.getResourceAsStream(resource));
+        return Mapper.MAPPER.readValue(read, clazz);
+    }
+
+    public <T> T getObject(String resource, TypeReference<T> typeReference) throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        String read = read(classLoader.getResourceAsStream(resource));
+        return Mapper.MAPPER.readValue(read, typeReference);
     }
 }

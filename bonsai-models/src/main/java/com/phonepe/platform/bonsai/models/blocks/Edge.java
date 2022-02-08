@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Singular;
 import lombok.ToString;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +16,6 @@ import java.util.Map;
 /**
  * An edge signifies a directional component of a Bonsai, which points to a single {@link Knot} id
  * It is part of a {@link Knot}
- *
- * @author tushar.naik
- * @version 1.0  10/07/18 - 2:41 PM
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

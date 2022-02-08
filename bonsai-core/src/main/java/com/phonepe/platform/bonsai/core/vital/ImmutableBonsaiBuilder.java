@@ -9,10 +9,6 @@ import com.phonepe.platform.bonsai.models.data.KnotData;
 
 import java.util.Map;
 
-/**
- * @author tushar.naik
- * @version 1.0  2018-10-03 - 11:55
- */
 public class ImmutableBonsaiBuilder<C extends Context> {
     private Bonsai<C> bonsai;
 

@@ -7,10 +7,6 @@ import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
-/**
- * @author tushar.naik
- * @version 1.0  22/08/18 - 5:34 PM
- */
 @AllArgsConstructor
 public class InMemoryKnotStore implements KnotStore<String, Knot> {
     private final Map<String, Knot> storage;

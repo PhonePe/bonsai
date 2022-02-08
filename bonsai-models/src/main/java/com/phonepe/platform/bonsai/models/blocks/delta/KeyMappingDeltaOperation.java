@@ -24,7 +24,7 @@ public class KeyMappingDeltaOperation extends DeltaOperation {
     @Builder
     public KeyMappingDeltaOperation(final String keyId, final String knotId) {
         super(DeltaOperationType.KEY_MAPPING_DELTA);
-        this.keyId  = keyId;
+        this.keyId = keyId;
         this.knotId = knotId;
     }
 

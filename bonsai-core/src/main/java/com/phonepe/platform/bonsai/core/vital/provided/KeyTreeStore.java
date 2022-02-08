@@ -7,8 +7,6 @@ package com.phonepe.platform.bonsai.core.vital.provided;
  *
  * @param <K> Key for association
  * @param <T> Some form that represents a Tree or pointers to the Tree
- * @author tushar.naik
- * @version 1.0  16/08/18 - 1:24 AM
  */
 public interface KeyTreeStore<K, T> {
     /**

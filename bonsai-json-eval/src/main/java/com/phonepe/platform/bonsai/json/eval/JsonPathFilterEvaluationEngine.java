@@ -38,9 +38,6 @@ import java.util.stream.Collectors;
 /**
  * This is a Json path based filter evaluator
  * A filter predicate visitor that will apply the filter, and tell whether it is true or false
- *
- * @author tushar.naik
- * @version 1.0  29/09/17 - 1:08 PM
  */
 @Slf4j
 @AllArgsConstructor
@@ -110,7 +107,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     public Boolean visit(MissingFilter filter) {
         List<Object> values = context.documentContext().read(filter.getField(), OBJECT_TYPE_REF);
         if (log.isTraceEnabled()) {
-            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values, context.documentContext().toString());
+            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values, context.documentContext().json());
         }
         return values == null || values.isEmpty() || values.stream().allMatch(Objects::isNull);
     }
@@ -126,7 +123,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     public Boolean visit(ExistsFilter filter) {
         List<Object> values = context.documentContext().read(filter.getField(), OBJECT_TYPE_REF);
         if (log.isTraceEnabled()) {
-            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values, context.documentContext().toString());
+            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values, context.documentContext().json());
         }
         return isNotEmpty(values);
     }
@@ -191,10 +188,10 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     private <T> List<T> nonNullValues(Filter filter, TypeRef<List<T>> typeRef) {
         List<T> values = context.documentContext().read(filter.getField(), typeRef);
         if (log.isTraceEnabled()) {
-            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values, context.documentContext().toString());
+            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values, context.documentContext().json());
         }
         return values == null ? Collections.emptyList() : values.stream().filter(Objects::nonNull)
-                                                                .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     private Predicate<Number> lessThan(NumericBinaryFilter filter) {

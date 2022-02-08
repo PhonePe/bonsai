@@ -6,10 +6,6 @@ import lombok.NoArgsConstructor;
 
 import javax.annotation.Nullable;
 
-/**
- * @author tushar.naik
- * @version 1.0  18/09/18 - 6:49 PM
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -3,10 +3,8 @@ package com.phonepe.platform.bonsai.core.exception;
 import lombok.Getter;
 
 /**
- * The grand Bonsai framework error
- *
- * @author tushar.naik
- * @version 1.0  27/07/18 - 11:03 AM
+ * An error class to capture error code and root cause exceptions
+ * This class is used to mask all internal errors
  */
 public class BonsaiError extends RuntimeException {
     @Getter

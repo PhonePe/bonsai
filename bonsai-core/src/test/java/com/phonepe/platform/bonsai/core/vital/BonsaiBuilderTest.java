@@ -17,10 +17,6 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * @author tushar.naik
- * @version 1.0  19/09/18 - 2:52 PM
- */
 public class BonsaiBuilderTest {
 
     @Test
@@ -71,18 +67,18 @@ public class BonsaiBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void given_bonsaiBuilder_when_buildingBonsaiWithZeroConditionsPerEdge_then_throwIllegalArgumentException() {
         final Bonsai bonsaiTree = BonsaiBuilder.builder()
-                                               .withBonsaiProperties(BonsaiProperties.builder()
-                                                                                     .maxAllowedConditionsPerEdge(0)
-                                                                                     .build())
-                                               .build();
+                .withBonsaiProperties(BonsaiProperties.builder()
+                        .maxAllowedConditionsPerEdge(0)
+                        .build())
+                .build();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void given_bonsaiBuilder_when_buildingBonsaiWithZeroVariationsPerKnot_then_throwIllegalArgumentException() {
         final Bonsai bonsaiTree = BonsaiBuilder.builder()
-                                               .withBonsaiProperties(BonsaiProperties.builder()
-                                                                                     .maxAllowedVariationsPerKnot(0)
-                                                                                     .build())
-                                               .build();
+                .withBonsaiProperties(BonsaiProperties.builder()
+                        .maxAllowedVariationsPerKnot(0)
+                        .build())
+                .build();
     }
 }

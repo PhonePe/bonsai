@@ -8,10 +8,6 @@ import lombok.ToString;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-/**
- * @author tushar.naik
- * @version 1.0  2019-07-01 - 16:33
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

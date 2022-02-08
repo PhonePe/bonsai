@@ -8,10 +8,6 @@ import lombok.Getter;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author tushar.naik
- * @version 1.0  21/04/17 - 11:15 PM
- */
 @AllArgsConstructor
 public class PerformanceEvaluator {
 
@@ -28,7 +24,21 @@ public class PerformanceEvaluator {
         MetricRegistry metricRegistry = new MetricRegistry();
         this.timer = metricRegistry.timer(name);
         this.reporter = ConsoleReporter.forRegistry(metricRegistry).convertRatesTo(TimeUnit.SECONDS)
-                                       .convertDurationsTo(TimeUnit.MILLISECONDS).build();
+                .convertDurationsTo(TimeUnit.MILLISECONDS).build();
+    }
+
+    private static void printStatus(long numOperations, long iteration) {
+        if (numOperations < 100) {
+            final long i1 = (100 / numOperations);
+            for (long j = 0; j < i1; j++) {
+                System.out.print("#");
+            }
+        } else {
+            final long i1 = (numOperations / 100);
+            if (iteration % i1 == 0) {
+                System.out.print("#");
+            }
+        }
     }
 
     /**
@@ -53,19 +63,5 @@ public class PerformanceEvaluator {
         System.out.println();
         reporter.report();
         return timer;
-    }
-
-    private static void printStatus(long numOperations, long iteration) {
-        if (numOperations < 100) {
-            final long i1 = (100 / numOperations);
-            for (long j = 0; j < i1; j++) {
-                System.out.print("#");
-            }
-        } else {
-            final long i1 = (numOperations / 100);
-            if (iteration % i1 == 0) {
-                System.out.print("#");
-            }
-        }
     }
 }
