@@ -11,7 +11,8 @@ import lombok.Data;
         @JsonSubTypes.Type(name = "STRING", value = StringValue.class),
         @JsonSubTypes.Type(name = "BOOLEAN", value = BooleanValue.class),
         @JsonSubTypes.Type(name = "JSON", value = JsonValue.class),
-        @JsonSubTypes.Type(name = "BYTE", value = ByteValue.class)
+        @JsonSubTypes.Type(name = "BYTE", value = ByteValue.class),
+        @JsonSubTypes.Type(name = "OBJECT", value = ObjectValue.class)
 })
 public abstract class Value {
     private ValueType valueType;
@@ -27,6 +28,7 @@ public abstract class Value {
         STRING,
         BOOLEAN,
         JSON,
-        BYTE
+        BYTE,
+        OBJECT
     }
 }

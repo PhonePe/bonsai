@@ -1,4 +1,4 @@
-package com.phonepe.platform.bonsai.core;
+package com.phonepe.platform.bonsai.models;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
