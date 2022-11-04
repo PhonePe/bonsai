@@ -23,6 +23,7 @@
         <!--intellij module setting-->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.deploy.skip>false</maven.deploy.skip>
 
         <!--lib versions-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
