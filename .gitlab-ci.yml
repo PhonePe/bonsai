@@ -22,6 +22,7 @@ test:
   script:
     - mvn clean verify -U -Pquality_check  -Dsonar.pullrequest.key=$CI_MERGE_REQUEST_IID -Dsonar.pullrequest.branch=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME -Dsonar.pullrequest.base=$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
     - cat bonsai-core/target/site/jacoco/index.html
+  allow_failure: true
   except:
     - master
 
