@@ -107,17 +107,17 @@
         <repository>
             <id>phonepe-releases</id>
             <name>releases</name>
-            <url>http://artifactory.phonepe.com/content/repositories/releases</url>
+            <url>https://artifactory.phonepe.com/repository/releases</url>
         </repository>
         <repository>
             <id>phonepe-snapshots</id>
             <name>snapshots</name>
-            <url>http://artifactory.phonepe.com/content/repositories/snapshots</url>
+            <url>https://artifactory.phonepe.com/repository/snapshots</url>
         </repository>
         <repository>
             <id>clojars</id>
             <name>Clojars repository</name>
-            <url>https://clojars.org/repo</url>
+            <url>https://repo.clojars.org</url>
         </repository>
         <repository>
             <id>central</id>
@@ -127,19 +127,6 @@
             </releases>
         </repository>
     </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>phonepe-releases</id>
-            <name>releases</name>
-            <url>http://artifactory.phonepe.com/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>phonepe-snapshots</id>
-            <name>snapshots</name>
-            <url>http://artifactory.phonepe.com/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <build>
         <plugins>
