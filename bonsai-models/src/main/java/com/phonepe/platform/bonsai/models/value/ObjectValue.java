@@ -17,7 +17,7 @@ public class ObjectValue extends Value {
     private Object object;
 
     public ObjectValue(@NotNull @JsonProperty("object") Object object) {
-        super(ValueType.STRING);
+        super(ValueType.OBJECT);
         this.object = object;
     }
 
