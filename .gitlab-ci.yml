@@ -1,6 +1,13 @@
+.default: &default
+  only:
+    - merge_requests
+    - web
+
 .default_tag: &default_tag
   tags:
-    - backend
+    - backend-docker-large
+
+image: docker.phonepe.com:5000/pp-maven:3.8.4-openjdk-8
 
 stages:
   - build
