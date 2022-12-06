@@ -5,6 +5,7 @@ import com.phonepe.platform.bonsai.models.value.BooleanValue;
 import com.phonepe.platform.bonsai.models.value.ByteValue;
 import com.phonepe.platform.bonsai.models.value.JsonValue;
 import com.phonepe.platform.bonsai.models.value.NumberValue;
+import com.phonepe.platform.bonsai.models.value.ObjectValue;
 import com.phonepe.platform.bonsai.models.value.StringValue;
 import com.phonepe.platform.bonsai.models.value.Value;
 import lombok.Builder;
@@ -46,6 +47,9 @@ public class ValuedKnotData extends KnotData {
 
     public static ValuedKnotData jsonValue(JsonNode data) {
         return new ValuedKnotData(new JsonValue(data));
+    }
+    public static ValuedKnotData objectValue(ObjectValue data) {
+        return new ValuedKnotData(new ObjectValue(data));
     }
 
     @Override
