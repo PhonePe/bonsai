@@ -48,7 +48,7 @@ public class ValuedKnotData extends KnotData {
     public static ValuedKnotData jsonValue(JsonNode data) {
         return new ValuedKnotData(new JsonValue(data));
     }
-    public static ValuedKnotData objectValue(ObjectValue data) {
+    public static ValuedKnotData objectValue(Object data) {
         return new ValuedKnotData(new ObjectValue(data));
     }
 
