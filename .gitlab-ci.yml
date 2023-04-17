@@ -11,26 +11,43 @@ image: docker.phonepe.com:5000/pp-maven:3.8.4-openjdk-17
 
 stages:
   - build
-  - test
+  - quality
   - deploy
+  - merge
   - release
 
 compile:
   stage: build
   <<: *default_tag
+  when: manual
+  allow_failure: false
   script:
     - mvn -U compile
   except:
     - master
 
-test:
-  stage: test
+merge_ready:
+  stage: quality
   <<: *default_tag
   script:
-    - mvn clean verify -U -Pquality_check  -Dsonar.pullrequest.key=$CI_MERGE_REQUEST_IID -Dsonar.pullrequest.branch=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME -Dsonar.pullrequest.base=$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - mvn clean install -U -Pquality_check -Dsonar.pullrequest.key=$CI_MERGE_REQUEST_IID -Dsonar.pullrequest.branch=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME -Dsonar.pullrequest.base=$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
     - cat bonsai-core/target/site/jacoco/index.html
   except:
     - master
+
+stage_merge_status:
+  stage: merge
+  <<: *default
+  <<: *default_tag
+  allow_failure: false
+  script:
+    - git merge-base --is-ancestor $CI_COMMIT_SHA origin/stage
+  only:
+    - merge_requests
+  when: manual
+  except:
+    - master
+    - develop
 
 deploy:
   stage: deploy
