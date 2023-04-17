@@ -25,10 +25,11 @@
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.release>17</maven.compiler.release>
         <maven.deploy.skip>false</maven.deploy.skip>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
 
         <!--lib versions-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <lombok.version>1.18.8</lombok.version>
+        <lombok.version>1.18.22</lombok.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.28.2</mockito.version>
         <jackson.version>2.9.9</jackson.version>
@@ -133,12 +134,12 @@
         <repository>
             <id>phonepe-releases</id>
             <name>releases</name>
-            <url>http://artifactory.phonepe.com/content/repositories/releases</url>
+            <url>https://artifactory.phonepe.com/repository/releases</url>
         </repository>
         <snapshotRepository>
             <id>phonepe-snapshots</id>
             <name>snapshots</name>
-            <url>http://artifactory.phonepe.com/content/repositories/snapshots</url>
+            <url>https://artifactory.phonepe.com/repository/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
