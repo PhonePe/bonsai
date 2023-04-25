@@ -2,6 +2,7 @@ package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.BonsaiConstants;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
@@ -707,6 +708,10 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             log.debug("[bonsai][getMatchingKnot][{}][{}] edge condition satisfied: {}, knot: {} ", context.id(), key,
                     edge.getEdgeIdentifier().getId(), rhsKnot.getId());
         }
+        if (Objects.isNull(edge.getProperties())) {
+            edge.setProperties(Maps.newHashMap());
+        }
+        edge.getProperties().put("key", key);
         edgeList.add(edge);
         /* recursion happening here */
         Knot matchingNode = getMatchingKnot(key, rhsKnot, context, path, edgeList);
