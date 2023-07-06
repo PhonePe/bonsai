@@ -73,6 +73,7 @@ class TreeUtils {
                                 .flatNode(new ListFlatNode(flatNodes))
                                 .path(keyNode.getEdgePath())
                                 .version(listNode.getVersion())
+                                .edges(keyNode.getEdges())
                                 .build());
                 return null;
             }
@@ -84,6 +85,7 @@ class TreeUtils {
                                 .flatNode(new ValueFlatNode(valueNode.getValue()))
                                 .path(keyNode.getEdgePath())
                                 .version(valueNode.getVersion())
+                                .edges(keyNode.getEdges())
                                 .build());
                 return null;
             }
@@ -106,6 +108,7 @@ class TreeUtils {
                                 .flatNode(new MapFlatNode(flatNodesMap))
                                 .version(mapNode.getVersion())
                                 .path(keyNode.getEdgePath())
+                                .edges(keyNode.getEdges())
                                 .build());
                 return null;
             }

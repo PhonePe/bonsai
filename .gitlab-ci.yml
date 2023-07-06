@@ -19,6 +19,8 @@ compile:
   stage: build
   <<: *default
   <<: *default_tag
+  when: manual
+  allow_failure: false
   script:
     - mvn -U compile
   except:

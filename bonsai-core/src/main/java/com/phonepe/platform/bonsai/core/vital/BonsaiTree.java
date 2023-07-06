@@ -2,6 +2,7 @@ package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.models.BonsaiConstants;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
@@ -420,7 +421,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             }
 
             final List<Integer> edgePath = Lists.newArrayList();
-            final Knot knot = getMatchingKnot(key, knotStore.getKnot(id), context, edgePath);
+            final List<Edge> edges = Lists.newArrayList();
+            final Knot knot = getMatchingKnot(key, knotStore.getKnot(id), context, edgePath, edges);
             if (knot == null) {
                 log.warn("[bonsai][evaluate][{}] knotId:{} is null", key, id);
                 return KeyNode.empty(key, edgePath);
@@ -435,7 +437,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                                     .version(knot.getVersion())
                                     .value(valuedKnotData.getValue())
                                     .build(),
-                            edgePath);
+                            edgePath,
+                            edges);
                 }
 
                 @Override
@@ -453,7 +456,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                                     .version(knot.getVersion())
                                     .nodes(nodes)
                                     .build(),
-                            edgePath);
+                            edgePath,
+                            edges);
                 }
 
                 @Override
@@ -472,7 +476,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                                     .version(knot.getVersion())
                                     .nodeMap(nodeMap)
                                     .build(),
-                            edgePath);
+                            edgePath,
+                            edges);
                 }
             });
         } finally {
@@ -668,7 +673,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
      * @param context current context
      * @return node after traversal
      */
-    private Knot getMatchingKnot(final String key, final Knot knot, final C context, List<Integer> path) {
+    private Knot getMatchingKnot(final String key, final Knot knot, final C context, final List<Integer> path, final List<Edge> edgeList) {
         if (knot == null) {
             if (log.isDebugEnabled()) {
                 log.debug("[bonsai][getMatchingKnot][{}][{}] no knot", context.id(), key);
@@ -703,9 +708,13 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             log.debug("[bonsai][getMatchingKnot][{}][{}] edge condition satisfied: {}, knot: {} ", context.id(), key,
                     edge.getEdgeIdentifier().getId(), rhsKnot.getId());
         }
-
+        if (Objects.isNull(edge.getProperties())) {
+            edge.setProperties(Maps.newHashMap());
+        }
+        edge.getProperties().put("key", key);
+        edgeList.add(edge);
         /* recursion happening here */
-        Knot matchingNode = getMatchingKnot(key, rhsKnot, context, path);
+        Knot matchingNode = getMatchingKnot(key, rhsKnot, context, path, edgeList);
         if (matchingNode == null) {
             /* no more matching knots on the RHS, use previous knot */
             return knotPreferenceCheck(key, knot, context);
