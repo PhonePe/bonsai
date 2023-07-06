@@ -6,42 +6,64 @@
 .default_tag: &default_tag
   tags:
     - backend-docker-large
-
-image: docker.phonepe.com:5000/pp-maven:3.8.4-openjdk-8
+  image: docker.phonepe.com:5000/pp-maven:3.8.4-openjdk-17
 
 stages:
   - build
-  - test
+  - quality
   - deploy
+  - merge
   - release
 
 compile:
   stage: build
+  <<: *default
   <<: *default_tag
   script:
     - mvn -U compile
   except:
     - master
 
-test:
-  stage: test
+quality_check:
+  stage: quality
+  <<: *default
   <<: *default_tag
+  before_script:
+    - export MAVEN_OPTS="--add-opens java.base/java.lang=ALL-UNNAMED"
   script:
-    - mvn clean verify -U -Pquality_check  -Dsonar.pullrequest.key=$CI_MERGE_REQUEST_IID -Dsonar.pullrequest.branch=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME -Dsonar.pullrequest.base=$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - mvn clean verify -U -Pquality_check -Dproject.version='CI-TEST-${CI_JOB_ID}-SNAPSHOT' -Dsonar.pullrequest.key=$CI_MERGE_REQUEST_IID -Dsonar.pullrequest.branch=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME -Dsonar.pullrequest.base=$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
     - cat bonsai-core/target/site/jacoco/index.html
-  allow_failure: true
-  except:
-    - master
+  artifacts:
+    reports:
+      junit:
+        - bonsai-core/target/surefire-reports/TEST-*.xml
+    expire_in: 2 hrs
 
-deploy:
+deploy_artifacts:
   stage: deploy
+  <<: *default
   <<: *default_tag
+  when: manual
+  allow_failure: true
   script:
     - mvn clean deploy -U -DskipTests
   except:
     - master
 
-release:
+stage_merge_status:
+  stage: merge
+  <<: *default
+  <<: *default_tag
+  allow_failure: false
+  script:
+    - git merge-base --is-ancestor $CI_COMMIT_SHA origin/stage
+  only:
+    - merge_requests
+  except:
+    - master
+    - develop
+
+release_library:
   stage: release
   <<: *default_tag
   script:
@@ -50,7 +72,7 @@ release:
     - git pull
     - git checkout develop
     - git pull
-    - mvn -U jgitflow:release-start jgitflow:release-finish
+    - mvn -U jgitflow:release-start jgitflow:release-finish -DgenerateChangelog
     - git push --all
     - git push --tags origin
   when: manual
