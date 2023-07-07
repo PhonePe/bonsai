@@ -13,7 +13,6 @@ import com.phonepe.platform.bonsai.models.model.ListFlatNode;
 import com.phonepe.platform.bonsai.models.model.MapFlatNode;
 import com.phonepe.platform.bonsai.models.model.ValueFlatNode;
 import com.phonepe.platform.bonsai.models.value.BooleanValue;
-import com.phonepe.platform.bonsai.models.value.ByteValue;
 import com.phonepe.platform.bonsai.models.value.JsonValue;
 import com.phonepe.platform.bonsai.models.value.NumberValue;
 import com.phonepe.platform.bonsai.models.value.StringValue;
@@ -25,6 +24,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -39,61 +39,20 @@ public class NodeUtilsTest {
 
     @Test
     public void testDefaultValueReturnedOnInvalidKeyNode() throws IOException {
-        assertTrue(
-                NodeUtils.asBoolean(
-                        KeyNode.builder()
-                                .node(ValueNode.builder().value(new StringValue("false")).build())
-                                .build(),
-                        true
-                                   ));
-        assertTrue(
-                NodeUtils.asBoolean(
-                        KeyNode.builder()
-                                .node(ValueNode.builder().value(new StringValue("falsea")).build())
-                                .build(),
-                        true
-                                   ));
-        assertTrue(
-                NodeUtils.asBoolean(KeyNode.builder().node(ValueNode.builder().build()).build(),
-                                    true
-                                   ));
-        assertTrue(
-                NodeUtils.asBoolean(
-                        KeyNode.builder().node(ValueNode.builder().value(new NumberValue(3)).build()).build(),
-                        true
-                                   ));
-        assertTrue(
-                NodeUtils.asBoolean(
-                        KeyNode.builder()
-                                .node(ValueNode.builder().value(new JsonValue(new ObjectMapper().readTree("{}")))
-                                              .build()).build(),
-                        true
-                                   ));
-        assertTrue(
-                NodeUtils.asBoolean(
-                        KeyNode.builder().node(ValueNode.builder().value(new ByteValue("{}".getBytes())).build())
-                                .build(),
-                        true
-                                   ));
-        assertTrue(
-                NodeUtils.asBoolean(KeyNode.builder().node(null).build(),
-                                    true
-                                   ));
+        assertTrue(NodeUtils.asBoolean(KeyNode.of(ValueNode.stringValue("false")), true));
+        assertTrue(NodeUtils.asBoolean(KeyNode.of(ValueNode.stringValue("falsea")), true));
+        assertTrue(NodeUtils.asBoolean(KeyNode.of(ValueNode.builder().build()), true));
+        assertTrue(NodeUtils.asBoolean(KeyNode.of(ValueNode.numberValue(3)), true));
+        assertTrue(NodeUtils.asBoolean(KeyNode.of(ValueNode.jsonValue(new ObjectMapper().readTree("{}"))), true));
+        assertTrue(NodeUtils.asBoolean(KeyNode.of(ValueNode.byteValue("{}".getBytes())), true));
+        assertTrue(NodeUtils.asBoolean(KeyNode.empty(""), true));
         assertTrue(NodeUtils.asBoolean((KeyNode) null, true));
     }
 
     @Test
     public void testNonDefaultValueReturnedOnValidKeyNode() {
-        assertTrue(
-                NodeUtils.asBoolean(
-                        KeyNode.builder().node(ValueNode.builder().value(new BooleanValue(true)).build()).build(),
-                        false
-                                   ));
-        assertFalse(
-                NodeUtils.asBoolean(
-                        KeyNode.builder().node(ValueNode.builder().value(new BooleanValue(false)).build()).build(),
-                        true
-                                   ));
+        assertTrue(NodeUtils.asBoolean(KeyNode.of(ValueNode.booleanValue(true)), false));
+        assertFalse(NodeUtils.asBoolean(KeyNode.of(ValueNode.booleanValue(false)), true));
     }
 
     @Test
@@ -143,18 +102,18 @@ public class NodeUtilsTest {
     public void testBooleanValueReturnedOnContainerKeyNode() {
 
         ImmutableList<KeyNode> trueNodes = ImmutableList.of(
-                KeyNode.builder().node(ValueNode.builder().value(new BooleanValue(true)).build()).build(),
-                KeyNode.builder().node(ValueNode.builder().value(new BooleanValue(true)).build()).build(),
-                KeyNode.builder().node(ValueNode.builder().value(new BooleanValue(true)).build()).build());
+                KeyNode.of(ValueNode.booleanValue(true)),
+                KeyNode.of(ValueNode.booleanValue(true)),
+                KeyNode.of(ValueNode.booleanValue(true)));
         assertTrue(
                 NodeUtils.asBoolean(KeyNode.builder().node(ListNode.builder().nodes(trueNodes).build()).build(),
                                     false
                                    ));
 
         ImmutableMap<String, KeyNode> trueNodesMap = ImmutableMap.of(
-                "1", KeyNode.builder().node(ValueNode.builder().value(new BooleanValue(true)).build()).build(),
-                "2", KeyNode.builder().node(ValueNode.builder().value(new BooleanValue(true)).build()).build(),
-                "3", KeyNode.builder().node(ValueNode.builder().value(new BooleanValue(true)).build()).build());
+                "1", KeyNode.of(ValueNode.booleanValue(true)),
+                "2", KeyNode.of(ValueNode.booleanValue(true)),
+                "3", KeyNode.of(ValueNode.booleanValue(true)));
         assertTrue(
                 NodeUtils.asBoolean(KeyNode.builder().node(MapNode.builder().nodeMap(trueNodesMap).build()).build(),
                                     false
@@ -179,7 +138,7 @@ public class NodeUtilsTest {
                              "false"));
         assertEquals("true",
                      NodeUtils.asString(
-                             KeyNode.builder().node(ValueNode.builder().value(new BooleanValue(true)).build()).build(),
+                             KeyNode.of(ValueNode.booleanValue(true)),
                              "false"));
         assertEquals("123",
                      NodeUtils.asString(
@@ -240,7 +199,7 @@ public class NodeUtilsTest {
                                      .build(), 4));
         assertEquals(1,
                      NodeUtils.asNumber(
-                             KeyNode.builder().node(ValueNode.builder().value(new BooleanValue(true)).build()).build(),
+                             KeyNode.of(ValueNode.booleanValue(true)),
                              123));
         assertEquals(123,
                      NodeUtils.asNumber(
@@ -284,25 +243,19 @@ public class NodeUtilsTest {
     public void testJsonNodeValueReturnedOnValidKeyNode() {
         assertNotNull(
                 NodeUtils.asJsonNode(
-                        KeyNode.builder()
-                                .node(ValueNode.builder().value(new JsonValue(NullNode.getInstance())).build())
-                                .build(),
+                        KeyNode.of(ValueNode.builder().value(new JsonValue(NullNode.getInstance())).build()),
                         null));
         assertNull(
                 NodeUtils.asJsonNode(
-                        KeyNode.builder()
-                                .node(ValueNode.builder().value(new StringValue("123")).build())
-                                .build(),
+                        KeyNode.of(ValueNode.builder().value(new StringValue("123")).build()),
                         null));
         assertNull(
                 NodeUtils.asJsonNode(
-                        KeyNode.builder()
-                                .node(ValueNode.builder().value(null).build())
-                                .build(),
+                        KeyNode.of(ValueNode.builder().value(null).build()),
                         null));
         assertNull(
                 NodeUtils.asJsonNode(
-                        KeyNode.builder().node(ValueNode.builder().value(new BooleanValue(true)).build()).build(),
+                        KeyNode.of(ValueNode.booleanValue(true)),
                         null));
         assertNull(
                 NodeUtils.asJsonNode(
@@ -341,18 +294,30 @@ public class NodeUtilsTest {
         assertTrue(
                 NodeUtils.asListOfBoolean(
                         KeyNode.builder().build(),
-                        Collections.singletonList(true)
-                                         ).get(0));
+                        Collections.singletonList(true)).get(0));
         assertTrue(
                 NodeUtils.asListOfBoolean(
                         KeyNode.builder().node(new MapNode()).build(),
-                        Collections.singletonList(true)
-                                         ).get(0));
+                        Collections.singletonList(true)).get(0));
         assertTrue(
                 NodeUtils.asListOfBoolean(
                         KeyNode.builder().node(new ValueNode()).build(),
-                        Collections.singletonList(true)
-                                         ).get(0));
+                        Collections.singletonList(true)).get(0));
+    }
+    @Test
+    public void testListOfNumberReturnedOnInvalidKeyNodes() {
+        assertEquals(1,
+                NodeUtils.asListOfNumber(
+                        KeyNode.builder().build(),
+                        Collections.singletonList(1)).get(0));
+        assertEquals(1,
+                     NodeUtils.asListOfNumber(
+                        KeyNode.builder().node(new MapNode()).build(),
+                        Collections.singletonList(1)).get(0));
+        assertEquals(1,
+                     NodeUtils.asListOfNumber(
+                        KeyNode.builder().node(new ValueNode()).build(),
+                        Collections.singletonList(1)).get(0));
     }
 
     @Test
@@ -415,8 +380,9 @@ public class NodeUtilsTest {
         assertEquals(1, NodeUtils.asObject(ValueFlatNode.stringValue("{\"a\":1}"),
                                            TestObject.class, null, OBJECT_MAPPER).getA());
         assertEquals(1,
-                     NodeUtils.asObject(ValueFlatNode.byteValue(OBJECT_MAPPER.writeValueAsBytes(new TestObject(1, "test"))),
-                                        TestObject.class, null, OBJECT_MAPPER).getA());
+                     NodeUtils.asObject(
+                             ValueFlatNode.byteValue(OBJECT_MAPPER.writeValueAsBytes(new TestObject(1, "test"))),
+                             TestObject.class, null, OBJECT_MAPPER).getA());
         assertEquals(1, NodeUtils.asObject(ValueFlatNode.objectValue(new TestObject(1, "test")),
                                            TestObject.class, null, OBJECT_MAPPER).getA());
         assertEquals(1, NodeUtils.asObject(ValueFlatNode.jsonValue(OBJECT_MAPPER.readTree("{\"a\":1}")),
@@ -433,6 +399,21 @@ public class NodeUtilsTest {
                                            TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
         assertEquals(1, NodeUtils.asObject((FlatNode) null,
                                            TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
+    }
+
+    @Test
+    public void testAsMap() {
+        assertEquals(ImmutableMap.of(), NodeUtils.asMap(KeyNode.of(ValueNode.objectValue(new TestObject(1, "test"))),
+                                                         ImmutableMap.of(),
+                                                         (keyNode, o) -> null));
+        assertEquals(ImmutableMap.of("t", "default"), NodeUtils.asMap(KeyNode.of(MapNode.builder()
+                                                   .nodeMap(ImmutableMap.of("t",
+                                                                            KeyNode.of(ValueNode.objectValue(
+                                                                                    new TestObject(1,
+                                                                                                   "test")))))
+                                                   .build()),
+                                           ImmutableMap.of(),
+                                           (keyNode, o) -> "default"));
     }
 
     @Data
