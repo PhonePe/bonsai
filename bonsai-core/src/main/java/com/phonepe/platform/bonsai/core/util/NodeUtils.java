@@ -68,7 +68,7 @@ public class NodeUtils {
 
         @Override
         public String visit(final ObjectValue objectValue) {
-            return objectValue.toString();
+            return objectValue.getObject().toString();
         }
     };
 
@@ -283,6 +283,9 @@ public class NodeUtils {
             return flatNode.accept(new FlatNodeVisitor<JsonNode>() {
                 @Override
                 public JsonNode visit(ValueFlatNode valueFlatNode) {
+                    if (valueFlatNode.getValue() == null) {
+                        return defaultValue;
+                    }
                     return valueFlatNode.getValue().accept(valueToJsonNodeVisitor(defaultValue));
                 }
 
@@ -405,11 +408,11 @@ public class NodeUtils {
                     return mapNode.getNodeMap()
                             .entrySet().stream()
                             .map(stringNodePair -> MapEntry
-                                    .of(stringNodePair.getKey(), converter.apply(stringNodePair.getValue(),
-                                                                                 defaultValue == null ? null
-                                                                                                      :
-                                                                                 defaultValue.get(
-                                                                                         stringNodePair.getKey()))))
+                                    .of(stringNodePair.getKey(),
+                                        converter.apply(stringNodePair.getValue(),
+                                                        defaultValue == null ? null
+                                                                             : defaultValue.get(
+                                                                                     stringNodePair.getKey()))))
                             .collect(HashMap::new, (map, entry) -> map
                                     .put(entry.getK(), entry.getV()), HashMap::putAll);
                 }

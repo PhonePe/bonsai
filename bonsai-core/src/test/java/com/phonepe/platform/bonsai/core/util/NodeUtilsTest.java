@@ -2,6 +2,7 @@ package com.phonepe.platform.bonsai.core.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.phonepe.platform.bonsai.models.KeyNode;
@@ -24,7 +25,6 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -173,6 +173,15 @@ public class NodeUtilsTest {
         assertEquals("123",
                      NodeUtils.asString(new ValueFlatNode(new NumberValue(123)),
                                         "false"));
+        assertEquals("123",
+                     NodeUtils.asString(ValueFlatNode.objectValue("123"),
+                                        "false"));
+        assertEquals("123",
+                     NodeUtils.asString(ValueFlatNode.jsonValue(new TextNode("123")),
+                                        "false"));
+        assertEquals("123",
+                     NodeUtils.asString(ValueFlatNode.jsonValue(new TextNode("123")),
+                                        "false"));
         assertEquals("false",
                      NodeUtils.asString(new ValueFlatNode(),
                                         "false"));
@@ -304,20 +313,21 @@ public class NodeUtilsTest {
                         KeyNode.builder().node(new ValueNode()).build(),
                         Collections.singletonList(true)).get(0));
     }
+
     @Test
     public void testListOfNumberReturnedOnInvalidKeyNodes() {
         assertEquals(1,
-                NodeUtils.asListOfNumber(
-                        KeyNode.builder().build(),
-                        Collections.singletonList(1)).get(0));
+                     NodeUtils.asListOfNumber(
+                             KeyNode.builder().build(),
+                             Collections.singletonList(1)).get(0));
         assertEquals(1,
                      NodeUtils.asListOfNumber(
-                        KeyNode.builder().node(new MapNode()).build(),
-                        Collections.singletonList(1)).get(0));
+                             KeyNode.builder().node(new MapNode()).build(),
+                             Collections.singletonList(1)).get(0));
         assertEquals(1,
                      NodeUtils.asListOfNumber(
-                        KeyNode.builder().node(new ValueNode()).build(),
-                        Collections.singletonList(1)).get(0));
+                             KeyNode.builder().node(new ValueNode()).build(),
+                             Collections.singletonList(1)).get(0));
     }
 
     @Test
@@ -404,16 +414,18 @@ public class NodeUtilsTest {
     @Test
     public void testAsMap() {
         assertEquals(ImmutableMap.of(), NodeUtils.asMap(KeyNode.of(ValueNode.objectValue(new TestObject(1, "test"))),
-                                                         ImmutableMap.of(),
-                                                         (keyNode, o) -> null));
+                                                        ImmutableMap.of(),
+                                                        (keyNode, o) -> null));
         assertEquals(ImmutableMap.of("t", "default"), NodeUtils.asMap(KeyNode.of(MapNode.builder()
-                                                   .nodeMap(ImmutableMap.of("t",
-                                                                            KeyNode.of(ValueNode.objectValue(
-                                                                                    new TestObject(1,
-                                                                                                   "test")))))
-                                                   .build()),
-                                           ImmutableMap.of(),
-                                           (keyNode, o) -> "default"));
+                                                                                         .nodeMap(ImmutableMap.of("t",
+                                                                                                                  KeyNode.of(
+                                                                                                                          ValueNode.objectValue(
+                                                                                                                                  new TestObject(
+                                                                                                                                          1,
+                                                                                                                                          "test")))))
+                                                                                         .build()),
+                                                                      ImmutableMap.of(),
+                                                                      (keyNode, o) -> "default"));
     }
 
     @Data
