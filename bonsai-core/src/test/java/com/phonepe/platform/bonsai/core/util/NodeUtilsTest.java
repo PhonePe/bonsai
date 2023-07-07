@@ -17,6 +17,9 @@ import com.phonepe.platform.bonsai.models.value.ByteValue;
 import com.phonepe.platform.bonsai.models.value.JsonValue;
 import com.phonepe.platform.bonsai.models.value.NumberValue;
 import com.phonepe.platform.bonsai.models.value.StringValue;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -31,6 +34,8 @@ import static org.junit.Assert.assertTrue;
 
 public class NodeUtilsTest {
 
+
+    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Test
     public void testDefaultValueReturnedOnInvalidKeyNode() throws IOException {
@@ -379,6 +384,63 @@ public class NodeUtilsTest {
         assertTrue(booleans.get(0));
         assertFalse(booleans.get(1));
         assertFalse(booleans.get(2));
+    }
+
+    @Test
+    public void testAsObject() throws IOException {
+        assertEquals(1, NodeUtils.asObject(KeyNode.of(ValueNode.stringValue("{\"a\":1}")),
+                                           TestObject.class, null, OBJECT_MAPPER).getA());
+        assertEquals(1,
+                     NodeUtils.asObject(KeyNode.of(
+                                                ValueNode.byteValue(OBJECT_MAPPER.writeValueAsBytes(new TestObject(1,
+                                                                                                                   "test")))),
+                                        TestObject.class, null, OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(KeyNode.of(ValueNode.objectValue(new TestObject(1, "test"))),
+                                           TestObject.class, null, OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(KeyNode.of(ValueNode.jsonValue(OBJECT_MAPPER.readTree("{\"a\":1}"))),
+                                           TestObject.class, null, OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(KeyNode.of(ValueNode.numberValue(3)),
+                                           TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(KeyNode.of(ValueNode.booleanValue(true)),
+                                           TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(KeyNode.of(ListNode.builder().build()),
+                                           TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(KeyNode.of(MapNode.builder().build()),
+                                           TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(KeyNode.empty(""),
+                                           TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject((KeyNode) null,
+                                           TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
+
+        assertEquals(1, NodeUtils.asObject(ValueFlatNode.stringValue("{\"a\":1}"),
+                                           TestObject.class, null, OBJECT_MAPPER).getA());
+        assertEquals(1,
+                     NodeUtils.asObject(ValueFlatNode.byteValue(OBJECT_MAPPER.writeValueAsBytes(new TestObject(1, "test"))),
+                                        TestObject.class, null, OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(ValueFlatNode.objectValue(new TestObject(1, "test")),
+                                           TestObject.class, null, OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(ValueFlatNode.jsonValue(OBJECT_MAPPER.readTree("{\"a\":1}")),
+                                           TestObject.class, null, OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(ValueFlatNode.numberValue(3),
+                                           TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(ValueFlatNode.booleanValue(true),
+                                           TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(new ListFlatNode(),
+                                           TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(new MapFlatNode(),
+                                           TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject(new ValueFlatNode(),
+                                           TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
+        assertEquals(1, NodeUtils.asObject((FlatNode) null,
+                                           TestObject.class, new TestObject(1, "test"), OBJECT_MAPPER).getA());
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TestObject {
+        private int a;
+        private String b;
     }
 
 }

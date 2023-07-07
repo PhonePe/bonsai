@@ -1,5 +1,6 @@
 package com.phonepe.platform.bonsai.models;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,5 +41,10 @@ public class KeyNode {
 
     public static KeyNode empty(String key, List<Integer> path, List<Edge> edges) {
         return new KeyNode(key, null, path, edges);
+    }
+
+    @VisibleForTesting
+    public static KeyNode of(Node node) {
+        return new KeyNode(null, node, null, null);
     }
 }

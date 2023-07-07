@@ -302,15 +302,15 @@ public class NodeUtils {
         }
     }
 
-    public <T> T asObject(final KeyNode flatNode,
+    public <T> T asObject(final KeyNode node,
                           final Class<T> aClass,
                           final T defaultValue,
                           final ObjectMapper mapper) {
         try {
-            if (flatNode == null) {
+            if (node == null || node.getNode() == null) {
                 return defaultValue;
             }
-            return flatNode.getNode().accept(new NodeVisitor<T>() {
+            return node.getNode().accept(new NodeVisitor<T>() {
                 @Override
                 public T visit(final ListNode listNode) {
                     return defaultValue;
@@ -327,7 +327,7 @@ public class NodeUtils {
                 }
             });
         } catch (Exception e) {
-            log.error(ERROR_MESSAGE, MDC.get(BonsaiConstants.EVALUATION_ID), flatNode, e);
+            log.error(ERROR_MESSAGE, MDC.get(BonsaiConstants.EVALUATION_ID), node, e);
             return defaultValue;
         }
     }
@@ -343,6 +343,9 @@ public class NodeUtils {
             return flatNode.accept(new FlatNodeVisitor<T>() {
                 @Override
                 public T visit(ValueFlatNode valueFlatNode) {
+                    if (valueFlatNode.getValue() == null) {
+                        return defaultValue;
+                    }
                     return valueFlatNode.getValue().accept(valueToObjectVisitor(defaultValue, aClass, mapper));
                 }
 
