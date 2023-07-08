@@ -25,6 +25,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -180,7 +181,7 @@ public class NodeUtilsTest {
                      NodeUtils.asString(ValueFlatNode.jsonValue(new TextNode("123")),
                                         "false"));
         assertEquals("123",
-                     NodeUtils.asString(ValueFlatNode.jsonValue(new TextNode("123")),
+                     NodeUtils.asString(ValueFlatNode.byteValue("123".getBytes()),
                                         "false"));
         assertEquals("false",
                      NodeUtils.asString(new ValueFlatNode(),
@@ -278,6 +279,10 @@ public class NodeUtilsTest {
                 NodeUtils.asJsonNode(
                         KeyNode.builder().node(ListNode.builder().build()).build(),
                         null));
+        assertNull(
+                NodeUtils.asJsonNode(
+                        (KeyNode) null,
+                        null));
     }
 
     @Test
@@ -296,6 +301,8 @@ public class NodeUtilsTest {
                 NodeUtils.asJsonNode(new MapFlatNode(), null));
         assertNull(
                 NodeUtils.asJsonNode(new ListFlatNode(), null));
+        assertNull(
+                NodeUtils.asJsonNode((FlatNode) null, null));
     }
 
     @Test
@@ -412,20 +419,41 @@ public class NodeUtilsTest {
     }
 
     @Test
+    public void testAsMapOfBoolean() {
+        assertEquals(ImmutableMap.of("t", false), NodeUtils.asMapOfBoolean(
+                KeyNode.of(new MapNode("asdf", 1,
+                                       ImmutableMap.of("t", KeyNode.of(ValueNode.booleanValue(false))))),
+                ImmutableMap.of("u", true)));
+    }
+
+    @Test
+    public void testAsMapOfString() {
+        assertEquals(ImmutableMap.of("first", "map"), NodeUtils.asMapOfString(
+                KeyNode.of(new MapNode("asdf", 1,
+                                       ImmutableMap.of("first", KeyNode.of(ValueNode.stringValue("map"))))),
+                ImmutableMap.of("second", "map")));
+    }
+
+
+    @Test
+    public void testAsMapOfNumber() {
+        assertEquals(ImmutableMap.of("first", 1), NodeUtils.asMapOfNumber(
+                KeyNode.of(new MapNode("asdf", 1,
+                                       ImmutableMap.of("first", KeyNode.of(ValueNode.numberValue(1))))),
+                ImmutableMap.of("second", 2)));
+    }
+
+    @Test
     public void testAsMap() {
         assertEquals(ImmutableMap.of(), NodeUtils.asMap(KeyNode.of(ValueNode.objectValue(new TestObject(1, "test"))),
                                                         ImmutableMap.of(),
                                                         (keyNode, o) -> null));
-        assertEquals(ImmutableMap.of("t", "default"), NodeUtils.asMap(KeyNode.of(MapNode.builder()
-                                                                                         .nodeMap(ImmutableMap.of("t",
-                                                                                                                  KeyNode.of(
-                                                                                                                          ValueNode.objectValue(
-                                                                                                                                  new TestObject(
-                                                                                                                                          1,
-                                                                                                                                          "test")))))
-                                                                                         .build()),
-                                                                      ImmutableMap.of(),
-                                                                      (keyNode, o) -> "default"));
+        assertEquals(ImmutableMap.of("t", "default"),
+                     NodeUtils.asMap(KeyNode.of(MapNode.builder()
+                        .nodeMap(ImmutableMap.of("t",
+                                                 KeyNode.of(ValueNode.objectValue(new TestObject(1, "test"))))).build()),
+                                     ImmutableMap.of(),
+                                     (keyNode, o) -> "default"));
     }
 
     @Data

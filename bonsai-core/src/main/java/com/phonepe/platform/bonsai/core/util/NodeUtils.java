@@ -89,6 +89,13 @@ public class NodeUtils {
 
                 @Override
                 public Boolean visit(final ValueNode valueNode) {
+                    if (valueNode.getValue() == null) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("[bonsai][{}] default value being returned, keyNode is {}", MDC.get(
+                                    BonsaiConstants.EVALUATION_ID), keyNode);
+                        }
+                        return defaultValue;
+                    }
                     return valueNode.getValue().accept(new AbstractValueVisitor<Boolean>(defaultValue) {
 
                         @Override
@@ -119,6 +126,13 @@ public class NodeUtils {
             return flatNode.accept(new FlatNodeVisitor<Boolean>() {
                 @Override
                 public Boolean visit(ValueFlatNode valueFlatNode) {
+                    if (valueFlatNode.getValue() == null) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("[bonsai][{}] default value being returned for valueFlatNode:{}",
+                                      MDC.get(BonsaiConstants.EVALUATION_ID), valueFlatNode);
+                        }
+                        return defaultValue;
+                    }
                     return valueFlatNode.getValue().accept(new AbstractValueVisitor<Boolean>(defaultValue) {
                         @Override
                         public Boolean visit(BooleanValue booleanValue) {
@@ -266,6 +280,9 @@ public class NodeUtils {
 
                 @Override
                 public JsonNode visit(final ValueNode valueNode) {
+                    if (valueNode.getValue() == null) {
+                        return defaultValue;
+                    }
                     return valueNode.getValue().accept(valueToJsonNodeVisitor(defaultValue));
                 }
             });
