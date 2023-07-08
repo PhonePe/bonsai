@@ -119,6 +119,8 @@ public class NodeUtilsTest {
                 NodeUtils.asBoolean(KeyNode.builder().node(MapNode.builder().nodeMap(trueNodesMap).build()).build(),
                                     false
                                    ));
+
+        assertFalse(NodeUtils.asBoolean(KeyNode.builder().node(new ListNode()).build(), false));
     }
 
     @Test
@@ -433,7 +435,6 @@ public class NodeUtilsTest {
                                        ImmutableMap.of("first", KeyNode.of(ValueNode.stringValue("map"))))),
                 ImmutableMap.of("second", "map")));
     }
-
 
     @Test
     public void testAsMapOfNumber() {
