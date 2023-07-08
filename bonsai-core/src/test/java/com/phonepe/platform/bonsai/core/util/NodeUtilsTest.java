@@ -25,7 +25,6 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -77,26 +76,10 @@ public class NodeUtilsTest {
 
     @Test
     public void testNonDefaultValueReturnedOnValidPzFlatNode() {
-        assertTrue(
-                NodeUtils.asBoolean(
-                        new ValueFlatNode(new BooleanValue(true)),
-                        false
-                                   ));
-        assertFalse(
-                NodeUtils.asBoolean(
-                        new ValueFlatNode(new BooleanValue(false)),
-                        true
-                                   ));
-        assertFalse(
-                NodeUtils.asBoolean(
-                        new ListFlatNode(),
-                        false
-                                   ));
-        assertFalse(
-                NodeUtils.asBoolean(
-                        new MapFlatNode(),
-                        false
-                                   ));
+        assertTrue(NodeUtils.asBoolean(new ValueFlatNode(new BooleanValue(true)), false));
+        assertFalse(NodeUtils.asBoolean(new ValueFlatNode(new BooleanValue(false)), true));
+        assertFalse(NodeUtils.asBoolean(new ListFlatNode(), false));
+        assertFalse(NodeUtils.asBoolean(new MapFlatNode(), false));
     }
 
     @Test
@@ -331,6 +314,10 @@ public class NodeUtilsTest {
                              Collections.singletonList(1)).get(0));
         assertEquals(1,
                      NodeUtils.asListOfNumber(
+                             KeyNode.builder().node(new ListNode()).build(),
+                             Collections.singletonList(1)).get(0));
+        assertEquals(1,
+                     NodeUtils.asListOfNumber(
                              KeyNode.builder().node(new MapNode()).build(),
                              Collections.singletonList(1)).get(0));
         assertEquals(1,
@@ -451,8 +438,10 @@ public class NodeUtilsTest {
                                                         (keyNode, o) -> null));
         assertEquals(ImmutableMap.of("t", "default"),
                      NodeUtils.asMap(KeyNode.of(MapNode.builder()
-                        .nodeMap(ImmutableMap.of("t",
-                                                 KeyNode.of(ValueNode.objectValue(new TestObject(1, "test"))))).build()),
+                                                        .nodeMap(ImmutableMap.of("t",
+                                                                                 KeyNode.of(ValueNode.objectValue(
+                                                                                         new TestObject(1, "test")))))
+                                                        .build()),
                                      ImmutableMap.of(),
                                      (keyNode, o) -> "default"));
     }
