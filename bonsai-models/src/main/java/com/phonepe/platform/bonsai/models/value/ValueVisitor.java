@@ -10,4 +10,6 @@ public interface ValueVisitor<T> {
     T visit(ByteValue byteValue);
 
     T visit(JsonValue jsonValue);
+
+    T visit(ObjectValue objectValue);
 }
