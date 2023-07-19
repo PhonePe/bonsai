@@ -1,5 +1,6 @@
 package com.phonepe.platform.bonsai.models.model;
 
+import com.phonepe.platform.bonsai.models.blocks.Edge;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ import java.util.List;
 @Builder
 public class FlatNodeDetail {
     private List<Integer> path;
+    private List<Edge> edges;
     private FlatNode flatNode;
     private long version;
 }
