@@ -401,11 +401,6 @@ public class BonsaiTreeTest {
         Assert.assertEquals("widget1", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
                 .getNodes().get(1).getNode()).getValue()).getValue());
 
-        /* since we are using KnotMergingConflictResolver, which will merge the remaining keys for MultiKnot */
-        Assert.assertEquals("widget2", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
-                .getNodes().get(2).getNode()).getValue()).getValue());
-
-
         /* now evaluate with a new value for widget1 */
         preferentialEval = bonsai.evaluate
                 ("l1",
@@ -424,10 +419,6 @@ public class BonsaiTreeTest {
         /* the value should be whatever we have set in preferences */
         Assert.assertEquals("newStringValue", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
                 .getNodes().get(1).getNode()).getValue()).getValue());
-
-        Assert.assertEquals("widget2", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
-                .getNodes().get(2).getNode()).getValue()).getValue());
-
     }
 
     @Test

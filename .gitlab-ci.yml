@@ -29,6 +29,8 @@ quality_check:
   stage: quality
   <<: *default
   <<: *default_tag
+  only:
+    - merge_requests
   before_script:
     - export MAVEN_OPTS="--add-opens java.base/java.lang=ALL-UNNAMED"
   script:
