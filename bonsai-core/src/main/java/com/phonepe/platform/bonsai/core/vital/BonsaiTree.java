@@ -7,7 +7,6 @@ import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.models.BonsaiConstants;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode;
-import com.phonepe.platform.bonsai.core.structures.ConflictResolver;
 import com.phonepe.platform.bonsai.core.visitor.delta.impl.TreeKnotStateDeltaOperationModifierVisitor;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
@@ -77,15 +76,13 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     private final ComponentBonsaiTreeValidator componentValidator;
     private final BonsaiProperties bonsaiProperties;
     private final BonsaiIdGenerator bonsaiIdGenerator;
-    private final ConflictResolver<Knot> knotConflictResolver;
     private final DeltaOperationVisitor<TreeKnotState> treeKnotDeltaOperationModifier;
 
     public BonsaiTree(final Stores<String, String, Knot, Edge> stores,
                       final VariationSelectorEngine<C> variationSelectorEngine,
                       final ComponentBonsaiTreeValidator componentValidator,
                       final BonsaiProperties bonsaiProperties,
-                      final BonsaiIdGenerator bonsaiIdGenerator,
-                      final ConflictResolver<Knot> knotConflictResolver) {
+                      final BonsaiIdGenerator bonsaiIdGenerator) {
         this.keyTreeStore = stores.getKeyTreeStore();
         this.knotStore = stores.getKnotStore();
         this.edgeStore = stores.getEdgeStore();
@@ -93,7 +90,6 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         this.componentValidator = componentValidator;
         this.bonsaiProperties = bonsaiProperties;
         this.bonsaiIdGenerator = bonsaiIdGenerator;
-        this.knotConflictResolver = knotConflictResolver;
         this.treeKnotDeltaOperationModifier = new TreeKnotStateDeltaOperationModifierVisitor(
                 componentValidator, knotStore, edgeStore
         );
@@ -422,64 +418,16 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
 
             final List<Integer> edgePath = Lists.newArrayList();
             final List<Edge> edges = Lists.newArrayList();
+            if (context.getPreferences() != null && context.getPreferences().containsKey(key)) {
+                return getKeyNode(key, context, edgePath, edges, context.getPreferences().get(key));
+            }
             final Knot knot = getMatchingKnot(key, knotStore.getKnot(id), context, edgePath, edges);
             if (knot == null) {
                 log.warn("[bonsai][evaluate][{}] knotId:{} is null", key, id);
                 return KeyNode.empty(key, edgePath);
             }
 
-            return knot.getKnotData().accept(new KnotDataVisitor<KeyNode>() {
-                @Override
-                public KeyNode visit(final ValuedKnotData valuedKnotData) {
-                    return new KeyNode(key,
-                            ValueNode.builder()
-                                    .id(knot.getId())
-                                    .version(knot.getVersion())
-                                    .value(valuedKnotData.getValue())
-                                    .build(),
-                            edgePath,
-                            edges);
-                }
-
-                @Override
-                public KeyNode visit(final MultiKnotData multiKnotData) {
-                    /* recursively evaluate the list of keys in MultiKnot */
-                    final List<String> keys = multiKnotData.getKeys();
-                    final List<KeyNode> nodes = keys != null
-                            ? keys.stream()
-                            .map(key -> evaluate(key, context))
-                            .collect(Collectors.toList())
-                            : null;
-                    return new KeyNode(key,
-                            ListNode.builder()
-                                    .id(knot.getId())
-                                    .version(knot.getVersion())
-                                    .nodes(nodes)
-                                    .build(),
-                            edgePath,
-                            edges);
-                }
-
-                @Override
-                public KeyNode visit(final MapKnotData mapKnotData) {
-                    /* recursively evaluate the keys withing the MapKnot data */
-                    final Map<String, String> mapKeys = mapKnotData.getMapKeys();
-                    final Map<String, KeyNode> nodeMap = mapKeys != null
-                            ? mapKeys.entrySet()
-                            .stream()
-                            .collect(Collectors.toMap(Map.Entry::getKey,
-                                    entry -> evaluate(entry.getValue(), context)))
-                            : null;
-                    return new KeyNode(key,
-                            MapNode.builder()
-                                    .id(knot.getId())
-                                    .version(knot.getVersion())
-                                    .nodeMap(nodeMap)
-                                    .build(),
-                            edgePath,
-                            edges);
-                }
-            });
+            return getKeyNode(key, context, edgePath, edges, knot);
         } finally {
             if (isMDCContextSet) {
                 removeMDCContext();
@@ -491,6 +439,65 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     public FlatTreeRepresentation evaluateFlat(String key, C context) {
         KeyNode evaluate = evaluate(key, context);
         return TreeUtils.flatten(evaluate);
+    }
+
+    private KeyNode getKeyNode(final String key, final C context,
+                               final List<Integer> edgePath, final List<Edge> edges,
+                               final Knot knot) {
+        return knot.getKnotData().accept(new KnotDataVisitor<KeyNode>() {
+            @Override
+            public KeyNode visit(final ValuedKnotData valuedKnotData) {
+                return new KeyNode(key,
+                                   ValueNode.builder()
+                                           .id(knot.getId())
+                                           .version(knot.getVersion())
+                                           .value(valuedKnotData.getValue())
+                                           .build(),
+                                   edgePath,
+                                   edges);
+            }
+
+            @Override
+            public KeyNode visit(final MultiKnotData multiKnotData) {
+                /* recursively evaluate the list of keys in MultiKnot */
+                final List<String> keys = multiKnotData.getKeys();
+                final List<KeyNode> nodes = keys != null
+                                            ? keys.stream()
+                                                    .map(key -> evaluate(key, context))
+                                                    .collect(Collectors.toList())
+                                            : null;
+                return new KeyNode(key,
+                                   ListNode.builder()
+                                           .id(knot.getId())
+                                           .version(knot.getVersion())
+                                           .nodes(nodes)
+                                           .build(),
+                                   edgePath,
+                                   edges);
+            }
+
+            @Override
+            public KeyNode visit(final MapKnotData mapKnotData) {
+                /* recursively evaluate the keys withing the MapKnot data */
+                final Map<String, String> mapKeys = mapKnotData.getMapKeys();
+                final Map<String, KeyNode> nodeMap = mapKeys != null
+                                                     ? mapKeys.entrySet()
+                                                             .stream()
+                                                             .collect(Collectors.toMap(Map.Entry::getKey,
+                                                                                       entry -> evaluate(
+                                                                                               entry.getValue(),
+                                                                                               context)))
+                                                     : null;
+                return new KeyNode(key,
+                                   MapNode.builder()
+                                           .id(knot.getId())
+                                           .version(knot.getVersion())
+                                           .nodeMap(nodeMap)
+                                           .build(),
+                                   edgePath,
+                                   edges);
+            }
+        });
     }
 
     private boolean setMDCContext() {
@@ -686,7 +693,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             if (log.isDebugEnabled()) {
                 log.debug("[bonsai][getMatchingKnot][{}][{}] no edges", context.id(), key);
             }
-            return knotPreferenceCheck(key, knot, context);
+            return knot;
         }
         List<Edge> edges = new ArrayList<>(edgeStore.getAllEdges(edgeIdentifiers.stream()
                         .map(EdgeIdentifier::getId)
@@ -698,7 +705,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             if (log.isDebugEnabled()) {
                 log.debug("[bonsai][getMatchingKnot][{}][{}] no edge satisfies conditions", context.id(), key);
             }
-            return knotPreferenceCheck(key, knot, context);
+            return knot;
         }
         /* recursively iterate over the matching edge knot on the RHS (knot --edge--> rhsKnot) */
         Edge edge = conditionSatisfyingEdge.get();
@@ -717,27 +724,9 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         Knot matchingNode = getMatchingKnot(key, rhsKnot, context, path, edgeList);
         if (matchingNode == null) {
             /* no more matching knots on the RHS, use previous knot */
-            return knotPreferenceCheck(key, knot, context);
+            return knot;
         }
-        return knotPreferenceCheck(key, matchingNode, context);
-    }
-
-    /**
-     * checks if {@link Context#getPreferences()} already has the key and {@link Knot},
-     * If so, uses the {@link ConflictResolver} to choose one of the two Knots
-     *
-     * @param key     key being evaluated
-     * @param knot    knot that matched
-     * @param context context containing preferences
-     * @return either preference Knot of the Knot sent in
-     */
-    private Knot knotPreferenceCheck(final String key, final Knot knot, final C context) {
-        /* if context preferences already contains the key, return it */
-        if (context.getPreferences() != null && context.getPreferences().containsKey(key)) {
-            Knot preferenceKnot = context.getPreferences().get(key);
-            return knotConflictResolver.resolveConflict(preferenceKnot, knot);
-        }
-        return knot;
+        return matchingNode;
     }
 
     private void checkMappingExistence(final String key) {

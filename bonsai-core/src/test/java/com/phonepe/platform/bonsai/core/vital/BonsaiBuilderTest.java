@@ -1,7 +1,6 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.phonepe.platform.bonsai.core.Bonsai;
-import com.phonepe.platform.bonsai.core.structures.ConflictResolver;
 import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
@@ -44,7 +43,6 @@ public class BonsaiBuilderTest {
                 return UUID.randomUUID().toString();
             }
         };
-        final ConflictResolver<Knot> knotConflictResolver = new KnotMergingConflictResolver();
         final Bonsai bonsaiTree = BonsaiBuilder.builder()
                                                .withKeyTreeStore(keyTreeStore)
                                                .withKnotStore(knotStore)
@@ -52,7 +50,6 @@ public class BonsaiBuilderTest {
                                                .withVariationSelectorEngine(variationSelectorEngine)
                                                .withBonsaiProperties(bonsaiProperties)
                                                .withBonsaiIdGenerator(bonsaiIdGenerator)
-                                               .withKnotConflictResolver(knotConflictResolver)
                                                .withBonsaiProperties(BonsaiProperties.builder().build())
                                                .build();
 
