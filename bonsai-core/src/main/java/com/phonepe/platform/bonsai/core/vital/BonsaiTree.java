@@ -13,7 +13,6 @@ import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
 import com.phonepe.platform.bonsai.core.vital.provided.Stores;
 import com.phonepe.platform.bonsai.core.vital.provided.VariationSelectorEngine;
-import com.phonepe.platform.bonsai.json.eval.JsonPathSetup;
 import com.phonepe.platform.bonsai.models.KeyNode;
 import com.phonepe.platform.bonsai.models.ListNode;
 import com.phonepe.platform.bonsai.models.MapNode;
@@ -93,7 +92,6 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         this.treeKnotDeltaOperationModifier = new TreeKnotStateDeltaOperationModifierVisitor(
                 componentValidator, knotStore, edgeStore
         );
-        JsonPathSetup.setup();
     }
 
     @Override
