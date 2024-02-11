@@ -36,7 +36,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
     private static final String ERROR_FIELD_STR = "field:%s cannot be null";
     private static final FilterFieldIdentifier FIELD_IDENTIFIER = new FilterFieldIdentifier();
 
-    private BonsaiProperties bonsaiProperties;
+    private final BonsaiProperties bonsaiProperties;
 
     public ComponentBonsaiTreeValidator(BonsaiProperties bonsaiProperties) {
         this.bonsaiProperties = bonsaiProperties;
@@ -44,19 +44,19 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
 
     private static <T> void checkNotNull(T reference, String fieldName) {
         if (reference == null) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, String.format(ERROR_FIELD_STR, fieldName));
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, ERROR_FIELD_STR.formatted(fieldName));
         }
     }
 
     private static void checkNotNullOrEmpty(String reference, String fieldName) {
         if (Strings.isNullOrEmpty(reference)) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, String.format(ERROR_FIELD_STR, fieldName));
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, ERROR_FIELD_STR.formatted(fieldName));
         }
     }
 
     private static <T> void checkNotNullOrEmpty(Collection<T> reference, String fieldName) {
         if (reference == null || reference.isEmpty()) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, String.format(ERROR_FIELD_STR, fieldName));
+            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, ERROR_FIELD_STR.formatted(fieldName));
         }
     }
 
@@ -85,7 +85,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
         validate(newKnot.getKnotData());
         if (!TreeUtils.isKnotDataOfSimilarType(existingKnot, newKnot)) {
             throw new BonsaiError(BonsaiErrorCode.KNOT_RESOLUTION_ERROR,
-                    String.format("knotData class mismatch rootKnot:%s variationKnot:%s",
+                    "knotData class mismatch rootKnot:%s variationKnot:%s".formatted(
                             existingKnot.getKnotData().getClass(),
                             newKnot.getKnotData().getClass()));
         }
@@ -232,13 +232,13 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
         final KnotData knotData = treeKnot.getKnotData();
         final KnotData.KnotDataType knotDataType = knotData.getKnotDataType();
         checkCondition((rootKnotDataType == knotDataType),
-                String.format("Internal KnotDataType : [%s]  isn't same as Root KnotDataType : [%s].", knotDataType, rootKnotDataType));
+                "Internal KnotDataType : [%s]  isn't same as Root KnotDataType : [%s].".formatted(knotDataType, rootKnotDataType));
 
         if (KnotData.KnotDataType.VALUED == knotDataType) {
             final ValuedKnotData valuedKnotData = (ValuedKnotData) treeKnot.getKnotData();
             final Value.ValueType valueType = valuedKnotData.getValue().getValueType();
             checkCondition((rootKnotValueType == valueType),
-                    String.format("Internal KnotValueType : [%s] isn't same as Root KnotValueType : [%s].", valueType, rootKnotValueType));
+                    "Internal KnotValueType : [%s] isn't same as Root KnotValueType : [%s].".formatted(valueType, rootKnotValueType));
         }
 
         final List<TreeEdge> treeEdgeList =

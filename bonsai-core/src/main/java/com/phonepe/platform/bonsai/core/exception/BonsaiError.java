@@ -30,22 +30,22 @@ public class BonsaiError extends RuntimeException {
     }
 
     public static BonsaiError propagate(Throwable e) {
-        if (e instanceof BonsaiError) {
-            return (BonsaiError) e;
+        if (e instanceof BonsaiError error) {
+            return error;
         }
         return new BonsaiError(BonsaiErrorCode.INTERNAL_SERVER_ERROR, e.getMessage(), e);
     }
 
     public static BonsaiError propagate(String message, Throwable e) {
-        if (e instanceof BonsaiError) {
-            return (BonsaiError) e;
+        if (e instanceof BonsaiError error) {
+            return error;
         }
         return new BonsaiError(BonsaiErrorCode.INTERNAL_SERVER_ERROR, message + " Error:" + e.getMessage(), e);
     }
 
     public static BonsaiError propagate(BonsaiErrorCode errorCode, String message, Throwable e) {
-        if (e instanceof BonsaiError) {
-            return (BonsaiError) e;
+        if (e instanceof BonsaiError error) {
+            return error;
         }
         return new BonsaiError(errorCode, message + " Error:" + e.getMessage(), e);
     }

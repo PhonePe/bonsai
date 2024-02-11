@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class JsonPathFilterEvaluationEngineTest {
-    private Bonsai<Context> bonsai = BonsaiBuilder.builder()
+    private final Bonsai<Context> bonsai = BonsaiBuilder.builder()
             .withBonsaiProperties(BonsaiProperties
                     .builder()
                     .mutualExclusivitySettingTurnedOn(true)

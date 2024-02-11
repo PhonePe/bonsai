@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 class FlatNodeTest {
-    private ObjectExtractor objectExtractor = new ObjectExtractor();
+    private final ObjectExtractor objectExtractor = new ObjectExtractor();
 
     @Test
     void testJsonValueFlatNode() throws IOException {

@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ComponentBonsaiTreeValidatorTest {
 
-    private ComponentBonsaiTreeValidator componentValidator
+    private final ComponentBonsaiTreeValidator componentValidator
             = new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
             .mutualExclusivitySettingTurnedOn(true)
             .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)

@@ -14,34 +14,36 @@ public class PathExpressionTest {
     @Test
     void testJsonPath() throws Exception {
         JsonPathSetup.setup();
-        DocumentContext parse = Parsers.parse("{\n" +
-                "  \"t\": [\n" +
-                "    {\n" +
-                "      \"price\": 1,\n" +
-                "      \"name\": \"anton\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"price\": 10,\n" +
-                "      \"name\": \"anaton\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"price\": 120,\n" +
-                "      \"name\": \"aanton\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"price\": 10,\n" +
-                "      \"name\": \"aaanton\"\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}");
+        DocumentContext parse = Parsers.parse("""
+                {
+                  "t": [
+                    {
+                      "price": 1,
+                      "name": "anton"
+                    },
+                    {
+                      "price": 10,
+                      "name": "anaton"
+                    },
+                    {
+                      "price": 120,
+                      "name": "aanton"
+                    },
+                    {
+                      "price": 10,
+                      "name": "aaanton"
+                    }
+                  ]
+                }\
+                """);
 
-        val read = parse.read("$.t[*].price", new TypeRef<List<Integer>>() {
-                })
+        final var read = parse.read("$.t[*].price", new TypeRef<List<Integer>>() {
+        })
                 .stream()
                 .mapToInt(Integer::intValue)
                 .sum();
-        val read2 = parse.read("$.t[*].price", new TypeRef<List<Integer>>() {
-                })
+        final var read2 = parse.read("$.t[*].price", new TypeRef<List<Integer>>() {
+        })
                 .stream()
                 .mapToInt(Integer::intValue)
                 .sum();

@@ -575,13 +575,13 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             final String internalKnotId = keyTreeStore.getKeyTree(key);
             if (internalKnotId == null || internalKnotId.isEmpty()) {
                 throw new BonsaiError(BonsaiErrorCode.KNOT_ABSENT,
-                                      String.format("%s is not present in our ecosystem", key));
+                        "%s is not present in our ecosystem".formatted(key));
             }
 
             final Knot internalKnot = knotStore.getKnot(internalKnotId);
             if (internalKnot == null) {
                 throw new BonsaiError(BonsaiErrorCode.KNOT_ABSENT,
-                                      String.format("%s is not present in our ecosystem", key));
+                        "%s is not present in our ecosystem".formatted(key));
             }
         });
     }
@@ -698,7 +698,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                         .collect(Collectors.toList()))
                 .values());
         Optional<Edge> conditionSatisfyingEdge = variationSelectorEngine.match(context, edges);
-        if (!conditionSatisfyingEdge.isPresent()) {
+        if (conditionSatisfyingEdge.isEmpty()) {
             /* base condition for the recursion */
             if (log.isDebugEnabled()) {
                 log.debug("[bonsai][getMatchingKnot][{}][{}] no edge satisfies conditions", context.id(), key);
@@ -794,7 +794,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                     .collect(Collectors.toSet());
             if (existingEdgeFields.size() > 1) {
                 throw new BonsaiError(BonsaiErrorCode.INVALID_STATE,
-                        String.format("mutualExclusivitySettingTurnedOn but multiple fields exist for knot:%s fields:%s",
+                        "mutualExclusivitySettingTurnedOn but multiple fields exist for knot:%s fields:%s".formatted(
                                 knot.getId(), existingEdgeFields));
             }
             if (!existingEdgeFields.isEmpty() && anyFieldNotInExistingEdgeFields(edge, existingEdgeFields)) {

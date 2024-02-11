@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class BonsaiTreeEdgeNumberTest {
 
-    private Bonsai<Context> bonsai = BonsaiBuilder.builder()
+    private final Bonsai<Context> bonsai = BonsaiBuilder.builder()
             .withBonsaiProperties(
                     BonsaiProperties
                             .builder()

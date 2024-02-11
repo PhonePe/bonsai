@@ -12,13 +12,15 @@ public class FlatNodeTest {
     void name() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper()
                 .registerModule(new ParameterNamesModule());
-        FlatNode flatNode = objectMapper.readValue("{\n" +
-                "\t\"type\": \"VALUE\", \n" +
-                "\t\"value\": {\n" +
-                "\t\t\"valueType\": \"NUMBER\",\n" +
-                "\t\t\"value\": 2\n" +
-                "\t}\n" +
-                "}", FlatNode.class);
+        FlatNode flatNode = objectMapper.readValue("""
+                {
+                	"type": "VALUE",\s
+                	"value": {
+                		"valueType": "NUMBER",
+                		"value": 2
+                	}
+                }\
+                """, FlatNode.class);
         Assertions.assertEquals(FlatNode.FlatNodeType.VALUE, flatNode.getType());
     }
 }

@@ -10,7 +10,7 @@ import com.phonepe.platform.bonsai.models.data.KnotData;
 import java.util.Map;
 
 public class ImmutableBonsaiBuilder<C extends Context> {
-    private Bonsai<C> bonsai;
+    private final Bonsai<C> bonsai;
 
     public ImmutableBonsaiBuilder(final Bonsai<C> bonsai) {
         this.bonsai = bonsai;

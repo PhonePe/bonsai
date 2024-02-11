@@ -73,7 +73,7 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
                     .treeKnot(treeKnot)
                     .build();
         } else {
-            final String errorOutput = String.format("[bonsai] The tree with [Key : %s] and [KnotId : %s] already exist.",
+            final String errorOutput = "[bonsai] The tree with [Key : %s] and [KnotId : %s] already exist.".formatted(
                     keyMappingDeltaOperation.getKeyId(), keyMappingDeltaOperation.getKnotId());
             log.error(errorOutput);
             throw new BonsaiError(BonsaiErrorCode.TREE_ALREADY_EXIST, errorOutput);
@@ -105,7 +105,7 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
 
         boolean isSuccessfullyInserted = insertKnotDeltaDataIntoTreeKnot(treeKnot, deltaOperationsToPreviousState, knotDeltaOperation);
         if (!isSuccessfullyInserted) {
-            final String errorOutput = String.format("[bonsai] Failed to insert knotDeltaOperation :[%s] into TreeKnot.", knotDeltaOperation);
+            final String errorOutput = "[bonsai] Failed to insert knotDeltaOperation :[%s] into TreeKnot.".formatted(knotDeltaOperation);
             log.error(errorOutput);
         }
 
@@ -214,7 +214,7 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
 
         boolean isSuccessfullyInserted = insertEdgeDeltaDataIntoTreeKnot(treeKnot, deltaOperationsToPreviousState, edgeDeltaOperation);
         if (!isSuccessfullyInserted) {
-            final String errorOutput = String.format("[bonsai] Failed to insert edgeDeltaOperation :[%s] into TreeKnot.", edgeDeltaOperation);
+            final String errorOutput = "[bonsai] Failed to insert edgeDeltaOperation :[%s] into TreeKnot.".formatted(edgeDeltaOperation);
             log.error(errorOutput);
         }
 

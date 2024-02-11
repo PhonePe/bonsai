@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BonsaiTreeEdgeOperationTest {
 
-    private Bonsai<Context> bonsai = BonsaiBuilder.builder()
+    private final Bonsai<Context> bonsai = BonsaiBuilder.builder()
             .withBonsaiProperties(BonsaiProperties
                     .builder()
                     .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
