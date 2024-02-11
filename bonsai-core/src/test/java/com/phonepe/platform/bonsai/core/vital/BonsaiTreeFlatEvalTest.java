@@ -2,8 +2,14 @@ package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.ParseContext;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.phonepe.platform.bonsai.core.Bonsai;
+import com.phonepe.platform.bonsai.core.Parsers;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.data.MapKnotData;
@@ -13,16 +19,16 @@ import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.query.dsl.numeric.GreaterEqualFilter;
 import com.phonepe.platform.query.dsl.numeric.LessThanFilter;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class BonsaiTreeFlatEvalTest {
+class BonsaiTreeFlatEvalTest {
 
     private Bonsai<Context> bonsai;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.bonsai = BonsaiBuilder.builder()
                 .withBonsaiProperties(
@@ -36,13 +42,13 @@ public class BonsaiTreeFlatEvalTest {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         this.bonsai = null;
     }
 
     @Test
-    public void testFlatEval() {
+    void testFlatEval() {
         bonsai.createMapping("w1", ValuedKnotData.stringValue("widget1"), null);
         bonsai.createMapping("w2", ValuedKnotData.stringValue("widget2"), null);
         bonsai.createMapping("v1", ValuedKnotData.stringValue("value1"), null);
@@ -67,21 +73,21 @@ public class BonsaiTreeFlatEvalTest {
 
         FlatTreeRepresentation flatEval = bonsai.evaluateFlat(
                 "l1", Context.builder()
-                        .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
+                        .documentContext(Parsers.parse(ImmutableMap.of("gender", "female")))
                         .build());
-        Assert.assertEquals(ImmutableList.of(1), flatEval.getFlatNodeMapping().get("l1").getPath());
+        Assertions.assertEquals(ImmutableList.of(1), flatEval.getFlatNodeMapping().get("l1").getPath());
 
         flatEval = bonsai.evaluateFlat(
                 "l1", Context.builder()
-                        .documentContext(JsonPath.parse(ImmutableMap.of("gender", "male")))
+                        .documentContext(Parsers.parse(ImmutableMap.of("gender", "male")))
                         .build());
-        Assert.assertEquals(ImmutableList.of(2), flatEval.getFlatNodeMapping().get("l1").getPath());
+        Assertions.assertEquals(ImmutableList.of(2), flatEval.getFlatNodeMapping().get("l1").getPath());
 
         flatEval = bonsai.evaluateFlat(
                 "l1", Context.builder()
-                        .documentContext(JsonPath.parse(ImmutableMap.of("gender", "xmale")))
+                        .documentContext(Parsers.parse(ImmutableMap.of("gender", "xmale")))
                         .build());
-        Assert.assertEquals(ImmutableList.of(), flatEval.getFlatNodeMapping().get("l1").getPath());
+        Assertions.assertEquals(ImmutableList.of(), flatEval.getFlatNodeMapping().get("l1").getPath());
 
 
         /* trying the same with another level */
@@ -102,11 +108,11 @@ public class BonsaiTreeFlatEvalTest {
 
         flatEval = bonsai.evaluateFlat(
                 "l1", Context.builder()
-                        .documentContext(JsonPath.parse(ImmutableMap.of("gender", "male",
+                        .documentContext(Parsers.parse(ImmutableMap.of("gender", "male",
                                 "age", 35,
                                 "cars", 1
                         )))
                         .build());
-        Assert.assertEquals(ImmutableList.of(2, 1, 1), flatEval.getFlatNodeMapping().get("l1").getPath());
+        Assertions.assertEquals(ImmutableList.of(2, 1, 1), flatEval.getFlatNodeMapping().get("l1").getPath());
     }
 }

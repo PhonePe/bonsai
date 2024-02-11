@@ -7,39 +7,39 @@ import com.phonepe.platform.bonsai.models.value.BooleanValue;
 import com.phonepe.platform.bonsai.models.value.JsonValue;
 import com.phonepe.platform.bonsai.models.value.NumberValue;
 import com.phonepe.platform.bonsai.models.value.StringValue;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class FlatNodeTest {
+class FlatNodeTest {
     private ObjectExtractor objectExtractor = new ObjectExtractor();
 
     @Test
-    public void testJsonValueFlatNode() throws IOException {
+    void testJsonValueFlatNode() throws IOException {
         FlatNode flatNode = objectExtractor.getObject("serde/jsonValue.json", FlatNode.class);
-        Assert.assertEquals(FlatNode.FlatNodeType.VALUE, flatNode.getType());
-        Assert.assertEquals("json", ((JsonValue) ((ValueFlatNode) flatNode).getValue()).getValue().get("some").asText());
+        Assertions.assertEquals(FlatNode.FlatNodeType.VALUE, flatNode.getType());
+        Assertions.assertEquals("json", ((JsonValue) ((ValueFlatNode) flatNode).getValue()).getValue().get("some").asText());
     }
 
     @Test
-    public void testNumberValueFlatNode() throws IOException {
+    void testNumberValueFlatNode() throws IOException {
         FlatNode flatNode = objectExtractor.getObject("serde/numberValue.json", FlatNode.class);
-        Assert.assertEquals(FlatNode.FlatNodeType.VALUE, flatNode.getType());
-        Assert.assertEquals(2, ((NumberValue) ((ValueFlatNode) flatNode).getValue()).getValue());
+        Assertions.assertEquals(FlatNode.FlatNodeType.VALUE, flatNode.getType());
+        Assertions.assertEquals(2, ((NumberValue) ((ValueFlatNode) flatNode).getValue()).getValue());
     }
 
     @Test
-    public void testStringValueFlatNode() throws IOException {
+    void testStringValueFlatNode() throws IOException {
         FlatNode flatNode = objectExtractor.getObject("serde/stringValue.json", FlatNode.class);
-        Assert.assertEquals(FlatNode.FlatNodeType.VALUE, flatNode.getType());
-        Assert.assertEquals("hello", ((StringValue) ((ValueFlatNode) flatNode).getValue()).getValue());
+        Assertions.assertEquals(FlatNode.FlatNodeType.VALUE, flatNode.getType());
+        Assertions.assertEquals("hello", ((StringValue) ((ValueFlatNode) flatNode).getValue()).getValue());
     }
 
     @Test
-    public void testBooleanValueFlatNode() throws IOException {
+    void testBooleanValueFlatNode() throws IOException {
         FlatNode flatNode = objectExtractor.getObject("serde/booleanValue.json", FlatNode.class);
-        Assert.assertEquals(FlatNode.FlatNodeType.VALUE, flatNode.getType());
-        Assert.assertEquals(true, ((BooleanValue) ((ValueFlatNode) flatNode).getValue()).isValue());
+        Assertions.assertEquals(FlatNode.FlatNodeType.VALUE, flatNode.getType());
+        Assertions.assertEquals(true, ((BooleanValue) ((ValueFlatNode) flatNode).getValue()).isValue());
     }
 }

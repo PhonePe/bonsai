@@ -4,17 +4,17 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.TypeRef;
 import lombok.val;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 public class PathExpressionTest {
 
     @Test
-    public void testJsonPath() throws Exception {
+    void testJsonPath() throws Exception {
         JsonPathSetup.setup();
-        DocumentContext parse = JsonPath.parse("{\n" +
+        DocumentContext parse = Parsers.parse("{\n" +
                 "  \"t\": [\n" +
                 "    {\n" +
                 "      \"price\": 1,\n" +
@@ -45,8 +45,8 @@ public class PathExpressionTest {
                 .stream()
                 .mapToInt(Integer::intValue)
                 .sum();
-        Assert.assertEquals(141, read);
-        Assert.assertEquals(141, read2);
+        Assertions.assertEquals(141, read);
+        Assertions.assertEquals(141, read2);
 
     }
 

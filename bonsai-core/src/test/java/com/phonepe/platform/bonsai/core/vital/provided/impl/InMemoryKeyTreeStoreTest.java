@@ -1,13 +1,13 @@
 package com.phonepe.platform.bonsai.core.vital.provided.impl;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InMemoryKeyTreeStoreTest {
 
@@ -18,61 +18,61 @@ public class InMemoryKeyTreeStoreTest {
 
     private InMemoryKeyTreeStore inMemoryKeyTreeStore;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         inMemoryKeyTreeStore = new InMemoryKeyTreeStore();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         inMemoryKeyTreeStore = null;
     }
 
     @Test
-    public void given_inMemoryKeyTreeStore_when_checkingMappingBetweenKeyToKnotId_then_returnKnotId() {
+    void given_inMemoryKeyTreeStore_when_checkingMappingBetweenKeyToKnotId_then_returnKnotId() {
         final String returnedKnotId = inMemoryKeyTreeStore.createKeyTree(KEY_TWO, KNOT_ID_TWO);
         final boolean isKnotTwoIdPresent = inMemoryKeyTreeStore.containsKey(KEY_TWO);
         final boolean isKnotOneIdPresent = inMemoryKeyTreeStore.containsKey(KEY_ONE);
         final boolean isKnotThreePresent = inMemoryKeyTreeStore.containsKey(null);
 
-        assertNull("Previous copy of Returned KnotId should be null.", returnedKnotId);
-        assertFalse("keyTwo:knotIdTwo should not be present in the map.", isKnotOneIdPresent);
-        assertTrue("keyOne:knotIdOne should be present in the map.", isKnotTwoIdPresent);
-        assertFalse("Nothing should not be present in the map for null key.", isKnotThreePresent);
+        assertNull(returnedKnotId, "Previous copy of Returned KnotId should be null.");
+        assertFalse(isKnotOneIdPresent, "keyTwo:knotIdTwo should not be present in the map.");
+        assertTrue(isKnotTwoIdPresent, "keyOne:knotIdOne should be present in the map.");
+        assertFalse(isKnotThreePresent, "Nothing should not be present in the map for null key.");
     }
 
     @Test
-    public void given_inMemoryKeyTreeStore_when_mappingKnotIdWithValidKey_then_returnKnotId() {
+    void given_inMemoryKeyTreeStore_when_mappingKnotIdWithValidKey_then_returnKnotId() {
         final String returnedKnotId = inMemoryKeyTreeStore.createKeyTree(KEY_ONE, KNOT_ID_ONE);
         final String getKnotId = inMemoryKeyTreeStore.getKeyTree(KEY_ONE);
 
-        assertNull("Previous copy of Returned KnotId should be null.", returnedKnotId);
-        assertEquals("Fetched KnotId should be : knotIdOne", KNOT_ID_ONE, getKnotId);
+        assertNull(returnedKnotId, "Previous copy of Returned KnotId should be null.");
+        assertEquals(KNOT_ID_ONE, getKnotId, "Fetched KnotId should be : knotIdOne");
     }
 
     @Test
-    public void given_inMemoryKeyTreeStore_when_mappingKnotWithNullKey_then_returnNullObject() {
+    void given_inMemoryKeyTreeStore_when_mappingKnotWithNullKey_then_returnNullObject() {
         final String returnedKnotId = inMemoryKeyTreeStore.createKeyTree(null, KNOT_ID_ONE);
         final String getKnotId = inMemoryKeyTreeStore.getKeyTree(null);
 
-        assertNull("Previous copy of Returned KnotId should be null.", returnedKnotId);
-        assertNull("Fetched copy of Returned KnotId should be null.", getKnotId);
+        assertNull(returnedKnotId, "Previous copy of Returned KnotId should be null.");
+        assertNull(getKnotId, "Fetched copy of Returned KnotId should be null.");
     }
 
     @Test
-    public void given_inMemoryKeyTreeStore_when_deletingKeyToKnotIdMapping_then_deleteMapping() {
+    void given_inMemoryKeyTreeStore_when_deletingKeyToKnotIdMapping_then_deleteMapping() {
         final String returnedKnotId = inMemoryKeyTreeStore.createKeyTree(KEY_ONE, KNOT_ID_ONE);
         final String deletedKnotId = inMemoryKeyTreeStore.removeKeyTree(KEY_ONE);
         final String getKnotId = inMemoryKeyTreeStore.getKeyTree(KEY_ONE);
 
-        assertNull("Previous copy of Returned KnotId should be null.", returnedKnotId);
-        assertEquals("Previous copy of deleted KnotId should be : knotIdOne", KNOT_ID_ONE, deletedKnotId);
-        assertNull("Fetched copy of deleted KnotId should be null.", getKnotId);
+        assertNull(returnedKnotId, "Previous copy of Returned KnotId should be null.");
+        assertEquals(KNOT_ID_ONE, deletedKnotId, "Previous copy of deleted KnotId should be : knotIdOne");
+        assertNull(getKnotId, "Fetched copy of deleted KnotId should be null.");
     }
 
     @Test
-    public void given_inMemoryKeyTreeStore_when_deletingNonExistingKeyToKnotIdMapping_then_returnNull() {
+    void given_inMemoryKeyTreeStore_when_deletingNonExistingKeyToKnotIdMapping_then_returnNull() {
         final String deletedKnotId = inMemoryKeyTreeStore.removeKeyTree(null);
-        assertNull("Copy of deletedKnotId KnotId should be null.", deletedKnotId);
+        assertNull(deletedKnotId, "Copy of deletedKnotId KnotId should be null.");
     }
 }

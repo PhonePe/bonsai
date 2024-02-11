@@ -1,13 +1,13 @@
 package com.phonepe.platform.bonsai.core.exception;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BonsaiErrorTest {
+class BonsaiErrorTest {
 
     @Test
-    public void given_bonsaiError_when_creatingBonsaiErrorObject_then_returnBonsaiErrorObject() {
+    void given_bonsaiError_when_creatingBonsaiErrorObject_then_returnBonsaiErrorObject() {
         final BonsaiError bonsaiErrorWithOnlyErrorCode = new BonsaiError(BonsaiErrorCode.INVALID_INPUT);
         final BonsaiError bonsaiErrorWithCodeAndMessage = new BonsaiError(BonsaiErrorCode.INVALID_INPUT, "Invalid Input");
         final BonsaiError bonsaiErrorWithCodeMessageAndThrowable = new BonsaiError(BonsaiErrorCode.TREE_ALREADY_EXIST, "Tree Exist", new IllegalArgumentException());
@@ -22,7 +22,7 @@ public class BonsaiErrorTest {
     }
 
     @Test
-    public void given_bonsaiError_when_creatingBonsaiErrorObjectUsingStaticFunction_then_returnBonsaiErrorObject() {
+    void given_bonsaiError_when_creatingBonsaiErrorObjectUsingStaticFunction_then_returnBonsaiErrorObject() {
         final BonsaiError bonsaiErrorWithThrowable = BonsaiError.propagate(new IllegalArgumentException());
         final BonsaiError bonsaiErrorWithMessageAndThrowable = BonsaiError.propagate("Invalid Message", new IllegalArgumentException());
         final BonsaiError bonsaiErrorWithCodeMessageAndThrowable = BonsaiError.propagate(BonsaiErrorCode.INVALID_INPUT, "Invalid Message", new IllegalArgumentException());

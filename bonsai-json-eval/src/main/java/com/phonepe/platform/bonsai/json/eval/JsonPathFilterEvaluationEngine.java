@@ -43,11 +43,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implements FilterVisitor<Boolean> {
 
-    private static final TypeRef<List<Number>> NUMBER_TYPE_REF = new TypeRef<List<Number>>() {
+    private static final TypeRef<List<Number>> NUMBER_TYPE_REF = new TypeRef<>() {
     };
-    private static final TypeRef<List<String>> STRING_TYPE_REF = new TypeRef<List<String>>() {
+    private static final TypeRef<List<String>> STRING_TYPE_REF = new TypeRef<>() {
     };
-    private static final TypeRef<List<Object>> OBJECT_TYPE_REF = new TypeRef<List<Object>>() {
+    private static final TypeRef<List<Object>> OBJECT_TYPE_REF = new TypeRef<>() {
     };
 
     protected final String entityId;

@@ -3,7 +3,7 @@ package com.phonepe.platform.bonsai.core.vital;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
-import com.phonepe.platform.bonsai.core.Mapper;
+import com.phonepe.platform.bonsai.core.Parsers;
 import com.phonepe.platform.bonsai.core.ObjectExtractor;
 import com.phonepe.platform.bonsai.core.TreeGenerationHelper;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
@@ -33,10 +33,10 @@ import com.phonepe.platform.bonsai.models.value.StringValue;
 import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,16 +48,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BonsaiTreeTest {
 
     private Bonsai<Context> bonsai;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         bonsai = BonsaiBuilder.builder()
                 .withBonsaiProperties(
@@ -70,13 +71,13 @@ public class BonsaiTreeTest {
                 .build();
     }
 
-    @After
+    @AfterEach
     public void destroy() {
         bonsai = null;
     }
 
     @Test
-    public void given_bonsaiTree_when_evaluatingTree_then_returnKeyNode() throws IOException {
+    void given_bonsaiTree_when_evaluatingTree_then_returnKeyNode() throws IOException {
         Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
         Knot level1 = bonsai.createMapping("test", ValuedKnotData.stringValue("1"), null);
         Knot level21 = bonsai.createKnot(ValuedKnotData.stringValue("21"), null);
@@ -92,22 +93,22 @@ public class BonsaiTreeTest {
                 .knotId(level22.getId())
                 .build());
         final KeyNode keyNode = bonsai.evaluate("test", Context.builder()
-                .documentContext(JsonPath.parse(userContext1))
+                .documentContext(Parsers.parse(userContext1))
                 .build());
-        Assert.assertNotNull("KeyNode should not be null.", keyNode);
-        Assert.assertEquals("The value of [keyNode.Key] should be : test.", "test", keyNode.getKey());
+        Assertions.assertNotNull(keyNode, "KeyNode should not be null.");
+        Assertions.assertEquals("test", keyNode.getKey(), "The value of [keyNode.Key] should be : test.");
     }
 
     @Test
-    public void given_bonsaiTree_when_evaluatingTreeHeavilyWithGenderFilter_then_returnKeyNode() throws IOException, BonsaiError {
-        Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
-        Map userContext2 = new ObjectExtractor().getObject("userData2.json", Map.class);
+    void given_bonsaiTree_when_evaluatingTreeHeavilyWithGenderFilter_then_returnKeyNode() throws IOException, BonsaiError {
+        final var userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
+        final var userContext2 = new ObjectExtractor().getObject("userData2.json", Map.class);
 
         bonsai.createMapping("icon_1", ValuedKnotData.stringValue("1"), null);
         bonsai.createMapping("icon_2", ValuedKnotData.stringValue("2"), null);
         bonsai.createMapping("icon_3", ValuedKnotData.stringValue("3"), null);
         bonsai.createMapping("icon_4", ValuedKnotData.stringValue("4"), null);
-        Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
+        final var widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
                 .key("icon_1")
                 .key("icon_4")
                 .key("icon_2")
@@ -115,7 +116,7 @@ public class BonsaiTreeTest {
                 .build(), null);
         bonsai.createMapping("widget_2", ValuedKnotData.stringValue("widget_2"), null);
         bonsai.createMapping("widget_3", ValuedKnotData.stringValue("widget_3"), null);
-        Knot hpKnot = bonsai.createKnot(MultiKnotData.builder()
+        final var hpKnot = bonsai.createKnot(MultiKnotData.builder()
                 .key("widget_1")
                 .key("widget_2")
                 .key("widget_3")
@@ -123,65 +124,65 @@ public class BonsaiTreeTest {
 
         bonsai.createMapping("home_page_1", hpKnot.getId());
 
-        Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
+        final var femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
                 .key("icon_3")
                 .key("icon_1")
                 .key("icon_4")
                 .build(), null);
-        Assert.assertNotNull(femaleConditionKnot);
+        Assertions.assertNotNull(femaleConditionKnot);
 
-        Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
+        Assertions.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
                 .filter(new EqualsFilter("$.gender", "female"))
                 .knotId(femaleConditionKnot.getId())
                 .build()));
 
         KeyNode user1HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
-                .documentContext(JsonPath.parse(userContext1))
+                .documentContext(Parsers.parse(userContext1))
                 .build());
-        System.out.println(Mapper.MAPPER.writeValueAsString(user1HomePageEvaluation));
+        System.out.println(Parsers.MAPPER.writeValueAsString(user1HomePageEvaluation));
 
-        Assert.assertEquals("home_page_1", user1HomePageEvaluation.getKey());
-        Assert.assertEquals(user1HomePageEvaluation.getNode().getId(), hpKnot.getId());
-        Assert.assertTrue(NodeVisitors.isList(user1HomePageEvaluation.getNode()));
+        Assertions.assertEquals("home_page_1", user1HomePageEvaluation.getKey());
+        Assertions.assertEquals(user1HomePageEvaluation.getNode().getId(), hpKnot.getId());
+        Assertions.assertTrue(NodeVisitors.isList(user1HomePageEvaluation.getNode()));
 
-        Assert.assertEquals(3, ((ListNode) user1HomePageEvaluation.getNode()).getNodes().size());
-        Assert.assertTrue(NodeVisitors.isList(((ListNode) user1HomePageEvaluation.getNode()).getNodes()
+        Assertions.assertEquals(3, ((ListNode) user1HomePageEvaluation.getNode()).getNodes().size());
+        Assertions.assertTrue(NodeVisitors.isList(((ListNode) user1HomePageEvaluation.getNode()).getNodes()
                 .get(0)
                 .getNode()));
 
-        Assert.assertEquals(4, ((ListNode) (((ListNode) user1HomePageEvaluation.getNode()).getNodes()
+        Assertions.assertEquals(4, ((ListNode) (((ListNode) user1HomePageEvaluation.getNode()).getNodes()
                 .get(0)
                 .getNode())).getNodes()
                 .size());
 
         /* evaluate with context 2 */
         KeyNode user2HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
-                .documentContext(JsonPath.parse(userContext2))
+                .documentContext(Parsers.parse(userContext2))
                 .build());
 
 
-        Assert.assertEquals("home_page_1", user2HomePageEvaluation.getKey());
-        Assert.assertEquals(hpKnot.getId(), user2HomePageEvaluation.getNode().getId());
-        Assert.assertTrue(NodeVisitors.isList(user2HomePageEvaluation.getNode()));
+        Assertions.assertEquals("home_page_1", user2HomePageEvaluation.getKey());
+        Assertions.assertEquals(hpKnot.getId(), user2HomePageEvaluation.getNode().getId());
+        Assertions.assertTrue(NodeVisitors.isList(user2HomePageEvaluation.getNode()));
 
-        Assert.assertEquals(3, ((ListNode) user2HomePageEvaluation.getNode()).getNodes().size());
-        Assert.assertTrue(NodeVisitors.isList(((ListNode) user2HomePageEvaluation.getNode()).getNodes()
+        Assertions.assertEquals(3, ((ListNode) user2HomePageEvaluation.getNode()).getNodes().size());
+        Assertions.assertTrue(NodeVisitors.isList(((ListNode) user2HomePageEvaluation.getNode()).getNodes()
                 .get(0)
                 .getNode()));
 
-        Assert.assertEquals(3, ((ListNode) (((ListNode) user2HomePageEvaluation.getNode()).getNodes()
+        Assertions.assertEquals(3, ((ListNode) (((ListNode) user2HomePageEvaluation.getNode()).getNodes()
                 .get(0).getNode())).getNodes()
                 .size());
 
-        Assert.assertEquals((((ListNode) user2HomePageEvaluation.getNode()).getNodes()
+        Assertions.assertEquals((((ListNode) user2HomePageEvaluation.getNode()).getNodes()
                 .get(0)
                 .getNode()).getId(), femaleConditionKnot.getId());
 
-        System.out.println(Mapper.MAPPER.writeValueAsString(user2HomePageEvaluation));
+        System.out.println(Parsers.MAPPER.writeValueAsString(user2HomePageEvaluation));
     }
 
     @Test
-    public void given_bonsaiTree_when_evaluatingTreeHeavilyWithLocationFilter_then_returnKeyNode() throws IOException, BonsaiError {
+    void given_bonsaiTree_when_evaluatingTreeHeavilyWithLocationFilter_then_returnKeyNode() throws IOException, BonsaiError {
         Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
         Map userContext2 = new ObjectExtractor().getObject("userData2.json", Map.class);
 
@@ -210,61 +211,61 @@ public class BonsaiTreeTest {
                 .key("icon_1")
                 .key("icon_4")
                 .build(), null);
-        Assert.assertNotNull(femaleConditionKnot);
+        Assertions.assertNotNull(femaleConditionKnot);
 
-        Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
+        Assertions.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
                 .filter(new EqualsFilter("$.location.tier", "tier2"))
                 .knotId(femaleConditionKnot.getId())
                 .build()));
 
         KeyNode user1HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
-                .documentContext(JsonPath.parse(userContext1))
+                .documentContext(Parsers.parse(userContext1))
                 .build());
-        System.out.println(Mapper.MAPPER.writeValueAsString(user1HomePageEvaluation));
+        System.out.println(Parsers.MAPPER.writeValueAsString(user1HomePageEvaluation));
 
-        Assert.assertEquals("home_page_1", user1HomePageEvaluation.getKey());
-        Assert.assertEquals(hpKnot.getId(), user1HomePageEvaluation.getNode().getId());
-        Assert.assertTrue(NodeVisitors.isList(user1HomePageEvaluation.getNode()));
+        Assertions.assertEquals("home_page_1", user1HomePageEvaluation.getKey());
+        Assertions.assertEquals(hpKnot.getId(), user1HomePageEvaluation.getNode().getId());
+        Assertions.assertTrue(NodeVisitors.isList(user1HomePageEvaluation.getNode()));
 
-        Assert.assertEquals(3, ((ListNode) user1HomePageEvaluation.getNode()).getNodes().size());
-        Assert.assertTrue(NodeVisitors.isList(((ListNode) user1HomePageEvaluation.getNode()).getNodes()
+        Assertions.assertEquals(3, ((ListNode) user1HomePageEvaluation.getNode()).getNodes().size());
+        Assertions.assertTrue(NodeVisitors.isList(((ListNode) user1HomePageEvaluation.getNode()).getNodes()
                 .get(0)
                 .getNode()));
 
-        Assert.assertEquals(4, ((ListNode) (((ListNode) user1HomePageEvaluation.getNode()).getNodes()
+        Assertions.assertEquals(4, ((ListNode) (((ListNode) user1HomePageEvaluation.getNode()).getNodes()
                 .get(0)
                 .getNode())).getNodes()
                 .size());
 
         /* evaluate with context 2 */
         KeyNode user2HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
-                .documentContext(JsonPath.parse(userContext2))
+                .documentContext(Parsers.parse(userContext2))
                 .build());
 
 
-        Assert.assertEquals("home_page_1", user2HomePageEvaluation.getKey());
-        Assert.assertEquals(user2HomePageEvaluation.getNode().getId(), hpKnot.getId());
-        Assert.assertTrue(NodeVisitors.isList(user2HomePageEvaluation.getNode()));
+        Assertions.assertEquals("home_page_1", user2HomePageEvaluation.getKey());
+        Assertions.assertEquals(user2HomePageEvaluation.getNode().getId(), hpKnot.getId());
+        Assertions.assertTrue(NodeVisitors.isList(user2HomePageEvaluation.getNode()));
 
-        Assert.assertEquals(3, ((ListNode) user2HomePageEvaluation.getNode()).getNodes().size());
-        Assert.assertTrue(NodeVisitors.isList(((ListNode) user2HomePageEvaluation.getNode()).getNodes()
+        Assertions.assertEquals(3, ((ListNode) user2HomePageEvaluation.getNode()).getNodes().size());
+        Assertions.assertTrue(NodeVisitors.isList(((ListNode) user2HomePageEvaluation.getNode()).getNodes()
                 .get(0)
                 .getNode()));
 
-        Assert.assertEquals(3, ((ListNode) (((ListNode) user2HomePageEvaluation.getNode()).getNodes()
+        Assertions.assertEquals(3, ((ListNode) (((ListNode) user2HomePageEvaluation.getNode()).getNodes()
                 .get(0)
                 .getNode())).getNodes()
                 .size());
 
-        Assert.assertEquals((((ListNode) user2HomePageEvaluation.getNode()).getNodes()
+        Assertions.assertEquals((((ListNode) user2HomePageEvaluation.getNode()).getNodes()
                 .get(0)
                 .getNode()).getId(), femaleConditionKnot.getId());
 
-        System.out.println(Mapper.MAPPER.writeValueAsString(user2HomePageEvaluation));
+        System.out.println(Parsers.MAPPER.writeValueAsString(user2HomePageEvaluation));
     }
 
     @Test
-    public void given_bonsaiTree_when_evaluatingTreeHeavilyWithMapKnot_then_returnKeyNode() throws IOException, BonsaiError {
+    void given_bonsaiTree_when_evaluatingTreeHeavilyWithMapKnot_then_returnKeyNode() throws IOException, BonsaiError {
         Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
 
         bonsai.createMapping("icon_1", ValuedKnotData.stringValue("1"), null);
@@ -272,12 +273,12 @@ public class BonsaiTreeTest {
         Knot icon3 = bonsai.createKnot(ValuedKnotData.stringValue(("This is some coool icon")), null);
         /* there is no older mapping, hence it will return null */
         Knot icon_3 = bonsai.createMapping("icon_3", icon3.getId());
-        Assert.assertNull(icon_3);
+        Assertions.assertNull(icon_3);
 
         /* now mappings exist, hence it will return the older knot */
         Knot icon_3_1 = bonsai.createMapping("icon_3", icon3.getId());
-        Assert.assertNotNull(icon_3_1);
-        Assert.assertEquals(icon3, icon_3_1);
+        Assertions.assertNotNull(icon_3_1);
+        Assertions.assertEquals(icon3, icon_3_1);
         bonsai.createMapping("icon_4", ValuedKnotData.stringValue("4"), null);
         Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
                 .key("icon_1")
@@ -294,39 +295,39 @@ public class BonsaiTreeTest {
                         "w3", "widget_3",
                         "w4", "widget_4"))
                 .build(), null);
-        Assert.assertNull(bonsai.createMapping("home_page_1", homePageKnot.getId()));
+        Assertions.assertNull(bonsai.createMapping("home_page_1", homePageKnot.getId()));
         Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
                 .key("icon_3")
                 .key("icon_1")
                 .key("icon_4")
                 .build(), null);
-        Assert.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
+        Assertions.assertNotNull(bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
                 .filter(new EqualsFilter("$.gender", "female"))
                 .knotId(femaleConditionKnot.getId())
                 .build()));
 
         KeyNode user1HomePageEvaluation = bonsai.evaluate("home_page_1", Context.builder()
-                .documentContext(JsonPath.parse(userContext1))
+                .documentContext(Parsers.parse(userContext1))
                 .build());
-        System.out.println(Mapper.MAPPER.writeValueAsString(user1HomePageEvaluation));
+        System.out.println(Parsers.MAPPER.writeValueAsString(user1HomePageEvaluation));
 
-        Assert.assertEquals("home_page_1", user1HomePageEvaluation.getKey());
-        Assert.assertEquals(homePageKnot.getId(), user1HomePageEvaluation.getNode().getId());
-        Assert.assertTrue(NodeVisitors.isMap(user1HomePageEvaluation.getNode()));
+        Assertions.assertEquals("home_page_1", user1HomePageEvaluation.getKey());
+        Assertions.assertEquals(homePageKnot.getId(), user1HomePageEvaluation.getNode().getId());
+        Assertions.assertTrue(NodeVisitors.isMap(user1HomePageEvaluation.getNode()));
 
-        Assert.assertEquals(4, ((MapNode) user1HomePageEvaluation.getNode()).getNodeMap().size());
-        Assert.assertTrue(NodeVisitors.isList(((MapNode) user1HomePageEvaluation.getNode()).getNodeMap()
+        Assertions.assertEquals(4, ((MapNode) user1HomePageEvaluation.getNode()).getNodeMap().size());
+        Assertions.assertTrue(NodeVisitors.isList(((MapNode) user1HomePageEvaluation.getNode()).getNodeMap()
                 .get("w1")
                 .getNode()));
 
-        Assert.assertEquals(4, ((ListNode) (((MapNode) user1HomePageEvaluation.getNode()).getNodeMap()
+        Assertions.assertEquals(4, ((ListNode) (((MapNode) user1HomePageEvaluation.getNode()).getNodeMap()
                 .get("w1")
                 .getNode())).getNodes()
                 .size());
     }
 
     @Test
-    public void given_bonsaiTree_when_evaluatingTree_then_returnPreferredKeyNode() {
+    void given_bonsaiTree_when_evaluatingTree_then_returnPreferredKeyNode() {
         Knot l1 = bonsai.createKnot(ValuedKnotData.stringValue("L-1"), null);
         bonsai.createMapping("baseKey", l1.getId());
 
@@ -338,10 +339,10 @@ public class BonsaiTreeTest {
                 .build());
 
         KeyNode nonPreferencialEval = bonsai.evaluate("baseKey", Context.builder()
-                .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
+                .documentContext(Parsers.parse(ImmutableMap.of("gender", "female")))
                 .build());
-        Assert.assertEquals(l21.getId(), nonPreferencialEval.getNode().getId());
-        Assert.assertEquals("L-2-1", ((StringValue) ((ValueNode) nonPreferencialEval.getNode()).getValue()).getValue());
+        Assertions.assertEquals(l21.getId(), nonPreferencialEval.getNode().getId());
+        Assertions.assertEquals("L-2-1", ((StringValue) ((ValueNode) nonPreferencialEval.getNode()).getValue()).getValue());
         Knot preferredKnot = Knot.builder()
                 .id("P1kaID")
                 .knotData(ValuedKnotData.stringValue("P-1"))
@@ -349,16 +350,16 @@ public class BonsaiTreeTest {
         KeyNode preferentialEval = bonsai.evaluate
                 ("baseKey",
                         Context.builder()
-                                .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
+                                .documentContext(Parsers.parse(ImmutableMap.of("gender", "female")))
                                 .preferences(ImmutableMap.of("baseKey", preferredKnot))
                                 .build());
-        Assert.assertEquals(preferredKnot.getId(), preferentialEval.getNode().getId());
-        Assert.assertEquals(((StringValue) ((ValuedKnotData) preferredKnot.getKnotData()).getValue()).getValue(),
+        Assertions.assertEquals(preferredKnot.getId(), preferentialEval.getNode().getId());
+        Assertions.assertEquals(((StringValue) ((ValuedKnotData) preferredKnot.getKnotData()).getValue()).getValue(),
                 ((StringValue) ((ValueNode) preferentialEval.getNode()).getValue()).getValue());
     }
 
     @Test
-    public void given_bonsaiTree_when_evaluatingTree_then_returnRecursivePreferredKeyNode() {
+    void given_bonsaiTree_when_evaluatingTree_then_returnRecursivePreferredKeyNode() {
         bonsai.createMapping("w1", ValuedKnotData.stringValue("widget1"), null);
         bonsai.createMapping("w2", ValuedKnotData.stringValue("widget2"), null);
         bonsai.createMapping("w3", ValuedKnotData.stringValue("widget3"), null);
@@ -382,9 +383,9 @@ public class BonsaiTreeTest {
                 .build());
 
         KeyNode nonPreferencialEval = bonsai.evaluate("l1", Context.builder()
-                .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
+                .documentContext(Parsers.parse(ImmutableMap.of("gender", "female")))
                 .build());
-        Assert.assertEquals(l21.getId(), nonPreferencialEval.getNode().getId());
+        Assertions.assertEquals(l21.getId(), nonPreferencialEval.getNode().getId());
         Knot preferredKnot = Knot.builder()
                 .id("P1kaID")
                 .knotData(MultiKnotData.builder().key("w3").key("w1").build())
@@ -392,37 +393,37 @@ public class BonsaiTreeTest {
         KeyNode preferentialEval = bonsai.evaluate
                 ("l1",
                         Context.builder()
-                                .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
+                                .documentContext(Parsers.parse(ImmutableMap.of("gender", "female")))
                                 .preferences(ImmutableMap.of("l1", preferredKnot))
                                 .build());
-        Assert.assertEquals(preferredKnot.getId(), preferentialEval.getNode().getId());
-        Assert.assertEquals("widget3", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+        Assertions.assertEquals(preferredKnot.getId(), preferentialEval.getNode().getId());
+        Assertions.assertEquals("widget3", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
                 .getNodes().get(0).getNode()).getValue()).getValue());
-        Assert.assertEquals("widget1", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+        Assertions.assertEquals("widget1", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
                 .getNodes().get(1).getNode()).getValue()).getValue());
 
         /* now evaluate with a new value for widget1 */
         preferentialEval = bonsai.evaluate
                 ("l1",
                         Context.builder()
-                                .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
+                                .documentContext(Parsers.parse(ImmutableMap.of("gender", "female")))
                                 .preferences(ImmutableMap.of("l1", preferredKnot,
                                         "w1", Knot.builder()
                                                 .id("w1kaID")
                                                 .knotData(ValuedKnotData.stringValue("newStringValue"))
                                                 .build()))
                                 .build());
-        Assert.assertEquals(preferredKnot.getId(), preferentialEval.getNode().getId());
-        Assert.assertEquals("widget3", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+        Assertions.assertEquals(preferredKnot.getId(), preferentialEval.getNode().getId());
+        Assertions.assertEquals("widget3", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
                 .getNodes().get(0).getNode()).getValue()).getValue());
 
         /* the value should be whatever we have set in preferences */
-        Assert.assertEquals("newStringValue", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
+        Assertions.assertEquals("newStringValue", ((StringValue) ((ValueNode) ((ListNode) preferentialEval.getNode())
                 .getNodes().get(1).getNode()).getValue()).getValue());
     }
 
     @Test
-    public void given_bonsaiTree_when_gettingCompleteTree_then_returnTreeKnot() {
+    void given_bonsaiTree_when_gettingCompleteTree_then_returnTreeKnot() {
         final Knot knotOne = bonsai.createKnot(ValuedKnotData.stringValue("KnotOne"), null);
         final Knot knotTwo = bonsai.createKnot(ValuedKnotData.stringValue("KnotTwo"), null);
         bonsai.createMapping("key", knotOne.getId());
@@ -433,26 +434,26 @@ public class BonsaiTreeTest {
 
         final TreeKnot treeKnot = bonsai.getCompleteTree("key");
 
-        assertNotNull("TreeKnot should not be null.", treeKnot);
-        assertNotNull("TreeKnot Id should not be null.", treeKnot.getId());
-        assertNotNull("TreeKnot data should exist.", treeKnot.getKnotData());
-        assertEquals("There is only one edge connected to root TreeKnot.", 1, treeKnot.getTreeEdges().size());
-        assertNotEquals("Version of TreeKnot should not be zero.", 0, treeKnot.getVersion());
+        assertNotNull(treeKnot, "TreeKnot should not be null.");
+        assertNotNull(treeKnot.getId(), "TreeKnot Id should not be null.");
+        assertNotNull(treeKnot.getKnotData(), "TreeKnot data should exist.");
+        assertEquals(1, treeKnot.getTreeEdges().size(), "There is only one edge connected to root TreeKnot.");
+        assertNotEquals(0, treeKnot.getVersion(), "Version of TreeKnot should not be zero.");
         final TreeEdge treeEdge = treeKnot.getTreeEdges().get(0);
-        assertNotNull("TreeEdge should not be null.", treeEdge);
-        assertNotNull("TreeEdge should have non-null identifier.", treeEdge.getEdgeIdentifier());
-        assertEquals("There is only one filter connected to root TreeEdge.", 1, treeEdge.getFilters().size());
-        assertNotEquals("Version of TreeEdge should not be zero.", 0, treeEdge.getVersion());
+        assertNotNull(treeEdge, "TreeEdge should not be null.");
+        assertNotNull(treeEdge.getEdgeIdentifier(), "TreeEdge should have non-null identifier.");
+        assertEquals(1, treeEdge.getFilters().size(), "There is only one filter connected to root TreeEdge.");
+        assertNotEquals(0, treeEdge.getVersion(), "Version of TreeEdge should not be zero.");
         final TreeKnot treeKnotInternal = treeEdge.getTreeKnot();
-        assertNotNull("Internal TreeKnot should not be null.", treeKnotInternal);
-        assertNotNull("Internal TreeKnot Id should not be null.", treeKnotInternal.getId());
-        assertNotNull("Internal TreeKnot data should exist.", treeKnotInternal.getKnotData());
-        assertNull("Internal TreeKnot should have zero TreeEdges.", treeKnotInternal.getTreeEdges());
-        assertNotEquals("Version of Internal TreeKnot should not be zero.", 0, treeKnotInternal.getVersion());
+        assertNotNull(treeKnotInternal, "Internal TreeKnot should not be null.");
+        assertNotNull(treeKnotInternal.getId(), "Internal TreeKnot Id should not be null.");
+        assertNotNull(treeKnotInternal.getKnotData(), "Internal TreeKnot data should exist.");
+        assertNull(treeKnotInternal.getTreeEdges(), "Internal TreeKnot should have zero TreeEdges.");
+        assertNotEquals(0, treeKnotInternal.getVersion(), "Version of Internal TreeKnot should not be zero.");
     }
 
     @Test
-    public void given_bonsaiTree_when_gettingCompleteTreeWithPendingUpdates_then_returnTreeKnot() {
+    void given_bonsaiTree_when_gettingCompleteTreeWithPendingUpdates_then_returnTreeKnot() {
         final List<DeltaOperation> deltaOperationList = new ArrayList<>();
         deltaOperationList.add(new KeyMappingDeltaOperation("key", "knotOne"));
         deltaOperationList.add(new KnotDeltaOperation(new Knot("knotOne", 0, null, ValuedKnotData.stringValue("Knot One Value"), new HashMap<>())));
@@ -461,18 +462,18 @@ public class BonsaiTreeTest {
         final String knotViaKey = bonsai.getMapping("key");
         final Knot knot = bonsai.getKnot("knotOne");
 
-        assertNotNull("TreeKnot should not be null.", treeKnot);
-        assertEquals("The Id of TreeKnot should be : knotOne.", "knotOne", treeKnot.getId());
-        assertEquals("The version of temporary TreeKnot should be zero.", 0, treeKnot.getVersion());
-        assertEquals("There are zero edges connected to TreeKnot.", 0, treeKnot.getTreeEdges().size());
-        assertNotNull("TreeKnot data should exist.", treeKnot.getKnotData());
-        assertEquals("VALUED type KnotData should present.", "VALUED", treeKnot.getKnotData().getKnotDataType().toString());
-        assertNull("InMemoryKeyTreeStore should not contain knotId for keyId : key", knotViaKey);
-        assertNull("InMemoryKnotStore should not contain Knot for knotId : knotOne", knot);
+        assertNotNull(treeKnot, "TreeKnot should not be null.");
+        assertEquals("knotOne", treeKnot.getId(), "The Id of TreeKnot should be : knotOne.");
+        assertEquals(0, treeKnot.getVersion(), "The version of temporary TreeKnot should be zero.");
+        assertEquals(0, treeKnot.getTreeEdges().size(), "There are zero edges connected to TreeKnot.");
+        assertNotNull(treeKnot.getKnotData(), "TreeKnot data should exist.");
+        assertEquals("VALUED", treeKnot.getKnotData().getKnotDataType().toString(), "VALUED type KnotData should present.");
+        assertNull(knotViaKey, "InMemoryKeyTreeStore should not contain knotId for keyId : key");
+        assertNull(knot, "InMemoryKnotStore should not contain Knot for knotId : knotOne");
     }
 
     @Test
-    public void given_bonsaiTree_when_applyingPendingUpdatesOnCompleteTree_then_returnTreeKnot() {
+    void given_bonsaiTree_when_applyingPendingUpdatesOnCompleteTree_then_returnTreeKnot() {
         final List<DeltaOperation> deltaOperationList = new ArrayList<>();
         deltaOperationList.add(new KeyMappingDeltaOperation("key", "knotOne"));
         deltaOperationList.add(new KnotDeltaOperation(new Knot("knotOne", 0, null, ValuedKnotData.stringValue("Knot One Value"), new HashMap<>())));
@@ -481,17 +482,17 @@ public class BonsaiTreeTest {
         final String knotViaKey = bonsai.getMapping("key");
         final Knot knot = bonsai.getKnot(knotViaKey);
 
-        assertNotNull("TreeKnot should not be null.", treeKnot);
-        assertEquals("The Id of TreeKnot should be : knotOne.", "knotOne", treeKnot.getId());
-        assertEquals("The version of temporary TreeKnot should be zero.", 0, treeKnot.getVersion());
-        assertEquals("There are zero edges connected to TreeKnot.", 0, treeKnot.getTreeEdges().size());
-        assertNotNull("TreeKnot data should exist.", treeKnot.getKnotData());
-        assertEquals("VALUED type KnotData should present.", "VALUED", treeKnot.getKnotData().getKnotDataType().toString());
-        assertNotNull("Knot should not be null.", knot);
-        assertNotEquals("The version of Knot should not be zero.", 0, knot.getVersion()); // This is main check.
-        assertNull("There are zero edges connected to Knot.", knot.getEdges());
-        assertNotNull("Knot data should exist.", knot.getKnotData());
-        assertEquals("VALUED type KnotData should present.", "VALUED", knot.getKnotData().getKnotDataType().toString());
+        assertNotNull(treeKnot, "TreeKnot should not be null.");
+        assertEquals("knotOne", treeKnot.getId(), "The Id of TreeKnot should be : knotOne.");
+        assertEquals(0, treeKnot.getVersion(), "The version of temporary TreeKnot should be zero.");
+        assertEquals(0, treeKnot.getTreeEdges().size(), "There are zero edges connected to TreeKnot.");
+        assertNotNull(treeKnot.getKnotData(), "TreeKnot data should exist.");
+        assertEquals("VALUED", treeKnot.getKnotData().getKnotDataType().toString(), "VALUED type KnotData should present.");
+        assertNotNull(knot, "Knot should not be null.");
+        assertNotEquals(0, knot.getVersion(), "The version of Knot should not be zero."); // This is main check.
+        assertNull(knot.getEdges(), "There are zero edges connected to Knot.");
+        assertNotNull(knot.getKnotData(), "Knot data should exist.");
+        assertEquals("VALUED", knot.getKnotData().getKnotDataType().toString(), "VALUED type KnotData should present.");
     }
 
     /**
@@ -535,7 +536,7 @@ public class BonsaiTreeTest {
      * Now, validate its along with the new number '3' on the newest knot.
      */
     @Test
-    public void Given_BonsaiTreeAndDeltaOperationList_When_ApplyingDeltaOperationsOnTree_Then_SaveAndReturnFinalTreeKnot() {
+    void Given_BonsaiTreeAndDeltaOperationList_When_ApplyingDeltaOperationsOnTree_Then_SaveAndReturnFinalTreeKnot() {
         // First Insertion
         List<DeltaOperation> deltaOperationList = new ArrayList<>();
         final KeyMappingDeltaOperation keyMappingDeltaOperation = KeyMappingDeltaOperation.builder()
@@ -819,7 +820,7 @@ public class BonsaiTreeTest {
      * Now, validate it.
      */
     @Test
-    public void Given_BonsaiTreeAndDeltaOperationList_When_ApplyingDeltaOperationsOnTree_Then_ReturnFinalTreeKnotAndVerifyEdgeVersioning() {
+    void Given_BonsaiTreeAndDeltaOperationList_When_ApplyingDeltaOperationsOnTree_Then_ReturnFinalTreeKnotAndVerifyEdgeVersioning() {
         List<DeltaOperation> deltaOperationList = new ArrayList<>();
         final Knot firstKnot = Knot.builder()
                 .id("firstKnotId")
@@ -1035,7 +1036,7 @@ public class BonsaiTreeTest {
      * 3. Now apply the RD2 on the top-most snapshot and validate if it is equivalent to the first copy.
      */
     @Test
-    public void Given_BonsaiTreeAndDeltaOperationList_When_ApplyingDeltaOperationsOnTree_Then_ReturnFinalTreeKnotAndVerifyAndApplyRevertDeltaOperationList() {
+    void Given_BonsaiTreeAndDeltaOperationList_When_ApplyingDeltaOperationsOnTree_Then_ReturnFinalTreeKnotAndVerifyAndApplyRevertDeltaOperationList() {
 
         final String knotIdOne = "knotIdOne";
         final KnotData knotDataOne = ValuedKnotData.builder().value(new StringValue("Value::1")).build();
@@ -1314,82 +1315,92 @@ public class BonsaiTreeTest {
     }
 
     @Test
-    public void given_bonsaiTree_when_deleteKnot_then_returnNull() {
+    void given_bonsaiTree_when_deleteKnot_then_returnNull() {
         final TreeKnot treeKnot = bonsai.deleteKnot("knotId", false);
-        Assert.assertNull("TreeKnot should be null.", treeKnot);
+        Assertions.assertNull(treeKnot, "TreeKnot should be null.");
     }
 
     @Test
-    public void given_bonsaiTree_when_evaluatingWithOnlyKeyToKnotMapping_then_returnEmptyNotNullKeyNode() {
+    void given_bonsaiTree_when_evaluatingWithOnlyKeyToKnotMapping_then_returnEmptyNotNullKeyNode() {
         final Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Knot Data."), null);
         bonsai.createMapping("key", knot.getId());
         bonsai.deleteKnot(knot.getId(), false);
 
         final KeyNode keyNode = bonsai.evaluate("key",
-                Context.builder().documentContext(JsonPath.parse(ImmutableMap.of("E", 9333))).build());
+                Context.builder().documentContext(Parsers.parse(ImmutableMap.of("E", 9333))).build());
 
-        assertNotNull("KeyNode should not be null.", keyNode);
-        assertEquals("KeyNode's key value should be : key", "key", keyNode.getKey());
-        assertNull("KeyNode's node should be null.", keyNode.getNode());
-        assertEquals("The size of KeyNode edgePath should be null.", 0, keyNode.getEdgePath().size());
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void given_bonsaiTree_when_addingNonExistingVariation_then_throwBonsaiError() {
-        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build(), null);
-        bonsai.createMapping("l1", l1.getId());
-        bonsai.addVariation(l1.getId(), Variation.builder()
-                .filter(new EqualsFilter("$.gender", "female"))
-                .knotId("variationKnot")
-                .build());
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void given_bonsaiTree_when_updatingEdgeFilters_then_throwBonsaiError() {
-        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build(), null);
-        bonsai.updateVariation(l1.getId(), "edgeId", Variation.builder().build());
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void given_bonsaiTreeWithDissimilarKnotData_when_evaluatingTree_then_throwBonsaiError() {
-        Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build(), null);
-        bonsai.createMapping("l1", l1.getId());
-        Knot l21 = bonsai.createKnot(MultiKnotData.builder().key("l21w3").key("l21w4").build(), null);
-        bonsai.addVariation(l1.getId(), Variation.builder()
-                .filter(new EqualsFilter("$.gender", "female"))
-                .knotId(l21.getId())
-                .build());
-        Knot preferredKnot = Knot.builder()
-                .id("P1kaID")
-                .knotData(ValuedKnotData.stringValue("P-1"))
-                .build();
-        bonsai.evaluate("l1",
-                Context.builder()
-                        .documentContext(JsonPath.parse(ImmutableMap.of("gender", "female")))
-                        .preferences(ImmutableMap.of("l1", preferredKnot))
-                        .build());
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void given_bonsaiTree_when_evaluatingTreeWithOverShootingEdgesPerKnot_then_throwBonsaiError() {
-        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"), null);
-        bonsai.createMapping("mera_data", knot.getId());
-        TreeGenerationHelper.generateEdges(knot, bonsai, 10000);
-        KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
-                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
-                .build());
-        Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals("Data9333", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue());
-        System.out.println(evaluate);
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void given_bonsaiTree_when_createMappingWithWrongKnotData_then_throwBonsaiError() {
-        bonsai.createMapping("mera_data", new MapKnotData(), null);
+        assertNotNull(keyNode, "KeyNode should not be null.");
+        assertEquals("key", keyNode.getKey(), "KeyNode's key value should be : key");
+        assertNull(keyNode.getNode(), "KeyNode's node should be null.");
+        assertEquals(0, keyNode.getEdgePath().size(), "The size of KeyNode edgePath should be null.");
     }
 
     @Test
-    public void given_bonsaiTree_when_evaluatingTreeWithMaxEdgesPerKnot_then_returnEvaluatedKnot() {
+    void given_bonsaiTree_when_addingNonExistingVariation_then_throwBonsaiError() {
+        assertThrows(BonsaiError.class, () -> {
+            Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build(), null);
+            bonsai.createMapping("l1", l1.getId());
+            bonsai.addVariation(l1.getId(), Variation.builder()
+                    .filter(new EqualsFilter("$.gender", "female"))
+                    .knotId("variationKnot")
+                    .build());
+        });
+    }
+
+    @Test
+    void given_bonsaiTree_when_updatingEdgeFilters_then_throwBonsaiError() {
+        assertThrows(BonsaiError.class, () -> {
+            Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build(), null);
+            bonsai.updateVariation(l1.getId(), "edgeId", Variation.builder().build());
+        });
+    }
+
+    @Test
+    void given_bonsaiTreeWithDissimilarKnotData_when_evaluatingTree_then_throwBonsaiError() {
+        assertThrows(BonsaiError.class, () -> {
+            Knot l1 = bonsai.createKnot(MultiKnotData.builder().key("w1").key("w2").build(), null);
+            bonsai.createMapping("l1", l1.getId());
+            Knot l21 = bonsai.createKnot(MultiKnotData.builder().key("l21w3").key("l21w4").build(), null);
+            bonsai.addVariation(l1.getId(), Variation.builder()
+                    .filter(new EqualsFilter("$.gender", "female"))
+                    .knotId(l21.getId())
+                    .build());
+            Knot preferredKnot = Knot.builder()
+                    .id("P1kaID")
+                    .knotData(ValuedKnotData.stringValue("P-1"))
+                    .build();
+            bonsai.evaluate("l1",
+                    Context.builder()
+                            .documentContext(Parsers.parse(ImmutableMap.of("gender", "female")))
+                            .preferences(ImmutableMap.of("l1", preferredKnot))
+                            .build());
+        });
+    }
+
+    @Test
+    void given_bonsaiTree_when_evaluatingTreeWithOverShootingEdgesPerKnot_then_throwBonsaiError() {
+        assertThrows(BonsaiError.class, () -> {
+            Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"), null);
+            bonsai.createMapping("mera_data", knot.getId());
+            TreeGenerationHelper.generateEdges(knot, bonsai, 10000);
+            KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
+                    .documentContext(Parsers.parse(ImmutableMap.of("E", 9333)))
+                    .build());
+            Assertions.assertTrue(evaluate.getNode() instanceof ValueNode);
+            Assertions.assertEquals("Data9333", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue());
+            System.out.println(evaluate);
+        });
+    }
+
+    @Test
+    void given_bonsaiTree_when_createMappingWithWrongKnotData_then_throwBonsaiError() {
+        assertThrows(BonsaiError.class, () -> {
+            bonsai.createMapping("mera_data", new MapKnotData(), null);
+        });
+    }
+
+    @Test
+    void given_bonsaiTree_when_evaluatingTreeWithMaxEdgesPerKnot_then_returnEvaluatedKnot() {
         Bonsai<Context> bonsai = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties
                         .builder()
@@ -1402,131 +1413,145 @@ public class BonsaiTreeTest {
         bonsai.createMapping("mera_data", knot.getId());
         TreeGenerationHelper.generateEdges(knot, bonsai, 10);
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
-                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
+                .documentContext(Parsers.parse(ImmutableMap.of("E", 9333)))
                 .build());
-        Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals("Data", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue().toString());
+        Assertions.assertTrue(evaluate.getNode() instanceof ValueNode);
+        Assertions.assertEquals("Data", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue().toString());
         System.out.println(evaluate);
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void given_bonsaiTree_when_evaluatingTreeWithOneMaxthenMaxEdgesPerKnot_then_throwBonsaiError() {
-        Bonsai<Context> bonsai = BonsaiBuilder.builder()
-                .withBonsaiProperties(BonsaiProperties
-                        .builder()
-                        .mutualExclusivitySettingTurnedOn(true)
-                        .maxAllowedVariationsPerKnot(10)
-                        .build())
-                .build();
-
-        Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"), null);
-        bonsai.createMapping("mera_data", knot.getId());
-        TreeGenerationHelper.generateEdges(knot, bonsai, 11);
-        KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
-                .documentContext(JsonPath.parse(ImmutableMap.of("E", 9333)))
-                .build());
-        Assert.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assert.assertEquals("Data9333", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue()
-                .toString());
-        System.out.println(evaluate);
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void givenSelfCyclicMultiKnotDataWhenDetectingCycleOnBonsaiThenThrowException() {
-        try {
-            bonsai.createMapping("key", MultiKnotData.builder().key("key").build(), null);
-        } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.KNOT_ABSENT, e.getErrorCode());
-            throw e;
-        }
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void givenSelfCyclicMapKnotDataWhenDetectingCycleOnBonsaiThenThrowException() {
-        try {
-            bonsai.createMapping("key1", MapKnotData.builder().mapKeys(ImmutableMap.of("key", "key1")).build(), null);
-        } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.KNOT_ABSENT, e.getErrorCode());
-            throw e;
-        }
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void givenCyclicInputWhenDetectingCycleOnBonsaiThenThrowException() {
-        final Knot knot = bonsai.createMapping("key", ValuedKnotData.stringValue("Value one"), null);
-
-        try {
-            final Edge edge = bonsai.addVariation(knot.getId(), Variation.builder()
-                    .filter(EqualsFilter.builder().field("field").value("value").build())
-                    .knotId(knot.getId()).build());
-        } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.CYCLE_DETECTED, e.getErrorCode());
-            throw e;
-        }
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void givenCyclicInputWithValuedKnotsWhenDetectingCycleOnBonsaiThenThrowException() {
-        final Knot knotOne = bonsai.createMapping("key", ValuedKnotData.numberValue(0), null);
-        final Knot knotTwo = bonsai.createKnot(ValuedKnotData.numberValue(1), null);
-        final Edge edgeOne = bonsai.addVariation(knotOne.getId(), Variation.builder()
-                .filter(EqualsFilter.builder().field("field").value("value").build())
-                .knotId(knotTwo.getId()).build());
-        try {
-            final Edge edgeTwo = bonsai.addVariation(knotTwo.getId(), Variation.builder()
-                    .filter(EqualsFilter.builder().field("field2").value("value2").build())
-                    .knotId(knotOne.getId()).build());
-        } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.CYCLE_DETECTED, e.getErrorCode());
-            throw e;
-        }
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void givenCyclicInputInMapKnotWhenDetectingCycleOnBonsaiThenThrowException() {
-        try {
-            bonsai.createMapping("keyThree", ValuedKnotData.numberValue(1), null);
-            final Knot knotTwo = bonsai.createMapping("keyTwo", MapKnotData.builder()
-                    .mapKeys(ImmutableMap.of("key", "keyThree"))
-                    .build(), null);
-            final Knot knotOne = bonsai.createMapping("keyOne", MapKnotData.builder()
-                    .mapKeys(ImmutableMap.of("key", "keyTwo"))
-                    .build(), null);
-            bonsai.updateKnotData(knotTwo.getId(), MapKnotData.builder()
-                    .mapKeys(ImmutableMap.of("key", "keyOne"))
-                    .build(), new HashMap<>());
-        } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.CYCLE_DETECTED, e.getErrorCode());
-            throw e;
-        }
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void givenTriangularInputVariationWhenDetectingCycleOnBonsaiThenSaveSuccessfully() {
-        bonsai.createMapping("key", ValuedKnotData.numberValue(1), null);
-        bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"), null);
-        final Knot knotThree = bonsai.createMapping("world", MapKnotData.builder().mapKeys(ImmutableMap.of("key", "key")).build(), null);
-        final Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build(), null);
-        final Knot knotTwo = bonsai.createKnot(MultiKnotData.builder().key("world").build(), null);
-        bonsai.addVariation(knotOne.getId(), Variation.builder()
-                .filter(EqualsFilter.builder().field("field").value("value").build())
-                .knotId(knotTwo.getId())
-                .build());
-        try {
-            bonsai.updateKnotData(knotThree.getId(), MapKnotData.builder().mapKeys(ImmutableMap.of("key", "keyOne")).build(), new HashMap<>());
-        } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.CYCLE_DETECTED, e.getErrorCode());
-            throw e;
-        }
     }
 
     @Test
-    public void updatingPropertiesSuccessfully() {
+    void given_bonsaiTree_when_evaluatingTreeWithOneMaxthenMaxEdgesPerKnot_then_throwBonsaiError() {
+        assertThrows(BonsaiError.class, () -> {
+            Bonsai<Context> bonsai = BonsaiBuilder.builder()
+                    .withBonsaiProperties(BonsaiProperties
+                            .builder()
+                            .mutualExclusivitySettingTurnedOn(true)
+                            .maxAllowedVariationsPerKnot(10)
+                            .build())
+                    .build();
+
+            Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"), null);
+            bonsai.createMapping("mera_data", knot.getId());
+            TreeGenerationHelper.generateEdges(knot, bonsai, 11);
+            KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
+                    .documentContext(Parsers.parse(ImmutableMap.of("E", 9333)))
+                    .build());
+            Assertions.assertTrue(evaluate.getNode() instanceof ValueNode);
+            Assertions.assertEquals("Data9333", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue()
+                    .toString());
+            System.out.println(evaluate);
+        });
+    }
+
+    @Test
+    void givenSelfCyclicMultiKnotDataWhenDetectingCycleOnBonsaiThenThrowException() {
+        assertThrows(BonsaiError.class, () -> {
+            try {
+                bonsai.createMapping("key", MultiKnotData.builder().key("key").build(), null);
+            } catch (BonsaiError e) {
+                Assertions.assertEquals(BonsaiErrorCode.KNOT_ABSENT, e.getErrorCode());
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void givenSelfCyclicMapKnotDataWhenDetectingCycleOnBonsaiThenThrowException() {
+        assertThrows(BonsaiError.class, () -> {
+            try {
+                bonsai.createMapping("key1", MapKnotData.builder().mapKeys(ImmutableMap.of("key", "key1")).build(), null);
+            } catch (BonsaiError e) {
+                Assertions.assertEquals(BonsaiErrorCode.KNOT_ABSENT, e.getErrorCode());
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void givenCyclicInputWhenDetectingCycleOnBonsaiThenThrowException() {
+        assertThrows(BonsaiError.class, () -> {
+            final Knot knot = bonsai.createMapping("key", ValuedKnotData.stringValue("Value one"), null);
+
+            try {
+                final Edge edge = bonsai.addVariation(knot.getId(), Variation.builder()
+                        .filter(EqualsFilter.builder().field("field").value("value").build())
+                        .knotId(knot.getId()).build());
+            } catch (BonsaiError e) {
+                Assertions.assertEquals(BonsaiErrorCode.CYCLE_DETECTED, e.getErrorCode());
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void givenCyclicInputWithValuedKnotsWhenDetectingCycleOnBonsaiThenThrowException() {
+        assertThrows(BonsaiError.class, () -> {
+            final Knot knotOne = bonsai.createMapping("key", ValuedKnotData.numberValue(0), null);
+            final Knot knotTwo = bonsai.createKnot(ValuedKnotData.numberValue(1), null);
+            final Edge edgeOne = bonsai.addVariation(knotOne.getId(), Variation.builder()
+                    .filter(EqualsFilter.builder().field("field").value("value").build())
+                    .knotId(knotTwo.getId()).build());
+            try {
+                final Edge edgeTwo = bonsai.addVariation(knotTwo.getId(), Variation.builder()
+                        .filter(EqualsFilter.builder().field("field2").value("value2").build())
+                        .knotId(knotOne.getId()).build());
+            } catch (BonsaiError e) {
+                Assertions.assertEquals(BonsaiErrorCode.CYCLE_DETECTED, e.getErrorCode());
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void givenCyclicInputInMapKnotWhenDetectingCycleOnBonsaiThenThrowException() {
+        assertThrows(BonsaiError.class, () -> {
+            try {
+                bonsai.createMapping("keyThree", ValuedKnotData.numberValue(1), null);
+                final Knot knotTwo = bonsai.createMapping("keyTwo", MapKnotData.builder()
+                        .mapKeys(ImmutableMap.of("key", "keyThree"))
+                        .build(), null);
+                final Knot knotOne = bonsai.createMapping("keyOne", MapKnotData.builder()
+                        .mapKeys(ImmutableMap.of("key", "keyTwo"))
+                        .build(), null);
+                bonsai.updateKnotData(knotTwo.getId(), MapKnotData.builder()
+                        .mapKeys(ImmutableMap.of("key", "keyOne"))
+                        .build(), new HashMap<>());
+            } catch (BonsaiError e) {
+                Assertions.assertEquals(BonsaiErrorCode.CYCLE_DETECTED, e.getErrorCode());
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void givenTriangularInputVariationWhenDetectingCycleOnBonsaiThenSaveSuccessfully() {
+        assertThrows(BonsaiError.class, () -> {
+            bonsai.createMapping("key", ValuedKnotData.numberValue(1), null);
+            bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"), null);
+            final Knot knotThree = bonsai.createMapping("world", MapKnotData.builder().mapKeys(ImmutableMap.of("key", "key")).build(), null);
+            final Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build(), null);
+            final Knot knotTwo = bonsai.createKnot(MultiKnotData.builder().key("world").build(), null);
+            bonsai.addVariation(knotOne.getId(), Variation.builder()
+                    .filter(EqualsFilter.builder().field("field").value("value").build())
+                    .knotId(knotTwo.getId())
+                    .build());
+            try {
+                bonsai.updateKnotData(knotThree.getId(), MapKnotData.builder().mapKeys(ImmutableMap.of("key", "keyOne")).build(), new HashMap<>());
+            } catch (BonsaiError e) {
+                Assertions.assertEquals(BonsaiErrorCode.CYCLE_DETECTED, e.getErrorCode());
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void updatingPropertiesSuccessfully() {
         bonsai.createMapping("key", ValuedKnotData.numberValue(1), null);
         bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"), null);
         Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build(), null);
 
-        Assert.assertEquals(0, knotOne.getProperties().size());
+        Assertions.assertEquals(0, knotOne.getProperties().size());
 
         final Map<String, Object> properties = new HashMap<>();
         final List<String> labels = new ArrayList<>();
@@ -1537,16 +1562,16 @@ public class BonsaiTreeTest {
         bonsai.updateKnotData(knotOne.getId(), knotOne.getKnotData(), properties);
         knotOne = bonsai.getKnot(knotOne.getId());
 
-        Assert.assertTrue(knotOne.getProperties().containsValue(labels));
+        Assertions.assertTrue(knotOne.getProperties().containsValue(labels));
     }
 
     @Test
-    public void modifyingPropertiesSuccessfully() {
+    void modifyingPropertiesSuccessfully() {
         bonsai.createMapping("key", ValuedKnotData.numberValue(1), null);
         bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"), null);
         Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build(), null);
 
-        Assert.assertEquals(0, knotOne.getProperties().size());
+        Assertions.assertEquals(0, knotOne.getProperties().size());
 
         final Map<String, Object> properties = new HashMap<>();
         final List<String> labels = new ArrayList<>();
@@ -1556,7 +1581,7 @@ public class BonsaiTreeTest {
         bonsai.updateKnotData(knotOne.getId(), knotOne.getKnotData(), properties);
         knotOne = bonsai.getKnot(knotOne.getId());
 
-        Assert.assertTrue(knotOne.getProperties().containsValue(labels));
+        Assertions.assertTrue(knotOne.getProperties().containsValue(labels));
 
         final List<String> newLabelList = new ArrayList<>(labels);
         newLabelList.add("New label");
@@ -1566,16 +1591,16 @@ public class BonsaiTreeTest {
         bonsai.updateKnotData(knotOne.getId(), knotOne.getKnotData(), updatedProperties);
         knotOne = bonsai.getKnot(knotOne.getId());
 
-        Assert.assertTrue(knotOne.getProperties().containsValue(newLabelList));
+        Assertions.assertTrue(knotOne.getProperties().containsValue(newLabelList));
     }
 
     @Test
-    public void updatingPropertiesWithNull() {
+    void updatingPropertiesWithNull() {
         bonsai.createMapping("key", ValuedKnotData.numberValue(1), null);
         bonsai.createMapping("hello", ValuedKnotData.stringValue("hello value"), null);
         Knot knotOne = bonsai.createMapping("keyOne", MultiKnotData.builder().key("hello").build(), null);
 
-        Assert.assertEquals(0, knotOne.getProperties().size());
+        Assertions.assertEquals(0, knotOne.getProperties().size());
 
         final Map<String, Object> properties = new HashMap<>();
         final List<String> labels = new ArrayList<>();
@@ -1585,11 +1610,11 @@ public class BonsaiTreeTest {
         bonsai.updateKnotData(knotOne.getId(), knotOne.getKnotData(), properties);
         knotOne = bonsai.getKnot(knotOne.getId());
 
-        Assert.assertTrue(knotOne.getProperties().containsValue(labels));
+        Assertions.assertTrue(knotOne.getProperties().containsValue(labels));
 
         bonsai.updateKnotData(knotOne.getId(), knotOne.getKnotData(), null);
         knotOne = bonsai.getKnot(knotOne.getId());
 
-        Assert.assertTrue(knotOne.getProperties().containsValue(labels));
+        Assertions.assertTrue(knotOne.getProperties().containsValue(labels));
     }
 }
