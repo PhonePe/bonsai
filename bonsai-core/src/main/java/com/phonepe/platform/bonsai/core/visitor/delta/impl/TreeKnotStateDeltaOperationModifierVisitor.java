@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -134,23 +135,7 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
                     ? new ArrayList<>() :
                     knotDeltaOperation.getKnot().getEdges(); // If-else check to avoid error in loop.
 
-            // To ensure if the existing setup is being updated/deleted.
-            if (knotStore.containsKnot(treeKnot.getId())) {
-                final Knot revertKnotState = Converters.toKnot(treeKnot);
-                if (revertKnotState != null) {
-                    revertKnotState.setVersion(0);
-                }
-                final KnotDeltaOperation revertKnotDeltaOperation = new KnotDeltaOperation(revertKnotState);
-                revertDeltaOperation.add(revertKnotDeltaOperation);
-
-                Optional.ofNullable(treeKnot.getTreeEdges())
-                        .orElse(Collections.emptyList()) // To avoid NullPointerException.
-                        .stream()
-                        .filter(treeEdge -> edgeIdentifierList.stream()
-                                .noneMatch(updatedEdge -> updatedEdge.getId()
-                                        .equals(treeEdge.getEdgeIdentifier().getId())))
-                        .forEach(treeEdge -> captureRevertTreeEdge(treeEdge, revertDeltaOperation));
-            }
+            updateOnExistingKnot(treeKnot, revertDeltaOperation, edgeIdentifierList);
 
             final List<TreeEdge> treeEdgeList = new ArrayList<>();
             int edgeNumber = safeSize(treeKnot.getTreeEdges()) + 1;
@@ -183,9 +168,9 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
         } else {
             final List<TreeKnot> childrenTreeKnots = treeKnot.getTreeEdges()
                     .stream()
-                    .filter(treeEdge -> treeEdge.getTreeKnot() != null)
                     .map(TreeEdge::getTreeKnot)
-                    .collect(Collectors.toList());
+                    .filter(Objects::nonNull)
+                    .toList();
 
             for (int i = 0; !isSuccessfullyInserted && i < childrenTreeKnots.size(); i++) {
                 isSuccessfullyInserted = insertKnotDeltaDataIntoTreeKnot(childrenTreeKnots.get(i), revertDeltaOperation,
@@ -194,6 +179,27 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
         }
 
         return isSuccessfullyInserted;
+    }
+
+    private void updateOnExistingKnot(TreeKnot treeKnot, List<DeltaOperation> revertDeltaOperation,
+                           List<EdgeIdentifier> edgeIdentifierList) {
+        // To ensure if the existing setup is being updated/deleted.
+        if (knotStore.containsKnot(treeKnot.getId())) {
+            final Knot revertKnotState = Converters.toKnot(treeKnot);
+            if (revertKnotState != null) {
+                revertKnotState.setVersion(0);
+            }
+            final KnotDeltaOperation revertKnotDeltaOperation = new KnotDeltaOperation(revertKnotState);
+            revertDeltaOperation.add(revertKnotDeltaOperation);
+
+            Optional.ofNullable(treeKnot.getTreeEdges())
+                    .orElse(Collections.emptyList()) // To avoid NullPointerException.
+                    .stream()
+                    .filter(treeEdge -> edgeIdentifierList.stream()
+                            .noneMatch(updatedEdge -> updatedEdge.getId()
+                                    .equals(treeEdge.getEdgeIdentifier().getId())))
+                    .forEach(treeEdge -> captureRevertTreeEdge(treeEdge, revertDeltaOperation));
+        }
     }
 
     /**

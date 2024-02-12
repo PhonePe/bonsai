@@ -49,6 +49,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     };
     private static final TypeRef<List<Object>> OBJECT_TYPE_REF = new TypeRef<>() {
     };
+    public static final String BONSAI_FILTER_VALUES_DOCUMENT_LOG_STR = "[bonsai][{}] filter:{} values:{} document:{}";
 
     protected final String entityId;
 
@@ -107,7 +108,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     public Boolean visit(MissingFilter filter) {
         List<Object> values = context.documentContext().read(filter.getField(), OBJECT_TYPE_REF);
         if (log.isTraceEnabled()) {
-            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values,
+            log.trace(BONSAI_FILTER_VALUES_DOCUMENT_LOG_STR, context.id(), filter.getField(), values,
                     context.documentContext().json());
         }
         return values == null || values.isEmpty() || values.stream().allMatch(Objects::isNull);
@@ -124,7 +125,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     public Boolean visit(ExistsFilter filter) {
         List<Object> values = context.documentContext().read(filter.getField(), OBJECT_TYPE_REF);
         if (log.isTraceEnabled()) {
-            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values,
+            log.trace(BONSAI_FILTER_VALUES_DOCUMENT_LOG_STR, context.id(), filter.getField(), values,
                     context.documentContext().json());
         }
         return isNotEmpty(values);
@@ -190,11 +191,10 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     private <T> List<T> nonNullValues(Filter filter, TypeRef<List<T>> typeRef) {
         List<T> values = context.documentContext().read(filter.getField(), typeRef);
         if (log.isTraceEnabled()) {
-            log.trace("[bonsai][{}] filter:{} values:{} document:{}", context.id(), filter.getField(), values,
+            log.trace(BONSAI_FILTER_VALUES_DOCUMENT_LOG_STR, context.id(), filter.getField(), values,
                     context.documentContext().json());
         }
-        return values == null ? Collections.emptyList() : values.stream().filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        return values == null ? Collections.emptyList() : values.stream().filter(Objects::nonNull).toList();
     }
 
     private Predicate<Number> lessThan(NumericBinaryFilter filter) {
