@@ -160,12 +160,12 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                         .getAllEdges(knot.getEdges()
                                 .stream()
                                 .map(EdgeIdentifier::getId)
-                                .collect(Collectors.toList()));
+                                .toList());
                 List<TreeEdge> collectedTreeEdges = allEdges
                         .values()
                         .stream()
                         .map(edge -> deleteVariation(knot.getId(), edge.getEdgeIdentifier().getId(), true))
-                        .collect(Collectors.toList());
+                        .toList();
                 treeKnot.setTreeEdges(collectedTreeEdges);
 
             }
@@ -462,7 +462,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                 final List<KeyNode> nodes = keys != null
                         ? keys.stream()
                         .map(key -> evaluate(key, context))
-                        .collect(Collectors.toList())
+                        .toList()
                         : null;
                 return new KeyNode(key,
                         ListNode.builder()
@@ -696,7 +696,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         }
         List<Edge> edges = new ArrayList<>(edgeStore.getAllEdges(edgeIdentifiers.stream()
                         .map(EdgeIdentifier::getId)
-                        .collect(Collectors.toList()))
+                        .toList())
                 .values());
         Optional<Edge> conditionSatisfyingEdge = variationSelectorEngine.match(context, edges);
         if (conditionSatisfyingEdge.isEmpty()) {
@@ -757,7 +757,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             List<TreeEdge> treeEdges
                     = edgeStore.getAllEdges(knot.getEdges().stream()
                             .map(EdgeIdentifier::getId)
-                            .collect(Collectors.toList()))
+                            .toList())
                     .values()
                     .stream()
                     .map(edge -> TreeEdge.builder()
@@ -769,7 +769,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                             .version(edge.getVersion())
                             .treeKnot(composeTreeKnot(edge.getKnotId()))
                             .build())
-                    .collect(Collectors.toList());
+                    .toList();
             profoundKnotBuilder.treeEdges(treeEdges);
         }
         return profoundKnotBuilder.build();
@@ -784,7 +784,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                             .filter(e -> !edge.getEdgeIdentifier()
                                     .getId()
                                     .equals(e))// all edges that arent the current edge being added
-                            .collect(Collectors.toList()));
+                            .toList());
             Set<String> existingEdgeFields = allEdges.values()
                     .stream()
                     .flatMap(k -> k.getFilters()

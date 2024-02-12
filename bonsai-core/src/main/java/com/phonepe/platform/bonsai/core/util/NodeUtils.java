@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 @Slf4j
 @UtilityClass
@@ -481,7 +480,7 @@ public class NodeUtils {
                             .getNodes()
                             .stream()
                             .map(node -> converter.apply(node, null))
-                            .collect(Collectors.toList());
+                            .toList();
                 }
             });
         } catch (Exception e) {

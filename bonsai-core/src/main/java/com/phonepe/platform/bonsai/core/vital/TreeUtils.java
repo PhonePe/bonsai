@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class TreeUtils {
@@ -65,7 +64,7 @@ class TreeUtils {
                         ? nodes.stream()
                         .peek(k -> flatten(k, mapping)) // recursive action on every item in the list
                         .map(KeyNode::getKey)
-                        .collect(Collectors.toList())
+                        .toList()
                         : Collections.emptyList();
                 mapping.put(
                         keyNode.getKey(),

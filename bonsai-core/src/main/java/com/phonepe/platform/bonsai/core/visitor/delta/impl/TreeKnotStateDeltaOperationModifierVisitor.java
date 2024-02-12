@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This class is the default implementation of trying and adding Delta's operation on given TreeKnot.
@@ -297,7 +296,7 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
                     .stream()
                     .filter(treeEdge -> treeEdge.getTreeKnot() != null)
                     .map(TreeEdge::getTreeKnot)
-                    .collect(Collectors.toList());
+                    .toList();
 
             for (int i = 0; !isSuccessfullyInserted && i < childrenTreeKnots.size(); i++) {
                 isSuccessfullyInserted = insertEdgeDeltaDataIntoTreeKnot(childrenTreeKnots.get(i), revertDeltaOperation,

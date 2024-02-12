@@ -187,7 +187,7 @@
                 <version>5.22.0</version>
                 <configuration>
                     <activeRecipes>
-                        <recipe>org.openrewrite.java.format.AutoFormat</recipe>
+                        <recipe>org.openrewrite.java.migrate.util.ReplaceStreamCollectWithToList</recipe>
                     </activeRecipes>
                 </configuration>
                 <dependencies>
@@ -205,6 +205,11 @@
                         <groupId>org.openrewrite.recipe</groupId>
                         <artifactId>rewrite-migrate-java</artifactId>
                         <version>2.8.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.livetheoogway.recipes</groupId>
+                        <artifactId>rewrite-static-analysis</artifactId>
+                        <version>1.0-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
             </plugin>

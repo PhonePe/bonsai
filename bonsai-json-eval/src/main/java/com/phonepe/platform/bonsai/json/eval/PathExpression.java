@@ -12,7 +12,6 @@ import javax.naming.OperationNotSupportedException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 @Data
@@ -65,7 +64,7 @@ public class PathExpression {
             if (operation == null) {
                 List<Object> values = context.read(path, OBJECT_TYPE_REF);
                 List<Object> nonNullValues =
-                        values == null ? null : values.stream().filter(Objects::nonNull).collect(Collectors.toList());
+                        values == null ? null : values.stream().filter(Objects::nonNull).toList();
                 if (nonNullValues == null || nonNullValues.isEmpty()) {
                     return null;
                 }
