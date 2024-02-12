@@ -19,7 +19,8 @@ public class JsonPathEvaluationTest {
         JsonPathSetup.setup();
         Map object = objectExtractor.getObject("sample.json", Map.class);
         JsonPathFilterEvaluationEngine<JsonEvalContext> eval
-                = new JsonPathFilterEvaluationEngine<>("temp", () -> JsonPath.parse(object), genericFilterContext -> true);
+                = new JsonPathFilterEvaluationEngine<>("temp", () -> JsonPath.parse(object),
+                genericFilterContext -> true);
         List<Filter> filters = objectExtractor.getObject("filterList1.json", new TypeReference<List<Filter>>() {
         });
         long count = filters.stream()
@@ -33,7 +34,8 @@ public class JsonPathEvaluationTest {
         JsonPathSetup.setup();
         Map object = objectExtractor.getObject("sample.json", Map.class);
         JsonPathFilterEvaluationEngine<JsonEvalContext> eval
-                = new TraceWrappedJsonPathFilterEvaluationEngine<>("temp", () -> JsonPath.parse(object), genericFilterContext -> true);
+                = new TraceWrappedJsonPathFilterEvaluationEngine<>("temp", () -> JsonPath.parse(object),
+                genericFilterContext -> true);
         List<Filter> filters = objectExtractor.getObject("filterList1.json", new TypeReference<List<Filter>>() {
         });
         long count = filters.stream()

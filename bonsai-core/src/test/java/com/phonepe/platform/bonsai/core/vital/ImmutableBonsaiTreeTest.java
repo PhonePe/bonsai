@@ -2,7 +2,6 @@ package com.phonepe.platform.bonsai.core.vital;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.Parsers;
 import com.phonepe.platform.bonsai.core.exception.BonsaiError;
@@ -128,7 +127,8 @@ public class ImmutableBonsaiTreeTest {
         Assertions.assertEquals("k2", edge.getKnotId(), "KnotId should not be null");
         Assertions.assertEquals("e1", edge.getEdgeIdentifier().getId(), "EdgeId should be : e1");
         Assertions.assertEquals(1, edge.getVersion(), "Version should be : 123");
-        Assertions.assertEquals("$.data", edge.getFilters().get(0).getField(), "Field of Edge Filter should be : $.data");
+        Assertions.assertEquals("$.data", edge.getFilters().get(0).getField(),
+                "Field of Edge Filter should be : $.data");
     }
 
     @Test

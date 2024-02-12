@@ -2,8 +2,8 @@ package com.phonepe.platform.bonsai.core.vital;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jayway.jsonpath.DocumentContext;
-import com.phonepe.platform.bonsai.models.BonsaiConstants;
 import com.phonepe.platform.bonsai.json.eval.JsonEvalContext;
+import com.phonepe.platform.bonsai.models.BonsaiConstants;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

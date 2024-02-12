@@ -100,12 +100,15 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
             throw new BonsaiError(BonsaiErrorCode.TREE_DOES_NOT_EXIST, errorOutput);
         }
 
-        final List<DeltaOperation> deltaOperationsToPreviousState = (metaData.getDeltaOperationsToPreviousState() != null)
-                ? metaData.getDeltaOperationsToPreviousState() : new ArrayList<>();
+        final List<DeltaOperation> deltaOperationsToPreviousState =
+                (metaData.getDeltaOperationsToPreviousState() != null)
+                        ? metaData.getDeltaOperationsToPreviousState() : new ArrayList<>();
 
-        boolean isSuccessfullyInserted = insertKnotDeltaDataIntoTreeKnot(treeKnot, deltaOperationsToPreviousState, knotDeltaOperation);
+        boolean isSuccessfullyInserted =
+                insertKnotDeltaDataIntoTreeKnot(treeKnot, deltaOperationsToPreviousState, knotDeltaOperation);
         if (!isSuccessfullyInserted) {
-            final String errorOutput = "[bonsai] Failed to insert knotDeltaOperation :[%s] into TreeKnot.".formatted(knotDeltaOperation);
+            final String errorOutput =
+                    "[bonsai] Failed to insert knotDeltaOperation :[%s] into TreeKnot.".formatted(knotDeltaOperation);
             log.error(errorOutput);
         }
 
@@ -128,7 +131,8 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
         boolean isSuccessfullyInserted = false;
         if (knotDeltaOperation.getKnot().getId().equals(treeKnot.getId())) {
             final List<EdgeIdentifier> edgeIdentifierList = (knotDeltaOperation.getKnot().getEdges() == null)
-                    ? new ArrayList<>() : knotDeltaOperation.getKnot().getEdges(); // If-else check to avoid error in loop.
+                    ? new ArrayList<>() :
+                    knotDeltaOperation.getKnot().getEdges(); // If-else check to avoid error in loop.
 
             // To ensure if the existing setup is being updated/deleted.
             if (knotStore.containsKnot(treeKnot.getId())) {
@@ -143,7 +147,8 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
                         .orElse(Collections.emptyList()) // To avoid NullPointerException.
                         .stream()
                         .filter(treeEdge -> edgeIdentifierList.stream()
-                                .noneMatch(updatedEdge -> updatedEdge.getId().equals(treeEdge.getEdgeIdentifier().getId())))
+                                .noneMatch(updatedEdge -> updatedEdge.getId()
+                                        .equals(treeEdge.getEdgeIdentifier().getId())))
                         .forEach(treeEdge -> captureRevertTreeEdge(treeEdge, revertDeltaOperation));
             }
 
@@ -160,7 +165,8 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
                 } else {
                     treeKnot.getTreeEdges()
                             .stream()
-                            .filter(treeEdgeSingle -> edgeIdentifier.getId().equals(treeEdgeSingle.getEdgeIdentifier().getId()))
+                            .filter(treeEdgeSingle -> edgeIdentifier.getId()
+                                    .equals(treeEdgeSingle.getEdgeIdentifier().getId()))
                             .findFirst()
                             .ifPresent(treeEdgeList::add);
                 }
@@ -182,7 +188,8 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
                     .collect(Collectors.toList());
 
             for (int i = 0; !isSuccessfullyInserted && i < childrenTreeKnots.size(); i++) {
-                isSuccessfullyInserted = insertKnotDeltaDataIntoTreeKnot(childrenTreeKnots.get(i), revertDeltaOperation, knotDeltaOperation);
+                isSuccessfullyInserted = insertKnotDeltaDataIntoTreeKnot(childrenTreeKnots.get(i), revertDeltaOperation,
+                        knotDeltaOperation);
             }
         }
 
@@ -209,12 +216,15 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
             throw new BonsaiError(BonsaiErrorCode.TREE_DOES_NOT_EXIST, errorOutput);
         }
 
-        final List<DeltaOperation> deltaOperationsToPreviousState = (metaData.getDeltaOperationsToPreviousState() != null)
-                ? metaData.getDeltaOperationsToPreviousState() : new ArrayList<>();
+        final List<DeltaOperation> deltaOperationsToPreviousState =
+                (metaData.getDeltaOperationsToPreviousState() != null)
+                        ? metaData.getDeltaOperationsToPreviousState() : new ArrayList<>();
 
-        boolean isSuccessfullyInserted = insertEdgeDeltaDataIntoTreeKnot(treeKnot, deltaOperationsToPreviousState, edgeDeltaOperation);
+        boolean isSuccessfullyInserted =
+                insertEdgeDeltaDataIntoTreeKnot(treeKnot, deltaOperationsToPreviousState, edgeDeltaOperation);
         if (!isSuccessfullyInserted) {
-            final String errorOutput = "[bonsai] Failed to insert edgeDeltaOperation :[%s] into TreeKnot.".formatted(edgeDeltaOperation);
+            final String errorOutput =
+                    "[bonsai] Failed to insert edgeDeltaOperation :[%s] into TreeKnot.".formatted(edgeDeltaOperation);
             log.error(errorOutput);
         }
 
@@ -284,7 +294,8 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
                     .collect(Collectors.toList());
 
             for (int i = 0; !isSuccessfullyInserted && i < childrenTreeKnots.size(); i++) {
-                isSuccessfullyInserted = insertEdgeDeltaDataIntoTreeKnot(childrenTreeKnots.get(i), revertDeltaOperation, edgeDeltaOperation);
+                isSuccessfullyInserted = insertEdgeDeltaDataIntoTreeKnot(childrenTreeKnots.get(i), revertDeltaOperation,
+                        edgeDeltaOperation);
             }
         }
 

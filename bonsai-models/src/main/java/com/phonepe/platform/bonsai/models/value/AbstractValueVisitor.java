@@ -30,7 +30,7 @@ public class AbstractValueVisitor<T> implements ValueVisitor<T> {
     public T visit(StringValue stringValue) {
         if (log.isDebugEnabled()) {
             log.debug("[bonsai][{}] default value being returned, stringValue is {}, defaultValue:{}",
-                      MDC.get(BonsaiConstants.EVALUATION_ID), stringValue, defaultValue);
+                    MDC.get(BonsaiConstants.EVALUATION_ID), stringValue, defaultValue);
         }
         return defaultValue;
     }
@@ -39,7 +39,7 @@ public class AbstractValueVisitor<T> implements ValueVisitor<T> {
     public T visit(BooleanValue booleanValue) {
         if (log.isDebugEnabled()) {
             log.debug("[bonsai][{}] default value being returned, booleanValue is {}, defaultValue:{}",
-                      MDC.get(BonsaiConstants.EVALUATION_ID), booleanValue, defaultValue);
+                    MDC.get(BonsaiConstants.EVALUATION_ID), booleanValue, defaultValue);
         }
         return defaultValue;
     }
@@ -48,7 +48,7 @@ public class AbstractValueVisitor<T> implements ValueVisitor<T> {
     public T visit(ByteValue byteValue) {
         if (log.isDebugEnabled()) {
             log.debug("[bonsai][{}] default value being returned, byteValue is {}, defaultValue:{}",
-                      MDC.get(BonsaiConstants.EVALUATION_ID), byteValue, defaultValue);
+                    MDC.get(BonsaiConstants.EVALUATION_ID), byteValue, defaultValue);
         }
         return defaultValue;
     }
@@ -57,7 +57,7 @@ public class AbstractValueVisitor<T> implements ValueVisitor<T> {
     public T visit(JsonValue jsonValue) {
         if (log.isDebugEnabled()) {
             log.debug("[bonsai][{}] default value being returned, jsonValue is {}, defaultValue:{}",
-                      MDC.get(BonsaiConstants.EVALUATION_ID), jsonValue, defaultValue);
+                    MDC.get(BonsaiConstants.EVALUATION_ID), jsonValue, defaultValue);
         }
         return defaultValue;
     }
@@ -66,7 +66,7 @@ public class AbstractValueVisitor<T> implements ValueVisitor<T> {
     public T visit(final ObjectValue objectValue) {
         if (log.isDebugEnabled()) {
             log.debug("[bonsai][{}] default value being returned, jsonValue is {}, defaultValue:{}",
-                      MDC.get(BonsaiConstants.EVALUATION_ID), objectValue, defaultValue);
+                    MDC.get(BonsaiConstants.EVALUATION_ID), objectValue, defaultValue);
         }
         return defaultValue;
     }

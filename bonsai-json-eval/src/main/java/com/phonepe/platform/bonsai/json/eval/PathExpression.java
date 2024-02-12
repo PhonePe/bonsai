@@ -53,7 +53,8 @@ public class PathExpression {
     public Pair<String, Object> eval(DocumentContext context) {
         if (filters != null && !filters.isEmpty() &&
                 !filters.stream()
-                        .allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine<>(key, () -> context, genericFilterContext -> true)))) {
+                        .allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine<>(key, () -> context,
+                                genericFilterContext -> true)))) {
             return null;
         }
         if (value != null) {

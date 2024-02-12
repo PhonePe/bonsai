@@ -51,7 +51,8 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
         treeComponentValidator = new ComponentBonsaiTreeValidator(bonsaiProperties);
         knotStore = new InMemoryKnotStore();
         edgeStore = new InMemoryEdgeStore();
-        treeKnotModifierVisitor = new TreeKnotStateDeltaOperationModifierVisitor(treeComponentValidator, knotStore, edgeStore);
+        treeKnotModifierVisitor =
+                new TreeKnotStateDeltaOperationModifierVisitor(treeComponentValidator, knotStore, edgeStore);
     }
 
     @AfterEach
@@ -363,7 +364,8 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 Edge.builder()
                         .edgeIdentifier(new EdgeIdentifier("E2", 1, 1))
                         .knotId("K2")
-                        .filters(Arrays.asList(EqualsFilter.builder().field("fieldTwoChanged").value("valueTwoChanged").build()))
+                        .filters(Arrays.asList(
+                                EqualsFilter.builder().field("fieldTwoChanged").value("valueTwoChanged").build()))
                         .build()
         );
 
@@ -621,7 +623,8 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                     Edge.builder()
                             .edgeIdentifier(new EdgeIdentifier("E3", 1, 1))
                             .knotId("K3")
-                            .filters(Arrays.asList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
+                            .filters(
+                                    Arrays.asList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
                             .build()
             );
 

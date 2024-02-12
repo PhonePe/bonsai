@@ -46,8 +46,10 @@ public class BonsaiTreeEdgeOperationTest {
 
         Assertions.assertEquals(2, edge.getFilters().size());
         Assertions.assertEquals(2, bonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().size());
-        Assertions.assertEquals("$.gender", bonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().get(0).getField());
-        Assertions.assertEquals("$.gender2", bonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().get(1).getField());
+        Assertions.assertEquals("$.gender",
+                bonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().get(0).getField());
+        Assertions.assertEquals("$.gender2",
+                bonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().get(1).getField());
     }
 
     @Test
@@ -97,8 +99,8 @@ public class BonsaiTreeEdgeOperationTest {
             Edge edge = bonsai.updateVariation(knot1.getId(),
                     edge1.getEdgeIdentifier().getId(),
                     Variation.builder().filters(Lists.newArrayList(
-                            new EqualsFilter("$.gender", "female"),
-                            new EqualsFilter("$.gender", "female2")))
+                                    new EqualsFilter("$.gender", "female"),
+                                    new EqualsFilter("$.gender", "female2")))
                             .build());
         });
     }

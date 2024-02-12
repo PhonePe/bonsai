@@ -38,7 +38,8 @@ public class ImmutableBonsaiBuilder<C extends Context> {
         return bonsai.createKnot(knot);
     }
 
-    public ImmutableBonsaiBuilder<C> updateKnotData(final String id, final KnotData knotData, final Map<String, Object> properties) {
+    public ImmutableBonsaiBuilder<C> updateKnotData(final String id, final KnotData knotData,
+                                                    final Map<String, Object> properties) {
         bonsai.updateKnotData(id, knotData, properties);
         return this;
     }
@@ -84,7 +85,8 @@ public class ImmutableBonsaiBuilder<C extends Context> {
         return this;
     }
 
-    public ImmutableBonsaiBuilder<C> createMapping(final String key, final KnotData knotData, Map<String, Object> properties) {
+    public ImmutableBonsaiBuilder<C> createMapping(final String key, final KnotData knotData,
+                                                   Map<String, Object> properties) {
         bonsai.createMapping(key, knotData, properties);
         return this;
     }

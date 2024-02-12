@@ -1,9 +1,7 @@
 package com.phonepe.platform.bonsai.json.eval;
 
 import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.TypeRef;
-import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -38,12 +36,12 @@ public class PathExpressionTest {
                 """);
 
         final var read = parse.read("$.t[*].price", new TypeRef<List<Integer>>() {
-        })
+                })
                 .stream()
                 .mapToInt(Integer::intValue)
                 .sum();
         final var read2 = parse.read("$.t[*].price", new TypeRef<List<Integer>>() {
-        })
+                })
                 .stream()
                 .mapToInt(Integer::intValue)
                 .sum();

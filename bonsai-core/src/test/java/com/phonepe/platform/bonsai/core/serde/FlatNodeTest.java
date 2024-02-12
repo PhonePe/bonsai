@@ -19,7 +19,8 @@ class FlatNodeTest {
     void testJsonValueFlatNode() throws IOException {
         FlatNode flatNode = objectExtractor.getObject("serde/jsonValue.json", FlatNode.class);
         Assertions.assertEquals(FlatNode.FlatNodeType.VALUE, flatNode.getType());
-        Assertions.assertEquals("json", ((JsonValue) ((ValueFlatNode) flatNode).getValue()).getValue().get("some").asText());
+        Assertions.assertEquals("json",
+                ((JsonValue) ((ValueFlatNode) flatNode).getValue()).getValue().get("some").asText());
     }
 
     @Test

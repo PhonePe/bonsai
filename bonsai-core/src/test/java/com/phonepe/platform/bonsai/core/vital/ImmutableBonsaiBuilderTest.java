@@ -142,8 +142,9 @@ public class ImmutableBonsaiBuilderTest {
 
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.createEdge(e1Edge);
 
-        final List<Filter> edgeFilters = Arrays.asList(EqualsFilter.builder().field("fieldOne").value("valueOne").build(),
-                NotEqualsFilter.builder().field("fieldOne").value("valueTwo").build());
+        final List<Filter> edgeFilters =
+                Arrays.asList(EqualsFilter.builder().field("fieldOne").value("valueOne").build(),
+                        NotEqualsFilter.builder().field("fieldOne").value("valueTwo").build());
         final Variation updateVariation = Variation.builder().filters(edgeFilters).build();
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.updateVariation("K1", "E1", updateVariation);
 

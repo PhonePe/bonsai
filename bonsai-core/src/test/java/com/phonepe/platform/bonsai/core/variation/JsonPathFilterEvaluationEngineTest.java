@@ -2,7 +2,6 @@ package com.phonepe.platform.bonsai.core.variation;
 
 import com.codahale.metrics.Timer;
 import com.google.common.collect.ImmutableMap;
-import com.jayway.jsonpath.JsonPath;
 import com.phonepe.platform.bonsai.core.Bonsai;
 import com.phonepe.platform.bonsai.core.Parsers;
 import com.phonepe.platform.bonsai.core.PerformanceEvaluator;
@@ -36,7 +35,8 @@ public class JsonPathFilterEvaluationEngineTest {
                 .documentContext(Parsers.parse(ImmutableMap.of("E", 9333)))
                 .build());
         Assertions.assertTrue(evaluate.getNode() instanceof ValueNode);
-        Assertions.assertEquals("Data9333", ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue().toString());
+        Assertions.assertEquals("Data9333",
+                ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue().toString());
         System.out.println(evaluate);
     }
 
@@ -45,7 +45,8 @@ public class JsonPathFilterEvaluationEngineTest {
     void perfTestingOfBonsai() {
         Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"), null);
         bonsai.createMapping("tera_data", knot.getId());
-        Timer performanceTreeCreation = new PerformanceEvaluator().evaluate(1, () -> TreeGenerationHelper.generateEdges(knot, bonsai, 1000));
+        Timer performanceTreeCreation =
+                new PerformanceEvaluator().evaluate(1, () -> TreeGenerationHelper.generateEdges(knot, bonsai, 1000));
         System.out.println("time for treeCreation = " + performanceTreeCreation.getSnapshot().get99thPercentile());
 
         long start = System.currentTimeMillis();

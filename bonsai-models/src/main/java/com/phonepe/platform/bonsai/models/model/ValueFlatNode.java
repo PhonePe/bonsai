@@ -28,11 +28,6 @@ public class ValueFlatNode extends FlatNode {
         this.value = value;
     }
 
-    @Override
-    public <T> T accept(FlatNodeVisitor<T> visitor) {
-        return visitor.visit(this);
-    }
-
     public static ValueFlatNode stringValue(String data) {
         return new ValueFlatNode(new StringValue(data));
     }
@@ -52,7 +47,13 @@ public class ValueFlatNode extends FlatNode {
     public static ValueFlatNode jsonValue(JsonNode data) {
         return new ValueFlatNode(new JsonValue(data));
     }
+
     public static ValueFlatNode objectValue(Object data) {
         return new ValueFlatNode(new ObjectValue(data));
+    }
+
+    @Override
+    public <T> T accept(FlatNodeVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

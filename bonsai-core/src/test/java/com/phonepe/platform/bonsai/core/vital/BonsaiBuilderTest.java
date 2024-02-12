@@ -1,15 +1,10 @@
 package com.phonepe.platform.bonsai.core.vital;
 
 import com.phonepe.platform.bonsai.core.Bonsai;
-import com.phonepe.platform.bonsai.core.vital.provided.EdgeStore;
-import com.phonepe.platform.bonsai.core.vital.provided.KeyTreeStore;
-import com.phonepe.platform.bonsai.core.vital.provided.KnotStore;
 import com.phonepe.platform.bonsai.core.vital.provided.VariationSelectorEngine;
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryEdgeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryKeyTreeStore;
 import com.phonepe.platform.bonsai.core.vital.provided.impl.InMemoryKnotStore;
-import com.phonepe.platform.bonsai.models.blocks.Edge;
-import com.phonepe.platform.bonsai.models.blocks.Knot;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -22,7 +17,7 @@ class BonsaiBuilderTest {
     @Test
     void given_bonsaiBuilder_when_buildingBonsaiWithLeastRequiredParameters_then_returnBonsaiTree() {
         final var bonsaiTree = BonsaiBuilder.builder()
-                                               .withBonsaiProperties(BonsaiProperties.builder().build()).build();
+                .withBonsaiProperties(BonsaiProperties.builder().build()).build();
         assertNotNull(bonsaiTree);
     }
 
@@ -45,14 +40,14 @@ class BonsaiBuilderTest {
             }
         };
         final Bonsai bonsaiTree = BonsaiBuilder.builder()
-                                               .withKeyTreeStore(keyTreeStore)
-                                               .withKnotStore(knotStore)
-                                               .withEdgeStore(edgeStore)
-                                               .withVariationSelectorEngine(variationSelectorEngine)
-                                               .withBonsaiProperties(bonsaiProperties)
-                                               .withBonsaiIdGenerator(bonsaiIdGenerator)
-                                               .withBonsaiProperties(BonsaiProperties.builder().build())
-                                               .build();
+                .withKeyTreeStore(keyTreeStore)
+                .withKnotStore(knotStore)
+                .withEdgeStore(edgeStore)
+                .withVariationSelectorEngine(variationSelectorEngine)
+                .withBonsaiProperties(bonsaiProperties)
+                .withBonsaiIdGenerator(bonsaiIdGenerator)
+                .withBonsaiProperties(BonsaiProperties.builder().build())
+                .build();
 
         assertNotNull(bonsaiTree);
     }
