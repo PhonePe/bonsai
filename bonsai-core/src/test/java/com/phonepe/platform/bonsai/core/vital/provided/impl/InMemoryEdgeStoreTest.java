@@ -3,36 +3,36 @@ package com.phonepe.platform.bonsai.core.vital.provided.impl;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InMemoryEdgeStoreTest {
 
     private InMemoryEdgeStore inMemoryEdgeStore;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         inMemoryEdgeStore = new InMemoryEdgeStore();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         inMemoryEdgeStore = null;
     }
 
     @Test
-    public void given_inMemoryKeyTreeStore_when_checkingEdgePresenceInMemory_then_returnKnotId() {
+    void given_inMemoryKeyTreeStore_when_checkingEdgePresenceInMemory_then_returnKnotId() {
         final Edge edge = getAnEdge("E1");
         inMemoryEdgeStore.mapEdge(edge.getEdgeIdentifier().getId(), edge);
         final boolean isEdgeOnePresent = inMemoryEdgeStore.containsEdge("E1");
@@ -45,55 +45,59 @@ public class InMemoryEdgeStoreTest {
     }
 
     @Test
-    public void given_inMemoryEdgeStore_when_mappingEdgeWithRightEdgeId_then_returnAnEdge() {
+    void given_inMemoryEdgeStore_when_mappingEdgeWithRightEdgeId_then_returnAnEdge() {
         final Edge edge = getAnEdge("E1");
         final Edge firstReturnedEdgeCopy = inMemoryEdgeStore.mapEdge(edge.getEdgeIdentifier().getId(), edge);
         final Edge secondReturnedEdgeCopy = inMemoryEdgeStore.getEdge(edge.getEdgeIdentifier().getId());
 
-        assertNull("Previous copy of an Edge should be null.", firstReturnedEdgeCopy);
-        assertNotNull("Edge should not be null.", secondReturnedEdgeCopy);
-        assertEquals("Edge identifier should match.", edge.getEdgeIdentifier().getId(),
-                secondReturnedEdgeCopy.getEdgeIdentifier().getId());
-        assertEquals("KnotId should match.", edge.getKnotId(), secondReturnedEdgeCopy.getKnotId());
-        assertEquals("Both edges should have equal number of filters.", edge.getFilters().size(),
-                secondReturnedEdgeCopy.getFilters().size());
+        assertNull(firstReturnedEdgeCopy, "Previous copy of an Edge should be null.");
+        assertNotNull(secondReturnedEdgeCopy, "Edge should not be null.");
+        assertEquals(edge.getEdgeIdentifier().getId(),
+                secondReturnedEdgeCopy.getEdgeIdentifier().getId(),
+                "Edge identifier should match.");
+        assertEquals(edge.getKnotId(), secondReturnedEdgeCopy.getKnotId(), "KnotId should match.");
+        assertEquals(edge.getFilters().size(),
+                secondReturnedEdgeCopy.getFilters().size(),
+                "Both edges should have equal number of filters.");
     }
 
     @Test
-    public void given_inMemoryEdgeStore_when_mappingEdgeWithNullEdgeId_then_returnNullObject() {
+    void given_inMemoryEdgeStore_when_mappingEdgeWithNullEdgeId_then_returnNullObject() {
         final Edge edge = getAnEdge("E1");
         final Edge firstReturnedEdgeCopy = inMemoryEdgeStore.mapEdge(null, edge);
         final Edge secondReturnedEdgeCopy = inMemoryEdgeStore.getEdge(null);
 
-        assertNull("Previous copy of an Edge should be null", firstReturnedEdgeCopy);
-        assertNull("Edge should be null for null edgeId", secondReturnedEdgeCopy);
+        assertNull(firstReturnedEdgeCopy, "Previous copy of an Edge should be null");
+        assertNull(secondReturnedEdgeCopy, "Edge should be null for null edgeId");
     }
 
     @Test
-    public void given_inMemoryEdgeStore_when_deletingEdge_then_deleteEdge() {
+    void given_inMemoryEdgeStore_when_deletingEdge_then_deleteEdge() {
         final Edge edge = getAnEdge("E1");
         final Edge firstReturnedEdgeCopy = inMemoryEdgeStore.mapEdge(edge.getEdgeIdentifier().getId(), edge);
         final Edge secondReturnedEdgeCopy = inMemoryEdgeStore.deleteEdge(edge.getEdgeIdentifier().getId());
         final Edge thirdReturnedEdgeCopy = inMemoryEdgeStore.getEdge(edge.getEdgeIdentifier().getId());
 
-        assertNull("Previous copy of an Edge should be null.", firstReturnedEdgeCopy);
-        assertNotNull("Previous copy of an Egde should not be null after deleting.", secondReturnedEdgeCopy);
-        assertEquals("Edge identifier should match.", edge.getEdgeIdentifier().getId(),
-                secondReturnedEdgeCopy.getEdgeIdentifier().getId());
-        assertEquals("KnotId should match.", edge.getKnotId(), secondReturnedEdgeCopy.getKnotId());
-        assertEquals("Both edges should have equal number of filters.", edge.getFilters().size(),
-                secondReturnedEdgeCopy.getFilters().size());
-        assertNull("Edge corresponding to given E1 should be null.", thirdReturnedEdgeCopy);
+        assertNull(firstReturnedEdgeCopy, "Previous copy of an Edge should be null.");
+        assertNotNull(secondReturnedEdgeCopy, "Previous copy of an Egde should not be null after deleting.");
+        assertEquals(edge.getEdgeIdentifier().getId(),
+                secondReturnedEdgeCopy.getEdgeIdentifier().getId(),
+                "Edge identifier should match.");
+        assertEquals(edge.getKnotId(), secondReturnedEdgeCopy.getKnotId(), "KnotId should match.");
+        assertEquals(edge.getFilters().size(),
+                secondReturnedEdgeCopy.getFilters().size(),
+                "Both edges should have equal number of filters.");
+        assertNull(thirdReturnedEdgeCopy, "Edge corresponding to given E1 should be null.");
     }
 
     @Test
-    public void given_inMemoryEdgeStore_when_deletingNonExistingEdge_then_returnNull() {
+    void given_inMemoryEdgeStore_when_deletingNonExistingEdge_then_returnNull() {
         final Edge secondReturnedEdgeCopy = inMemoryEdgeStore.deleteEdge(null);
-        assertNull("Edge should be null for null edgeId.", secondReturnedEdgeCopy);
+        assertNull(secondReturnedEdgeCopy, "Edge should be null for null edgeId.");
     }
 
     @Test
-    public void given_inMemoryEdgeStore_when_gettingAllEdges_then_returnAllEdges() {
+    void given_inMemoryEdgeStore_when_gettingAllEdges_then_returnAllEdges() {
         final Edge edgeOne = getAnEdge("E1");
         final Edge edgeTwo = getAnEdge("E2");
         final Edge firstReturnedEdgeCopy = inMemoryEdgeStore.mapEdge(edgeOne.getEdgeIdentifier().getId(), edgeOne);
@@ -101,16 +105,18 @@ public class InMemoryEdgeStoreTest {
         final List<String> ids = Arrays.asList("E1", "E2", "E3");
         final Map<String, Edge> thirdReturnedEdgeMap = inMemoryEdgeStore.getAllEdges(ids);
 
-        assertNull("Previous copy of an Edge should be null.", firstReturnedEdgeCopy);
-        assertNull("Previous copy of an Edge should be null.", secondReturnedEdgeCopy);
-        assertEquals("The size of map should be 3.", 3, thirdReturnedEdgeMap.size());
-        assertEquals("KnotId should match : knotId.", "knotId", thirdReturnedEdgeMap.get("E1").getKnotId());
-        assertEquals("Edge identifier should match : E1.", "E1",
-                thirdReturnedEdgeMap.get("E1").getEdgeIdentifier().getId());
-        assertEquals("KnotId should match : knotId.", "knotId", thirdReturnedEdgeMap.get("E2").getKnotId());
-        assertEquals("Edge identifier should match : E2.", "E2",
-                thirdReturnedEdgeMap.get("E2").getEdgeIdentifier().getId());
-        assertNull("There is no Edge corresponding to EdgeId : E3.", thirdReturnedEdgeMap.get("E3"));
+        assertNull(firstReturnedEdgeCopy, "Previous copy of an Edge should be null.");
+        assertNull(secondReturnedEdgeCopy, "Previous copy of an Edge should be null.");
+        assertEquals(3, thirdReturnedEdgeMap.size(), "The size of map should be 3.");
+        assertEquals("knotId", thirdReturnedEdgeMap.get("E1").getKnotId(), "KnotId should match : knotId.");
+        assertEquals("E1",
+                thirdReturnedEdgeMap.get("E1").getEdgeIdentifier().getId(),
+                "Edge identifier should match : E1.");
+        assertEquals("knotId", thirdReturnedEdgeMap.get("E2").getKnotId(), "KnotId should match : knotId.");
+        assertEquals("E2",
+                thirdReturnedEdgeMap.get("E2").getEdgeIdentifier().getId(),
+                "Edge identifier should match : E2.");
+        assertNull(thirdReturnedEdgeMap.get("E3"), "There is no Edge corresponding to EdgeId : E3.");
     }
 
     private Edge getAnEdge(final String edgeId) {

@@ -24,8 +24,8 @@ import com.phonepe.platform.query.dsl.logical.NotFilter;
 import com.phonepe.platform.query.dsl.logical.OrFilter;
 import com.phonepe.platform.query.dsl.numeric.GreaterEqualFilter;
 import com.phonepe.platform.query.dsl.numeric.LessEqualFilter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,63 +33,75 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class ComponentBonsaiTreeValidatorTest {
 
-    private ComponentBonsaiTreeValidator componentValidator
+    private final ComponentBonsaiTreeValidator componentValidator
             = new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
             .mutualExclusivitySettingTurnedOn(true)
             .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
             .maxAllowedVariationsPerKnot(Integer.MAX_VALUE)
             .build());
 
-    @Test(expected = BonsaiError.class)
-    public void validateEdge() {
-        componentValidator.validate(Edge.builder().build());
+    @Test
+    void validateEdge() {
+        assertThrows(BonsaiError.class, () -> {
+            componentValidator.validate(Edge.builder().build());
+        });
     }
 
-    @Test(expected = BonsaiError.class)
-    public void validateEdgeErrorOnNegativeVersion() {
-        componentValidator.validate(Edge.builder().edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
-                .version(-1).build());
+    @Test
+    void validateEdgeErrorOnNegativeVersion() {
+        assertThrows(BonsaiError.class, () -> {
+            componentValidator.validate(Edge.builder().edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
+                    .version(-1).build());
+        });
     }
 
-    @Test(expected = BonsaiError.class)
-    public void validateEdgeErrorOnNegativePriority() {
-        componentValidator.validate(Edge.builder()
-                .edgeIdentifier(new EdgeIdentifier("id1", 1, -1))
-                .version(1).build());
+    @Test
+    void validateEdgeErrorOnNegativePriority() {
+        assertThrows(BonsaiError.class, () -> {
+            componentValidator.validate(Edge.builder()
+                    .edgeIdentifier(new EdgeIdentifier("id1", 1, -1))
+                    .version(1).build());
+        });
     }
 
-    @Test(expected = BonsaiError.class)
-    public void validateEdgeErrorWhenFiltersContainMultipleFields() {
-        componentValidator.validate(Edge.builder()
-                .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
-                .version(1)
-                .knotId("knotId1")
-                .filter(new GreaterEqualFilter("field1", 123))
-                .filter(new LessEqualFilter("field2", 123))
-                .build());
+    @Test
+    void validateEdgeErrorWhenFiltersContainMultipleFields() {
+        assertThrows(BonsaiError.class, () -> {
+            componentValidator.validate(Edge.builder()
+                    .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
+                    .version(1)
+                    .knotId("knotId1")
+                    .filter(new GreaterEqualFilter("field1", 123))
+                    .filter(new LessEqualFilter("field2", 123))
+                    .build());
+        });
     }
 
-    @Test(expected = BonsaiError.class)
-    public void given_twoDifferentKnots_when_validating_then_throwBonsaiError() {
-        final Knot knotOne = Knot.builder()
-                .id("k1")
-                .version(1)
-                .knotData(ValuedKnotData.stringValue("string one"))
-                .build();
-        final Map<String, String> mapKeys = new HashMap<>();
-        mapKeys.put("key1", "key1");
-        final Knot knotTwo = Knot.builder()
-                .id("k2")
-                .version(3)
-                .knotData(MapKnotData.builder().mapKeys(mapKeys).build())
-                .build();
-        componentValidator.validate(knotOne, knotTwo);
+    @Test
+    void given_twoDifferentKnots_when_validating_then_throwBonsaiError() {
+        assertThrows(BonsaiError.class, () -> {
+            final Knot knotOne = Knot.builder()
+                    .id("k1")
+                    .version(1)
+                    .knotData(ValuedKnotData.stringValue("string one"))
+                    .build();
+            final Map<String, String> mapKeys = new HashMap<>();
+            mapKeys.put("key1", "key1");
+            final Knot knotTwo = Knot.builder()
+                    .id("k2")
+                    .version(3)
+                    .knotData(MapKnotData.builder().mapKeys(mapKeys).build())
+                    .build();
+            componentValidator.validate(knotOne, knotTwo);
+        });
     }
 
-    @Test()
-    public void validateEdgeNoErrorWhenFiltersContainSameField() {
+    @Test
+    void validateEdgeNoErrorWhenFiltersContainSameField() {
         componentValidator.validate(Edge.builder()
                 .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
                 .version(1)
@@ -100,23 +112,25 @@ public class ComponentBonsaiTreeValidatorTest {
     }
 
 
-    @Test(expected = BonsaiError.class)
-    public void validateEdgeErrorOnSingleConditionEdgeSettingOnAndMultipleFiltersSet() {
+    @Test
+    void validateEdgeErrorOnSingleConditionEdgeSettingOnAndMultipleFiltersSet() {
+        assertThrows(BonsaiError.class, () -> {
 
-        new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
-                .mutualExclusivitySettingTurnedOn(true)
-                .build())
-                .validate(Edge.builder()
-                        .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
-                        .version(1)
-                        .knotId("knotId1")
-                        .filter(new AndFilter(ImmutableList.of(new GreaterEqualFilter("field1", 123),
-                                new GreaterEqualFilter("field1", 121))))
-                        .build());
+            new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
+                    .mutualExclusivitySettingTurnedOn(true)
+                    .build())
+                    .validate(Edge.builder()
+                            .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
+                            .version(1)
+                            .knotId("knotId1")
+                            .filter(new AndFilter(ImmutableList.of(new GreaterEqualFilter("field1", 123),
+                                    new GreaterEqualFilter("field1", 121))))
+                            .build());
+        });
     }
 
-    @Test()
-    public void validateEdgeNoErrorOnInnerFiltersContainSameField() {
+    @Test
+    void validateEdgeNoErrorOnInnerFiltersContainSameField() {
         componentValidator.validate(Edge.builder()
                 .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
                 .version(1)
@@ -126,8 +140,8 @@ public class ComponentBonsaiTreeValidatorTest {
                 .build());
     }
 
-    @Test()
-    public void validateEdgeErrorOnInnerFiltersContainSameField() {
+    @Test
+    void validateEdgeErrorOnInnerFiltersContainSameField() {
         componentValidator.validate(Edge.builder()
                 .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
                 .version(1)
@@ -137,8 +151,8 @@ public class ComponentBonsaiTreeValidatorTest {
                 .build());
     }
 
-    @Test()
-    public void validateEdgeErrorOnInnerFiltersContainSameField2() {
+    @Test
+    void validateEdgeErrorOnInnerFiltersContainSameField2() {
         componentValidator.validate(Edge.builder()
                 .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
                 .version(1)
@@ -148,43 +162,49 @@ public class ComponentBonsaiTreeValidatorTest {
                 .build());
     }
 
-    @Test(expected = BonsaiError.class)
-    public void validateVariationMutuality() {
-        componentValidator.validate(Variation.builder()
-                .filter(new AndFilter(ImmutableList.of(new GreaterEqualFilter("field1", 123),
-                        new GreaterEqualFilter("field2", 121))))
+    @Test
+    void validateVariationMutuality() {
+        assertThrows(BonsaiError.class, () -> {
+            componentValidator.validate(Variation.builder()
+                    .filter(new AndFilter(ImmutableList.of(new GreaterEqualFilter("field1", 123),
+                            new GreaterEqualFilter("field2", 121))))
 
-                .knotId("knotId1")
-                .priority(1)
-                .build());
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void validateVariationSingleCondition() {
-        new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
-                .mutualExclusivitySettingTurnedOn(true)
-                .build())
-                .validate(Variation.builder()
-                        .filter(new AndFilter(ImmutableList.of(new GreaterEqualFilter("field1", 123),
-                                new GreaterEqualFilter("field1", 123))))
-                        .knotId("knotId1")
-                        .priority(1)
-                        .build());
-    }
-
-    @Test(expected = BonsaiError.class)
-    public void validateKnotError() {
-        new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
-                .mutualExclusivitySettingTurnedOn(true)
-                .build())
-                .validate(Knot.builder()
-                        .id("k1")
-                        .version(1)
-                        .build());
+                    .knotId("knotId1")
+                    .priority(1)
+                    .build());
+        });
     }
 
     @Test
-    public void validateKnotValid() {
+    void validateVariationSingleCondition() {
+        assertThrows(BonsaiError.class, () -> {
+            new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
+                    .mutualExclusivitySettingTurnedOn(true)
+                    .build())
+                    .validate(Variation.builder()
+                            .filter(new AndFilter(ImmutableList.of(new GreaterEqualFilter("field1", 123),
+                                    new GreaterEqualFilter("field1", 123))))
+                            .knotId("knotId1")
+                            .priority(1)
+                            .build());
+        });
+    }
+
+    @Test
+    void validateKnotError() {
+        assertThrows(BonsaiError.class, () -> {
+            new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
+                    .mutualExclusivitySettingTurnedOn(true)
+                    .build())
+                    .validate(Knot.builder()
+                            .id("k1")
+                            .version(1)
+                            .build());
+        });
+    }
+
+    @Test
+    void validateKnotValid() {
         new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                 .mutualExclusivitySettingTurnedOn(true)
                 .build())
@@ -195,21 +215,23 @@ public class ComponentBonsaiTreeValidatorTest {
                         .build());
     }
 
-    @Test(expected = BonsaiError.class)
-    public void validateKnotInValid() {
-        new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
-                .mutualExclusivitySettingTurnedOn(true)
-                .build())
-                .validate(Knot.builder()
-                        .id("k1")
-                        .version(1)
-                        .knotData(new MapKnotData())
-                        .build());
+    @Test
+    void validateKnotInValid() {
+        assertThrows(BonsaiError.class, () -> {
+            new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
+                    .mutualExclusivitySettingTurnedOn(true)
+                    .build())
+                    .validate(Knot.builder()
+                            .id("k1")
+                            .version(1)
+                            .knotData(new MapKnotData())
+                            .build());
+        });
     }
 
 
     @Test
-    public void Given_RootValuedKnotAndInternalMapKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
+    void Given_RootValuedKnotAndInternalMapKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
         final Map<String, String> mapKeys = new HashMap<>();
         mapKeys.put("key1", "value1");
         mapKeys.put("key2", "value2");
@@ -244,12 +266,12 @@ public class ComponentBonsaiTreeValidatorTest {
         try {
             componentValidator.validate(rootTreeKnot);
         } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
+            Assertions.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
         }
     }
 
     @Test
-    public void Given_RootMapKnotAndInternalValuedKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
+    void Given_RootMapKnotAndInternalValuedKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
         final ValuedKnotData valuedKnotData = ValuedKnotData.builder()
                 .value(new StringValue("string value"))
                 .build();
@@ -283,12 +305,12 @@ public class ComponentBonsaiTreeValidatorTest {
         try {
             componentValidator.validate(rootTreeKnot);
         } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
+            Assertions.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
         }
     }
 
     @Test
-    public void Given_RootValuedKnotAndInternalMultiKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
+    void Given_RootValuedKnotAndInternalMultiKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
         final List<String> keys = new ArrayList<>();
         keys.add("key1");
         keys.add("key2");
@@ -324,12 +346,12 @@ public class ComponentBonsaiTreeValidatorTest {
         try {
             componentValidator.validate(rootTreeKnot);
         } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
+            Assertions.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
         }
     }
 
     @Test
-    public void Given_RootMultiKnotAndInternalValuedKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
+    void Given_RootMultiKnotAndInternalValuedKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
         final ValuedKnotData valuedKnotData = ValuedKnotData.builder()
                 .value(new StringValue("string value"))
                 .build();
@@ -364,12 +386,12 @@ public class ComponentBonsaiTreeValidatorTest {
         try {
             componentValidator.validate(rootTreeKnot);
         } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
+            Assertions.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
         }
     }
 
     @Test
-    public void Given_RootMultiKnotAndInternalMapKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
+    void Given_RootMultiKnotAndInternalMapKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
         final Map<String, String> mapKeys = new HashMap<>();
         mapKeys.put("key1", "value1");
         mapKeys.put("key2", "value2");
@@ -407,12 +429,12 @@ public class ComponentBonsaiTreeValidatorTest {
         try {
             componentValidator.validate(rootTreeKnot);
         } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
+            Assertions.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
         }
     }
 
     @Test
-    public void Given_RootMapKnotAndInternalMultiKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
+    void Given_RootMapKnotAndInternalMultiKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
         final List<String> keys = new ArrayList<>();
         keys.add("key1");
         keys.add("key2");
@@ -450,12 +472,12 @@ public class ComponentBonsaiTreeValidatorTest {
         try {
             componentValidator.validate(rootTreeKnot);
         } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
+            Assertions.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
         }
     }
 
     @Test
-    public void Given_RootStringValuedKnotAndInternalNumberValuedKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
+    void Given_RootStringValuedKnotAndInternalNumberValuedKnot_When_ValidatingTreeKnot_ThenThrowBonsaiError() {
         final ValuedKnotData numberKnotData = ValuedKnotData.builder()
                 .value(new NumberValue(9))
                 .build();
@@ -486,12 +508,12 @@ public class ComponentBonsaiTreeValidatorTest {
         try {
             componentValidator.validate(rootTreeKnot);
         } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
+            Assertions.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
         }
     }
 
     @Test
-    public void Given_RootStringValuedKnotAndInternalStringValuedKnot_When_ValidatingTreeKnotWithMutualExclusionOn_ThenThrowBonsaiError() {
+    void Given_RootStringValuedKnotAndInternalStringValuedKnot_When_ValidatingTreeKnotWithMutualExclusionOn_ThenThrowBonsaiError() {
         final ValuedKnotData numberKnotData = ValuedKnotData.builder()
                 .value(new StringValue("string value"))
                 .build();
@@ -523,12 +545,12 @@ public class ComponentBonsaiTreeValidatorTest {
         try {
             componentValidator.validate(rootTreeKnot);
         } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR, e.getErrorCode());
+            Assertions.assertEquals(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR, e.getErrorCode());
         }
     }
 
     @Test
-    public void Given_RootStringValuedKnotAndInternalStringValuedKnot_When_ValidatingTreeKnotWithMutualExclusionOff_ThenReturnNothing() {
+    void Given_RootStringValuedKnotAndInternalStringValuedKnot_When_ValidatingTreeKnotWithMutualExclusionOff_ThenReturnNothing() {
         final ValuedKnotData numberKnotData = ValuedKnotData.builder()
                 .value(new StringValue("string value"))
                 .build();
@@ -562,11 +584,11 @@ public class ComponentBonsaiTreeValidatorTest {
 
         componentValidator.validate(rootTreeKnot);
 
-        Assert.assertNotNull(rootTreeKnot);
+        Assertions.assertNotNull(rootTreeKnot);
     }
 
     @Test
-    public void Given_TwoInternalStringValuedKnotAndRootStringValuedKnot_When_ValidatingTreeKnotWithMutualExclusionOn_ThenThrowBonsaiError() {
+    void Given_TwoInternalStringValuedKnotAndRootStringValuedKnot_When_ValidatingTreeKnotWithMutualExclusionOn_ThenThrowBonsaiError() {
         final ValuedKnotData stringKnotDataOne = ValuedKnotData.builder()
                 .value(new StringValue("string value One"))
                 .build();
@@ -612,12 +634,12 @@ public class ComponentBonsaiTreeValidatorTest {
         try {
             componentValidator.validate(rootTreeKnot);
         } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR, e.getErrorCode());
+            Assertions.assertEquals(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR, e.getErrorCode());
         }
     }
 
     @Test
-    public void Given_TwoInternalStringValuedKnotAndRootStringValuedKnot_When_ValidatingTreeKnotWithMutualExclusionOff_ThenReturnNothing() {
+    void Given_TwoInternalStringValuedKnotAndRootStringValuedKnot_When_ValidatingTreeKnotWithMutualExclusionOff_ThenReturnNothing() {
         final ValuedKnotData stringKnotDataOne = ValuedKnotData.builder()
                 .value(new StringValue("string value One"))
                 .build();
@@ -665,7 +687,7 @@ public class ComponentBonsaiTreeValidatorTest {
 
         componentValidator.validate(rootTreeKnot);
 
-        Assert.assertNotNull(rootTreeKnot);
+        Assertions.assertNotNull(rootTreeKnot);
     }
 
 
@@ -691,7 +713,7 @@ public class ComponentBonsaiTreeValidatorTest {
      * And this test-case should pass even with the mutual exclusion flag is set to true.
      */
     @Test
-    public void Given_HeavyTreeKnot_When_ValidatingTreeKnotWithMutualExclusionOn_ThenReturnNothing() {
+    void Given_HeavyTreeKnot_When_ValidatingTreeKnotWithMutualExclusionOn_ThenReturnNothing() {
         final ValuedKnotData treeKnotThirdValue = ValuedKnotData.builder()
                 .value(new StringValue("Value3"))
                 .build();
@@ -780,11 +802,11 @@ public class ComponentBonsaiTreeValidatorTest {
 
         componentValidator.validate(treeKnotFirst);
 
-        Assert.assertNotNull(treeKnotFirst);
+        Assertions.assertNotNull(treeKnotFirst);
     }
 
     @Test
-    public void Given_TwoInternalStringValuedKnotAndRootStringValuedKnot_When_ValidatingTreeKnotWithMutualExclusionOn_ThenThrowMaximumVaritionBonsaiError() {
+    void Given_TwoInternalStringValuedKnotAndRootStringValuedKnot_When_ValidatingTreeKnotWithMutualExclusionOn_ThenThrowMaximumVaritionBonsaiError() {
         final ValuedKnotData stringKnotDataOne = ValuedKnotData.builder()
                 .value(new StringValue("string value One"))
                 .build();
@@ -832,7 +854,7 @@ public class ComponentBonsaiTreeValidatorTest {
                     getComponentBonsaiTreeValidator(1, 3, true);
             componentValidator.validate(rootTreeKnot);
         } catch (BonsaiError e) {
-            Assert.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
+            Assertions.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
         }
     }
 

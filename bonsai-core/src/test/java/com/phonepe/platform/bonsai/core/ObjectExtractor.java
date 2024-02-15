@@ -37,12 +37,12 @@ public class ObjectExtractor {
     public <T> T getObject(String resource, Class<T> clazz) throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
         String read = read(classLoader.getResourceAsStream(resource));
-        return Mapper.MAPPER.readValue(read, clazz);
+        return Parsers.MAPPER.readValue(read, clazz);
     }
 
     public <T> T getObject(String resource, TypeReference<T> typeReference) throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
         String read = read(classLoader.getResourceAsStream(resource));
-        return Mapper.MAPPER.readValue(read, typeReference);
+        return Parsers.MAPPER.readValue(read, typeReference);
     }
 }

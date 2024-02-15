@@ -1,0 +1,8 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.migrate.util.ReplaceStreamCollectWithToList
+displayName: Replace Stream.collect() with .toList()
+description: This recipe replaces Stream.collect(Collectors.toList()) with Stream.toList() where possible.
+recipeList:
+  - org.openrewrite.java.migrate.util.ReplaceStreamCollectWithToList:
+      convertToList: true

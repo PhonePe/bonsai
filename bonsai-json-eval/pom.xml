@@ -3,26 +3,18 @@
     <parent>
         <artifactId>bonsai</artifactId>
         <groupId>com.phonepe.platform</groupId>
-        <version>1.0.40</version>
+        <version>1.0.41</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>bonsai-json-eval</artifactId>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.release>8</maven.compiler.release>
         <maven.deploy.skip>false</maven.deploy.skip>
         <maven.javadoc.skip>true</maven.javadoc.skip>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>com.phonepe.platform</groupId>
             <artifactId>query-dsl</artifactId>

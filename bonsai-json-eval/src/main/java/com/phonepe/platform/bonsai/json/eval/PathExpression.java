@@ -12,7 +12,6 @@ import javax.naming.OperationNotSupportedException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 @Data
@@ -53,7 +52,8 @@ public class PathExpression {
     public Pair<String, Object> eval(DocumentContext context) {
         if (filters != null && !filters.isEmpty() &&
                 !filters.stream()
-                        .allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine<>(key, () -> context, genericFilterContext -> true)))) {
+                        .allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine<>(key, () -> context,
+                                genericFilterContext -> true)))) {
             return null;
         }
         if (value != null) {
@@ -64,7 +64,7 @@ public class PathExpression {
             if (operation == null) {
                 List<Object> values = context.read(path, OBJECT_TYPE_REF);
                 List<Object> nonNullValues =
-                        values == null ? null : values.stream().filter(Objects::nonNull).collect(Collectors.toList());
+                        values == null ? null : values.stream().filter(Objects::nonNull).toList();
                 if (nonNullValues == null || nonNullValues.isEmpty()) {
                     return null;
                 }

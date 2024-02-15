@@ -1,52 +1,52 @@
 package com.phonepe.platform.bonsai.json.eval;
 
 import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.TypeRef;
-import lombok.val;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 public class PathExpressionTest {
 
     @Test
-    public void testJsonPath() throws Exception {
+    void testJsonPath() throws Exception {
         JsonPathSetup.setup();
-        DocumentContext parse = JsonPath.parse("{\n" +
-                "  \"t\": [\n" +
-                "    {\n" +
-                "      \"price\": 1,\n" +
-                "      \"name\": \"anton\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"price\": 10,\n" +
-                "      \"name\": \"anaton\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"price\": 120,\n" +
-                "      \"name\": \"aanton\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"price\": 10,\n" +
-                "      \"name\": \"aaanton\"\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}");
+        DocumentContext parse = Parsers.parse("""
+                {
+                  "t": [
+                    {
+                      "price": 1,
+                      "name": "anton"
+                    },
+                    {
+                      "price": 10,
+                      "name": "anaton"
+                    },
+                    {
+                      "price": 120,
+                      "name": "aanton"
+                    },
+                    {
+                      "price": 10,
+                      "name": "aaanton"
+                    }
+                  ]
+                }\
+                """);
 
-        val read = parse.read("$.t[*].price", new TypeRef<List<Integer>>() {
+        final var read = parse.read("$.t[*].price", new TypeRef<List<Integer>>() {
                 })
                 .stream()
                 .mapToInt(Integer::intValue)
                 .sum();
-        val read2 = parse.read("$.t[*].price", new TypeRef<List<Integer>>() {
+        final var read2 = parse.read("$.t[*].price", new TypeRef<List<Integer>>() {
                 })
                 .stream()
                 .mapToInt(Integer::intValue)
                 .sum();
-        Assert.assertEquals(141, read);
-        Assert.assertEquals(141, read2);
+        Assertions.assertEquals(141, read);
+        Assertions.assertEquals(141, read2);
 
     }
 
