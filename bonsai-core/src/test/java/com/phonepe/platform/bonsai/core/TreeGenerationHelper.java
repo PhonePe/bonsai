@@ -53,37 +53,37 @@ public class TreeGenerationHelper {
     private static ValuedKnotData getKnotData(ValuedKnotData valuedKnotData, int i) {
         return ValuedKnotData.builder()
                 .value(valuedKnotData.getValue()
-                               .accept(new ValueVisitor<Value>() {
-                                   @Override
-                                   public Value visit(NumberValue numberValue) {
-                                       return new NumberValue(numberValue.getValue().doubleValue() + 1);
-                                   }
+                        .accept(new ValueVisitor<Value>() {
+                            @Override
+                            public Value visit(NumberValue numberValue) {
+                                return new NumberValue(numberValue.getValue().doubleValue() + 1);
+                            }
 
-                                   @Override
-                                   public Value visit(StringValue stringValue) {
-                                       return new StringValue(stringValue.getValue() + i);
-                                   }
+                            @Override
+                            public Value visit(StringValue stringValue) {
+                                return new StringValue(stringValue.getValue() + i);
+                            }
 
-                                   @Override
-                                   public Value visit(BooleanValue booleanValue) {
-                                       return new BooleanValue(i % 2 == 0);
-                                   }
+                            @Override
+                            public Value visit(BooleanValue booleanValue) {
+                                return new BooleanValue(i % 2 == 0);
+                            }
 
-                                   @Override
-                                   public Value visit(ByteValue byteValue) {
-                                       return new ByteValue(byteValue.getValue());
-                                   }
+                            @Override
+                            public Value visit(ByteValue byteValue) {
+                                return new ByteValue(byteValue.getValue());
+                            }
 
-                                   @Override
-                                   public Value visit(JsonValue jsonValue) {
-                                       return new JsonValue(jsonValue.getValue());
-                                   }
+                            @Override
+                            public Value visit(JsonValue jsonValue) {
+                                return new JsonValue(jsonValue.getValue());
+                            }
 
-                                   @Override
-                                   public Value visit(final ObjectValue objectValue) {
-                                       return new ObjectValue(objectValue.getObject());
-                                   }
-                               }))
+                            @Override
+                            public Value visit(final ObjectValue objectValue) {
+                                return new ObjectValue(objectValue.getObject());
+                            }
+                        }))
                 .build();
     }
 

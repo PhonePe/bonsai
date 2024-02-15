@@ -175,6 +175,7 @@ public class TraceWrappedJsonPathFilterEvaluationEngine<C extends JsonEvalContex
     }
 
     private void trace(Filter filter, boolean result) {
-        log.trace("[bonsai][{}][{}][{}] eval result: {}", filter.getClass().getSimpleName(), entityId, context.id(), result);
+        log.trace("[bonsai][{}][{}][{}] eval result: {}", filter.getClass().getSimpleName(), entityId, context.id(),
+                result);
     }
 }

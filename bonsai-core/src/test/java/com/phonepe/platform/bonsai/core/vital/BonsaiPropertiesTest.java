@@ -1,36 +1,36 @@
 package com.phonepe.platform.bonsai.core.vital;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BonsaiPropertiesTest {
 
     private BonsaiProperties bonsaiProperties;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         bonsaiProperties = BonsaiProperties.builder().build();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         bonsaiProperties = null;
     }
 
     @Test
-    public void given_bonsaiProperties_when_settingDefaultProperties_then_returnTheseProperties() {
+    void given_bonsaiProperties_when_settingDefaultProperties_then_returnTheseProperties() {
         assertEquals(1, bonsaiProperties.getMaxAllowedConditionsPerEdge());
         assertEquals(1, bonsaiProperties.getMaxAllowedVariationsPerKnot());
         assertFalse(bonsaiProperties.isMutualExclusivitySettingTurnedOn());
     }
 
     @Test
-    public void given_bonsaiProperties_when_settingTheseProperties_then_returnTheseProperties() {
+    void given_bonsaiProperties_when_settingTheseProperties_then_returnTheseProperties() {
         final BonsaiProperties bonsaiProperties = BonsaiProperties.builder()
                 .mutualExclusivitySettingTurnedOn(true)
                 .maxAllowedVariationsPerKnot(5)

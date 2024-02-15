@@ -11,24 +11,24 @@ import com.phonepe.platform.bonsai.models.structures.OrderedList;
 import com.phonepe.platform.query.dsl.Filter;
 import com.phonepe.platform.query.dsl.general.EqualsFilter;
 import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ImmutableBonsaiBuilderTest {
 
     private Bonsai<Context> mutableBonsaiTree;
     private ImmutableBonsaiBuilder<Context> immutableBonsaiBuilder;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mutableBonsaiTree = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties.builder()
@@ -40,14 +40,14 @@ public class ImmutableBonsaiBuilderTest {
         immutableBonsaiBuilder = ImmutableBonsaiBuilder.builder(mutableBonsaiTree);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         mutableBonsaiTree = null;
         immutableBonsaiBuilder = null;
     }
 
     @Test
-    public void given_immutableBonsaiBuilder_when_buildingImmutableBonsaiTree_then_buildImmutableBonsaiTree() {
+    void given_immutableBonsaiBuilder_when_buildingImmutableBonsaiTree_then_buildImmutableBonsaiTree() {
         final Bonsai<Context> mutableBonsaiTree = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties.builder()
                         .maxAllowedConditionsPerEdge(10)
@@ -62,7 +62,7 @@ public class ImmutableBonsaiBuilderTest {
     }
 
     @Test
-    public void given_immutableBonsaiBuilder_when_addingKnotsIntoImmutableBonsaiBuilder_then_doThoseOperations() {
+    void given_immutableBonsaiBuilder_when_addingKnotsIntoImmutableBonsaiBuilder_then_doThoseOperations() {
         final Bonsai<Context> mutableBonsaiTree = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties.builder()
                         .maxAllowedConditionsPerEdge(10)
@@ -111,7 +111,7 @@ public class ImmutableBonsaiBuilderTest {
     }
 
     @Test
-    public void given_immutableBonsaiBuilder_when_addingEdgeIntoImmutableBonsaiBuilder_then_doThoseOperations() {
+    void given_immutableBonsaiBuilder_when_addingEdgeIntoImmutableBonsaiBuilder_then_doThoseOperations() {
         final Bonsai<Context> mutableBonsaiTree = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties.builder()
                         .maxAllowedConditionsPerEdge(10)
@@ -142,8 +142,9 @@ public class ImmutableBonsaiBuilderTest {
 
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.createEdge(e1Edge);
 
-        final List<Filter> edgeFilters = Arrays.asList(EqualsFilter.builder().field("fieldOne").value("valueOne").build(),
-                NotEqualsFilter.builder().field("fieldOne").value("valueTwo").build());
+        final List<Filter> edgeFilters =
+                Arrays.asList(EqualsFilter.builder().field("fieldOne").value("valueOne").build(),
+                        NotEqualsFilter.builder().field("fieldOne").value("valueTwo").build());
         final Variation updateVariation = Variation.builder().filters(edgeFilters).build();
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.updateVariation("K1", "E1", updateVariation);
 
@@ -157,7 +158,7 @@ public class ImmutableBonsaiBuilderTest {
     }
 
     @Test
-    public void given_immutableBonsaiTree_when_creatingKnotAndCapture_then_saveKnotAndReturnPreviousValueCorrespondingToKnotId() {
+    void given_immutableBonsaiTree_when_creatingKnotAndCapture_then_saveKnotAndReturnPreviousValueCorrespondingToKnotId() {
         final Knot knot = Knot.builder()
                 .id("K1")
                 .knotData(ValuedKnotData.stringValue("K1 Data"))
@@ -173,7 +174,7 @@ public class ImmutableBonsaiBuilderTest {
     }
 
     @Test
-    public void given_immutableBonsaiTree_when_creatingKnotAndCaptureWithKnotData_then_saveKnotAndReturnValueCorrespondingToKnotId() {
+    void given_immutableBonsaiTree_when_creatingKnotAndCaptureWithKnotData_then_saveKnotAndReturnValueCorrespondingToKnotId() {
         final KnotData knotData = ValuedKnotData.stringValue("K1 Data");
         final Knot capturedPreviousKnot = immutableBonsaiBuilder.createKnotAndCapture(knotData, null);
         final Bonsai<Context> immutableBonsaiTree = immutableBonsaiBuilder.build();
@@ -184,7 +185,7 @@ public class ImmutableBonsaiBuilderTest {
     }
 
     @Test
-    public void given_immutableBonsaiTree_when_creatingMappingAndCaptureWithKnotData_then_saveKnotAndPreviousValueCorrespondingToKnotId() {
+    void given_immutableBonsaiTree_when_creatingMappingAndCaptureWithKnotData_then_saveKnotAndPreviousValueCorrespondingToKnotId() {
         final KnotData knotData = ValuedKnotData.stringValue("K1 Data");
         final Knot capturedPreviousKnot = immutableBonsaiBuilder.createMappingAndCapture("key", knotData, null);
         final Bonsai<Context> immutableBonsaiTree = immutableBonsaiBuilder.build();
@@ -195,7 +196,7 @@ public class ImmutableBonsaiBuilderTest {
     }
 
     @Test
-    public void given_immutableBonsaiTree_when_addingVariationAndCapture_then_saveVariation() {
+    void given_immutableBonsaiTree_when_addingVariationAndCapture_then_saveVariation() {
         final Knot knotOne = Knot.builder()
                 .id("K1")
                 .knotData(ValuedKnotData.stringValue("K1 Data"))

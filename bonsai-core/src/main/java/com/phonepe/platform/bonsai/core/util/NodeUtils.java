@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 @Slf4j
 @UtilityClass
@@ -113,7 +112,7 @@ public class NodeUtils {
             });
         } catch (Exception e) {
             log.error("[bonsai][{}] Error getting chimera value as boolean for keyNode:{}",
-                      MDC.get(BonsaiConstants.EVALUATION_ID), keyNode, e);
+                    MDC.get(BonsaiConstants.EVALUATION_ID), keyNode, e);
             return defaultValue;
         }
     }
@@ -129,7 +128,7 @@ public class NodeUtils {
                     if (valueFlatNode.getValue() == null) {
                         if (log.isDebugEnabled()) {
                             log.debug("[bonsai][{}] default value being returned for valueFlatNode:{}",
-                                      MDC.get(BonsaiConstants.EVALUATION_ID), valueFlatNode);
+                                    MDC.get(BonsaiConstants.EVALUATION_ID), valueFlatNode);
                         }
                         return defaultValue;
                     }
@@ -145,7 +144,7 @@ public class NodeUtils {
                 public Boolean visit(ListFlatNode listFlatNode) {
                     if (log.isDebugEnabled()) {
                         log.debug("[bonsai][{}] default value being returned for listFlatNode:{}",
-                                  MDC.get(BonsaiConstants.EVALUATION_ID), listFlatNode);
+                                MDC.get(BonsaiConstants.EVALUATION_ID), listFlatNode);
                     }
                     return defaultValue;
                 }
@@ -154,14 +153,14 @@ public class NodeUtils {
                 public Boolean visit(MapFlatNode mapFlatNode) {
                     if (log.isDebugEnabled()) {
                         log.debug("[bonsai][{}] default value being returned for mapFlatNode:{}",
-                                  MDC.get(BonsaiConstants.EVALUATION_ID), mapFlatNode);
+                                MDC.get(BonsaiConstants.EVALUATION_ID), mapFlatNode);
                     }
                     return defaultValue;
                 }
             });
         } catch (Exception e) {
             log.error("[bonsai][{}] Error getting chimera value as boolean for flatNode:{}",
-                      MDC.get(BonsaiConstants.EVALUATION_ID), flatNode, e);
+                    MDC.get(BonsaiConstants.EVALUATION_ID), flatNode, e);
             return defaultValue;
         }
     }
@@ -181,7 +180,7 @@ public class NodeUtils {
                 public String visit(ListFlatNode listFlatNode) {
                     if (log.isDebugEnabled()) {
                         log.debug("[bonsai][{}] default value being returned for listFlatNode:{}",
-                                  MDC.get(BonsaiConstants.EVALUATION_ID), listFlatNode);
+                                MDC.get(BonsaiConstants.EVALUATION_ID), listFlatNode);
                     }
                     return defaultValue;
                 }
@@ -190,14 +189,14 @@ public class NodeUtils {
                 public String visit(MapFlatNode mapFlatNode) {
                     if (log.isDebugEnabled()) {
                         log.debug("[bonsai][{}] default value being returned for mapFlatNode:{}",
-                                  MDC.get(BonsaiConstants.EVALUATION_ID), mapFlatNode);
+                                MDC.get(BonsaiConstants.EVALUATION_ID), mapFlatNode);
                     }
                     return defaultValue;
                 }
             });
         } catch (Exception e) {
             log.error("[bonsai][{}] Error getting chimera value as boolean for flatNode:{}",
-                      MDC.get(BonsaiConstants.EVALUATION_ID), flatNode, e);
+                    MDC.get(BonsaiConstants.EVALUATION_ID), flatNode, e);
             return defaultValue;
         }
     }
@@ -251,7 +250,7 @@ public class NodeUtils {
                 public Number visit(ListFlatNode listFlatNode) {
                     if (log.isDebugEnabled()) {
                         log.debug("[bonsai][{}] default value being returned for listFlatNode:{}, value:{}",
-                                  MDC.get(BonsaiConstants.EVALUATION_ID), listFlatNode, defaultValue);
+                                MDC.get(BonsaiConstants.EVALUATION_ID), listFlatNode, defaultValue);
                     }
                     return defaultValue;
                 }
@@ -260,7 +259,7 @@ public class NodeUtils {
                 public Number visit(MapFlatNode mapFlatNode) {
                     if (log.isDebugEnabled()) {
                         log.debug("[bonsai][{}] default value being returned for mapFlatNode:{}, value:{}",
-                                  MDC.get(BonsaiConstants.EVALUATION_ID), mapFlatNode, defaultValue);
+                                MDC.get(BonsaiConstants.EVALUATION_ID), mapFlatNode, defaultValue);
                     }
                     return defaultValue;
                 }
@@ -426,10 +425,10 @@ public class NodeUtils {
                             .entrySet().stream()
                             .map(stringNodePair -> MapEntry
                                     .of(stringNodePair.getKey(),
-                                        converter.apply(stringNodePair.getValue(),
-                                                        defaultValue == null ? null
-                                                                             : defaultValue.get(
-                                                                                     stringNodePair.getKey()))))
+                                            converter.apply(stringNodePair.getValue(),
+                                                    defaultValue == null ? null
+                                                            : defaultValue.get(
+                                                            stringNodePair.getKey()))))
                             .collect(HashMap::new, (map, entry) -> map
                                     .put(entry.getK(), entry.getV()), HashMap::putAll);
                 }
@@ -481,7 +480,7 @@ public class NodeUtils {
                             .getNodes()
                             .stream()
                             .map(node -> converter.apply(node, null))
-                            .collect(Collectors.toList());
+                            .toList();
                 }
             });
         } catch (Exception e) {

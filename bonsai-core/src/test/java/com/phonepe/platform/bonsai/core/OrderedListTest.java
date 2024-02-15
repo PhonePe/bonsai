@@ -3,16 +3,17 @@ package com.phonepe.platform.bonsai.core;
 import com.google.common.collect.Lists;
 import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.models.structures.OrderedList;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OrderedListTest {
 
     @Test
-    public void testOrderedListAdd() {
+    void testOrderedListAdd() {
         OrderedList<EdgeIdentifier> edges = new OrderedList<>();
         edges.add(new EdgeIdentifier("2", 1, 2));
         edges.add(new EdgeIdentifier("1", 1, 1));
@@ -37,7 +38,7 @@ public class OrderedListTest {
     }
 
     @Test
-    public void testOrderedListAddAll() {
+    void testOrderedListAddAll() {
         OrderedList<EdgeIdentifier> edges = new OrderedList<>();
         edges.add(new EdgeIdentifier("2", 1, 2));
         edges.add(new EdgeIdentifier("1", 1, 1));
@@ -64,27 +65,35 @@ public class OrderedListTest {
         assertEquals("123", edges.get(edges.size() - 1).getId());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testOrderedListAddFirstException() {
-        OrderedList<EdgeIdentifier> edges = new OrderedList<>();
-        edges.addFirst(new EdgeIdentifier("1", 1, 1));
+    @Test
+    void testOrderedListAddFirstException() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            OrderedList<EdgeIdentifier> edges = new OrderedList<>();
+            edges.addFirst(new EdgeIdentifier("1", 1, 1));
+        });
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testOrderedListAddLastException() {
-        OrderedList<EdgeIdentifier> edges = new OrderedList<>();
-        edges.addLast(new EdgeIdentifier("1", 1, 1));
+    @Test
+    void testOrderedListAddLastException() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            OrderedList<EdgeIdentifier> edges = new OrderedList<>();
+            edges.addLast(new EdgeIdentifier("1", 1, 1));
+        });
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testOrderedListAddAllException() {
-        OrderedList<EdgeIdentifier> edges = new OrderedList<>();
-        edges.addAll(2, Collections.emptyList());
+    @Test
+    void testOrderedListAddAllException() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            OrderedList<EdgeIdentifier> edges = new OrderedList<>();
+            edges.addAll(2, Collections.emptyList());
+        });
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testOrderedListAddException() {
-        OrderedList<EdgeIdentifier> edges = new OrderedList<>();
-        edges.add(2, new EdgeIdentifier("1", 1, 1));
+    @Test
+    void testOrderedListAddException() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            OrderedList<EdgeIdentifier> edges = new OrderedList<>();
+            edges.add(2, new EdgeIdentifier("1", 1, 1));
+        });
     }
 }
