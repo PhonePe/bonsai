@@ -112,7 +112,7 @@ public interface Bonsai<C extends Context> {
      * @param knotId    id of the {@link Knot}
      * @param variation variation of a {@link Knot}. An edge to connect to the {@link Knot} with another variation of the Knot
      * @return edgeId
-     * @throws BonsaiError 1. if there are cycles {@link com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode#CYCLE_DETECTED}
+     * @throws BonsaiError 1. if there are cycl`es {@link com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode#CYCLE_DETECTED}
      *                     2. if the edge's pivot is violated at that level {@link com.phonepe.platform.bonsai.core.exception.BonsaiErrorCode#VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR}
      */
     Edge addVariation(String knotId, Variation variation);
@@ -238,7 +238,7 @@ public interface Bonsai<C extends Context> {
     TreeKnotState getCompleteTreeWithDeltaOperations(String key, List<DeltaOperation> deltaOperationList);
 
     /**
-     * This function is to permanently save new changes into tree(aerospike) for a given key
+     * This interface allows you to make changes to the tree as a list of operations
      * and corresponding List of Deltas.
      *
      * @param key                - Name of the root node.
@@ -246,6 +246,14 @@ public interface Bonsai<C extends Context> {
      * @return TreeKnotState - object contains TreeKnot and revert-delta-operations.
      */
     TreeKnotState applyDeltaOperations(String key, List<DeltaOperation> deltaOperationList);
+
+    /**
+     * This utility interface to calculate the delta operations required to create the key recursively
+     *
+     * @param key - key for which delta operations are to be calculated.
+     * @return List of Delta Operations or empty list if the key does not exist
+     */
+    List<DeltaOperation> calculateDeltaOperations(String key);
 
     /**
      * Perform a full evaluation of the Key

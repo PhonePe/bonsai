@@ -3,6 +3,8 @@ package com.phonepe.platform.bonsai.json.eval;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.Collection;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utils {
 
@@ -68,5 +70,9 @@ public class Utils {
 
     public static boolean isEmpty(String str) {
         return str == null || str.length() == 0;
+    }
+
+    public static <T> boolean isEmpty(Collection<T> collection) {
+        return collection == null || collection.isEmpty();
     }
 }

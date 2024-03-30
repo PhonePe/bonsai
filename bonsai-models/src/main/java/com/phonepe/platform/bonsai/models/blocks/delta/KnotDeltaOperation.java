@@ -5,6 +5,7 @@ import com.phonepe.platform.bonsai.models.blocks.delta.type.DeltaOperationType;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationBiConsumerVisitor;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationUnaryVisitor;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVisitor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -20,6 +21,7 @@ public class KnotDeltaOperation extends DeltaOperation {
         super(DeltaOperationType.KNOT_DELTA);
     }
 
+    @Builder
     public KnotDeltaOperation(final Knot knot) {
         super(DeltaOperationType.KNOT_DELTA);
         this.knot = knot;

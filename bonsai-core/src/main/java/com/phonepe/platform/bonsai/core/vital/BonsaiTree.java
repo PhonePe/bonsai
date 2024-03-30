@@ -23,7 +23,10 @@ import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
 import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
+import com.phonepe.platform.bonsai.models.blocks.delta.EdgeDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KeyMappingDeltaOperation;
+import com.phonepe.platform.bonsai.models.blocks.delta.KnotDeltaOperation;
+import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationUnaryVisitor;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVisitor;
 import com.phonepe.platform.bonsai.models.blocks.model.Converters;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
@@ -392,10 +395,25 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         final TreeKnotState metaData = getCompleteTreeWithDeltaOperations(key, deltaOperationList);
         Knot rootKnot = createCompleteTree(metaData.getTreeKnot());
         if (!containsKey(key)) {
-            KeyMappingDeltaOperation keyMappingDeltaOperation = (KeyMappingDeltaOperation) deltaOperationList.get(0);
-            createMapping(keyMappingDeltaOperation.getKeyId(), rootKnot.getId());
+            deltaOperationList.stream().filter(KeyMappingDeltaOperation.class::isInstance).findFirst().ifPresent(
+                    deltaOperation -> {
+                        KeyMappingDeltaOperation keyMappingDeltaOperation = (KeyMappingDeltaOperation) deltaOperation;
+                        createMapping(keyMappingDeltaOperation.getKeyId(), rootKnot.getId());
+                    });
         }
         return metaData;
+    }
+
+    @Override
+    public List<DeltaOperation> calculateDeltaOperations(String key) {
+        List<DeltaOperation> operations = new ArrayList<>();
+        var knotId = keyTreeStore.getKeyTree(key);
+        if (Strings.isNullOrEmpty(knotId)) {
+            return operations;
+        }
+        operations.add(KeyMappingDeltaOperation.builder().keyId(key).knotId(knotId).build());
+        recursivelyCalculateDeltaOperations(knotStore.getKnot(knotId), operations);
+        return operations;
     }
 
     @Override
@@ -824,4 +842,22 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                 .anyMatch(filter -> !allFields.containsAll(
                         filter.accept(FIELD_IDENTIFIER).collect(Collectors.toSet())));
     }
+
+    private void recursivelyCalculateDeltaOperations(final Knot knot,
+                                                     final List<DeltaOperation> operations) {
+        if (knot == null) {
+            return;
+        }
+
+        operations.add(KnotDeltaOperation.builder().knot(knot.deepClone(0)).build());
+
+        if (knot.getEdges() != null) {
+            for (EdgeIdentifier edgeIdentifier : knot.getEdges()) {
+                final var edge = edgeStore.getEdge(edgeIdentifier.getId());
+                operations.add(EdgeDeltaOperation.builder().edge(edge.deepClone(0)).build());
+                recursivelyCalculateDeltaOperations(getKnot(edge.getKnotId()), operations);
+            }
+        }
+    }
+
 }

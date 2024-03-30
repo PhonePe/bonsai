@@ -1,6 +1,7 @@
 package com.phonepe.platform.bonsai.models.structures;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -54,5 +55,12 @@ public class OrderedList<T extends Comparable<T>> extends LinkedList<T> {
     @Override
     public void add(int index, T element) {
         throw new UnsupportedOperationException("Adding at position not supported");
+    }
+
+    @SafeVarargs
+    public static <T extends Comparable<T>> OrderedList<T> of(T... elements) {
+        OrderedList<T> orderedList = new OrderedList<>();
+        Collections.addAll(orderedList, elements);
+        return orderedList;
     }
 }

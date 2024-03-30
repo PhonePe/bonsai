@@ -55,19 +55,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BonsaiTreeTest {
 
+    private static final BonsaiProperties DEFAULT_PROPERTIES =
+            BonsaiProperties.builder().mutualExclusivitySettingTurnedOn(true)
+                    .maxAllowedConditionsPerEdge(10).maxAllowedVariationsPerKnot(10).build();
+
     private Bonsai<Context> bonsai;
+
+    private static Bonsai<Context> createNewInMemoryBonsai(BonsaiProperties properties) {
+        return BonsaiBuilder.builder().withBonsaiProperties(properties).build();
+    }
 
     @BeforeEach
     public void setUp() {
-        bonsai = BonsaiBuilder.builder()
-                .withBonsaiProperties(
-                        BonsaiProperties
-                                .builder()
-                                .mutualExclusivitySettingTurnedOn(true)
-                                .maxAllowedConditionsPerEdge(10)
-                                .maxAllowedVariationsPerKnot(10)
-                                .build())
-                .build();
+        bonsai = createNewInMemoryBonsai(DEFAULT_PROPERTIES);
     }
 
     @AfterEach
@@ -499,6 +499,8 @@ public class BonsaiTreeTest {
         assertNull(knot.getEdges(), "There are zero edges connected to Knot.");
         assertNotNull(knot.getKnotData(), "Knot data should exist.");
         assertEquals("VALUED", knot.getKnotData().getKnotDataType().toString(), "VALUED type KnotData should present.");
+
+
     }
 
     /**
@@ -1408,13 +1410,9 @@ public class BonsaiTreeTest {
 
     @Test
     void given_bonsaiTree_when_evaluatingTreeWithMaxEdgesPerKnot_then_returnEvaluatedKnot() {
-        Bonsai<Context> bonsai = BonsaiBuilder.builder()
-                .withBonsaiProperties(BonsaiProperties
-                        .builder()
-                        .mutualExclusivitySettingTurnedOn(true)
-                        .maxAllowedVariationsPerKnot(10)
-                        .build())
-                .build();
+        Bonsai<Context> bonsai = createNewInMemoryBonsai(
+                BonsaiProperties.builder().mutualExclusivitySettingTurnedOn(true)
+                        .maxAllowedVariationsPerKnot(10).build());
 
         Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"), null);
         bonsai.createMapping("mera_data", knot.getId());
@@ -1431,13 +1429,9 @@ public class BonsaiTreeTest {
     @Test
     void given_bonsaiTree_when_evaluatingTreeWithOneMaxthenMaxEdgesPerKnot_then_throwBonsaiError() {
         assertThrows(BonsaiError.class, () -> {
-            Bonsai<Context> bonsai = BonsaiBuilder.builder()
-                    .withBonsaiProperties(BonsaiProperties
-                            .builder()
-                            .mutualExclusivitySettingTurnedOn(true)
-                            .maxAllowedVariationsPerKnot(10)
-                            .build())
-                    .build();
+            Bonsai<Context> bonsai = createNewInMemoryBonsai(
+                    BonsaiProperties.builder().mutualExclusivitySettingTurnedOn(true)
+                            .maxAllowedVariationsPerKnot(10).build());
 
             Knot knot = bonsai.createKnot(ValuedKnotData.stringValue("Data"), null);
             bonsai.createMapping("mera_data", knot.getId());
@@ -1628,5 +1622,48 @@ public class BonsaiTreeTest {
         knotOne = bonsai.getKnot(knotOne.getId());
 
         Assertions.assertTrue(knotOne.getProperties().containsValue(labels));
+    }
+
+    @Test
+    void given_validBonsaiTree_when_getDeltaOperations_then_returnValidDeltaOperations() throws IOException {
+        final var userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
+
+        var key = "example";
+        var root = bonsai.createMapping(key, ValuedKnotData.stringValue(("Root knot Value 1")), null);
+        var child11 = bonsai.createKnot(ValuedKnotData.stringValue(("Child 11")), null);
+        var child12 = bonsai.createKnot(ValuedKnotData.stringValue(("Child 12")), null);
+
+        bonsai.addVariation(root.getId(),
+                Variation.builder().filter(new EqualsFilter("$.gender", "male")).knotId(child11.getId()).build());
+
+        bonsai.addVariation(root.getId(),
+                Variation.builder().filter(new EqualsFilter("$.gender", "female")).knotId(child12.getId()).build());
+
+        var operations = bonsai.calculateDeltaOperations(key);
+
+
+        var user1ExampleEvaluation = bonsai.evaluate(key, Context.builder()
+                .documentContext(Parsers.parse(userContext1))
+                .build());
+
+        var newBonsai = createNewInMemoryBonsai(DEFAULT_PROPERTIES);
+
+        // if you apply these on a new tree, the evaluation should be the same, the resulting tree should also be the same
+        newBonsai.applyDeltaOperations(key, operations);
+        var user1ExampleEvaluationAgain = bonsai.evaluate(key, Context.builder()
+                .documentContext(Parsers.parse(userContext1))
+                .build());
+
+        assertEquals(user1ExampleEvaluation, user1ExampleEvaluationAgain);
+
+        AssertionUtils.assertSame(bonsai.getCompleteTree(key), newBonsai.getCompleteTree(key), false);
+    }
+
+
+    @Test
+    void given_validBonsaiTreeWithNothing_when_getDeltaOperations_then_returnEmptyOperations() throws IOException {
+        var key = "example";
+        List<DeltaOperation> operations = bonsai.calculateDeltaOperations(key);
+        assertEquals(0, operations.size());
     }
 }

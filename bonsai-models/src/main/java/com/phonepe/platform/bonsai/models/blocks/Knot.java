@@ -50,4 +50,15 @@ public class Knot {
         this.version = System.currentTimeMillis();
         return this;
     }
+
+    public Knot deepClone(long version) {
+        return Knot.builder()
+                .id(this.id)
+                .version(version)
+                .edges(this.edges)
+                .knotData(this.knotData)
+                .properties(this.properties)
+                .build();
+    }
+
 }

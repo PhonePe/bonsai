@@ -149,6 +149,11 @@ public class ImmutableBonsaiTree<C extends Context> implements Bonsai<C> {
         throw unsupportedOperationError();
     }
 
+    @Override
+    public List<DeltaOperation> calculateDeltaOperations(String key) {
+        return bonsai.calculateDeltaOperations(key);
+    }
+
     private BonsaiError unsupportedOperationError() {
         return new BonsaiError(BonsaiErrorCode.UNSUPPORTED_OPERATION, "ImmutableBonsaiTree cannot be modified");
     }

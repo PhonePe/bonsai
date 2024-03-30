@@ -50,4 +50,14 @@ public class Edge extends Condition {
         this.version = System.currentTimeMillis();
         return this;
     }
+
+    public Edge deepClone(long version) {
+        return Edge.builder()
+                .knotId(this.knotId)
+                .edgeIdentifier(this.edgeIdentifier)
+                .version(version)
+                .filters(this.filters)
+                .properties(this.getProperties())
+                .build();
+    }
 }
