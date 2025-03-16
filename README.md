@@ -1,20 +1,10 @@
-<pre> 
-▄▄▄▄    ▒█████   ███▄    █   ██████  ▄▄▄       ██▓
-▓█████▄ ▒██▒  ██▒ ██ ▀█   █ ▒██    ▒ ▒████▄    ▓██▒
-▒██▒ ▄██▒██░  ██▒▓██  ▀█ ██▒░ ▓██▄   ▒██  ▀█▄  ▒██▒
-▒██░█▀  ▒██   ██░▓██▒  ▐▌██▒  ▒   ██▒░██▄▄▄▄██ ░██░
-░▓█  ▀█▓░ ████▓▒░▒██░   ▓██░▒██████▒▒ ▓█   ▓██▒░██░
-░▒▓███▀▒░ ▒░▒░▒░ ░ ▒░   ▒ ▒ ▒ ▒▓▒ ▒ ░ ▒▒   ▓▒█░░▓  
-▒░▒   ░   ░ ▒ ▒░ ░ ░░   ░ ▒░░ ░▒  ░ ░  ▒   ▒▒ ░ ▒ ░
- ░    ░ ░ ░ ░ ▒     ░   ░ ░ ░  ░  ░    ░   ▒    ▒ ░
- ░          ░ ░           ░       ░        ░  ░ ░  
-      ░                                            
-</pre>
+# Bonsai
 
-# BONSAI
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=PhonePe_Bonsai&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=PhonePe_Bonsai)
 
-[![pipeline status](https://gitlab.phonepe.com/platform/bonsai/badges/develop/pipeline.svg)](https://gitlab.phonepe.com/platform/bonsai/commits/develop)
-[![coverage report](https://gitlab.phonepe.com/platform/bonsai/badges/develop/coverage.svg)](https://gitlab.phonepe.com/platform/bonsai/commits/develop)
+
+Rule engines are 
+Bonsai is one such data-structure, that allows you to represent the rule engine as a tree of knots and edges. 
 
 ### Tree
 

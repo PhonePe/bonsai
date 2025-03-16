@@ -47,9 +47,9 @@
             <version>1.3</version>
         </dependency>
         <dependency>
-            <artifactId>folios-condition-engine</artifactId>
-            <groupId>com.phonepe.folios</groupId>
-            <version>1.5</version>
+            <groupId>com.phonepe.platform</groupId>
+            <artifactId>bonsai-conditions</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

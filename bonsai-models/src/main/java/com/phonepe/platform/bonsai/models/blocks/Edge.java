@@ -1,6 +1,6 @@
 package com.phonepe.platform.bonsai.models.blocks;
 
-import com.phonepe.folios.condition.engine.Condition;
+import com.phonepe.platform.bonsai.conditions.Condition;
 import com.phonepe.platform.query.dsl.Filter;
 import lombok.Builder;
 import lombok.Data;
@@ -36,7 +36,7 @@ public class Edge extends Condition {
                 final @Singular List<Filter> filters,
                 final Map<String, Object> properties) {
         super(
-                live == null ? true : live,
+                live == null || live,
                 percentage == null ? 100f : percentage,
                 properties == null ? new HashMap<>() : properties
         );

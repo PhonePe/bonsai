@@ -39,7 +39,7 @@ public class NodeUtils {
 
     private static final String ERROR_MESSAGE = "[bonsai][{}] Error getting chimera value as JsonNode for keyNode:{}";
 
-    private static final ValueVisitor<String> STRING_VALUE_VISITOR = new ValueVisitor<String>() {
+    private static final ValueVisitor<String> STRING_VALUE_VISITOR = new ValueVisitor<>() {
         @Override
         public String visit(final NumberValue numberValue) {
             return String.valueOf(numberValue.getValue());
@@ -80,7 +80,7 @@ public class NodeUtils {
                 }
                 return defaultValue;
             }
-            return keyNode.getNode().accept(new NodeVisitor<Boolean>() {
+            return keyNode.getNode().accept(new NodeVisitor<>() {
                 @Override
                 public Boolean visit(final ListNode listNode) {
                     return listNode.getNodes().stream().allMatch(node -> NodeUtils.asBoolean(node, defaultValue));
@@ -95,7 +95,7 @@ public class NodeUtils {
                         }
                         return defaultValue;
                     }
-                    return valueNode.getValue().accept(new AbstractValueVisitor<Boolean>(defaultValue) {
+                    return valueNode.getValue().accept(new AbstractValueVisitor<>(defaultValue) {
 
                         @Override
                         public Boolean visit(final BooleanValue booleanValue) {
@@ -122,17 +122,17 @@ public class NodeUtils {
             if (flatNode == null) {
                 return defaultValue;
             }
-            return flatNode.accept(new FlatNodeVisitor<Boolean>() {
+            return flatNode.accept(new FlatNodeVisitor<>() {
                 @Override
                 public Boolean visit(ValueFlatNode valueFlatNode) {
                     if (valueFlatNode.getValue() == null) {
                         if (log.isDebugEnabled()) {
                             log.debug("[bonsai][{}] default value being returned for valueFlatNode:{}",
-                                    MDC.get(BonsaiConstants.EVALUATION_ID), valueFlatNode);
+                                      MDC.get(BonsaiConstants.EVALUATION_ID), valueFlatNode);
                         }
                         return defaultValue;
                     }
-                    return valueFlatNode.getValue().accept(new AbstractValueVisitor<Boolean>(defaultValue) {
+                    return valueFlatNode.getValue().accept(new AbstractValueVisitor<>(defaultValue) {
                         @Override
                         public Boolean visit(BooleanValue booleanValue) {
                             return booleanValue.isValue();
@@ -144,7 +144,7 @@ public class NodeUtils {
                 public Boolean visit(ListFlatNode listFlatNode) {
                     if (log.isDebugEnabled()) {
                         log.debug("[bonsai][{}] default value being returned for listFlatNode:{}",
-                                MDC.get(BonsaiConstants.EVALUATION_ID), listFlatNode);
+                                  MDC.get(BonsaiConstants.EVALUATION_ID), listFlatNode);
                     }
                     return defaultValue;
                 }
@@ -153,7 +153,7 @@ public class NodeUtils {
                 public Boolean visit(MapFlatNode mapFlatNode) {
                     if (log.isDebugEnabled()) {
                         log.debug("[bonsai][{}] default value being returned for mapFlatNode:{}",
-                                MDC.get(BonsaiConstants.EVALUATION_ID), mapFlatNode);
+                                  MDC.get(BonsaiConstants.EVALUATION_ID), mapFlatNode);
                     }
                     return defaultValue;
                 }
@@ -170,7 +170,7 @@ public class NodeUtils {
             if (flatNode == null) {
                 return defaultValue;
             }
-            return flatNode.accept(new FlatNodeVisitor<String>() {
+            return flatNode.accept(new FlatNodeVisitor<>() {
                 @Override
                 public String visit(ValueFlatNode valueFlatNode) {
                     return valueFlatNode.getValue().accept(STRING_VALUE_VISITOR);
@@ -180,7 +180,7 @@ public class NodeUtils {
                 public String visit(ListFlatNode listFlatNode) {
                     if (log.isDebugEnabled()) {
                         log.debug("[bonsai][{}] default value being returned for listFlatNode:{}",
-                                MDC.get(BonsaiConstants.EVALUATION_ID), listFlatNode);
+                                  MDC.get(BonsaiConstants.EVALUATION_ID), listFlatNode);
                     }
                     return defaultValue;
                 }
@@ -189,7 +189,7 @@ public class NodeUtils {
                 public String visit(MapFlatNode mapFlatNode) {
                     if (log.isDebugEnabled()) {
                         log.debug("[bonsai][{}] default value being returned for mapFlatNode:{}",
-                                MDC.get(BonsaiConstants.EVALUATION_ID), mapFlatNode);
+                                  MDC.get(BonsaiConstants.EVALUATION_ID), mapFlatNode);
                     }
                     return defaultValue;
                 }
@@ -206,7 +206,7 @@ public class NodeUtils {
             if (keyNode == null || keyNode.getNode() == null) {
                 return defaultValue;
             }
-            return keyNode.getNode().accept(new AbstractNodeVisitor<String>(defaultValue) {
+            return keyNode.getNode().accept(new AbstractNodeVisitor<>(defaultValue) {
                 @Override
                 public String visit(final ValueNode valueNode) {
                     return valueNode.getValue().accept(STRING_VALUE_VISITOR);
@@ -223,7 +223,7 @@ public class NodeUtils {
             if (keyNode == null || keyNode.getNode() == null) {
                 return defaultValue;
             }
-            return keyNode.getNode().accept(new AbstractNodeVisitor<Number>(defaultValue) {
+            return keyNode.getNode().accept(new AbstractNodeVisitor<>(defaultValue) {
                 @Override
                 public Number visit(final ValueNode valueNode) {
                     return valueNode.getValue().accept(valueToNumberVisitor(defaultValue));
@@ -240,7 +240,7 @@ public class NodeUtils {
             if (flatNode == null) {
                 return defaultValue;
             }
-            return flatNode.accept(new FlatNodeVisitor<Number>() {
+            return flatNode.accept(new FlatNodeVisitor<>() {
                 @Override
                 public Number visit(ValueFlatNode valueFlatNode) {
                     return valueFlatNode.getValue().accept(valueToNumberVisitor(defaultValue));
@@ -250,7 +250,7 @@ public class NodeUtils {
                 public Number visit(ListFlatNode listFlatNode) {
                     if (log.isDebugEnabled()) {
                         log.debug("[bonsai][{}] default value being returned for listFlatNode:{}, value:{}",
-                                MDC.get(BonsaiConstants.EVALUATION_ID), listFlatNode, defaultValue);
+                                  MDC.get(BonsaiConstants.EVALUATION_ID), listFlatNode, defaultValue);
                     }
                     return defaultValue;
                 }
@@ -259,7 +259,7 @@ public class NodeUtils {
                 public Number visit(MapFlatNode mapFlatNode) {
                     if (log.isDebugEnabled()) {
                         log.debug("[bonsai][{}] default value being returned for mapFlatNode:{}, value:{}",
-                                MDC.get(BonsaiConstants.EVALUATION_ID), mapFlatNode, defaultValue);
+                                  MDC.get(BonsaiConstants.EVALUATION_ID), mapFlatNode, defaultValue);
                     }
                     return defaultValue;
                 }
@@ -275,7 +275,7 @@ public class NodeUtils {
             if (keyNode == null || keyNode.getNode() == null) {
                 return defaultValue;
             }
-            return keyNode.getNode().accept(new AbstractNodeVisitor<JsonNode>(defaultValue) {
+            return keyNode.getNode().accept(new AbstractNodeVisitor<>(defaultValue) {
 
                 @Override
                 public JsonNode visit(final ValueNode valueNode) {
@@ -296,7 +296,7 @@ public class NodeUtils {
             if (flatNode == null) {
                 return defaultValue;
             }
-            return flatNode.accept(new FlatNodeVisitor<JsonNode>() {
+            return flatNode.accept(new FlatNodeVisitor<>() {
                 @Override
                 public JsonNode visit(ValueFlatNode valueFlatNode) {
                     if (valueFlatNode.getValue() == null) {
@@ -329,7 +329,7 @@ public class NodeUtils {
             if (node == null || node.getNode() == null) {
                 return defaultValue;
             }
-            return node.getNode().accept(new NodeVisitor<T>() {
+            return node.getNode().accept(new NodeVisitor<>() {
                 @Override
                 public T visit(final ListNode listNode) {
                     return defaultValue;
@@ -359,7 +359,7 @@ public class NodeUtils {
             if (flatNode == null) {
                 return defaultValue;
             }
-            return flatNode.accept(new FlatNodeVisitor<T>() {
+            return flatNode.accept(new FlatNodeVisitor<>() {
                 @Override
                 public T visit(ValueFlatNode valueFlatNode) {
                     if (valueFlatNode.getValue() == null) {
@@ -418,17 +418,17 @@ public class NodeUtils {
             if (keyNode == null || keyNode.getNode() == null) {
                 return defaultValue;
             }
-            return keyNode.getNode().accept(new AbstractNodeVisitor<Map<String, T>>(defaultValue) {
+            return keyNode.getNode().accept(new AbstractNodeVisitor<>(defaultValue) {
                 @Override
                 public Map<String, T> visit(final MapNode mapNode) {
                     return mapNode.getNodeMap()
                             .entrySet().stream()
                             .map(stringNodePair -> MapEntry
                                     .of(stringNodePair.getKey(),
-                                            converter.apply(stringNodePair.getValue(),
-                                                    defaultValue == null ? null
-                                                            : defaultValue.get(
-                                                            stringNodePair.getKey()))))
+                                        converter.apply(stringNodePair.getValue(),
+                                                        defaultValue == null ? null
+                                                                : defaultValue.get(
+                                                                stringNodePair.getKey()))))
                             .collect(HashMap::new, (map, entry) -> map
                                     .put(entry.getK(), entry.getV()), HashMap::putAll);
                 }
@@ -473,7 +473,7 @@ public class NodeUtils {
             if (keyNode == null || keyNode.getNode() == null) {
                 return defaultValue;
             }
-            return keyNode.getNode().accept(new AbstractNodeVisitor<List<T>>(defaultValue) {
+            return keyNode.getNode().accept(new AbstractNodeVisitor<>(defaultValue) {
                 @Override
                 public List<T> visit(ListNode listNode) {
                     return listNode
@@ -490,7 +490,7 @@ public class NodeUtils {
     }
 
     private static AbstractValueVisitor<Number> valueToNumberVisitor(Number defaultValue) {
-        return new AbstractValueVisitor<Number>(defaultValue) {
+        return new AbstractValueVisitor<>(defaultValue) {
             @Override
             public Number visit(final NumberValue numberValue) {
                 return numberValue.getValue();
@@ -509,7 +509,7 @@ public class NodeUtils {
     }
 
     private static AbstractValueVisitor<JsonNode> valueToJsonNodeVisitor(JsonNode defaultValue) {
-        return new AbstractValueVisitor<JsonNode>(defaultValue) {
+        return new AbstractValueVisitor<>(defaultValue) {
             @Override
             public JsonNode visit(final JsonValue jsonValue) {
                 return jsonValue.getValue();
@@ -520,7 +520,7 @@ public class NodeUtils {
     private static <T> AbstractValueVisitor<T> valueToObjectVisitor(final T defaultValue,
                                                                     final Class<T> type,
                                                                     final ObjectMapper mapper) {
-        return new AbstractValueVisitor<T>(defaultValue) {
+        return new AbstractValueVisitor<>(defaultValue) {
             @Override
             public T visit(final StringValue stringValue) {
                 return tryFunction(

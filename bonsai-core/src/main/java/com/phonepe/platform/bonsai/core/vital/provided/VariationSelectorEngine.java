@@ -1,6 +1,6 @@
 package com.phonepe.platform.bonsai.core.vital.provided;
 
-import com.phonepe.folios.condition.engine.ConditionEngine;
+import com.phonepe.platform.bonsai.conditions.ConditionEngine;
 import com.phonepe.platform.bonsai.core.vital.Context;
 import com.phonepe.platform.bonsai.json.eval.GenericFilterContext;
 import com.phonepe.platform.bonsai.json.eval.JsonPathFilterEvaluationEngine;
