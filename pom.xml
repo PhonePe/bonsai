@@ -7,6 +7,67 @@
     <packaging>pom</packaging>
     <version>1.0.42-SNAPSHOT</version>
 
+    <url>https://github.com/PhonePe/bonsai</url>
+    <description>Bonsai Rule Engine</description>
+    <inceptionYear>2025</inceptionYear>
+
+    <scm>
+        <connection>scm:git:https://github.com/PhonePe/bonsai.git</connection>
+        <developerConnection>scm:git:https://github.com/PhonePe/bonsai.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/PhonePe/bonsai.git</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>Tushar-Naik</id>
+            <name>Tushar Naik</name>
+            <email>tushar.knaik@gmail.com</email>
+            <roles>
+                <role>owner</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>suraj.s</id>
+            <name>Suraj Singh</name>
+            <email>suraj.s@phonepe.com</email>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/PhonePe/bonsai/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/PhonePe/bonsai</url>
+    </ciManagement>
+
+    <repositories>
+        <repository>
+            <id>clojars.org</id>
+            <url>https://clojars.org/repo</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
     <modules>
         <module>bonsai-models</module>
         <module>bonsai-json-eval</module>
@@ -38,6 +99,18 @@
         <junit.wiremock.version>2.27.2</junit.wiremock.version>
 
         <!--sonar settings-->
+        <sonar.projectKey>PhonePe_bonsai</sonar.projectKey>
+        <sonar.organization>phonepe</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.sources>src/main</sonar.sources>
+        <sonar.tests>src/test</sonar.tests>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.language>java</sonar.language>
+        <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
+        <sonar.exclusions>
+        </sonar.exclusions>
+
         <sonar.coverage.exclusions>
             **com/phonepe/platform/bonsai/core/structures/CollectorFunctions*,
             **com/phonepe/platform/bonsai/models/**,
@@ -117,45 +190,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-
-    <repositories>
-        <repository>
-            <id>phonepe-releases</id>
-            <name>releases</name>
-            <url>https://artifactory.phonepe.com/repository/releases</url>
-        </repository>
-        <repository>
-            <id>phonepe-snapshots</id>
-            <name>snapshots</name>
-            <url>https://artifactory.phonepe.com/repository/snapshots</url>
-        </repository>
-        <repository>
-            <id>clojars</id>
-            <name>Clojars repository</name>
-            <url>https://repo.clojars.org</url>
-        </repository>
-        <repository>
-            <id>central</id>
-            <url>https://repo1.maven.org/maven2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>phonepe-releases</id>
-            <name>releases</name>
-            <url>https://artifactory.phonepe.com/repository/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>phonepe-snapshots</id>
-            <name>snapshots</name>
-            <url>https://artifactory.phonepe.com/repository/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <build>
         <plugins>
@@ -255,26 +289,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <id>Tushar-Naik</id>
-            <name>Tushar Naik</name>
-            <email>tushar.naik@phonepe.com</email>
-        </developer>
-        <developer>
-            <id>suraj.s</id>
-            <name>Suraj Singh</name>
-            <email>suraj.s@phonepe.com</email>
-        </developer>
-    </developers>
 
 </project>

@@ -1,5 +1,20 @@
-package com.phonepe.platform.bonsai.conditions;
+/*
+ *  Copyright (c) 2025 Original Author(s), PhonePe India Pvt. Ltd.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 
+package com.phonepe.platform.bonsai.conditions;
 
 import com.google.common.collect.Sets;
 
@@ -14,7 +29,6 @@ import java.util.function.Supplier;
 
 /**
  * An abstract conditional matcher, who matches an entity against a list of conditions
- *
  */
 public abstract class ConditionEngine<E, C extends Condition> implements Matcher.ConditionalMatcher<E, C> {
 
@@ -33,8 +47,9 @@ public abstract class ConditionEngine<E, C extends Condition> implements Matcher
     @Override
     public Optional<C> match(E entity, final List<C> conditions) {
         return conditions.stream()
-                         .filter(condition -> condition.isLive() && (RANDOM_MATCHER.match(condition.getPercentage()) && match(entity, condition)))
-                         .findFirst();
+                .filter(condition -> condition.isLive() && (RANDOM_MATCHER.match(condition.getPercentage()) && match(
+                        entity, condition)))
+                .findFirst();
     }
 
     /**
@@ -83,7 +98,7 @@ public abstract class ConditionEngine<E, C extends Condition> implements Matcher
     public static <T> boolean testContainsContention(Set<T> iterable, Set<T> value) {
         return value == null
                 || (iterable != null && iterable.size() >= value.size() && Sets.intersection(iterable, value)
-                                                                               .size() == iterable.size());
+                .size() == iterable.size());
     }
 
 
@@ -97,7 +112,7 @@ public abstract class ConditionEngine<E, C extends Condition> implements Matcher
     public static boolean testContainsAll(String baseString, Collection<String> value) {
         return value == null
                 || (baseString != null && !baseString.isEmpty() && value.stream()
-                                                                        .allMatch(baseString::contains));
+                .allMatch(baseString::contains));
     }
 
     /**
@@ -110,7 +125,7 @@ public abstract class ConditionEngine<E, C extends Condition> implements Matcher
     public static boolean testContainsAny(String baseString, Collection<String> value) {
         return value == null
                 || (baseString != null && !baseString.isEmpty() && value.stream()
-                                                                        .anyMatch(baseString::contains));
+                .anyMatch(baseString::contains));
     }
 
     /**
@@ -123,7 +138,7 @@ public abstract class ConditionEngine<E, C extends Condition> implements Matcher
     public static boolean testExcludesAll(String baseString, Collection<String> value) {
         return value == null
                 || (baseString != null && !baseString.isEmpty() && !value.stream()
-                                                                         .allMatch(baseString::contains));
+                .allMatch(baseString::contains));
     }
 
     /**
@@ -136,7 +151,7 @@ public abstract class ConditionEngine<E, C extends Condition> implements Matcher
     public static boolean testExcludesAny(String baseString, Collection<String> value) {
         return value == null
                 || (baseString != null && !baseString.isEmpty() && value.stream()
-                                                                        .noneMatch(baseString::contains));
+                .noneMatch(baseString::contains));
     }
 
     /**
@@ -151,9 +166,9 @@ public abstract class ConditionEngine<E, C extends Condition> implements Matcher
     public static <K, V> boolean testContainsContention(Map<K, V[]> contender, Map<K, V> value) {
         return value == null
                 || (contender != null && value.keySet()
-                                              .stream()
-                                              .allMatch(k -> contender.containsKey(k) && contender.get(k)[0]
-                                                      .equals(value.get(k))));
+                .stream()
+                .allMatch(k -> contender.containsKey(k) && contender.get(k)[0]
+                        .equals(value.get(k))));
     }
 
     /**
@@ -168,9 +183,9 @@ public abstract class ConditionEngine<E, C extends Condition> implements Matcher
     public static <K, V> boolean testContainsMap(Map<K, V> contender, Map<K, V> value) {
         return value == null
                 || (contender != null && value.keySet()
-                                              .stream()
-                                              .allMatch(k -> contender.containsKey(k) && contender.get(k)
-                                                                                                  .equals(value.get(k))));
+                .stream()
+                .allMatch(k -> contender.containsKey(k) && contender.get(k)
+                        .equals(value.get(k))));
     }
 
     /**

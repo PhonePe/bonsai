@@ -1,3 +1,19 @@
+/*
+ *  Copyright (c) 2025 Original Author(s), PhonePe India Pvt. Ltd.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.phonepe.platform.bonsai.json.eval;
 
 import com.jayway.jsonpath.TypeRef;
@@ -33,7 +49,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * This is a Json path based filter evaluator
@@ -109,7 +124,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
         List<Object> values = context.documentContext().read(filter.getField(), OBJECT_TYPE_REF);
         if (log.isTraceEnabled()) {
             log.trace(BONSAI_FILTER_VALUES_DOCUMENT_LOG_STR, context.id(), filter.getField(), values,
-                    context.documentContext().json());
+                      context.documentContext().json());
         }
         return values == null || values.isEmpty() || values.stream().allMatch(Objects::isNull);
     }
@@ -126,7 +141,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
         List<Object> values = context.documentContext().read(filter.getField(), OBJECT_TYPE_REF);
         if (log.isTraceEnabled()) {
             log.trace(BONSAI_FILTER_VALUES_DOCUMENT_LOG_STR, context.id(), filter.getField(), values,
-                    context.documentContext().json());
+                      context.documentContext().json());
         }
         return isNotEmpty(values);
     }
@@ -178,9 +193,9 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
         return genericFilterHandler.test(genericFilterContext);
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////  Helper Functions  /////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// ///////////////////////////////////////  Helper Functions  /////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     private <T> Boolean applyAllMatchFilter(Filter filter, TypeRef<List<T>> typeRef, Predicate<T> predicate) {
@@ -192,7 +207,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
         List<T> values = context.documentContext().read(filter.getField(), typeRef);
         if (log.isTraceEnabled()) {
             log.trace(BONSAI_FILTER_VALUES_DOCUMENT_LOG_STR, context.id(), filter.getField(), values,
-                    context.documentContext().json());
+                      context.documentContext().json());
         }
         return values == null ? Collections.emptyList() : values.stream().filter(Objects::nonNull).toList();
     }
