@@ -89,7 +89,7 @@ public class PathExpression {
                 return numberOperation(context);
             }
         } catch (Exception e) {
-            log.error("[bonsai] Error while evaluating expression: " + toString(), e);
+            log.error("[bonsai] Error while evaluating expression: " + this, e);
             return null;
         }
     }
@@ -99,24 +99,15 @@ public class PathExpression {
         if (values == null || values.isEmpty() || values.get(0) == null) {
             return null;
         }
-        switch (operation) {
-            case SUM:
-                return new Pair<>(key, reValue(getDoubleStream(values).sum()));
-            case AVERAGE:
-                return new Pair<>(key, reValue(getDoubleStream(values).average().orElse(0)));
-            case MAX:
-                return new Pair<>(key, reValue(getDoubleStream(values).max().orElse(0)));
-            case MIN:
-                return new Pair<>(key, reValue(getDoubleStream(values).min().orElse(0)));
-            case LENGTH:
-                return new Pair<>(key, reValue(getDoubleStream(values).count()));
-            case PAD_TIMESTAMP:
-                return new Pair<>(key, Utils.leftPad(String.valueOf(values.get(0)), 20, '0'));
-            case CONVERT_TO_DATE:
-                return new Pair<>(key, new Date(values.get(0).longValue()));
-            default:
-                throw new OperationNotSupportedException("Operation not supported: " + this.toString());
-        }
+        return switch (operation) {
+            case SUM -> new Pair<>(key, reValue(getDoubleStream(values).sum()));
+            case AVERAGE -> new Pair<>(key, reValue(getDoubleStream(values).average().orElse(0)));
+            case MAX -> new Pair<>(key, reValue(getDoubleStream(values).max().orElse(0)));
+            case MIN -> new Pair<>(key, reValue(getDoubleStream(values).min().orElse(0)));
+            case LENGTH -> new Pair<>(key, reValue(getDoubleStream(values).count()));
+            case PAD_TIMESTAMP -> new Pair<>(key, Utils.leftPad(String.valueOf(values.get(0)), 20, '0'));
+            case CONVERT_TO_DATE -> new Pair<>(key, new Date(values.get(0).longValue()));
+        };
     }
 
     private DoubleStream getDoubleStream(List<Number> values) {
@@ -168,26 +159,17 @@ public class PathExpression {
         Number value;
 
         public double reValue(Number initialValue) {
-            switch (type) {
-                case ADD:
-                    return initialValue.doubleValue() + value.doubleValue();
-                case DIVIDE:
-                    return initialValue.doubleValue() / value.doubleValue();
-                case SUBTRACT:
-                    return initialValue.doubleValue() - value.doubleValue();
-                case MULTIPLY:
-                    return initialValue.doubleValue() * value.doubleValue();
-                case SQRT:
-                    return Math.sqrt(initialValue.doubleValue());
-                case CEIL:
-                    return Math.ceil(initialValue.doubleValue());
-                case FLOOR:
-                    return Math.floor(initialValue.doubleValue());
-                case POW:
-                    return Math.pow(initialValue.doubleValue(), value.doubleValue());
-                default:
-                    throw new UnsupportedOperationException("Adjustment not supported: " + this.toString());
-            }
+            return switch (type) {
+                case ADD -> initialValue.doubleValue() + value.doubleValue();
+                case DIVIDE -> initialValue.doubleValue() / value.doubleValue();
+                case SUBTRACT -> initialValue.doubleValue() - value.doubleValue();
+                case MULTIPLY -> initialValue.doubleValue() * value.doubleValue();
+                case SQRT -> Math.sqrt(initialValue.doubleValue());
+                case CEIL -> Math.ceil(initialValue.doubleValue());
+                case FLOOR -> Math.floor(initialValue.doubleValue());
+                case POW -> Math.pow(initialValue.doubleValue(), value.doubleValue());
+                default -> throw new UnsupportedOperationException("Adjustment not supported: " + this.toString());
+            };
         }
 
         enum Type {

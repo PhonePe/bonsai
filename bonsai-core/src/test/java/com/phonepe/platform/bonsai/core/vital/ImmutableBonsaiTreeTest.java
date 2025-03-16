@@ -351,9 +351,7 @@ public class ImmutableBonsaiTreeTest {
 
     @Test
     void given_immutableBonsaiTree_when_deleteKnot_then_throwBonsaiError() {
-        assertThrows(BonsaiError.class, () -> {
-            bonsai.deleteKnot("e1", false);
-        });
+        assertThrows(BonsaiError.class, () -> bonsai.deleteKnot("e1", false));
     }
 
     @Test
@@ -474,9 +472,7 @@ public class ImmutableBonsaiTreeTest {
 
     @Test
     void given_immutableBonsaiTree_when_unlinkVariation_then_throwBonsaiError() {
-        assertThrows(BonsaiError.class, () -> {
-            bonsai.unlinkVariation("knotId", "edgeId");
-        });
+        assertThrows(BonsaiError.class, () -> bonsai.unlinkVariation("knotId", "edgeId"));
     }
 
     @Test
@@ -488,16 +484,12 @@ public class ImmutableBonsaiTreeTest {
 
     @Test
     void given_immutableBonsaiTree_when_createMappingWithKeyE1_then_throwBonsaiError() {
-        assertThrows(BonsaiError.class, () -> {
-            bonsai.createMapping("e1", ValuedKnotData.stringValue("asdf"), null);
-        });
+        assertThrows(BonsaiError.class, () -> bonsai.createMapping("e1", ValuedKnotData.stringValue("asdf"), null));
     }
 
     @Test
     void given_immutableBonsaiTree_when_removeMapping_then_throwBonsaiError() {
-        assertThrows(BonsaiError.class, () -> {
-            bonsai.removeMapping("e1");
-        });
+        assertThrows(BonsaiError.class, () -> bonsai.removeMapping("e1"));
     }
 
     @Test
@@ -513,7 +505,7 @@ public class ImmutableBonsaiTreeTest {
     @Test
     void given_immutableBonsaiTree_when_getCompleteTreeWithDeltaOperations_then_returnCompleteTree() {
 
-        final List<DeltaOperation> deltaOperationList = Arrays.asList(
+        final List<DeltaOperation> deltaOperationList = List.of(
                 new KnotDeltaOperation(
                         Knot.builder()
                                 .edges(null)

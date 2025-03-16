@@ -29,12 +29,12 @@ public class BonsaiPropertiesTest {
     private BonsaiProperties bonsaiProperties;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         bonsaiProperties = BonsaiProperties.builder().build();
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         bonsaiProperties = null;
     }
 

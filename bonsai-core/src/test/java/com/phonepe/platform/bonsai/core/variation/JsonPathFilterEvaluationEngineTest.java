@@ -50,9 +50,9 @@ public class JsonPathFilterEvaluationEngineTest {
         KeyNode evaluate = bonsai.evaluate("mera_data", Context.builder()
                 .documentContext(Parsers.parse(ImmutableMap.of("E", 9333)))
                 .build());
-        Assertions.assertTrue(evaluate.getNode() instanceof ValueNode);
+        Assertions.assertInstanceOf(ValueNode.class, evaluate.getNode());
         Assertions.assertEquals("Data9333",
-                ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue().toString());
+                                ((StringValue) ((ValueNode) evaluate.getNode()).getValue()).getValue());
         System.out.println(evaluate);
     }
 

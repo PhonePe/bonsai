@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 public class NodeVisitors {
 
     public static boolean isList(Node node) {
-        return node.accept(new NodeVisitor<Boolean>() {
+        return node.accept(new NodeVisitor<>() {
             @Override
             public Boolean visit(ListNode listNode) {
                 return true;
@@ -42,7 +42,7 @@ public class NodeVisitors {
     }
 
     public static boolean isValue(Node node) {
-        return node.accept(new NodeVisitor<Boolean>() {
+        return node.accept(new NodeVisitor<>() {
             @Override
             public Boolean visit(ListNode listNode) {
                 return false;
@@ -61,7 +61,7 @@ public class NodeVisitors {
     }
 
     public static boolean isMap(Node node) {
-        return node.accept(new NodeVisitor<Boolean>() {
+        return node.accept(new NodeVisitor<>() {
             @Override
             public Boolean visit(ListNode listNode) {
                 return false;

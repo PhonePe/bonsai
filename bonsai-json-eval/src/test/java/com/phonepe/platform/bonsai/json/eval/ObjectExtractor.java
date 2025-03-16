@@ -24,11 +24,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class ObjectExtractor {
 
     private static String read(InputStream source) throws IOException {
-        return read(new InputStreamReader(source, Charset.forName("UTF-8")));
+        return read(new InputStreamReader(source, StandardCharsets.UTF_8));
     }
 
     private static String read(Reader source) throws IOException {
@@ -36,15 +37,13 @@ public class ObjectExtractor {
     }
 
     private static String read(BufferedReader source) throws IOException {
-        try {
+        try (source) {
             int read = source.read();
             StringBuilder script;
             for (script = new StringBuilder(); read != -1; read = source.read()) {
                 script.append((char) read);
             }
             return script.toString();
-        } finally {
-            source.close();
         }
     }
 

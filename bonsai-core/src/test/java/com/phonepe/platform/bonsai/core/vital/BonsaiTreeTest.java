@@ -1677,7 +1677,7 @@ public class BonsaiTreeTest {
 
 
     @Test
-    void given_validBonsaiTreeWithNothing_when_getDeltaOperations_then_returnEmptyOperations() throws IOException {
+    void given_validBonsaiTreeWithNothing_when_getDeltaOperations_then_returnEmptyOperations() {
         var key = "example";
         List<DeltaOperation> operations = bonsai.calculateDeltaOperations(key);
         assertEquals(0, operations.size());

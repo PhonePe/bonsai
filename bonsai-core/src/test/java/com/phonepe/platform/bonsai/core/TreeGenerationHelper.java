@@ -41,7 +41,7 @@ public class TreeGenerationHelper {
     public static void generateEdges(Knot knot, Bonsai bonsai, int numOfEdges) {
         IntStream.range(0, numOfEdges)
                 .forEach(i -> {
-                    KnotData accept = knot.getKnotData().accept(new KnotDataVisitor<KnotData>() {
+                    KnotData accept = knot.getKnotData().accept(new KnotDataVisitor<>() {
                         @Override
                         public KnotData visit(ValuedKnotData valuedKnotData) {
                             return getKnotData(valuedKnotData, i);
@@ -69,7 +69,7 @@ public class TreeGenerationHelper {
     private static ValuedKnotData getKnotData(ValuedKnotData valuedKnotData, int i) {
         return ValuedKnotData.builder()
                 .value(valuedKnotData.getValue()
-                        .accept(new ValueVisitor<Value>() {
+                        .accept(new ValueVisitor<>() {
                             @Override
                             public Value visit(NumberValue numberValue) {
                                 return new NumberValue(numberValue.getValue().doubleValue() + 1);

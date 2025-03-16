@@ -119,9 +119,7 @@ public class BonsaiTreeOperationTest {
 
     @Test
     void testCreateMappingError() {
-        assertThrows(BonsaiError.class, () -> {
-            bonsai.createMapping("widget_1", "randomUnknownId");
-        });
+        assertThrows(BonsaiError.class, () -> bonsai.createMapping("widget_1", "randomUnknownId"));
     }
 
     @Test
@@ -145,12 +143,10 @@ public class BonsaiTreeOperationTest {
 
     @Test
     void testAddVariationNoEdge() {
-        assertThrows(BonsaiError.class, () -> {
-            bonsai.addVariation("someInvalidKnotId", Variation.builder()
-                    .filter(new EqualsFilter("$.gender", "female"))
-                    .knotId("asdf")
-                    .build());
-        });
+        assertThrows(BonsaiError.class, () -> bonsai.addVariation("someInvalidKnotId", Variation.builder()
+                .filter(new EqualsFilter("$.gender", "female"))
+                .knotId("asdf")
+                .build()));
     }
 
 
@@ -302,7 +298,7 @@ public class BonsaiTreeOperationTest {
     }
 
     @Test
-    void testCycleDependencyCheck() throws IOException {
+    void testCycleDependencyCheck() {
         assertThrows(BonsaiError.class, () -> {
             Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
             bonsai.createMapping("icon_1", ValuedKnotData.stringValue("1"), null);
@@ -472,7 +468,7 @@ public class BonsaiTreeOperationTest {
         /* Tree should have both knots and 1 edge */
         TreeKnot widget_1 = bonsai.getCompleteTree("widget_1");
         Assertions.assertFalse(widget_1.getTreeEdges().isEmpty());
-        widget_1.getTreeEdges().get(0).getTreeKnot().getKnotData().accept(new KnotDataVisitor<Object>() {
+        widget_1.getTreeEdges().get(0).getTreeKnot().getKnotData().accept(new KnotDataVisitor<>() {
             @Override
             public Object visit(ValuedKnotData valuedKnotData) {
                 return null;
@@ -564,7 +560,7 @@ public class BonsaiTreeOperationTest {
         /* Tree should have both knots and 1 edge */
         TreeKnot widget_1 = bonsai.getCompleteTree("widget_1");
         Assertions.assertFalse(widget_1.getTreeEdges().isEmpty());
-        widget_1.getTreeEdges().get(0).getTreeKnot().getKnotData().accept(new KnotDataVisitor<Object>() {
+        widget_1.getTreeEdges().get(0).getTreeKnot().getKnotData().accept(new KnotDataVisitor<>() {
             @Override
             public Object visit(ValuedKnotData valuedKnotData) {
                 return null;

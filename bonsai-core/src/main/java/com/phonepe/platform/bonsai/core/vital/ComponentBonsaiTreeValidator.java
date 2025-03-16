@@ -123,7 +123,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
             throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT,
                     "filters exceed max allowed:" + bonsaiProperties.getMaxAllowedConditionsPerEdge());
         }
-        if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
+        if (bonsaiProperties.isMutualExclusivitySettingTurnedOn() && edge.getFilters() != null) {
             Set<String> allFields = edge.getFilters()
                     .stream()
                     .map(filter -> filter.accept(FIELD_IDENTIFIER))

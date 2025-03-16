@@ -19,6 +19,7 @@ package com.phonepe.platform.bonsai.json.eval;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -44,9 +45,7 @@ public class Utils {
         } else {
             char[] buf = new char[repeat];
 
-            for (int i = 0; i < buf.length; ++i) {
-                buf[i] = padChar;
-            }
+            Arrays.fill(buf, padChar);
 
             return new String(buf);
         }
@@ -85,7 +84,7 @@ public class Utils {
     }
 
     public static boolean isEmpty(String str) {
-        return str == null || str.length() == 0;
+        return str == null || str.isEmpty();
     }
 
     public static <T> boolean isEmpty(Collection<T> collection) {

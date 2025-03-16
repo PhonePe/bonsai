@@ -41,6 +41,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -58,7 +59,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
     private TreeKnotStateDeltaOperationModifierVisitor treeKnotModifierVisitor;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         final BonsaiProperties bonsaiProperties = BonsaiProperties.builder()
                 .mutualExclusivitySettingTurnedOn(true)
                 .maxAllowedConditionsPerEdge(10)
@@ -148,17 +149,17 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .build();
         final TreeEdge leafTreeEdge = TreeEdge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E3", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
                 .treeKnot(leafTreeKnot)
                 .build();
         final TreeKnot middleLeftTreeKnot = TreeKnot.builder()
                 .id("K1")
-                .treeEdges(Arrays.asList(leafTreeEdge))
+                .treeEdges(Collections.singletonList(leafTreeEdge))
                 .knotData(ValuedKnotData.stringValue("Middle Level Left Knot : K1"))
                 .build();
         final TreeEdge middleLeftTreeEdge = TreeEdge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E1", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldOne").value("valueOne").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldOne").value("valueOne").build()))
                 .treeKnot(middleLeftTreeKnot)
                 .build();
         final TreeKnot middleRightTreeKnot = TreeKnot.builder()
@@ -168,7 +169,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .build();
         final TreeEdge middleRightTreeEdge = TreeEdge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E2", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldTwo").value("valueTwo").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldTwo").value("valueTwo").build()))
                 .treeKnot(middleRightTreeKnot)
                 .build();
         final TreeKnot previousTreeKnot = TreeKnot.builder()
@@ -184,7 +185,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .build();
         final Edge edgeE3 = Edge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E3", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
                 .knotId("K3")
                 .build();
         final OrderedList<EdgeIdentifier> edgesOfK1 = new OrderedList<>();
@@ -196,7 +197,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .build();
         final Edge edgeE1 = Edge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E1", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldOne").value("valueOne").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldOne").value("valueOne").build()))
                 .knotId("K1")
                 .build();
         final Knot knotK2 = Knot.builder()
@@ -206,7 +207,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .build();
         final Edge edgeE2 = Edge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E2", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldTwo").value("valueTwo").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldTwo").value("valueTwo").build()))
                 .knotId("K2")
                 .build();
         final OrderedList<EdgeIdentifier> edgesOfK0 = new OrderedList<>();
@@ -290,17 +291,17 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .build();
         final TreeEdge leafTreeEdge = TreeEdge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E3", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
                 .treeKnot(leafTreeKnot)
                 .build();
         final TreeKnot middleLeftTreeKnot = TreeKnot.builder()
                 .id("K1")
-                .treeEdges(Arrays.asList(leafTreeEdge))
+                .treeEdges(Collections.singletonList(leafTreeEdge))
                 .knotData(ValuedKnotData.stringValue("Middle Level Left Knot : K1"))
                 .build();
         final TreeEdge middleLeftTreeEdge = TreeEdge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E1", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldOne").value("valueOne").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldOne").value("valueOne").build()))
                 .treeKnot(middleLeftTreeKnot)
                 .build();
         final TreeKnot middleRightTreeKnot = TreeKnot.builder()
@@ -310,7 +311,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .build();
         final TreeEdge middleRightTreeEdge = TreeEdge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E2", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldTwo").value("valueTwo").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldTwo").value("valueTwo").build()))
                 .treeKnot(middleRightTreeKnot)
                 .build();
         final TreeKnot previousTreeKnot = TreeKnot.builder()
@@ -326,7 +327,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .build();
         final Edge edgeE3 = Edge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E3", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
                 .knotId("K3")
                 .build();
         final OrderedList<EdgeIdentifier> edgesOfK1 = new OrderedList<>();
@@ -338,7 +339,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .build();
         final Edge edgeE1 = Edge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E1", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldOne").value("valueOne").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldOne").value("valueOne").build()))
                 .knotId("K1")
                 .build();
         final Knot knotK2 = Knot.builder()
@@ -348,7 +349,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .build();
         final Edge edgeE2 = Edge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E2", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldTwo").value("valueTwo").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldTwo").value("valueTwo").build()))
                 .knotId("K2")
                 .build();
         final OrderedList<EdgeIdentifier> edgesOfK0 = new OrderedList<>();
@@ -380,7 +381,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 Edge.builder()
                         .edgeIdentifier(new EdgeIdentifier("E2", 1, 1))
                         .knotId("K2")
-                        .filters(Arrays.asList(
+                        .filters(Collections.singletonList(
                                 EqualsFilter.builder().field("fieldTwoChanged").value("valueTwoChanged").build()))
                         .build()
         );
@@ -496,17 +497,17 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .build();
         final TreeEdge middleLeftTreeEdge = TreeEdge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E1", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldOne").value("valueOne").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldOne").value("valueOne").build()))
                 .treeKnot(middleLeftTreeKnot)
                 .build();
         final TreeKnot middleRightTreeKnot = TreeKnot.builder()
                 .id("K2")
-                .treeEdges(Arrays.asList(leafTreeEdge))
+                .treeEdges(Collections.singletonList(leafTreeEdge))
                 .knotData(ValuedKnotData.stringValue("Middle Level Right Knot : K2"))
                 .build();
         final TreeEdge middleRightTreeEdge = TreeEdge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E2", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldTwo").value("valueTwo").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldTwo").value("valueTwo").build()))
                 .treeKnot(middleRightTreeKnot)
                 .build();
         final TreeKnot previousTreeKnot = TreeKnot.builder()
@@ -527,7 +528,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .build();
         final Edge edgeE1 = Edge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E1", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldOne").value("valueOne").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldOne").value("valueOne").build()))
                 .knotId("K1")
                 .build();
         final OrderedList<EdgeIdentifier> edgesOfK2 = new OrderedList<>();
@@ -539,7 +540,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .build();
         final Edge edgeE2 = Edge.builder()
                 .edgeIdentifier(new EdgeIdentifier("E2", 1, 1))
-                .filters(Arrays.asList(EqualsFilter.builder().field("fieldTwo").value("valueTwo").build()))
+                .filters(Collections.singletonList(EqualsFilter.builder().field("fieldTwo").value("valueTwo").build()))
                 .knotId("K2")
                 .build();
         final OrderedList<EdgeIdentifier> edgesOfK0 = new OrderedList<>();
@@ -560,7 +561,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 Edge.builder()
                         .edgeIdentifier(new EdgeIdentifier("E3", 1, 1))
                         .knotId("K3")
-                        .filters(Arrays.asList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
+                        .filters(Collections.singletonList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
                         .build()
         );
 
@@ -619,7 +620,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                 Edge.builder()
                         .edgeIdentifier(new EdgeIdentifier("E1", 1, 1))
                         .knotId("K1")
-                        .filters(Arrays.asList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
+                        .filters(Collections.singletonList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
                         .build()
         );
 
@@ -639,8 +640,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
                     Edge.builder()
                             .edgeIdentifier(new EdgeIdentifier("E3", 1, 1))
                             .knotId("K3")
-                            .filters(
-                                    Arrays.asList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
+                            .filters(Collections.singletonList(EqualsFilter.builder().field("fieldLeaf").value("valueLeaf").build()))
                             .build()
             );
 

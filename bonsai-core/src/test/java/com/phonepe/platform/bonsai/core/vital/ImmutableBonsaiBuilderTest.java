@@ -57,7 +57,7 @@ public class ImmutableBonsaiBuilderTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         mutableBonsaiTree = null;
         immutableBonsaiBuilder = null;
     }

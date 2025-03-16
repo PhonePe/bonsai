@@ -310,8 +310,8 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
         } else {
             final List<TreeKnot> childrenTreeKnots = treeKnot.getTreeEdges()
                     .stream()
-                    .filter(treeEdge -> treeEdge.getTreeKnot() != null)
                     .map(TreeEdge::getTreeKnot)
+                    .filter(Objects::nonNull)
                     .toList();
 
             for (int i = 0; !isSuccessfullyInserted && i < childrenTreeKnots.size(); i++) {

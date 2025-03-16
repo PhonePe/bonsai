@@ -33,12 +33,12 @@ public class InMemoryKnotStoreTest {
     private InMemoryKnotStore inMemoryKnotStore;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         inMemoryKnotStore = new InMemoryKnotStore();
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         inMemoryKnotStore = null;
     }
 

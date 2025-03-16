@@ -38,12 +38,12 @@ public class InMemoryEdgeStoreTest {
     private InMemoryEdgeStore inMemoryEdgeStore;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         inMemoryEdgeStore = new InMemoryEdgeStore();
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         inMemoryEdgeStore = null;
     }
 

@@ -42,7 +42,6 @@ import com.phonepe.platform.bonsai.models.blocks.delta.DeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.EdgeDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KeyMappingDeltaOperation;
 import com.phonepe.platform.bonsai.models.blocks.delta.KnotDeltaOperation;
-import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationUnaryVisitor;
 import com.phonepe.platform.bonsai.models.blocks.delta.visitor.DeltaOperationVisitor;
 import com.phonepe.platform.bonsai.models.blocks.model.Converters;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
@@ -476,17 +475,17 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     private KeyNode getKeyNode(final String key, final C context,
                                final List<Integer> edgePath, final List<Edge> edges,
                                final Knot knot) {
-        return knot.getKnotData().accept(new KnotDataVisitor<KeyNode>() {
+        return knot.getKnotData().accept(new KnotDataVisitor<>() {
             @Override
             public KeyNode visit(final ValuedKnotData valuedKnotData) {
                 return new KeyNode(key,
-                        ValueNode.builder()
-                                .id(knot.getId())
-                                .version(knot.getVersion())
-                                .value(valuedKnotData.getValue())
-                                .build(),
-                        edgePath,
-                        edges);
+                                   ValueNode.builder()
+                                           .id(knot.getId())
+                                           .version(knot.getVersion())
+                                           .value(valuedKnotData.getValue())
+                                           .build(),
+                                   edgePath,
+                                   edges);
             }
 
             @Override
@@ -499,13 +498,13 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                         .toList()
                         : null;
                 return new KeyNode(key,
-                        ListNode.builder()
-                                .id(knot.getId())
-                                .version(knot.getVersion())
-                                .nodes(nodes)
-                                .build(),
-                        edgePath,
-                        edges);
+                                   ListNode.builder()
+                                           .id(knot.getId())
+                                           .version(knot.getVersion())
+                                           .nodes(nodes)
+                                           .build(),
+                                   edgePath,
+                                   edges);
             }
 
             @Override
@@ -516,18 +515,18 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                         ? mapKeys.entrySet()
                         .stream()
                         .collect(Collectors.toMap(Map.Entry::getKey,
-                                entry -> evaluate(
-                                        entry.getValue(),
-                                        context)))
+                                                  entry -> evaluate(
+                                                          entry.getValue(),
+                                                          context)))
                         : null;
                 return new KeyNode(key,
-                        MapNode.builder()
-                                .id(knot.getId())
-                                .version(knot.getVersion())
-                                .nodeMap(nodeMap)
-                                .build(),
-                        edgePath,
-                        edges);
+                                   MapNode.builder()
+                                           .id(knot.getId())
+                                           .version(knot.getVersion())
+                                           .nodeMap(nodeMap)
+                                           .build(),
+                                   edgePath,
+                                   edges);
             }
         });
     }
@@ -755,11 +754,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         edgeList.add(edge);
         /* recursion happening here */
         Knot matchingNode = getMatchingKnot(key, rhsKnot, context, path, edgeList);
-        if (matchingNode == null) {
-            /* no more matching knots on the RHS, use previous knot */
-            return knot;
-        }
-        return matchingNode;
+        /* no more matching knots on the RHS, use previous knot */
+        return Objects.requireNonNullElse(matchingNode, knot);
     }
 
     private void checkMappingExistence(final String key) {

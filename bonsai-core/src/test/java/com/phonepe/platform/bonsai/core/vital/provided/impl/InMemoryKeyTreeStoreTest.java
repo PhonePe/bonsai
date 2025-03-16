@@ -35,12 +35,12 @@ public class InMemoryKeyTreeStoreTest {
     private InMemoryKeyTreeStore inMemoryKeyTreeStore;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         inMemoryKeyTreeStore = new InMemoryKeyTreeStore();
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         inMemoryKeyTreeStore = null;
     }
 
