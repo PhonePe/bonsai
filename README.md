@@ -53,6 +53,20 @@ recursively nested, allowing you to represent really complex rules as simple nes
     - [Evaluating Trees](#evaluating-trees)
     - [Delta Operations](#delta-operations)
 - [Advanced Usage](#advanced-usage)
+    - [Nested Tree Structures](#nested-tree-structures)
+    - [Custom Context Implementation](#custom-context-implementation)
+    - [Tree Validation](#tree-validation)
+    - [Versioning and Concurrency](#versioning-and-concurrency)
+    - [Contextual Preferences](#contextual-preferences)
+- [Performance Considerations](#performance-considerations)
+    - [Optimizing Tree Structure](#optimizing-tree-structure)
+    - [Memory / Compute](#memory--compute)
+- [Real-World Use Cases](#real-world-use-cases)
+    - [Feature Flagging System](#feature-flagging-system)
+    - [Dynamic Pricing Rules](#dynamic-pricing-rules)
+- [Troubleshooting](#troubleshooting)
+    - [Common Errors](#common-errors)
+    - [Debugging Tips](#debugging-tips)
 
 ## Overview
 
