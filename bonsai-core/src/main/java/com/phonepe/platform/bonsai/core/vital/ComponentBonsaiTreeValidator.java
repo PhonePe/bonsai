@@ -33,9 +33,9 @@ import com.phonepe.platform.bonsai.models.data.MapKnotData;
 import com.phonepe.platform.bonsai.models.data.MultiKnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.models.value.Value;
-import com.phonepe.platform.query.dsl.Filter;
-import com.phonepe.platform.query.dsl.FilterCounter;
-import com.phonepe.platform.query.dsl.FilterFieldIdentifier;
+import com.phonepe.commons.query.dsl.Filter;
+import com.phonepe.commons.query.dsl.FilterCounter;
+import com.phonepe.commons.query.dsl.FilterFieldIdentifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,8 +77,12 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
     }
 
     private static void checkCondition(boolean condition, String errorReason) {
+        checkCondition(condition, BonsaiErrorCode.INVALID_INPUT, errorReason);
+    }
+
+    private static void checkCondition(boolean condition, BonsaiErrorCode code, String errorReason) {
         if (!condition) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, errorReason);
+            throw new BonsaiError(code, errorReason);
         }
     }
 
@@ -91,7 +95,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
         validate(knot.getKnotData());
         checkCondition(knot.getVersion() >= 0, "knot.version cannot be less than 0");
         if (knot.getEdges() != null && knot.getEdges().size() > bonsaiProperties.getMaxAllowedVariationsPerKnot()) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT,
+            throw new BonsaiError(BonsaiErrorCode.MAX_VARIATIONS_EXCEEDED,
                     "variations exceed max allowed:" + bonsaiProperties.getMaxAllowedVariationsPerKnot());
         }
     }
@@ -120,7 +124,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
                 .stream()
                 .mapToInt(k -> k.accept(new FilterCounter()))
                 .sum() > bonsaiProperties.getMaxAllowedConditionsPerEdge()) {
-            throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT,
+            throw new BonsaiError(BonsaiErrorCode.MAX_CONDITIONS_EXCEEDED,
                     "filters exceed max allowed:" + bonsaiProperties.getMaxAllowedConditionsPerEdge());
         }
         if (bonsaiProperties.isMutualExclusivitySettingTurnedOn() && edge.getFilters() != null) {
@@ -210,6 +214,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
         checkNotNullOrEmpty(filters, "edgeDeltaOperation.edge.filters");
         checkCondition(filters.stream().mapToInt(k -> k.accept(new FilterCounter())).sum() <=
                         bonsaiProperties.getMaxAllowedConditionsPerEdge(),
+                BonsaiErrorCode.MAX_CONDITIONS_EXCEEDED,
                 String.format("edgeDeltaOperation.edge.filters exceed max allowed count: %d.",
                         bonsaiProperties.getMaxAllowedConditionsPerEdge()));
         if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
@@ -267,6 +272,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
                 ((treeKnot.getTreeEdges() == null) ? new ArrayList<>() : treeKnot.getTreeEdges());
 
         checkCondition(treeEdgeList.size() <= bonsaiProperties.getMaxAllowedVariationsPerKnot(),
+                BonsaiErrorCode.MAX_VARIATIONS_EXCEEDED,
                 String.format("Number of variation of any knot can not exceed : %d",
                         bonsaiProperties.getMaxAllowedVariationsPerKnot()));
 
@@ -278,6 +284,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
             checkCondition(filters.stream()
                             .mapToInt(k -> k.accept(new FilterCounter()))
                             .sum() <= bonsaiProperties.getMaxAllowedConditionsPerEdge(),
+                    BonsaiErrorCode.MAX_CONDITIONS_EXCEEDED,
                     String.format("TreeEdge:Filters exceed max allowed count: %d.",
                             bonsaiProperties.getMaxAllowedConditionsPerEdge()));
             if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {

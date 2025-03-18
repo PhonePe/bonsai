@@ -28,7 +28,7 @@ import java.util.function.Predicate;
 
 /**
  * This is responsible for matching the {@link Edge}s filters against the {@link Context}
- * We are using the {@link JsonPathFilterEvaluationEngine} to evaluate if all {@link com.phonepe.platform.query.dsl.Filter}s
+ * We are using the {@link JsonPathFilterEvaluationEngine} to evaluate if all {@link com.phonepe.commons.query.dsl.Filter}s
  * present in the {@link Edge} are true
  * If so, this {@link Edge} will return true, ie, the Context satisfies the {@link Edge}s criteria
  */

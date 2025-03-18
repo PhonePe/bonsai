@@ -53,7 +53,7 @@ import com.phonepe.platform.bonsai.models.data.MultiKnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.bonsai.models.structures.OrderedList;
-import com.phonepe.platform.query.dsl.FilterFieldIdentifier;
+import com.phonepe.commons.query.dsl.FilterFieldIdentifier;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 

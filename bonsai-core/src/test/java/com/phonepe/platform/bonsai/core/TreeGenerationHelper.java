@@ -32,7 +32,7 @@ import com.phonepe.platform.bonsai.models.value.ObjectValue;
 import com.phonepe.platform.bonsai.models.value.StringValue;
 import com.phonepe.platform.bonsai.models.value.Value;
 import com.phonepe.platform.bonsai.models.value.ValueVisitor;
-import com.phonepe.platform.query.dsl.general.EqualsFilter;
+import com.phonepe.commons.query.dsl.general.EqualsFilter;
 
 import java.util.stream.IntStream;
 

@@ -34,8 +34,8 @@ import com.phonepe.platform.bonsai.models.data.KnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.models.model.FlatTreeRepresentation;
 import com.phonepe.platform.bonsai.models.value.StringValue;
-import com.phonepe.platform.query.dsl.general.EqualsFilter;
-import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
+import com.phonepe.commons.query.dsl.general.EqualsFilter;
+import com.phonepe.commons.query.dsl.general.NotEqualsFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

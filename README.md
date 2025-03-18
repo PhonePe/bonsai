@@ -5,12 +5,16 @@
     <a href="https://github.com/PhonePe/bonsai/actions">
     	<img src="https://github.com/PhonePe/bonsai/actions/workflows/actions.yml/badge.svg"/>
     </a>
-    <a href="https://s01.oss.sonatype.org/content/repositories/releases/com/phonepe/bonsai/">
-    	<img src="https://img.shields.io/maven-central/v/com.phonepe.commons/bonsai"/>
+    <a href="https://s01.oss.sonatype.org/content/repositories/releases/com/phonepe/platform/bonsai/">
+    	<img src="https://img.shields.io/maven-central/v/com.phonepe.platform/bonsai"/>
     </a>
     <a href="https://github.com/PhonePe/bonsai/blob/master/LICENSE">
     	<img src="https://img.shields.io/github/license/PhonePe/bonsai" alt="license" />
-    </a></p>
+    </a>
+    <a href="https://javadoc.io/doc/com.phonepe.platform/bonsai">
+    	<img src="https://javadoc.io/badge2/com.phonepe.platform/bonsai/javadoc.svg" alt="javadoc" />
+    </a>
+  </p>
   <p align="center">
     <a href="https://sonarcloud.io/project/overview?id=PhonePe_bonsai">
     	<img src="https://sonarcloud.io/api/project_badges/measure?project=PhonePe_bonsai&metric=alert_status"/>
@@ -28,7 +32,7 @@
 </p>
 
 
-Each one of us would have come across rule engines of different kinds in our respective industries. Rule engines are
+Each one of us would have come across rule engines of different kinds in our respective software experiences. Rule engines are
 typically structured as a set of rules that are evaluated against a **Context**. Bonsai is one such **data-structure**, that
 allows you to represent the rule engine as a tree of knots and edges. The kicker here is that the tree can be
 recursively nested, allowing you to represent really complex rules as simple nested forest of trees.
@@ -70,16 +74,30 @@ recursively nested, allowing you to represent really complex rules as simple nes
 
 ## Overview
 
-Bonsai is a **Java Library**. It is a powerful tree-based rule engine that enables you to:
+Bonsai is a **Java Library** for data selection based on conditions. It is a powerful tree-based rule engine that enables you to:
 
-1. Create a forest of trees with key-to-Knot mappings
+1. Create a forest of trees with key-to-data mappings
 2. Build complex decision trees with conditional branching
 3. Represent nested, hierarchical rule structures
-4. Evaluate rules against a context to traverse the tree. The Context and Rules are represented by a combination
-   of [JsonPath](https://github.com/json-path/JsonPath) and [Query-DSL](https://github.com/PhonePe/query-dsl)
+4. Evaluate rules against a context to traverse the tree and select the right data element. The Context and Rules are
+   represented by a combination of [JsonPath](https://github.com/json-path/JsonPath) and [Query-DSL](https://github.com/PhonePe/query-dsl)
 5. Modify trees dynamically with delta operations
 6. Maintain versioning of tree components
 7. Plug any storage implementations
+
+
+## Motivation
+
+While there are several rule engine options out there, none bridge the gap between data selection and rule definition in 
+a nice way. They are either too heavy or are plain workflow systems being termed as rule engines.
+
+Consider a scenario where data elements are configurations, and different variations of these configurations are to be
+selected based on a set of conditions. What started off as a small rule engine for Frontend App configurations, Bonsai
+as a library powers a large number of use-cases internally (A flavour of some of these are captured in
+the [Real-World Use Cases](#real-world-use-cases) section. It is either used directly as a light-weight library, or
+wrapped in a service that provides a UI to create and manage trees. One such prominent service is an internal feature 
+flagging and configuration system, which powers the page structure, and launch / placement of most widgets on the PhonePe app.
+
 
 ## Core Concepts
 
@@ -644,7 +662,7 @@ bonsai.createMapping("pricing.standard", pricingRoot.getId());
 |-----------------------------------------------|--------------------------------------------|-------------------------------------------------------------------------------|
 | CYCLE_DETECTED                                | A cycle was detected in the tree structure | Review your tree structure to ensure there are no circular references         |
 | VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR | Edge variations violate mutual exclusivity | Ensure edge conditions don't overlap when mutual exclusivity is enabled       |
-| VERSION_MISMATCH                              | Concurrent modification detected           | Retry the operation with the latest version                                   |
+| TREE_ALREADY_EXIST                            | Tree creation through delta ops failure    | A tree for the said key mapping already exists, try with a new key            |
 | MAX_VARIATIONS_EXCEEDED                       | Too many variations on a knot              | Increase the maxAllowedVariationsPerKnot property or restructure your tree    |
 | MAX_CONDITIONS_EXCEEDED                       | Too many conditions on an edge             | Increase the maxAllowedConditionsPerEdge property or simplify your conditions |
 

@@ -35,7 +35,7 @@ import com.phonepe.platform.bonsai.models.blocks.model.TreeEdge;
 import com.phonepe.platform.bonsai.models.blocks.model.TreeKnot;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.models.structures.OrderedList;
-import com.phonepe.platform.query.dsl.general.EqualsFilter;
+import com.phonepe.commons.query.dsl.general.EqualsFilter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

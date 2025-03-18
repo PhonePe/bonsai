@@ -23,7 +23,7 @@ import com.phonepe.platform.bonsai.core.exception.BonsaiError;
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.Knot;
 import com.phonepe.platform.bonsai.models.blocks.Variation;
-import com.phonepe.platform.query.dsl.general.EqualsFilter;
+import com.phonepe.commons.query.dsl.general.EqualsFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -18,7 +18,7 @@ package com.phonepe.platform.bonsai.json.eval;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.jayway.jsonpath.JsonPath;
-import com.phonepe.platform.query.dsl.Filter;
+import com.phonepe.commons.query.dsl.Filter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>bonsai</artifactId>
         <groupId>com.phonepe.platform</groupId>
-        <version>1.0.42-SNAPSHOT</version>
+        <version>1.0.43</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,7 +14,6 @@
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.release>17</maven.compiler.release>
         <maven.deploy.skip>false</maven.deploy.skip>
-        <maven.javadoc.skip>true</maven.javadoc.skip>
     </properties>
 
     <dependencies>
@@ -42,9 +41,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.phonepe.platform</groupId>
+            <groupId>com.phonepe.commons</groupId>
             <artifactId>query-dsl</artifactId>
-            <version>1.3</version>
         </dependency>
         <dependency>
             <groupId>com.phonepe.platform</groupId>

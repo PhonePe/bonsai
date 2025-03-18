@@ -17,7 +17,7 @@
 package com.phonepe.platform.bonsai.models.blocks;
 
 import com.phonepe.platform.bonsai.conditions.Condition;
-import com.phonepe.platform.query.dsl.Filter;
+import com.phonepe.commons.query.dsl.Filter;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

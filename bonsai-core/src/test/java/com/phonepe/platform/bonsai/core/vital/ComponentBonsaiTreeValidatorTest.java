@@ -30,16 +30,16 @@ import com.phonepe.platform.bonsai.models.data.MultiKnotData;
 import com.phonepe.platform.bonsai.models.data.ValuedKnotData;
 import com.phonepe.platform.bonsai.models.value.NumberValue;
 import com.phonepe.platform.bonsai.models.value.StringValue;
-import com.phonepe.platform.query.dsl.Filter;
-import com.phonepe.platform.query.dsl.general.EqualsFilter;
-import com.phonepe.platform.query.dsl.general.InFilter;
-import com.phonepe.platform.query.dsl.general.NotEqualsFilter;
-import com.phonepe.platform.query.dsl.general.NotInFilter;
-import com.phonepe.platform.query.dsl.logical.AndFilter;
-import com.phonepe.platform.query.dsl.logical.NotFilter;
-import com.phonepe.platform.query.dsl.logical.OrFilter;
-import com.phonepe.platform.query.dsl.numeric.GreaterEqualFilter;
-import com.phonepe.platform.query.dsl.numeric.LessEqualFilter;
+import com.phonepe.commons.query.dsl.Filter;
+import com.phonepe.commons.query.dsl.general.EqualsFilter;
+import com.phonepe.commons.query.dsl.general.InFilter;
+import com.phonepe.commons.query.dsl.general.NotEqualsFilter;
+import com.phonepe.commons.query.dsl.general.NotInFilter;
+import com.phonepe.commons.query.dsl.logical.AndFilter;
+import com.phonepe.commons.query.dsl.logical.NotFilter;
+import com.phonepe.commons.query.dsl.logical.OrFilter;
+import com.phonepe.commons.query.dsl.numeric.GreaterEqualFilter;
+import com.phonepe.commons.query.dsl.numeric.LessEqualFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -851,7 +851,7 @@ public class ComponentBonsaiTreeValidatorTest {
                     getComponentBonsaiTreeValidator(1, 3, true);
             componentValidator.validate(rootTreeKnot);
         } catch (BonsaiError e) {
-            Assertions.assertEquals(BonsaiErrorCode.INVALID_INPUT, e.getErrorCode());
+            Assertions.assertEquals(BonsaiErrorCode.MAX_VARIATIONS_EXCEEDED, e.getErrorCode());
         }
     }
 

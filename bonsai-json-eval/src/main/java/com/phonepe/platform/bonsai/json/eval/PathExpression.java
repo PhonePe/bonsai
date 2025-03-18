@@ -19,7 +19,7 @@ package com.phonepe.platform.bonsai.json.eval;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
-import com.phonepe.platform.query.dsl.Filter;
+import com.phonepe.commons.query.dsl.Filter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

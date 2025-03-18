@@ -18,7 +18,7 @@ package com.phonepe.platform.bonsai.core.vital.provided.impl;
 
 import com.phonepe.platform.bonsai.models.blocks.Edge;
 import com.phonepe.platform.bonsai.models.blocks.EdgeIdentifier;
-import com.phonepe.platform.query.dsl.general.EqualsFilter;
+import com.phonepe.commons.query.dsl.general.EqualsFilter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
