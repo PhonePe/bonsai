@@ -3,10 +3,10 @@
   <p align="center">Java Rule Engine library over a tree data-structure<p>
   <p align="center">
     <a href="https://github.com/PhonePe/bonsai/actions">
-    	<img src="https://github.com/PhonePe/bonsai/actions/workflows/actions.yml/badge.svg"/>
+    	<img src="https://github.com/PhonePe/bonsai/actions/workflows/build.yml/badge.svg"/>
     </a>
-    <a href="https://s01.oss.sonatype.org/content/repositories/releases/com/phonepe/platform/bonsai/">
-    	<img src="https://img.shields.io/maven-central/v/com.phonepe.platform/bonsai"/>
+    <a href="https://central.sonatype.com/artifact/com.phonepe.commons/bonsai">
+    	<img src="https://img.shields.io/maven-central/v/com.phonepe.commons/bonsai"/>
     </a>
     <a href="https://github.com/PhonePe/bonsai/blob/master/LICENSE">
     	<img src="https://img.shields.io/github/license/PhonePe/bonsai" alt="license" />
