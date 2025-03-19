@@ -304,15 +304,29 @@ class ImmutableBonsaiTreeTest {
 
     @Test
     void given_mutableBonsaiTree_when_createKnot_then_returnNonNullKnot() {
-        Bonsai<Context> newBonsai = BonsaiBuilder.builder()
+        Bonsai<Context> bonsai = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties.builder().build())
                 .build();
 
-        Knot k2 = newBonsai.createKnot(Knot.builder()
-                .id("k1")
-                .knotData(ValuedKnotData.stringValue("2"))
-                .version(123)
-                .build());
+        ImmutableBonsaiBuilder
+                .builder(bonsai)
+                .createKnot(Knot.builder()
+                                    .id("k1")
+                                    .knotData(ValuedKnotData.stringValue("1"))
+                                    .version(123)
+                                    .build())
+                .createKnot(Knot.builder()
+                                    .id("k1")
+                                    .knotData(ValuedKnotData.stringValue("1"))
+                                    .version(123)
+                                    .build())
+                .build();
+
+        Knot k2 = bonsai.createKnot(Knot.builder()
+                                            .id("k1")
+                                            .knotData(ValuedKnotData.stringValue("2"))
+                                            .version(123)
+                                            .build());
         Assertions.assertNotNull(k2);
     }
 
