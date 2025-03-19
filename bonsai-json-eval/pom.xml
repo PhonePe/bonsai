@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>bonsai</artifactId>
-        <groupId>com.phonepe.platform</groupId>
+        <groupId>com.phonepe.commons</groupId>
         <version>1.0.43</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -10,8 +10,6 @@
     <artifactId>bonsai-json-eval</artifactId>
 
     <properties>
-        <maven.deploy.skip>false</maven.deploy.skip>
-        <maven.javadoc.skip>true</maven.javadoc.skip>
         <json-path.version>2.9.0</json-path.version>
     </properties>
 

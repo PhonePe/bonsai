@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.phonepe.platform</groupId>
+    <groupId>com.phonepe.commons</groupId>
     <artifactId>bonsai</artifactId>
     <packaging>pom</packaging>
     <version>1.0.43</version>
@@ -41,6 +41,16 @@
             <id>suraj.s</id>
             <name>Suraj Singh</name>
             <email>suraj.s@phonepe.com</email>
+        </developer>
+        <developer>
+            <id>chandrasekharpatra1</id>
+            <name>Chandrasekhar Patra</name>
+            <email>chandrasekharpatra1@gmail.com</email>
+        </developer>
+        <developer>
+            <id>aditi.thakur</id>
+            <name>Aditi Thakur</name>
+            <email>aditi.thakur@phonepe.com</email>
         </developer>
     </developers>
 

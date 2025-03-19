@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>bonsai</artifactId>
-        <groupId>com.phonepe.platform</groupId>
+        <groupId>com.phonepe.commons</groupId>
         <version>1.0.43</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -10,10 +10,7 @@
     <artifactId>bonsai-models</artifactId>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.release>17</maven.compiler.release>
-        <maven.deploy.skip>false</maven.deploy.skip>
+        <validation-api.version>2.0.1.Final</validation-api.version>
     </properties>
 
     <dependencies>
@@ -32,7 +29,7 @@
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-            <version>2.0.1.Final</version>
+            <version>${validation-api.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
@@ -45,7 +42,7 @@
             <artifactId>query-dsl</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.phonepe.platform</groupId>
+            <groupId>com.phonepe.commons</groupId>
             <artifactId>bonsai-conditions</artifactId>
             <version>${project.version}</version>
         </dependency>

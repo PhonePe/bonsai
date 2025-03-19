@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>bonsai</artifactId>
-        <groupId>com.phonepe.platform</groupId>
+        <groupId>com.phonepe.commons</groupId>
         <version>1.0.43</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -11,8 +11,7 @@
 
     <properties>
         <metrics.version>3.1.0</metrics.version>
-        <maven.deploy.skip>false</maven.deploy.skip>
-        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <commons-lang3.version>3.7</commons-lang3.version>
     </properties>
 
     <dependencies>
@@ -20,17 +19,17 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.7</version>
+            <version>${commons-lang3.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.phonepe.platform</groupId>
+            <groupId>com.phonepe.commons</groupId>
             <artifactId>bonsai-json-eval</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.phonepe.platform</groupId>
+            <groupId>com.phonepe.commons</groupId>
             <artifactId>bonsai-models</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -61,15 +60,15 @@
         </dependency>
 
         <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-jackson</artifactId>
             <version>1.3.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>${metrics.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -78,8 +77,6 @@
             <version>2.2</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all -->
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
