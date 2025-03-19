@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RandomMatcherTest {
 
     @Test
-    public void test100PercentMatcher() {
+    void test100PercentMatcher() {
         RandomMatcher randomMatcher = new RandomMatcher();
         for (int i = 0; i < 10000; i++) {
             final Boolean match = randomMatcher.match(100);
@@ -35,7 +35,7 @@ class RandomMatcherTest {
     }
 
     @Test
-    public void testEqualRandom() {
+    void testEqualRandom() {
         RandomMatcher randomMatcher = new RandomMatcher();
         int percentage = 25;
         int size = 1000000;
@@ -50,7 +50,7 @@ class RandomMatcherTest {
             }
         }
         assertEquals(percentage, (float) (trueValue) / (size) * 100, 0.1);
-        assertEquals(100-percentage, (float) (falseValue) / (size) * 100, 0.1);
+        assertEquals(100 - percentage, (float) (falseValue) / (size) * 100, 0.1);
     }
 
     @Test

@@ -273,34 +273,7 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
             final EdgeIdentifier edgeIdentifier = treeEdge.getEdgeIdentifier();
             if (edgeDeltaOperation.getEdge().getEdgeIdentifier().getId().equals(edgeIdentifier.getId())) {
                 // To ensure if the existing setup is being updated/deleted.
-                if (edgeStore.containsEdge(treeEdge.getEdgeIdentifier().getId())) {
-                    final Edge revertEdgeState = Converters.toEdge(treeEdge);
-                    if (revertEdgeState != null) {
-                        revertEdgeState.setVersion(0);
-                    }
-                    final EdgeDeltaOperation revertEdgeDeltaOperation = new EdgeDeltaOperation(revertEdgeState);
-                    revertDeltaOperation.add(revertEdgeDeltaOperation);
-
-                    // Capture in-case the link is directing to the new variation.
-                    if (!treeEdge.getTreeKnot().getId().equals(edgeDeltaOperation.getEdge().getKnotId())) {
-                        captureRevertTreeKnot(treeEdge.getTreeKnot(), revertDeltaOperation);
-                    }
-                }
-
-                treeEdge.setVersion(edgeDeltaOperation.getEdge().getVersion());
-                treeEdge.setFilters(edgeDeltaOperation.getEdge().getFilters());
-                treeEdge.setProperties(edgeDeltaOperation.getEdge().getProperties());
-                treeEdge.setLive(edgeDeltaOperation.getEdge().isLive());
-                treeEdge.setPercentage(edgeDeltaOperation.getEdge().getPercentage());
-
-                final String childKnotId = edgeDeltaOperation.getEdge().getKnotId();
-                final Knot fetchedKnot = knotStore.getKnot(childKnotId);
-                if (fetchedKnot == null) {
-                    final TreeKnot childTreeKnot = TreeKnot.builder()
-                            .id(edgeDeltaOperation.getEdge().getKnotId())
-                            .build();
-                    treeEdge.setTreeKnot(childTreeKnot);
-                }
+                handleEdgePresence(revertDeltaOperation, edgeDeltaOperation, treeEdge);
                 return true;
             }
         }
@@ -321,6 +294,37 @@ public class TreeKnotStateDeltaOperationModifierVisitor implements DeltaOperatio
         }
 
         return isSuccessfullyInserted;
+    }
+
+    private void handleEdgePresence(List<DeltaOperation> revertDeltaOperation, EdgeDeltaOperation edgeDeltaOperation, TreeEdge treeEdge) {
+        if (edgeStore.containsEdge(treeEdge.getEdgeIdentifier().getId())) {
+            final Edge revertEdgeState = Converters.toEdge(treeEdge);
+            if (revertEdgeState != null) {
+                revertEdgeState.setVersion(0);
+            }
+            final EdgeDeltaOperation revertEdgeDeltaOperation = new EdgeDeltaOperation(revertEdgeState);
+            revertDeltaOperation.add(revertEdgeDeltaOperation);
+
+            // Capture in-case the link is directing to the new variation.
+            if (!treeEdge.getTreeKnot().getId().equals(edgeDeltaOperation.getEdge().getKnotId())) {
+                captureRevertTreeKnot(treeEdge.getTreeKnot(), revertDeltaOperation);
+            }
+        }
+
+        treeEdge.setVersion(edgeDeltaOperation.getEdge().getVersion());
+        treeEdge.setFilters(edgeDeltaOperation.getEdge().getFilters());
+        treeEdge.setProperties(edgeDeltaOperation.getEdge().getProperties());
+        treeEdge.setLive(edgeDeltaOperation.getEdge().isLive());
+        treeEdge.setPercentage(edgeDeltaOperation.getEdge().getPercentage());
+
+        final String childKnotId = edgeDeltaOperation.getEdge().getKnotId();
+        final Knot fetchedKnot = knotStore.getKnot(childKnotId);
+        if (fetchedKnot == null) {
+            final TreeKnot childTreeKnot = TreeKnot.builder()
+                    .id(edgeDeltaOperation.getEdge().getKnotId())
+                    .build();
+            treeEdge.setTreeKnot(childTreeKnot);
+        }
     }
 
     private void captureRevertTreeEdge(final TreeEdge treeEdge, final List<DeltaOperation> revertDeltaOperation) {

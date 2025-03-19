@@ -25,34 +25,35 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MatcherTest {
 
     private Matcher.UniMatcher<String, Integer> uniMatcher;
     private Matcher.BooleanUniMatcher<String> booleanUniMatcher;
     private Matcher.ConditionalMatcher<String, TestCondition> conditionalMatcher;
-    
+
     private TestCondition condition1;
-    private TestCondition condition2;
     private List<TestCondition> conditions;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        
+
         // Create test conditions
         condition1 = new TestCondition(true, 100f);
-        condition2 = new TestCondition(true, 75f);
-        
+        TestCondition condition2 = new TestCondition(true, 75f);
+
         conditions = Arrays.asList(condition1, condition2);
-        
+
         // Create test matchers using lambda implementations
-        uniMatcher = (value) -> "Value: " + value;
-        
-        booleanUniMatcher = (value) -> value.contains("test");
-        
-        conditionalMatcher = new Matcher.ConditionalMatcher<String, TestCondition>() {
+        uniMatcher = value -> "Value: " + value;
+
+        booleanUniMatcher = value -> value.contains("test");
+
+        conditionalMatcher = new Matcher.ConditionalMatcher<>() {
             @Override
             public Optional<TestCondition> match(String value, List<TestCondition> conditionList) {
                 return conditionList.stream()
@@ -85,7 +86,7 @@ class MatcherTest {
     void testConditionalMatcherWithMatchingCondition() {
         // Test ConditionalMatcher with a value that matches
         Optional<TestCondition> result = conditionalMatcher.match("test string", conditions);
-        
+
         // Should return the first matching condition
         assertTrue(result.isPresent());
         assertEquals(condition1, result.get());
@@ -95,7 +96,7 @@ class MatcherTest {
     void testConditionalMatcherWithNonMatchingValue() {
         // Test ConditionalMatcher with a value that doesn't match (too short)
         Optional<TestCondition> result = conditionalMatcher.match("short", conditions);
-        
+
         // Should return empty Optional since value doesn't match any condition
         assertFalse(result.isPresent());
     }
@@ -104,10 +105,10 @@ class MatcherTest {
     void testConditionalMatcherWithNonLiveCondition() {
         // Create a non-live condition
         TestCondition nonLiveCondition = new TestCondition(false, 100f);
-        
+
         // Test match with non-live condition
         Boolean result = conditionalMatcher.match("test string", nonLiveCondition);
-        
+
         // Should return false since condition is not live
         assertFalse(result);
     }
@@ -116,7 +117,7 @@ class MatcherTest {
     void testConditionalMatcherWithEmptyList() {
         // Test match with empty list
         Optional<TestCondition> result = conditionalMatcher.match("test string", Collections.emptyList());
-        
+
         // Should return empty Optional for empty list
         assertFalse(result.isPresent());
     }
