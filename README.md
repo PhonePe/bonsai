@@ -40,6 +40,7 @@ recursively nested, allowing you to represent really complex rules as simple nes
 ## Table of Contents
 
 - [Overview](#overview)
+- [Motivation](#motivation)
 - [Core Concepts](#core-concepts)
     - [Knot](#knot)
     - [Edge/Variation](#edgevariation)
