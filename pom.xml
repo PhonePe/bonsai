@@ -138,14 +138,8 @@
         </sonar.exclusions>
 
         <sonar.coverage.exclusions>
-            **com/phonepe/platform/bonsai/core/structures/CollectorFunctions*,
-            **com/phonepe/platform/bonsai/models/**,
-            **com/phonepe/platform/bonsai/json/eval/**
+            **com/phonepe/commons/bonsai/models/**
         </sonar.coverage.exclusions>
-
-        <sonar.exclusions>
-            **com/phonepe/platform/bonsai/core/structures/CollectorFunctions*
-        </sonar.exclusions>
     </properties>
 
     <dependencyManagement>
@@ -307,9 +301,7 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>**com/phonepe/platform/bonsai/core/structures/CollectorFunctions*</exclude>
-                        <exclude>**com/phonepe/platform/bonsai/models/**</exclude>
-                        <exclude>**com/phonepe/platform/bonsai/json/eval/**</exclude>
+                        <exclude>**com/phonepe/commons/bonsai/models/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
