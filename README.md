@@ -246,7 +246,7 @@ Add the Bonsai dependency to your Maven project:
 
 ```xml
 <dependency>
-    <groupId>com.phonepe.platform</groupId>
+    <groupId>com.phonepe.commons</groupId>
     <artifactId>bonsai-core</artifactId>
     <version>${bonsai.version}</version>
 </dependency>
@@ -255,7 +255,7 @@ Add the Bonsai dependency to your Maven project:
 For Gradle:
 
 ```groovy
-implementation 'com.phonepe.platform:bonsai-core:${bonsai.version}'
+implementation 'com.phonepe.commons:bonsai-core:${bonsai.version}'
 ```
 
 ## Storage
