@@ -258,5 +258,3 @@ public abstract class ConditionEngine<E, C extends Condition> implements Matcher
         return contender == null || Objects.equals(value, contender);
     }
 }
-
-

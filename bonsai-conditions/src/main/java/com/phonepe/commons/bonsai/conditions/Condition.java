@@ -49,7 +49,12 @@ public class Condition {
     public <T> T getProperty(String key, T defaultValue) {
         if (properties != null && !properties.isEmpty() && properties.containsKey(key)) {
             try {
-                return (T) properties.get(key);
+                Object value = properties.get(key);
+                if (defaultValue != null && defaultValue.getClass().isInstance(value)) {
+                    return (T) value;
+                } else {
+                    return defaultValue;
+                }
             } catch (Exception e) {
                 log.error("Exception while trying to cast:{}", properties.get(key), e);
                 return defaultValue;
