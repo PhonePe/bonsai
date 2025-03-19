@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class FlatNodeTest {
+class FlatNodeTest {
     @Test
     void name() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper()

@@ -35,7 +35,7 @@ public class Parsers {
 
     public static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public static ParseContext DOCUMENT_PARSER = JsonPath.using(Configuration.builder()
+    public static final ParseContext DOCUMENT_PARSER = JsonPath.using(Configuration.builder()
             .jsonProvider(new JacksonJsonProvider())
             .mappingProvider(new JacksonMappingProvider())
             .options(Option.SUPPRESS_EXCEPTIONS,

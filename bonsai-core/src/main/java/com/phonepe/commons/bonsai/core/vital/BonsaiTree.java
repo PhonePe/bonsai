@@ -173,7 +173,6 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             TreeKnot treeKnot = Converters.toTreeKnot(knot);
             /* this is a recursive delete operation */
             if (recursive && knot.getEdges() != null) {
-                //todo optimize and handle failures
                 Map<String, Edge> allEdges = edgeStore
                         .getAllEdges(knot.getEdges()
                                 .stream()

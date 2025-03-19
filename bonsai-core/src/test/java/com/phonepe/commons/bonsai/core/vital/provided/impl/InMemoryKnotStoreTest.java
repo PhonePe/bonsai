@@ -28,17 +28,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class InMemoryKnotStoreTest {
+class InMemoryKnotStoreTest {
 
     private InMemoryKnotStore inMemoryKnotStore;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         inMemoryKnotStore = new InMemoryKnotStore();
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         inMemoryKnotStore = null;
     }
 

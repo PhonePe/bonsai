@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.Optional;
 
-public class VariationSelectorEngineTest {
+class VariationSelectorEngineTest {
     @Test
     void testWhenNoContextThenVariationSelectionReturnsFalse() {
         Optional<Edge> match = new VariationSelectorEngine<>()

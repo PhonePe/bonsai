@@ -16,6 +16,10 @@
 
 package com.phonepe.commons.bonsai.conditions;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConditionEngines {
 
     public static class TrueConditionEngine<C extends Condition> extends ConditionEngine<Void, C> {

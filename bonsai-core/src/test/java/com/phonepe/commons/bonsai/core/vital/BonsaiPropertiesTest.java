@@ -24,17 +24,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BonsaiPropertiesTest {
+class BonsaiPropertiesTest {
 
     private BonsaiProperties bonsaiProperties;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         bonsaiProperties = BonsaiProperties.builder().build();
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         bonsaiProperties = null;
     }
 
@@ -47,14 +47,14 @@ public class BonsaiPropertiesTest {
 
     @Test
     void given_bonsaiProperties_when_settingTheseProperties_then_returnTheseProperties() {
-        final BonsaiProperties bonsaiProperties = BonsaiProperties.builder()
+        final BonsaiProperties newBonsaiProperties = BonsaiProperties.builder()
                 .mutualExclusivitySettingTurnedOn(true)
                 .maxAllowedVariationsPerKnot(5)
                 .maxAllowedConditionsPerEdge(10)
                 .build();
 
-        assertEquals(10, bonsaiProperties.getMaxAllowedConditionsPerEdge());
-        assertEquals(5, bonsaiProperties.getMaxAllowedVariationsPerKnot());
-        assertTrue(bonsaiProperties.isMutualExclusivitySettingTurnedOn());
+        assertEquals(10, newBonsaiProperties.getMaxAllowedConditionsPerEdge());
+        assertEquals(5, newBonsaiProperties.getMaxAllowedVariationsPerKnot());
+        assertTrue(newBonsaiProperties.isMutualExclusivitySettingTurnedOn());
     }
 }

@@ -33,17 +33,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class InMemoryEdgeStoreTest {
+class InMemoryEdgeStoreTest {
 
     private InMemoryEdgeStore inMemoryEdgeStore;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         inMemoryEdgeStore = new InMemoryEdgeStore();
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         inMemoryEdgeStore = null;
     }
 

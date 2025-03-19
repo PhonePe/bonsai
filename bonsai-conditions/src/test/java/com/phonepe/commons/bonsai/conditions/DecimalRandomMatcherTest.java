@@ -140,7 +140,7 @@ class DecimalRandomMatcherTest {
     }
 
     @Test
-    public void test100PercentMatcher() {
+    void test100PercentMatcher() {
         RandomMatcher randomMatcher = new DecimalRandomMatcher();
         for (int i = 0; i < 10000; i++) {
             final Boolean match = randomMatcher.match(100);
@@ -149,7 +149,7 @@ class DecimalRandomMatcherTest {
     }
 
     @Test
-    public void testEqualRandom() {
+    void testEqualRandom() {
         RandomMatcher randomMatcher = new DecimalRandomMatcher();
         float percentage = 2.0f;
         int size = 1000000;
@@ -168,7 +168,7 @@ class DecimalRandomMatcherTest {
     }
 
     @Test
-    public void test1000PercentMatcher() {
+    void test1000PercentMatcher() {
         RandomMatcher randomMatcher = new DecimalRandomMatcher(0, 1000);
         float percentage = 2.35f;
         int size = 10000000;

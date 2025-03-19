@@ -70,30 +70,24 @@ class BonsaiBuilderTest {
 
     @Test
     void given_bonsaiBuilder_when_buildingBonsaiWithNoBonsaiProperties_then_throwNullPointerException() {
-        assertThrows(NullPointerException.class, () -> {
-            final Bonsai bonsaiTree = BonsaiBuilder.builder().build();
-        });
+        assertThrows(NullPointerException.class, () -> BonsaiBuilder.builder().build());
     }
 
     @Test
     void given_bonsaiBuilder_when_buildingBonsaiWithZeroConditionsPerEdge_then_throwIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            final Bonsai bonsaiTree = BonsaiBuilder.builder()
-                    .withBonsaiProperties(BonsaiProperties.builder()
-                            .maxAllowedConditionsPerEdge(0)
-                            .build())
-                    .build();
-        });
+        assertThrows(IllegalArgumentException.class, () -> BonsaiBuilder.builder()
+                .withBonsaiProperties(BonsaiProperties.builder()
+                        .maxAllowedConditionsPerEdge(0)
+                        .build())
+                .build());
     }
 
     @Test
     void given_bonsaiBuilder_when_buildingBonsaiWithZeroVariationsPerKnot_then_throwIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            final Bonsai bonsaiTree = BonsaiBuilder.builder()
-                    .withBonsaiProperties(BonsaiProperties.builder()
-                            .maxAllowedVariationsPerKnot(0)
-                            .build())
-                    .build();
-        });
+        assertThrows(IllegalArgumentException.class, () -> BonsaiBuilder.builder()
+                .withBonsaiProperties(BonsaiProperties.builder()
+                        .maxAllowedVariationsPerKnot(0)
+                        .build())
+                .build());
     }
 }

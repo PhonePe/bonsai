@@ -596,6 +596,7 @@ public class NodeUtils {
     }
 
     @FunctionalInterface
+    @SuppressWarnings("java:S112")
     private interface ESupplier<T> {
         T get() throws Exception;
     }

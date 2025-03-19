@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BonsaiTreeEdgeOperationTest {
+class BonsaiTreeEdgeOperationTest {
 
     private final Bonsai<Context> bonsai = BonsaiBuilder.builder()
             .withBonsaiProperties(BonsaiProperties
@@ -94,25 +94,25 @@ public class BonsaiTreeEdgeOperationTest {
     @Test
     void testAddingEdgeFiltersNotAllowed() {
         assertThrows(BonsaiError.class, () -> {
-            Bonsai<Context> bonsai = BonsaiBuilder.builder()
+            Bonsai<Context> newBonsai = BonsaiBuilder.builder()
                     .withBonsaiProperties(BonsaiProperties
                             .builder()
                             .mutualExclusivitySettingTurnedOn(false)
                             .build())
                     .build();
-            Knot knot1 = TreeGenerationHelper.createTestKnot(bonsai, "knot1");
-            Knot knot2 = TreeGenerationHelper.createTestKnot(bonsai, "knot2");
+            Knot knot1 = TreeGenerationHelper.createTestKnot(newBonsai, "knot1");
+            Knot knot2 = TreeGenerationHelper.createTestKnot(newBonsai, "knot2");
 
-            bonsai.createMapping("key1", knot1.getId());
+            newBonsai.createMapping("key1", knot1.getId());
 
             /* checking multiple additions */
-            Edge edge1 = bonsai.addVariation(knot1.getId(),
+            Edge edge1 = newBonsai.addVariation(knot1.getId(),
                     Variation.builder()
                             .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
                             .knotId(knot2.getId())
                             .build());
 
-            Edge edge = bonsai.updateVariation(knot1.getId(),
+            newBonsai.updateVariation(knot1.getId(),
                     edge1.getEdgeIdentifier().getId(),
                     Variation.builder().filters(Lists.newArrayList(
                                     new EqualsFilter("$.gender", "female"),
@@ -123,59 +123,59 @@ public class BonsaiTreeEdgeOperationTest {
 
     @Test
     void testUpdateEdgeFiltersAllowed() throws BonsaiError {
-        Bonsai<Context> bonsai = BonsaiBuilder.builder()
+        Bonsai<Context> newBonsai = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties
                         .builder()
                         .mutualExclusivitySettingTurnedOn(false)
                         .build())
                 .build();
-        Knot knot1 = TreeGenerationHelper.createTestKnot(bonsai, "knot1");
-        Knot knot2 = TreeGenerationHelper.createTestKnot(bonsai, "knot2");
+        Knot knot1 = TreeGenerationHelper.createTestKnot(newBonsai, "knot1");
+        Knot knot2 = TreeGenerationHelper.createTestKnot(newBonsai, "knot2");
 
-        bonsai.createMapping("key1", knot1.getId());
+        newBonsai.createMapping("key1", knot1.getId());
 
         /* checking multiple additions */
-        Edge edge1 = bonsai.addVariation(knot1.getId(),
+        Edge edge1 = newBonsai.addVariation(knot1.getId(),
                 Variation.builder()
                         .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
                         .knotId(knot2.getId())
                         .build());
 
-        Edge edge = bonsai.updateVariation(knot1.getId(), edge1.getEdgeIdentifier().getId(),
+        Edge edge = newBonsai.updateVariation(knot1.getId(), edge1.getEdgeIdentifier().getId(),
                 Variation.builder().filters(Lists.newArrayList(new EqualsFilter("$.gender2", "female")))
                         .build());
 
         Assertions.assertEquals(1, edge.getFilters().size());
-        Assertions.assertEquals(1, bonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().size());
+        Assertions.assertEquals(1, newBonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().size());
     }
 
     @Test
     void testUpdateEdgeFiltersNotAllowed() throws BonsaiError {
-        Bonsai<Context> bonsai = BonsaiBuilder.builder()
+        Bonsai<Context> newBonsai = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties
                         .builder()
                         .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
                         .mutualExclusivitySettingTurnedOn(true)
                         .build())
                 .build();
-        Knot knot1 = TreeGenerationHelper.createTestKnot(bonsai, "knot1");
-        Knot knot2 = TreeGenerationHelper.createTestKnot(bonsai, "knot2");
+        Knot knot1 = TreeGenerationHelper.createTestKnot(newBonsai, "knot1");
+        Knot knot2 = TreeGenerationHelper.createTestKnot(newBonsai, "knot2");
 
-        bonsai.createMapping("key1", knot1.getId());
+        newBonsai.createMapping("key1", knot1.getId());
 
         /* checking multiple additions */
-        Edge edge1 = bonsai.addVariation(knot1.getId(),
+        Edge edge1 = newBonsai.addVariation(knot1.getId(),
                 Variation.builder()
                         .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
                         .knotId(knot2.getId())
                         .build());
 
-        Edge edge = bonsai.updateVariation(knot1.getId(), edge1.getEdgeIdentifier().getId(),
+        Edge edge = newBonsai.updateVariation(knot1.getId(), edge1.getEdgeIdentifier().getId(),
                 Variation.builder().filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
                         .build());
 
         Assertions.assertEquals(1, edge.getFilters().size());
-        Assertions.assertEquals(1, bonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().size());
+        Assertions.assertEquals(1, newBonsai.getEdge(edge1.getEdgeIdentifier().getId()).getFilters().size());
     }
 
 }

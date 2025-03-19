@@ -33,7 +33,7 @@ import com.phonepe.commons.bonsai.models.value.StringValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class JsonPathFilterEvaluationEngineTest {
+class JsonPathFilterEvaluationEngineTest {
     private final Bonsai<Context> bonsai = BonsaiBuilder.builder()
             .withBonsaiProperties(BonsaiProperties
                     .builder()

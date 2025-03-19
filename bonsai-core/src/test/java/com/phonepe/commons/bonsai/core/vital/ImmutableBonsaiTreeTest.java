@@ -28,7 +28,6 @@ import com.phonepe.commons.bonsai.models.blocks.Knot;
 import com.phonepe.commons.bonsai.models.blocks.Variation;
 import com.phonepe.commons.bonsai.models.blocks.delta.DeltaOperation;
 import com.phonepe.commons.bonsai.models.blocks.delta.KnotDeltaOperation;
-import com.phonepe.commons.bonsai.models.blocks.model.TreeEdge;
 import com.phonepe.commons.bonsai.models.blocks.model.TreeKnot;
 import com.phonepe.commons.bonsai.models.data.KnotData;
 import com.phonepe.commons.bonsai.models.data.ValuedKnotData;
@@ -46,7 +45,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ImmutableBonsaiTreeTest {
+class ImmutableBonsaiTreeTest {
 
     private final Bonsai<Context> mutableBonsai = BonsaiBuilder.builder()
             .withBonsaiProperties(BonsaiProperties.builder()
@@ -54,7 +53,7 @@ public class ImmutableBonsaiTreeTest {
                     .mutualExclusivitySettingTurnedOn(false)
                     .build())
             .build();
-    private final Bonsai<Context> bonsai = ImmutableBonsaiBuilder
+    private final Bonsai<Context> immutableBonsai = ImmutableBonsaiBuilder
             .builder(mutableBonsai)
             .createKnot(Knot.builder()
                     .id("k1")
@@ -261,7 +260,7 @@ public class ImmutableBonsaiTreeTest {
 
     @Test
     void given_immutableBonsaiTreeWithNonExistingKey_when_evaluateFlat_then_returnNonNullKnot() {
-        final FlatTreeRepresentation flatTree = bonsai.evaluateFlat("key3", Context.builder()
+        final FlatTreeRepresentation flatTree = immutableBonsai.evaluateFlat("key3", Context.builder()
                 .documentContext(Parsers.parse(Maps.newHashMap()))
                 .build());
 
@@ -270,7 +269,7 @@ public class ImmutableBonsaiTreeTest {
 
     @Test
     void given_immutableBonsaiTree_when_getMapping_then_returnKnotId() {
-        final String knotId = bonsai.getMapping("key1");
+        final String knotId = immutableBonsai.getMapping("key1");
         Assertions.assertEquals("k1", knotId, "Returned knotId should be : k1");
     }
 
@@ -305,25 +304,11 @@ public class ImmutableBonsaiTreeTest {
 
     @Test
     void given_mutableBonsaiTree_when_createKnot_then_returnNonNullKnot() {
-        Bonsai<Context> bonsai = BonsaiBuilder.builder()
+        Bonsai<Context> newBonsai = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties.builder().build())
                 .build();
 
-        Bonsai<Context> immutable = ImmutableBonsaiBuilder
-                .builder(bonsai)
-                .createKnot(Knot.builder()
-                        .id("k1")
-                        .knotData(ValuedKnotData.stringValue("1"))
-                        .version(123)
-                        .build())
-                .createKnot(Knot.builder()
-                        .id("k1")
-                        .knotData(ValuedKnotData.stringValue("1"))
-                        .version(123)
-                        .build())
-                .build();
-
-        Knot k2 = bonsai.createKnot(Knot.builder()
+        Knot k2 = newBonsai.createKnot(Knot.builder()
                 .id("k1")
                 .knotData(ValuedKnotData.stringValue("2"))
                 .version(123)
@@ -335,7 +320,7 @@ public class ImmutableBonsaiTreeTest {
     void given_mutableBonsaiTree_when_createKnotWithKnotDataOnly_then_throwBonsaiError() {
         assertThrows(BonsaiError.class, () -> {
             final KnotData knotData = ValuedKnotData.stringValue("knotValue");
-            bonsai.createKnot(knotData, null);
+            immutableBonsai.createKnot(knotData, null);
         });
     }
 
@@ -344,24 +329,24 @@ public class ImmutableBonsaiTreeTest {
         assertThrows(BonsaiError.class, () -> {
             final String knotId = "knotOne";
             final KnotData knotData = ValuedKnotData.stringValue("knotValue");
-            bonsai.updateKnotData(knotId, knotData, new HashMap<>());
+            immutableBonsai.updateKnotData(knotId, knotData, new HashMap<>());
         });
     }
 
     @Test
     void given_immutableBonsaiTree_when_deleteKnot_then_throwBonsaiError() {
-        assertThrows(BonsaiError.class, () -> bonsai.deleteKnot("e1", false));
+        assertThrows(BonsaiError.class, () -> immutableBonsai.deleteKnot("e1", false));
     }
 
     @Test
     void given_immutableBonsaiTree_when_createMapping_then_throwBonsaiError() {
         assertThrows(BonsaiError.class, () -> {
-            Bonsai<Context> bonsai = BonsaiBuilder.builder()
+            Bonsai<Context> newBonsai = BonsaiBuilder.builder()
                     .withBonsaiProperties(BonsaiProperties.builder().build())
                     .build();
 
             Bonsai<Context> immutable = ImmutableBonsaiBuilder
-                    .builder(bonsai)
+                    .builder(newBonsai)
                     .createKnot(Knot.builder()
                             .id("k1")
                             .knotData(ValuedKnotData.stringValue("1"))
@@ -381,12 +366,12 @@ public class ImmutableBonsaiTreeTest {
     @Test
     void given_immutableBonsaiTree_when_createEdge_then_throwBonsaiError() {
         assertThrows(BonsaiError.class, () -> {
-            Bonsai<Context> bonsai = BonsaiBuilder.builder()
+            Bonsai<Context> newBonsai = BonsaiBuilder.builder()
                     .withBonsaiProperties(BonsaiProperties.builder().build())
                     .build();
 
             Bonsai<Context> immutable = ImmutableBonsaiBuilder
-                    .builder(bonsai)
+                    .builder(newBonsai)
                     .createKnot(Knot.builder()
                             .id("k1")
                             .knotData(ValuedKnotData.stringValue("1"))
@@ -405,12 +390,12 @@ public class ImmutableBonsaiTreeTest {
 
     @Test
     void given_immutableBonsaiBuilder_when_performingCRUDOperationOnKnotAndEdge_then_returnMeaningfulTree() {
-        Bonsai<Context> bonsai = BonsaiBuilder.builder()
+        Bonsai<Context> newBonsai = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties.builder().build())
                 .build();
 
         ImmutableBonsaiBuilder<Context> bonsaiBuilder = ImmutableBonsaiBuilder
-                .builder(bonsai)
+                .builder(newBonsai)
                 .createKnot(Knot.builder()
                         .id("k1")
                         .knotData(ValuedKnotData.stringValue("1"))
@@ -452,48 +437,42 @@ public class ImmutableBonsaiTreeTest {
 
     @Test
     void given_immutableBonsaiTree_when_addVariation_then_throwBonsaiError() throws BonsaiError {
-        assertThrows(BonsaiError.class, () -> {
-            Edge edge1 = bonsai.addVariation("k1",
-                    Variation.builder()
-                            .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
-                            .knotId("k2")
-                            .build());
-        });
+        assertThrows(BonsaiError.class, () ->
+                immutableBonsai.addVariation("k1", Variation.builder()
+                        .filters(Lists.newArrayList(new EqualsFilter("$.gender", "female")))
+                        .knotId("k2")
+                        .build()));
     }
 
     @Test
     void given_immutableBonsaiTree_when_updateEdgeFilters_then_throwBonsaiError() throws BonsaiError {
-        assertThrows(BonsaiError.class, () -> {
-            Edge edge = bonsai.updateVariation("k1", "e1",
-                    Variation.builder().filters(Lists.newArrayList(new EqualsFilter("$.gender2", "female"))).build());
-        });
+        assertThrows(BonsaiError.class, () -> immutableBonsai.updateVariation("k1", "e1",
+                                                                              Variation.builder().filters(Lists.newArrayList(new EqualsFilter("$.gender2", "female"))).build()));
     }
 
     @Test
     void given_immutableBonsaiTree_when_unlinkVariation_then_throwBonsaiError() {
-        assertThrows(BonsaiError.class, () -> bonsai.unlinkVariation("knotId", "edgeId"));
+        assertThrows(BonsaiError.class, () -> immutableBonsai.unlinkVariation("knotId", "edgeId"));
     }
 
     @Test
     void given_immutableBonsaiTree_when_deleteVariation_then_throwBonsaiError() throws BonsaiError {
-        assertThrows(BonsaiError.class, () -> {
-            TreeEdge treeEdge = bonsai.deleteVariation("k1", "e1", false);
-        });
+        assertThrows(BonsaiError.class, () -> immutableBonsai.deleteVariation("k1", "e1", false));
     }
 
     @Test
     void given_immutableBonsaiTree_when_createMappingWithKeyE1_then_throwBonsaiError() {
-        assertThrows(BonsaiError.class, () -> bonsai.createMapping("e1", ValuedKnotData.stringValue("asdf"), null));
+        assertThrows(BonsaiError.class, () -> immutableBonsai.createMapping("e1", ValuedKnotData.stringValue("asdf"), null));
     }
 
     @Test
     void given_immutableBonsaiTree_when_removeMapping_then_throwBonsaiError() {
-        assertThrows(BonsaiError.class, () -> bonsai.removeMapping("e1"));
+        assertThrows(BonsaiError.class, () -> immutableBonsai.removeMapping("e1"));
     }
 
     @Test
     void given_immutableBonsaiTree_when_getCompleteTree_then_returnCompleteTree() {
-        final TreeKnot treeKnot = bonsai.getCompleteTree("key1");
+        final TreeKnot treeKnot = immutableBonsai.getCompleteTree("key1");
         Assertions.assertNotNull(treeKnot, "TreeKnot should not be null for key1");
         Assertions.assertEquals("k1", treeKnot.getId(), "Treeknot id should be : k1");
         Assertions.assertEquals(123, treeKnot.getVersion());
@@ -514,8 +493,7 @@ public class ImmutableBonsaiTreeTest {
                 )
         );
 
-        final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
-        final TreeKnot treeKnot = bonsai.getCompleteTreeWithDeltaOperations("key1", deltaOperationList).getTreeKnot();
+        final TreeKnot treeKnot = immutableBonsai.getCompleteTreeWithDeltaOperations("key1", deltaOperationList).getTreeKnot();
         Assertions.assertNotNull(treeKnot, "TreeKnot should not be null for key1");
         Assertions.assertEquals("k1", treeKnot.getId(), "Treeknot id should be : k1");
         Assertions.assertEquals(0, treeKnot.getVersion());
@@ -524,9 +502,6 @@ public class ImmutableBonsaiTreeTest {
 
     @Test
     void given_immutableBonsaiTree_when_applyPendingUpdatesOnCompleteTree_then_throwBonsaiError() {
-        assertThrows(BonsaiError.class, () -> {
-            final List<DeltaOperation> revertDeltaOperationList = new ArrayList<>();
-            bonsai.applyDeltaOperations("key1", new ArrayList<>());
-        });
+        assertThrows(BonsaiError.class, () -> immutableBonsai.applyDeltaOperations("key1", new ArrayList<>()));
     }
 }

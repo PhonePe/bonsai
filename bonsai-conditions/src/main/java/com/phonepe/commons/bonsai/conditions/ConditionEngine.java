@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
+import java.util.function.BiPredicate;
+import java.util.function.BooleanSupplier;
 
 /**
  * An abstract conditional matcher, who matches an entity against a list of conditions
@@ -35,7 +35,7 @@ public abstract class ConditionEngine<E, C extends Condition> implements Matcher
     /**
      * a random matcher to check applicability of a criteria, which is configured with a percentage
      */
-    private final static RandomMatcher RANDOM_MATCHER = new DecimalRandomMatcher();
+    private static final RandomMatcher RANDOM_MATCHER = new DecimalRandomMatcher();
 
     /**
      * matches the entity in contention with a list of conditions
@@ -234,8 +234,8 @@ public abstract class ConditionEngine<E, C extends Condition> implements Matcher
      * @param supplier value supplier
      * @return return true if supplier returns true, else false
      */
-    public static boolean checkIfApplicable(Supplier<Boolean> supplier) {
-        return supplier == null || supplier.get();
+    public static boolean checkIfApplicable(BooleanSupplier supplier) {
+        return supplier == null || supplier.getAsBoolean();
     }
 
     /**
@@ -245,8 +245,8 @@ public abstract class ConditionEngine<E, C extends Condition> implements Matcher
      * @param <T>        type of value
      * @return true if function is null OR if contender (t2) is null, or if function returns true
      */
-    public static <T> boolean checkIfApplicable(BiFunction<T, T, Boolean> biFunction, T t1, T t2) {
-        return biFunction == null || t2 == null || biFunction.apply(t1, t2);
+    public static <T> boolean checkIfApplicable(BiPredicate<T, T> biFunction, T t1, T t2) {
+        return biFunction == null || t2 == null || biFunction.test(t1, t2);
     }
 
     /**

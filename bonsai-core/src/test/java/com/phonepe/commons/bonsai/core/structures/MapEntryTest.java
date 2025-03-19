@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-public class MapEntryTest {
+class MapEntryTest {
     @Test
     void testMapEntry() {
         Map<String, Integer> collect = IntStream.range(1, 4)

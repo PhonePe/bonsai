@@ -54,9 +54,9 @@ public class Matcher {
      * A conditional matcher interface is a Bimatcher, which uses 2 arguments for its matching purposes
      *
      * @param <V>         contending entity
-     * @param <Condition> list of condition to be matched with
+     * @param <C> list of condition to be matched with
      */
-    public interface ConditionalMatcher<V, Condition> {
+    public interface ConditionalMatcher<V, C> {
 
         /**
          * Try to match a contending entity with a Collection of Criteria,
@@ -66,7 +66,7 @@ public class Matcher {
          * @param conditionList list of condition to be matched with
          * @return the condition, which matches the contending value
          */
-        Optional<Condition> match(V v1, List<Condition> conditionList);
+        Optional<C> match(V v1, List<C> conditionList);
 
         /**
          * check if the condition matches the contender
@@ -75,6 +75,6 @@ public class Matcher {
          * @param condition condition to be matched
          * @return true if there is a match
          */
-        Boolean match(V v1, Condition condition);
+        Boolean match(V v1, C condition);
     }
 }

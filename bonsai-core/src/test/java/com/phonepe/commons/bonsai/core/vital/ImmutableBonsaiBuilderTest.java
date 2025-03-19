@@ -39,13 +39,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ImmutableBonsaiBuilderTest {
+class ImmutableBonsaiBuilderTest {
 
     private Bonsai<Context> mutableBonsaiTree;
     private ImmutableBonsaiBuilder<Context> immutableBonsaiBuilder;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         mutableBonsaiTree = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties.builder()
                         .maxAllowedConditionsPerEdge(10)
@@ -57,21 +57,21 @@ public class ImmutableBonsaiBuilderTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         mutableBonsaiTree = null;
         immutableBonsaiBuilder = null;
     }
 
     @Test
     void given_immutableBonsaiBuilder_when_buildingImmutableBonsaiTree_then_buildImmutableBonsaiTree() {
-        final Bonsai<Context> mutableBonsaiTree = BonsaiBuilder.builder()
+        final Bonsai<Context> newMutableBonsaiTree = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties.builder()
                         .maxAllowedConditionsPerEdge(10)
                         .mutualExclusivitySettingTurnedOn(false)
                         .build())
                 .build();
         final Bonsai<Context> immutableBonsaiTree = ImmutableBonsaiBuilder
-                .builder(mutableBonsaiTree)
+                .builder(newMutableBonsaiTree)
                 .build();
 
         assertNotNull(immutableBonsaiTree);
@@ -79,7 +79,7 @@ public class ImmutableBonsaiBuilderTest {
 
     @Test
     void given_immutableBonsaiBuilder_when_addingKnotsIntoImmutableBonsaiBuilder_then_doThoseOperations() {
-        final Bonsai<Context> mutableBonsaiTree = BonsaiBuilder.builder()
+        final Bonsai<Context> newMutableBonsaiTree = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties.builder()
                         .maxAllowedConditionsPerEdge(10)
                         .maxAllowedVariationsPerKnot(10)
@@ -88,7 +88,7 @@ public class ImmutableBonsaiBuilderTest {
                 .build();
 
         ImmutableBonsaiBuilder<Context> immutableBonsaiTreeBuilder = ImmutableBonsaiBuilder
-                .builder(mutableBonsaiTree);
+                .builder(newMutableBonsaiTree);
 
         immutableBonsaiTreeBuilder = immutableBonsaiTreeBuilder.createKnot(
                 Knot.builder()
@@ -128,7 +128,7 @@ public class ImmutableBonsaiBuilderTest {
 
     @Test
     void given_immutableBonsaiBuilder_when_addingEdgeIntoImmutableBonsaiBuilder_then_doThoseOperations() {
-        final Bonsai<Context> mutableBonsaiTree = BonsaiBuilder.builder()
+        final Bonsai<Context> newMutableBonsaiTree = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties.builder()
                         .maxAllowedConditionsPerEdge(10)
                         .maxAllowedVariationsPerKnot(10)
@@ -137,7 +137,7 @@ public class ImmutableBonsaiBuilderTest {
                 .build();
 
         ImmutableBonsaiBuilder<Context> immutableBonsaiTreeBuilder = ImmutableBonsaiBuilder
-                .builder(mutableBonsaiTree);
+                .builder(newMutableBonsaiTree);
 
         OrderedList<EdgeIdentifier> edges = new OrderedList<>();
         Edge e1Edge = Edge.builder()

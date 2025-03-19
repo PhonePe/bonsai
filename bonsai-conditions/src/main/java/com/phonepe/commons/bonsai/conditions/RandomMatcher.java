@@ -19,6 +19,7 @@ package com.phonepe.commons.bonsai.conditions;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 /**
@@ -33,7 +34,7 @@ public class RandomMatcher implements Matcher.BooleanUniMatcher<Number> {
      */
     protected long lowerBound = 0;
     protected long higherBound = 100;
-    protected Random random = new Random(System.currentTimeMillis());
+    protected Random random = new SecureRandom(Long.toBinaryString(System.currentTimeMillis()).getBytes());
 
     public RandomMatcher(long lowerBound, long higherBound) {
         this.lowerBound = lowerBound;

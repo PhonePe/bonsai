@@ -25,22 +25,22 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class InMemoryKeyTreeStoreTest {
+class InMemoryKeyTreeStoreTest {
 
-    private final static String KEY_ONE = "keyOne";
-    private final static String KEY_TWO = "keyTwo";
-    private final static String KNOT_ID_ONE = "knotIdOne";
-    private final static String KNOT_ID_TWO = "knotIdTwo";
+    private static final String KEY_ONE = "keyOne";
+    private static final String KEY_TWO = "keyTwo";
+    private static final String KNOT_ID_ONE = "knotIdOne";
+    private static final String KNOT_ID_TWO = "knotIdTwo";
 
     private InMemoryKeyTreeStore inMemoryKeyTreeStore;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         inMemoryKeyTreeStore = new InMemoryKeyTreeStore();
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         inMemoryKeyTreeStore = null;
     }
 

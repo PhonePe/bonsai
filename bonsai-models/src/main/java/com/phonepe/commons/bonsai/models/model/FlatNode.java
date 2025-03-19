@@ -30,7 +30,7 @@ import lombok.Data;
 public abstract class FlatNode {
     private FlatNodeType type;
 
-    public FlatNode(FlatNodeType type) {
+    protected FlatNode(FlatNodeType type) {
         this.type = type;
     }
 

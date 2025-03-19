@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-public class BonsaiTreeEdgeNumberTest {
+class BonsaiTreeEdgeNumberTest {
 
     private final Bonsai<Context> bonsai = BonsaiBuilder.builder()
             .withBonsaiProperties(

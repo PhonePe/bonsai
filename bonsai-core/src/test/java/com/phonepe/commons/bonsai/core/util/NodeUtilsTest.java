@@ -41,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -101,7 +102,7 @@ public class NodeUtilsTest {
     @Test
     void testBooleanValueReturnedOnContainerKeyNode() {
 
-        ImmutableList<KeyNode> trueNodes = ImmutableList.of(
+        List<KeyNode> trueNodes = List.of(
                 KeyNode.of(ValueNode.booleanValue(true)),
                 KeyNode.of(ValueNode.booleanValue(true)),
                 KeyNode.of(ValueNode.booleanValue(true)));
@@ -110,7 +111,7 @@ public class NodeUtilsTest {
                         false
                 ));
 
-        ImmutableMap<String, KeyNode> trueNodesMap = ImmutableMap.of(
+        Map<String, KeyNode> trueNodesMap = Map.of(
                 "1", KeyNode.of(ValueNode.booleanValue(true)),
                 "2", KeyNode.of(ValueNode.booleanValue(true)),
                 "3", KeyNode.of(ValueNode.booleanValue(true)));

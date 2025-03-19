@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TreeKnotStateDeltaOperationModifierVisitorTest {
+class TreeKnotStateDeltaOperationModifierVisitorTest {
 
     private ComponentBonsaiTreeValidator treeComponentValidator;
 
@@ -59,7 +59,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
     private TreeKnotStateDeltaOperationModifierVisitor treeKnotModifierVisitor;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         final BonsaiProperties bonsaiProperties = BonsaiProperties.builder()
                 .mutualExclusivitySettingTurnedOn(true)
                 .maxAllowedConditionsPerEdge(10)
@@ -73,7 +73,7 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() {
         treeKnotModifierVisitor = null;
         knotStore = null;
         edgeStore = null;
@@ -518,9 +518,6 @@ public class TreeKnotStateDeltaOperationModifierVisitorTest {
         final TreeKnotState metaData = new TreeKnotState(previousTreeKnot, null);
 
         /* Save knot & edge details into database.*/
-        final Edge edgeE3 = Edge.builder()
-                .edgeIdentifier(new EdgeIdentifier("E3", 1, 1))
-                .build();
         final Knot knotK1 = Knot.builder()
                 .id("K1")
                 .knotData(ValuedKnotData.stringValue("Middle Level Left Knot : K1"))

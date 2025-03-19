@@ -47,12 +47,12 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BonsaiTreeOperationTest {
+class BonsaiTreeOperationTest {
 
     private Bonsai<Context> bonsai;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.bonsai = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties
                         .builder()
@@ -65,7 +65,7 @@ public class BonsaiTreeOperationTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         this.bonsai = null;
     }
 
@@ -83,24 +83,24 @@ public class BonsaiTreeOperationTest {
         bonsai.createMapping("widget_1", widgetKnot1.getId());
         Knot icon3 = bonsai.createKnot(ValuedKnotData.stringValue("This is some coool icon"), null);
         /* there is no older mapping, hence it will return null */
-        Knot icon_3 = bonsai.createMapping("icon_3", icon3.getId());
-        Assertions.assertNull(icon_3);
+        Knot iconThree = bonsai.createMapping("icon_3", icon3.getId());
+        Assertions.assertNull(iconThree);
 
         /* now mappings exist, hence it will return the older knot */
-        Knot icon_3_1 = bonsai.createMapping("icon_3", icon3.getId());
-        Assertions.assertNotNull(icon_3_1);
-        Assertions.assertEquals(icon3, icon_3_1);
+        Knot iconThreeOne = bonsai.createMapping("icon_3", icon3.getId());
+        Assertions.assertNotNull(iconThreeOne);
+        Assertions.assertEquals(icon3, iconThreeOne);
 
         /* now mappings exist, hence it will return the older knot */
-        icon_3_1 = bonsai.createMapping("icon_3", widgetKnot1.getId());
-        Assertions.assertNotNull(icon_3_1);
-        Assertions.assertEquals(icon3, icon_3_1);
+        iconThreeOne = bonsai.createMapping("icon_3", widgetKnot1.getId());
+        Assertions.assertNotNull(iconThreeOne);
+        Assertions.assertEquals(icon3, iconThreeOne);
 
 
         /* now mappings exist, hence it will return the older knot */
-        icon_3_1 = bonsai.createMapping("icon_3", icon3.getId());
-        Assertions.assertNotNull(icon_3_1);
-        Assertions.assertEquals(widgetKnot1, icon_3_1);
+        iconThreeOne = bonsai.createMapping("icon_3", icon3.getId());
+        Assertions.assertNotNull(iconThreeOne);
+        Assertions.assertEquals(widgetKnot1, iconThreeOne);
 
         String knotId = bonsai.getMapping("icon_3");
         Assertions.assertEquals(icon3.getId(), knotId);
@@ -252,7 +252,7 @@ public class BonsaiTreeOperationTest {
 
     @Test
     void testPivotCheck2() {
-        Bonsai<Context> bonsai = BonsaiBuilder.builder()
+        Bonsai<Context> newBonsai = BonsaiBuilder.builder()
                 .withBonsaiProperties(BonsaiProperties
                         .builder()
                         .maxAllowedConditionsPerEdge(10)
@@ -260,34 +260,34 @@ public class BonsaiTreeOperationTest {
                         .mutualExclusivitySettingTurnedOn(true)
                         .build())
                 .build();
-        bonsai.createMapping("icon_1", ValuedKnotData.stringValue("1"), null);
-        bonsai.createMapping("icon_2", ValuedKnotData.stringValue("2"), null);
-        bonsai.createMapping("icon_3", ValuedKnotData.stringValue("3"), null);
-        bonsai.createMapping("icon_4", ValuedKnotData.stringValue("4"), null);
-        bonsai.createMapping("widget_2", ValuedKnotData.stringValue("widget_2"), null);
-        bonsai.createMapping("widget_3", ValuedKnotData.stringValue("widget_3"), null);
-        Knot femaleConditionKnot = bonsai.createKnot(MultiKnotData.builder()
+        newBonsai.createMapping("icon_1", ValuedKnotData.stringValue("1"), null);
+        newBonsai.createMapping("icon_2", ValuedKnotData.stringValue("2"), null);
+        newBonsai.createMapping("icon_3", ValuedKnotData.stringValue("3"), null);
+        newBonsai.createMapping("icon_4", ValuedKnotData.stringValue("4"), null);
+        newBonsai.createMapping("widget_2", ValuedKnotData.stringValue("widget_2"), null);
+        newBonsai.createMapping("widget_3", ValuedKnotData.stringValue("widget_3"), null);
+        Knot femaleConditionKnot = newBonsai.createKnot(MultiKnotData.builder()
                 .key("icon_3")
                 .key("icon_1")
                 .key("icon_4")
                 .build(), null);
-        Knot widgetKnot1 = bonsai.createMapping("widget_1", MultiKnotData.builder()
+        Knot widgetKnot1 = newBonsai.createMapping("widget_1", MultiKnotData.builder()
                 .key("icon_1")
                 .key("icon_4")
                 .key("icon_2")
                 .key("icon_3")
                 .build(), null);
 
-        bonsai.createMapping("home_page_1", MultiKnotData.builder()
+        newBonsai.createMapping("home_page_1", MultiKnotData.builder()
                 .key("widget_1")
                 .key("widget_2")
                 .key("widget_3")
                 .build(), null);
-        Edge female = bonsai.addVariation(widgetKnot1.getId(), Variation.builder()
+        Edge female = newBonsai.addVariation(widgetKnot1.getId(), Variation.builder()
                 .filter(new EqualsFilter("$.gender", "female"))
                 .knotId(femaleConditionKnot.getId())
                 .build());
-        Edge edge = bonsai.updateVariation(widgetKnot1.getId(), female.getEdgeIdentifier().getId(),
+        Edge edge = newBonsai.updateVariation(widgetKnot1.getId(), female.getEdgeIdentifier().getId(),
                 Variation.builder().filters(Lists.newArrayList(OrFilter.builder()
                         .filter(new EqualsFilter("$.gender", "female"))
                         .filter(GenericFilter.builder()
@@ -300,7 +300,7 @@ public class BonsaiTreeOperationTest {
     @Test
     void testCycleDependencyCheck() {
         assertThrows(BonsaiError.class, () -> {
-            Map userContext1 = new ObjectExtractor().getObject("userData1.json", Map.class);
+            new ObjectExtractor().getObject("userData1.json", Map.class);
             bonsai.createMapping("icon_1", ValuedKnotData.stringValue("1"), null);
             bonsai.createMapping("icon_2", ValuedKnotData.stringValue("2"), null);
             bonsai.createMapping("icon_3", ValuedKnotData.stringValue("3"), null);
@@ -404,12 +404,12 @@ public class BonsaiTreeOperationTest {
                 .filter(new EqualsFilter("$.gender", "female"))
                 .knotId(femaleConditionKnot.getId())
                 .build());
-        TreeKnot widget_1 = bonsai.getCompleteTree("widget_1");
+        TreeKnot widgetOne = bonsai.getCompleteTree("widget_1");
 
-        System.out.println(Parsers.MAPPER.writeValueAsString(widget_1));
-        Assertions.assertEquals(widget_1.getId(), widgetKnot1.getId());
-        Assertions.assertEquals(widget_1.getTreeEdges().get(0).getTreeKnot().getId(), femaleConditionKnot.getId());
-        Assertions.assertEquals(widget_1.getTreeEdges().get(0).getTreeKnot().getTreeEdges().get(0)
+        System.out.println(Parsers.MAPPER.writeValueAsString(widgetOne));
+        Assertions.assertEquals(widgetOne.getId(), widgetKnot1.getId());
+        Assertions.assertEquals(widgetOne.getTreeEdges().get(0).getTreeKnot().getId(), femaleConditionKnot.getId());
+        Assertions.assertEquals(widgetOne.getTreeEdges().get(0).getTreeKnot().getTreeEdges().get(0)
                 .getTreeKnot().getId(), innerKnot.getId());
     }
 
@@ -466,9 +466,9 @@ public class BonsaiTreeOperationTest {
 
 
         /* Tree should have both knots and 1 edge */
-        TreeKnot widget_1 = bonsai.getCompleteTree("widget_1");
-        Assertions.assertFalse(widget_1.getTreeEdges().isEmpty());
-        widget_1.getTreeEdges().get(0).getTreeKnot().getKnotData().accept(new KnotDataVisitor<>() {
+        TreeKnot widgetOne = bonsai.getCompleteTree("widget_1");
+        Assertions.assertFalse(widgetOne.getTreeEdges().isEmpty());
+        widgetOne.getTreeEdges().get(0).getTreeKnot().getKnotData().accept(new KnotDataVisitor<>() {
             @Override
             public Object visit(ValuedKnotData valuedKnotData) {
                 return null;
@@ -489,14 +489,14 @@ public class BonsaiTreeOperationTest {
         Assertions.assertNotNull(bonsai.getEdge(femaleVariationEdge.getEdgeIdentifier().getId()));
         Assertions.assertNotNull(bonsai.getEdge(leafKnotEdge.getEdgeIdentifier().getId()));
 
-        System.out.println(Parsers.MAPPER.writeValueAsString(widget_1));
+        System.out.println(Parsers.MAPPER.writeValueAsString(widgetOne));
         TreeEdge treeEdge = bonsai.deleteVariation(widgetKnot1.getId(), femaleVariationEdge.getEdgeIdentifier()
                 .getId(), true);
         System.out.println(Parsers.MAPPER.writeValueAsString(treeEdge));
-        widget_1 = bonsai.getCompleteTree("widget_1");
-        System.out.println(Parsers.MAPPER.writeValueAsString(widget_1));
-        Assertions.assertNotNull(widget_1.getKnotData());
-        Assertions.assertTrue(widget_1.getTreeEdges().isEmpty());
+        widgetOne = bonsai.getCompleteTree("widget_1");
+        System.out.println(Parsers.MAPPER.writeValueAsString(widgetOne));
+        Assertions.assertNotNull(widgetOne.getKnotData());
+        Assertions.assertTrue(widgetOne.getTreeEdges().isEmpty());
         Assertions.assertNull(bonsai.getKnot(femaleConditionKnot.getId()));
         Assertions.assertNull(bonsai.getEdge(femaleVariationEdge.getEdgeIdentifier().getId()));
         Assertions.assertNull(bonsai.getEdge(leafKnotEdge.getEdgeIdentifier().getId()));
@@ -558,9 +558,9 @@ public class BonsaiTreeOperationTest {
                         .build());
 
         /* Tree should have both knots and 1 edge */
-        TreeKnot widget_1 = bonsai.getCompleteTree("widget_1");
-        Assertions.assertFalse(widget_1.getTreeEdges().isEmpty());
-        widget_1.getTreeEdges().get(0).getTreeKnot().getKnotData().accept(new KnotDataVisitor<>() {
+        TreeKnot widgetOne = bonsai.getCompleteTree("widget_1");
+        Assertions.assertFalse(widgetOne.getTreeEdges().isEmpty());
+        widgetOne.getTreeEdges().get(0).getTreeKnot().getKnotData().accept(new KnotDataVisitor<>() {
             @Override
             public Object visit(ValuedKnotData valuedKnotData) {
                 return null;
@@ -580,7 +580,7 @@ public class BonsaiTreeOperationTest {
         Assertions.assertNotNull(bonsai.getKnot(femaleConditionKnot.getId()));
         Assertions.assertNotNull(bonsai.getEdge(femaleVariationEdge.getEdgeIdentifier().getId()));
 
-        System.out.println(Parsers.MAPPER.writeValueAsString(widget_1));
+        System.out.println(Parsers.MAPPER.writeValueAsString(widgetOne));
 
         /* deleting variation non recursively */
         TreeEdge treeEdge = bonsai.deleteVariation(widgetKnot1.getId(), femaleVariationEdge.getEdgeIdentifier()
@@ -588,11 +588,11 @@ public class BonsaiTreeOperationTest {
 
 
         System.out.println(Parsers.MAPPER.writeValueAsString(treeEdge));
-        widget_1 = bonsai.getCompleteTree("widget_1");
-        System.out.println(Parsers.MAPPER.writeValueAsString(widget_1));
-        Assertions.assertNotNull(widget_1.getKnotData());
+        widgetOne = bonsai.getCompleteTree("widget_1");
+        System.out.println(Parsers.MAPPER.writeValueAsString(widgetOne));
+        Assertions.assertNotNull(widgetOne.getKnotData());
         /* edge must be deleted */
-        Assertions.assertTrue(widget_1.getTreeEdges().isEmpty());
+        Assertions.assertTrue(widgetOne.getTreeEdges().isEmpty());
         Assertions.assertNull(bonsai.getEdge(femaleVariationEdge.getEdgeIdentifier().getId()));
 
         /* other edges must exist */

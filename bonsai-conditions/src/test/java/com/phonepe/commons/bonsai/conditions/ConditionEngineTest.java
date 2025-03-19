@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -190,8 +192,8 @@ class ConditionEngineTest {
 
     @Test
     void testCheckIfApplicableWithSupplier() {
-        Supplier<Boolean> trueSupplier = () -> true;
-        Supplier<Boolean> falseSupplier = () -> false;
+        BooleanSupplier trueSupplier = () -> true;
+        BooleanSupplier falseSupplier = () -> false;
 
         assertTrue(ConditionEngine.checkIfApplicable(null));
         assertTrue(ConditionEngine.checkIfApplicable(trueSupplier));
@@ -200,7 +202,7 @@ class ConditionEngineTest {
 
     @Test
     void testCheckIfApplicableWithBiFunction() {
-        BiFunction<String, String, Boolean> equalsFunction = String::equals;
+        BiPredicate<String, String> equalsFunction = String::equals;
 
         assertTrue(ConditionEngine.checkIfApplicable(null, "test", "other"));
         assertTrue(ConditionEngine.checkIfApplicable(equalsFunction, "test", null));

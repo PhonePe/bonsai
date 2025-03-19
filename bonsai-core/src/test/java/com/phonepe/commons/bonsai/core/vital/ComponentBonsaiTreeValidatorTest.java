@@ -16,7 +16,6 @@
 
 package com.phonepe.commons.bonsai.core.vital;
 
-import com.google.common.collect.ImmutableList;
 import com.phonepe.commons.bonsai.core.exception.BonsaiError;
 import com.phonepe.commons.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.commons.bonsai.models.blocks.Edge;
@@ -51,14 +50,14 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ComponentBonsaiTreeValidatorTest {
+class ComponentBonsaiTreeValidatorTest {
 
     private final ComponentBonsaiTreeValidator componentValidator
             = new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
-            .mutualExclusivitySettingTurnedOn(true)
-            .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
-            .maxAllowedVariationsPerKnot(Integer.MAX_VALUE)
-            .build());
+                                                       .mutualExclusivitySettingTurnedOn(true)
+                                                       .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
+                                                       .maxAllowedVariationsPerKnot(Integer.MAX_VALUE)
+                                                       .build());
 
     @Test
     void validateEdge() {
@@ -67,26 +66,33 @@ public class ComponentBonsaiTreeValidatorTest {
 
     @Test
     void validateEdgeErrorOnNegativeVersion() {
-        assertThrows(BonsaiError.class, () -> componentValidator.validate(Edge.builder().edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
-                .version(-1).build()));
+        assertThrows(BonsaiError.class,
+                     () -> componentValidator.validate(Edge.builder().edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
+                                                               .version(-1).build()));
     }
 
     @Test
     void validateEdgeErrorOnNegativePriority() {
         assertThrows(BonsaiError.class, () -> componentValidator.validate(Edge.builder()
-                .edgeIdentifier(new EdgeIdentifier("id1", 1, -1))
-                .version(1).build()));
+                                                                                  .edgeIdentifier(
+                                                                                          new EdgeIdentifier("id1", 1,
+                                                                                                             -1))
+                                                                                  .version(1).build()));
     }
 
     @Test
     void validateEdgeErrorWhenFiltersContainMultipleFields() {
         assertThrows(BonsaiError.class, () -> componentValidator.validate(Edge.builder()
-                .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
-                .version(1)
-                .knotId("knotId1")
-                .filter(new GreaterEqualFilter("field1", 123))
-                .filter(new LessEqualFilter("field2", 123))
-                .build()));
+                                                                                  .edgeIdentifier(
+                                                                                          new EdgeIdentifier("id1", 1,
+                                                                                                             1))
+                                                                                  .version(1)
+                                                                                  .knotId("knotId1")
+                                                                                  .filter(new GreaterEqualFilter(
+                                                                                          "field1", 123))
+                                                                                  .filter(new LessEqualFilter("field2",
+                                                                                                              123))
+                                                                                  .build()));
     }
 
     @Test
@@ -111,119 +117,126 @@ public class ComponentBonsaiTreeValidatorTest {
     @Test
     void validateEdgeNoErrorWhenFiltersContainSameField() {
         componentValidator.validate(Edge.builder()
-                .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
-                .version(1)
-                .knotId("knotId1")
-                .filter(new GreaterEqualFilter("field1", 123))
-                .filter(new LessEqualFilter("field1", 300))
-                .build());
+                                            .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
+                                            .version(1)
+                                            .knotId("knotId1")
+                                            .filter(new GreaterEqualFilter("field1", 123))
+                                            .filter(new LessEqualFilter("field1", 300))
+                                            .build());
     }
 
 
     @Test
     void validateEdgeErrorOnSingleConditionEdgeSettingOnAndMultipleFiltersSet() {
         assertThrows(BonsaiError.class, () -> new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
-                .mutualExclusivitySettingTurnedOn(true)
-                .build())
+                                                                                       .mutualExclusivitySettingTurnedOn(
+                                                                                               true)
+                                                                                       .build())
                 .validate(Edge.builder()
-                        .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
-                        .version(1)
-                        .knotId("knotId1")
-                        .filter(new AndFilter(ImmutableList.of(new GreaterEqualFilter("field1", 123),
-                                new GreaterEqualFilter("field1", 121))))
-                        .build()));
+                                  .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
+                                  .version(1)
+                                  .knotId("knotId1")
+                                  .filter(new AndFilter(List.of(new GreaterEqualFilter("field1", 123),
+                                                                new GreaterEqualFilter("field1", 121))))
+                                  .build()));
     }
 
     @Test
     void validateEdgeNoErrorOnInnerFiltersContainSameField() {
         componentValidator.validate(Edge.builder()
-                .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
-                .version(1)
-                .knotId("knotId1")
-                .filter(new OrFilter(ImmutableList.of(new GreaterEqualFilter("field1", 123),
-                        new GreaterEqualFilter("field1", 121))))
-                .build());
+                                            .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
+                                            .version(1)
+                                            .knotId("knotId1")
+                                            .filter(new OrFilter(List.of(new GreaterEqualFilter("field1", 123),
+                                                                         new GreaterEqualFilter("field1", 121))))
+                                            .build());
     }
 
     @Test
     void validateEdgeErrorOnInnerFiltersContainSameField() {
         componentValidator.validate(Edge.builder()
-                .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
-                .version(1)
-                .knotId("knotId1")
-                .filter(new AndFilter(ImmutableList.of(new GreaterEqualFilter("field1", 123),
-                        new GreaterEqualFilter("field1", 121))))
-                .build());
+                                            .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
+                                            .version(1)
+                                            .knotId("knotId1")
+                                            .filter(new AndFilter(List.of(new GreaterEqualFilter("field1", 123),
+                                                                          new GreaterEqualFilter("field1", 121))))
+                                            .build());
     }
 
     @Test
     void validateEdgeErrorOnInnerFiltersContainSameField2() {
         componentValidator.validate(Edge.builder()
-                .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
-                .version(1)
-                .knotId("knotId1")
-                .filter(new EqualsFilter("field1", 100))
-                .filter(new NotFilter(new GreaterEqualFilter("field1", 123)))
-                .build());
+                                            .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
+                                            .version(1)
+                                            .knotId("knotId1")
+                                            .filter(new EqualsFilter("field1", 100))
+                                            .filter(new NotFilter(new GreaterEqualFilter("field1", 123)))
+                                            .build());
     }
 
     @Test
     void validateVariationMutuality() {
         assertThrows(BonsaiError.class, () -> componentValidator.validate(Variation.builder()
-                .filter(new AndFilter(ImmutableList.of(new GreaterEqualFilter("field1", 123),
-                        new GreaterEqualFilter("field2", 121))))
-
-                .knotId("knotId1")
-                .priority(1)
-                .build()));
+                                                                                  .filter(new AndFilter(
+                                                                                          List.of(new GreaterEqualFilter(
+                                                                                                          "field1", 123),
+                                                                                                  new GreaterEqualFilter(
+                                                                                                          "field2",
+                                                                                                          121))))
+                                                                                  .knotId("knotId1")
+                                                                                  .priority(1)
+                                                                                  .build()));
     }
 
     @Test
     void validateVariationSingleCondition() {
         assertThrows(BonsaiError.class, () -> new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
-                .mutualExclusivitySettingTurnedOn(true)
-                .build())
+                                                                                       .mutualExclusivitySettingTurnedOn(
+                                                                                               true)
+                                                                                       .build())
                 .validate(Variation.builder()
-                        .filter(new AndFilter(ImmutableList.of(new GreaterEqualFilter("field1", 123),
-                                new GreaterEqualFilter("field1", 123))))
-                        .knotId("knotId1")
-                        .priority(1)
-                        .build()));
+                                  .filter(new AndFilter(List.of(new GreaterEqualFilter("field1", 123),
+                                                                new GreaterEqualFilter("field1", 123))))
+                                  .knotId("knotId1")
+                                  .priority(1)
+                                  .build()));
     }
 
     @Test
     void validateKnotError() {
         assertThrows(BonsaiError.class, () -> new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
-                .mutualExclusivitySettingTurnedOn(true)
-                .build())
+                                                                                       .mutualExclusivitySettingTurnedOn(
+                                                                                               true)
+                                                                                       .build())
                 .validate(Knot.builder()
-                        .id("k1")
-                        .version(1)
-                        .build()));
+                                  .id("k1")
+                                  .version(1)
+                                  .build()));
     }
 
     @Test
     void validateKnotValid() {
         new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
-                .mutualExclusivitySettingTurnedOn(true)
-                .build())
+                                                 .mutualExclusivitySettingTurnedOn(true)
+                                                 .build())
                 .validate(Knot.builder()
-                        .id("k1")
-                        .version(1)
-                        .knotData(new ValuedKnotData())
-                        .build());
+                                  .id("k1")
+                                  .version(1)
+                                  .knotData(new ValuedKnotData())
+                                  .build());
     }
 
     @Test
     void validateKnotInValid() {
         assertThrows(BonsaiError.class, () -> new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
-                .mutualExclusivitySettingTurnedOn(true)
-                .build())
+                                                                                       .mutualExclusivitySettingTurnedOn(
+                                                                                               true)
+                                                                                       .build())
                 .validate(Knot.builder()
-                        .id("k1")
-                        .version(1)
-                        .knotData(new MapKnotData())
-                        .build()));
+                                  .id("k1")
+                                  .version(1)
+                                  .knotData(new MapKnotData())
+                                  .build()));
     }
 
 
@@ -576,10 +589,10 @@ public class ComponentBonsaiTreeValidatorTest {
                 .knotData(valuedKnotData)
                 .build();
 
-        final ComponentBonsaiTreeValidator componentValidator =
+        final ComponentBonsaiTreeValidator newComponentValidator =
                 getComponentBonsaiTreeValidator(Integer.MAX_VALUE, Integer.MAX_VALUE, false);
 
-        componentValidator.validate(rootTreeKnot);
+        newComponentValidator.validate(rootTreeKnot);
 
         Assertions.assertNotNull(rootTreeKnot);
     }
@@ -679,10 +692,10 @@ public class ComponentBonsaiTreeValidatorTest {
                 .knotData(valuedKnotData)
                 .build();
 
-        final ComponentBonsaiTreeValidator componentValidator =
+        final ComponentBonsaiTreeValidator newComponentValidator =
                 getComponentBonsaiTreeValidator(Integer.MAX_VALUE, Integer.MAX_VALUE, false);
 
-        componentValidator.validate(rootTreeKnot);
+        newComponentValidator.validate(rootTreeKnot);
 
         Assertions.assertNotNull(rootTreeKnot);
     }
@@ -847,9 +860,9 @@ public class ComponentBonsaiTreeValidatorTest {
                 .build();
 
         try {
-            final ComponentBonsaiTreeValidator componentValidator =
+            final ComponentBonsaiTreeValidator newComponentValidator =
                     getComponentBonsaiTreeValidator(1, 3, true);
-            componentValidator.validate(rootTreeKnot);
+            newComponentValidator.validate(rootTreeKnot);
         } catch (BonsaiError e) {
             Assertions.assertEquals(BonsaiErrorCode.MAX_VARIATIONS_EXCEEDED, e.getErrorCode());
         }
