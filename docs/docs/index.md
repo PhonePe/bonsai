@@ -3,7 +3,10 @@ hide:
   - navigation
 ---
 
-# Bonsai
+<div style="text-align: center; margin-bottom: 2em;">
+  <img src="assets/logo.svg" alt="Bonsai Logo" style="height: 100px; margin-bottom: 1em;">
+  <h1>Bonsai</h1>
+</div>
 
 Each of us would have encountered decision trees and rule engines of various kinds in our software journeys.
 Rule engines are typically structured as a set of rules that are evaluated against a **Context**.
@@ -40,6 +43,9 @@ and launch / placement of most widgets on the PhonePe app.
 ## Visual Representation
 
 ![Bonsai Representation](assets/bonsai_representation.png)
+
+!!! note
+    The above image is just a manually created representation, not to be confused with any UI kit, this library does not come with one.
 
 ## License
 

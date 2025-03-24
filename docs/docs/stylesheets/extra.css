@@ -38,6 +38,16 @@
     content: url("../assets/logo.svg");
 }
 
+/* Index page logo for light mode */
+[data-md-color-scheme="default"] div[style*="text-align: center"] img[src$="assets/logo.svg"] {
+    content: url("../assets/logo-light.svg");
+}
+
+/* Index page logo for dark mode */
+[data-md-color-scheme="slate"] div[style*="text-align: center"] img[src$="assets/logo.svg"] {
+    content: url("../assets/logo.svg");
+}
+
 /* override for images in dark mode */
 [data-md-color-scheme="slate"] img[src$="assets/bonsai_representation.png"] {
     content: url("../assets/bonsai_representation-dark.png");
