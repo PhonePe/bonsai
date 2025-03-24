@@ -5,15 +5,44 @@
 
 /* For dark mode */
 [data-md-color-scheme="slate"] .md-footer {
-    background-color: black;  /* Uses your black primary color */
-}
-
-/* Footer navigation color */
-.md-footer-nav {
     background-color: var(--md-primary-fg-color);
 }
 
-/* Footer meta section color */
-.md-footer-meta {
+/* Footer navigation color - Light mode */
+[data-md-color-scheme="default"] .md-footer-nav {
+    background-color: var(--md-primary-fg-color);
+}
+
+/* Footer meta section color - Light mode */
+[data-md-color-scheme="default"] .md-footer-meta {
     background-color: var(--md-primary-fg-color--dark);  /* Slightly darker shade */
+}
+
+/* Footer navigation color - Dark mode */
+[data-md-color-scheme="slate"] .md-footer-nav {
+    background-color: black;
+}
+
+/* Footer meta section color - Dark mode */
+[data-md-color-scheme="slate"] .md-footer-meta {
+    background-color: black;
+}
+
+/* Logo for light mode */
+[data-md-color-scheme="default"] .md-header__button.md-logo img {
+    content: url("../assets/logo-light.svg");
+}
+
+/* Logo for dark mode */
+[data-md-color-scheme="slate"] .md-header__button.md-logo img {
+    content: url("../assets/logo.svg");
+}
+
+/* override for images in dark mode */
+[data-md-color-scheme="slate"] img[src$="assets/bonsai_representation.png"] {
+    content: url("../assets/bonsai_representation-dark.png");
+}
+
+[data-md-color-scheme="slate"] img[src$="assets/storage.png"] {
+    content: url("../assets/storage-dark.png");
 }
