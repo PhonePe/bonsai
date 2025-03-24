@@ -47,8 +47,8 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/PhonePe
-    - icon: fontawesome/brands/java
-      link: https://central.sonatype.com/artifact/com.phonepe.commons/
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/phonepe-internet
     - icon: fontawesome/brands/x-twitter
       link: https://x.com/phonepe
 

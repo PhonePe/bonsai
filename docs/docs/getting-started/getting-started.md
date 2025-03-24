@@ -6,8 +6,6 @@ If you want to do a deeper integration, build applications using the concepts of
 
 - [Core Concepts](../core-concepts/index.md) - Understand the fundamental building blocks of Bonsai
 - [Storage](../storage.md) - Learn more about what Bonsai is and how it works
-- [Operations](../operations/index.md) - Explore the operations available for managing and traversing the tree structure
-
 
 
 If you are already aware of the concepts, you can directly skip to the following sections:
