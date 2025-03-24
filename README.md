@@ -12,7 +12,7 @@
     	<img src="https://img.shields.io/github/license/PhonePe/bonsai" alt="license" />
     </a>
     <a href="https://javadoc.io/doc/com.phonepe.platform/bonsai">
-    	<img src="https://javadoc.io/badge2/com.phonepe.platform/bonsai/javadoc.svg" alt="javadoc" />
+    	<img src="https://javadoc.io/badge2/com.phonepe.commons/bonsai/javadoc.svg" alt="javadoc" />
     </a>
   </p>
   <p align="center">
