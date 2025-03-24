@@ -1,0 +1,19 @@
+/* For light mode */
+[data-md-color-scheme="default"] .md-footer {
+    background-color: var(--md-primary-fg-color);  /* Uses your teal primary color */
+}
+
+/* For dark mode */
+[data-md-color-scheme="slate"] .md-footer {
+    background-color: black;  /* Uses your black primary color */
+}
+
+/* Footer navigation color */
+.md-footer-nav {
+    background-color: var(--md-primary-fg-color);
+}
+
+/* Footer meta section color */
+.md-footer-meta {
+    background-color: var(--md-primary-fg-color--dark);  /* Slightly darker shade */
+}

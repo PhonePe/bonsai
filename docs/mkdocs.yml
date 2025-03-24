@@ -1,0 +1,135 @@
+site_name: Bonsai
+site_url: https://phonepe.github.io/bonsai
+repo_url: https://github.com/PhonePe/bonsai
+
+theme:
+  name: material
+  features:
+    - navigation.tracking
+    - navigation.path
+    - navigation.tabs
+    - content.code.copy
+    - content.code.annotate
+    - navigation.expand
+    - toc.follow
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - search.share
+
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/link
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off
+        name: Switch to system preference
+
+extra:
+  status:
+    new: Recently added
+    deprecated: Deprecated
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/PhonePe
+    - icon: fontawesome/brands/java
+      link: https://central.sonatype.com/artifact/com.phonepe.commons/
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/phonepe
+
+plugins:
+  - search
+  - awesome-pages
+  - privacy:
+      enabled: true
+      cache: true
+      cache_dir: .cache/plugins/privacy
+      assets: true
+      assets_fetch: true
+      assets_fetch_dir: assets/external
+      links: true
+      links_noopener: true
+  - offline:
+      enabled: true
+copyright: "Copyright &copy; 2025  PhonePe Private Limited"
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - tables
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+extra_css:
+  - stylesheets/extra.css
+
+# Navigation Tree
+nav:
+  - Bonsai: index.md
+  - Overview: overview.md
+  - Getting Started:
+    - Installation: getting-started/quick-installation.md
+    - How to Read: getting-started/getting-started.md
+  - Core Concepts:
+    - Core Concepts: core-concepts/index.md
+    - Knot: core-concepts/knot.md
+    - Edge: core-concepts/edge.md
+    - Knot Data: core-concepts/knotdata.md
+    - Context: core-concepts/context.md
+  - Usage:
+      - Usage: usage/index.md
+      - Installation: usage/installation.md
+      - Creating Bonsai Instance: usage/creating-bonsai.md
+      - Building Trees: usage/building-trees.md
+      - Evaluating Trees: usage/evaluating-trees.md
+      - Knot Operations: usage/knot-operations.md
+      - Edge Operations: usage/edge-operations.md
+      - Trees Operations: usage/tree-operations.md
+      - Delta Operations: usage/delta-operations.md
+  - Storage: storage.md
+  - Advanced Usage:
+      - Advanced Usage: advanced-usage/index.md
+      - Nested Tree Structures: advanced-usage/nested-tree-structures.md
+      - Custom Context: advanced-usage/custom-context.md
+      - Tree Validation: advanced-usage/tree-validation.md
+      - Versioning: advanced-usage/versioning.md
+      - Contextual Preferences: advanced-usage/contextual-preferences.md
+  - Performance:
+      - Performance: performance/index.md
+      - Memory Compute: performance/memory-compute.md
+      - Optimizing Tree Structure:  performance/optimizing-tree-structure.md
+  - Use Cases:
+      - Use Cases: use-cases/index.md
+      - Feature Flagging: use-cases/feature-flagging.md
+      - Dynamic Pricing: use-cases/dynamic-pricing.md
+  - Troubleshooting:
+      - Troubleshooting: troubleshooting/index.md
+      - Common Errors: troubleshooting/common-errors.md
+      - Debugging Tips: troubleshooting/debugging-tips.md
