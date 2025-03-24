@@ -4,7 +4,7 @@ Understanding concepts that form the foundation of its tree-based rule engine is
 
 ## Key Components
 
-![Bonsai Representation](../bonsai_representation.png)
+![Bonsai Representation](../assets/bonsai_representation.png)
 
 Bonsai's architecture revolves around four primary components:
 

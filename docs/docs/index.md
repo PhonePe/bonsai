@@ -39,7 +39,7 @@ and launch / placement of most widgets on the PhonePe app.
 
 ## Visual Representation
 
-![Bonsai Representation](bonsai_representation.png)
+![Bonsai Representation](assets/bonsai_representation.png)
 
 ## License
 

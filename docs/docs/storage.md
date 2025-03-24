@@ -9,7 +9,7 @@ Bonsai is designed with a flexible storage architecture that allows you to use d
 
 ## Storage Architecture
 
-![Storage Architecture](storage.png)
+![Storage Architecture](assets/storage.png)
 
 Bonsai requires three storage components:
 

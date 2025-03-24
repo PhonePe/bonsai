@@ -3,6 +3,8 @@ site_url: https://phonepe.github.io/bonsai
 repo_url: https://github.com/PhonePe/bonsai
 
 theme:
+  logo: assets/logo.svg
+  favicon: assets/favicon.png
   name: material
   features:
     - navigation.tracking
