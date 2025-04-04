@@ -491,11 +491,17 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             public KeyNode visit(final MultiKnotData multiKnotData) {
                 /* recursively evaluate the list of keys in MultiKnot */
                 final List<String> keys = multiKnotData.getKeys();
-                final List<KeyNode> nodes = keys != null
-                        ? keys.stream()
-                        .map(key -> evaluate(key, context))
-                        .toList()
-                        : null;
+                List<KeyNode> nodes = new ArrayList<>();
+
+                if (keys != null) {
+                    for (String key : keys) {
+                        KeyNode node = evaluate(key, context);
+                        if (node != null) {
+                            nodes.add(node);
+                        }
+                    }
+                }
+
                 return new KeyNode(key,
                                    ListNode.builder()
                                            .id(knot.getId())
