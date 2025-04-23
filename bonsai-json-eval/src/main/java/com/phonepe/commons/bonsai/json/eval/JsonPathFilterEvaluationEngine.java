@@ -58,14 +58,13 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implements FilterVisitor<Boolean> {
 
+    public static final String BONSAI_FILTER_VALUES_DOCUMENT_LOG_STR = "[bonsai][{}] filter:{} values:{} document:{}";
     private static final TypeRef<List<Number>> NUMBER_TYPE_REF = new TypeRef<>() {
     };
     private static final TypeRef<List<String>> STRING_TYPE_REF = new TypeRef<>() {
     };
     private static final TypeRef<List<Object>> OBJECT_TYPE_REF = new TypeRef<>() {
     };
-    public static final String BONSAI_FILTER_VALUES_DOCUMENT_LOG_STR = "[bonsai][{}] filter:{} values:{} document:{}";
-
     protected final String entityId;
 
     protected final C context;
@@ -110,8 +109,9 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
 
     @Override
     public Boolean visit(NotInFilter filter) {
-        Predicate<Object> predicate = contains(filter);
-        return applyNoneMatch(filter, OBJECT_TYPE_REF, predicate);
+        List<Object> values = readContextValues(filter, OBJECT_TYPE_REF);
+        Set<Object> valueSet = filter.getValues();
+        return !valueInValueSet(values, valueSet);
     }
 
     @Override
@@ -131,9 +131,21 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
 
     @Override
     public Boolean visit(InFilter filter) {
-        List<Object> nonNullValues = nonNullValues(filter, OBJECT_TYPE_REF);
-        Set<Object> valueSet = new HashSet<>(filter.getValues());
-        return isNotEmpty(nonNullValues) && nonNullValues.stream().anyMatch(valueSet::contains);
+        List<Object> values = readContextValues(filter, OBJECT_TYPE_REF);
+        Set<Object> valueSet = filter.getValues();
+        return valueInValueSet(values, valueSet);
+    }
+
+    private Boolean valueInValueSet(List<Object> values, Set<Object> valueSet) {
+        if (!isNotEmpty(values)) {
+            return false;
+        }
+        for (Object value : values) {
+            if (value != null && valueSet.contains(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -199,17 +211,29 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
 
 
     private <T> Boolean applyAllMatchFilter(Filter filter, TypeRef<List<T>> typeRef, Predicate<T> predicate) {
-        List<T> nonNullValues = nonNullValues(filter, typeRef);
-        return isNotEmpty(nonNullValues) && nonNullValues.stream().allMatch(predicate);
+        List<T> values = readContextValues(filter, typeRef);
+        if (!isNotEmpty(values)) {
+            return false;
+        }
+        boolean hasNonNullValue = false;
+        for (T value : values) {
+            if (value != null) {
+                hasNonNullValue = true;
+                if (!predicate.test(value)) {
+                    return false;
+                }
+            }
+        }
+        return hasNonNullValue;
     }
 
-    private <T> List<T> nonNullValues(Filter filter, TypeRef<List<T>> typeRef) {
+    private <T> List<T> readContextValues(Filter filter, TypeRef<List<T>> typeRef) {
         List<T> values = context.documentContext().read(filter.getField(), typeRef);
         if (log.isTraceEnabled()) {
             log.trace(BONSAI_FILTER_VALUES_DOCUMENT_LOG_STR, context.id(), filter.getField(), values,
                       context.documentContext().json());
         }
-        return values == null ? Collections.emptyList() : values.stream().filter(Objects::nonNull).toList();
+        return values == null ? Collections.emptyList() : values;
     }
 
     private Predicate<Number> lessThan(NumericBinaryFilter filter) {
@@ -237,16 +261,11 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
         return k -> k.equals(filter.getValue());
     }
 
-    private Predicate<Object> contains(NotInFilter filter) {
-        Set<Object> notIn = new HashSet<>(filter.getValues());
-        return notIn::contains;
-    }
-
     private <T> Boolean applyNoneMatch(Filter filter,
                                        @SuppressWarnings("SameParameterValue") TypeRef<List<T>> typeRef,
                                        Predicate<T> predicate) {
-        List<T> nonNullValues = nonNullValues(filter, typeRef);
-        return isNotEmpty(nonNullValues) && nonNullValues.stream().noneMatch(predicate);
+        List<T> nonNullValues = readContextValues(filter, typeRef);
+        return isNotEmpty(nonNullValues) && nonNullValues.stream().filter(Objects::nonNull).noneMatch(predicate);
     }
 
     private <T> boolean isNotEmpty(List<T> nonNullValues) {

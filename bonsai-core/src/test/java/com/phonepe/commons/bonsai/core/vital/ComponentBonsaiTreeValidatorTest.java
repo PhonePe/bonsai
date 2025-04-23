@@ -45,8 +45,10 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -749,10 +751,10 @@ class ComponentBonsaiTreeValidatorTest {
                 .knotData(treeKnotFifthValue)
                 .build();
         final List<Filter> treeEdgeFifthFilters = new ArrayList<>();
-        final List<String> valueList = new ArrayList<>();
+        final Set<Object> valueList = new HashSet<>();
         valueList.add("valueThree");
         valueList.add("valueFour");
-        treeEdgeFifthFilters.add(new NotInFilter("fieldThree", Collections.singletonList(valueList)));
+        treeEdgeFifthFilters.add(new NotInFilter("fieldThree", valueList));
         final TreeEdge treeEdgeFifth = TreeEdge.builder()
                 .edgeIdentifier(new EdgeIdentifier("treeEdgeFifthId", 1, 1))
                 .filters(treeEdgeFifthFilters)
@@ -788,10 +790,10 @@ class ComponentBonsaiTreeValidatorTest {
                 .knotData(treeKnotFourthValue)
                 .build();
         final List<Filter> treeEdgeFourthFilters = new ArrayList<>();
-        final List<String> values = new ArrayList<>();
+        final Set<Object> values = new HashSet<>();
         values.add("valueThree");
         values.add("valueTwo");
-        treeEdgeFourthFilters.add(new InFilter("fieldOne", Collections.singletonList(values)));
+        treeEdgeFourthFilters.add(new InFilter("fieldOne", values));
         final TreeEdge treeEdgeFourth = TreeEdge.builder()
                 .edgeIdentifier(new EdgeIdentifier("treeEdgeFourthId", 1, 1))
                 .filters(treeEdgeFourthFilters)
