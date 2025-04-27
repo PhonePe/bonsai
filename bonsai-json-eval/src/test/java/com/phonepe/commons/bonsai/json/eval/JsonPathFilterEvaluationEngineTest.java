@@ -46,6 +46,7 @@ import org.mockito.Mockito;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -234,7 +235,7 @@ public class JsonPathFilterEvaluationEngineTest {
     void testVisitNotInFilter() {
         NotInFilter filter = new NotInFilter();
         filter.setField("$.data.value");
-        filter.setValues(Arrays.asList(1, 2, 3));
+        filter.setValues(Set.of(1, 2, 3));
         
         Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
                 .thenReturn(Collections.singletonList(5));
@@ -308,7 +309,7 @@ public class JsonPathFilterEvaluationEngineTest {
     void testVisitInFilter() {
         InFilter filter = new InFilter();
         filter.setField("$.data.value");
-        filter.setValues(Arrays.asList(1, 2, 3));
+        filter.setValues(Set.of(1, 2, 3));
         
         Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
                 .thenReturn(Collections.singletonList(2));
