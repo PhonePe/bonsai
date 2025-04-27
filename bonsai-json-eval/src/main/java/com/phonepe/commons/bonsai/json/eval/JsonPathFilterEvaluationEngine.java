@@ -137,7 +137,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
     }
 
     private Boolean valueInValueSet(List<Object> values, Set<Object> valueSet) {
-        if (!isNotEmpty(values)) {
+        if (isEmpty(values)) {
             return false;
         }
         for (Object value : values) {
@@ -195,7 +195,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
 
     @Override
     public Boolean visit(StringRegexMatchFilter filter) {
-        /* todo create a small Pattern compiled cache, to avoid compile every time */
+        /* todo create a small Pattern compiled cache, to avo   id compile every time */
         return applyAllMatchFilter(filter, STRING_TYPE_REF, k -> k.matches(filter.getValue()));
     }
 
@@ -212,7 +212,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
 
     private <T> Boolean applyAllMatchFilter(Filter filter, TypeRef<List<T>> typeRef, Predicate<T> predicate) {
         List<T> values = readContextValues(filter, typeRef);
-        if (!isNotEmpty(values)) {
+        if (isEmpty(values)) {
             return false;
         }
         boolean hasNonNullValue = false;
@@ -272,4 +272,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
         return nonNullValues != null && !nonNullValues.isEmpty();
     }
 
+    private <T> boolean isEmpty(List<T> nonNullValues) {
+        return nonNullValues == null || nonNullValues.isEmpty();
+    }
 }
