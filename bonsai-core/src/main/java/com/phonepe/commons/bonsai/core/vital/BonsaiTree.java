@@ -747,7 +747,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         /* recursively iterate over the matching edge knot on the RHS (knot --edge--> rhsKnot) */
         Edge edge = conditionSatisfyingEdge.get();
         Knot rhsKnot = knotStore.getKnot(edge.getKnotId());
-        path.add(edge.getEdgeIdentifier().getNumber());
+        path.add(getEdgePositionInCurrentEdges(edge.getEdgeIdentifier(), edgeIdentifiers));
         if (log.isDebugEnabled()) {
             log.debug("[bonsai][getMatchingKnot][{}][{}] edge condition satisfied: {}, knot: {} ", context.id(), key,
                     edge.getEdgeIdentifier().getId(), rhsKnot.getId());
@@ -875,6 +875,17 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                 recursivelyCalculateDeltaOperations(getKnot(edge.getKnotId()), operations);
             }
         }
+    }
+
+    private Integer getEdgePositionInCurrentEdges(final EdgeIdentifier edge, final OrderedList<EdgeIdentifier> edges) {
+        String requiredEdgeId = edge.getId();
+        for (int i = 0; i < edges.size(); i++) {
+            if(requiredEdgeId.equals(edges.get(i).getId())) {
+                return i+1; // Edge number is 1 indexed
+            }
+        }
+        throw new BonsaiError(BonsaiErrorCode.EDGE_ABSENT,
+                              "No edge found in knots edges for edgeId: " + edge.getId());
     }
 
 }

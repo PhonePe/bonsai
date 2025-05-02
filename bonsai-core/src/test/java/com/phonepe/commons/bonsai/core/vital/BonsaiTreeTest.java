@@ -1674,4 +1674,196 @@ class BonsaiTreeTest {
         List<DeltaOperation> operations = bonsai.calculateDeltaOperations(key);
         assertEquals(0, operations.size());
     }
+
+    @Test
+    void given_bonsaiTreeWithVariations_when_evaluatingTree_then_returnCorrectEdgeNumber() {
+        Map<String, String> u3Context = new HashMap<>(1);
+        u3Context.put("userId", "U3");
+
+        String keyName = "edgePathNumber";
+        Knot level1 = bonsai.createMapping(keyName, ValuedKnotData.stringValue("noneMatch"), null);
+        Knot level21 = bonsai.createKnot(ValuedKnotData.stringValue("U1"), null);
+        Knot level22 = bonsai.createKnot(ValuedKnotData.stringValue("U2"), null);
+        Knot level23 = bonsai.createKnot(ValuedKnotData.stringValue("U3"), null);
+        bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U1").build())
+                .knotId(level21.getId())
+                .build());
+        bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U2").build())
+                .knotId(level22.getId())
+                .build());
+        Edge edgeOfU3 = bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U3").build())
+                .knotId(level23.getId())
+                .build());
+
+        final KeyNode keyNode = bonsai.evaluate(keyName, Context.builder()
+                .documentContext(Parsers.parse(u3Context))
+                .build());
+        Assertions.assertNotNull(keyNode, "KeyNode should not be null.");
+        Assertions.assertEquals(keyName, keyNode.getKey(), "The value of [keyNode.Key] should be : noneMatch.");
+        Assertions.assertEquals(1, keyNode.getEdgePath().size(), "Edge path should be of size 1");
+        Assertions.assertEquals(3, keyNode.getEdgePath().get(0),
+                                "Edge path should point to 3rd number of edge");
+        Assertions.assertEquals(edgeOfU3.getEdgeIdentifier().getId(),
+                                keyNode.getEdges().get(0).getEdgeIdentifier().getId(),
+                                "Edge of U3 should be matched");
+    }
+
+    @Test
+    void given_bonsaiTreeWithDeletedVariation_when_evaluatingTreeForThatVariation_then_returnEmptyEdge() {
+        Map<String, String> u3Context = new HashMap<>(1);
+        u3Context.put("userId", "U3");
+
+        String keyName = "edgePathNumber";
+        Knot level1 = bonsai.createMapping(keyName, ValuedKnotData.stringValue("noneMatch"), null);
+        Knot level21 = bonsai.createKnot(ValuedKnotData.stringValue("U1"), null);
+        Knot level22 = bonsai.createKnot(ValuedKnotData.stringValue("U2"), null);
+        Knot level23 = bonsai.createKnot(ValuedKnotData.stringValue("U3"), null);
+        Knot level24 = bonsai.createKnot(ValuedKnotData.stringValue("U4"), null);
+        bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U1").build())
+                .knotId(level21.getId())
+                .build());
+        bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U2").build())
+                .knotId(level22.getId())
+                .build());
+        Edge edgeOfU3 = bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U3").build())
+                .knotId(level23.getId())
+                .build());
+        bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U4").build())
+                .knotId(level24.getId())
+                .build());
+
+        // Delete edge of U3
+        bonsai.deleteVariation(level1.getId(), edgeOfU3.getEdgeIdentifier().getId(), true);
+
+        // Evaluate with userId = U3, this should not match any user
+        final KeyNode keyNodeForU3Eval = bonsai.evaluate(keyName, Context.builder()
+                .documentContext(Parsers.parse(u3Context))
+                .build());
+        Assertions.assertNotNull(keyNodeForU3Eval, "KeyNode should not be null.");
+        Assertions.assertEquals(keyName, keyNodeForU3Eval.getKey(), "The value of [keyNode.Key] should be : noneMatch.");
+        Assertions.assertTrue(keyNodeForU3Eval.getEdgePath().isEmpty(), "Edge path should be of empty");
+    }
+
+    /**
+     *
+     */
+    @Test
+    void given_bonsaiTreeWithDeletedVariation_when_evaluatingNextMatchingVariation_then_returnCorrectEdgeNumber() {
+
+        String keyName = "edgePathNumber";
+        Knot level1 = bonsai.createMapping(keyName, ValuedKnotData.stringValue("noneMatch"), null);
+        Knot level21 = bonsai.createKnot(ValuedKnotData.stringValue("U1"), null);
+        Knot level22 = bonsai.createKnot(ValuedKnotData.stringValue("U2"), null);
+        Knot level23 = bonsai.createKnot(ValuedKnotData.stringValue("U3"), null);
+        Knot level24 = bonsai.createKnot(ValuedKnotData.stringValue("U4"), null);
+        bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U1").build())
+                .knotId(level21.getId())
+                .build());
+        bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U2").build())
+                .knotId(level22.getId())
+                .build());
+        Edge edgeOfU3 = bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U3").build())
+                .knotId(level23.getId())
+                .build());
+        Edge edgeOfU4 = bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U4").build())
+                .knotId(level24.getId())
+                .build());
+
+        // Delete edge of U3
+        bonsai.deleteVariation(level1.getId(), edgeOfU3.getEdgeIdentifier().getId(), true);
+
+        // Evaluate with userId = U4
+        Map<String, String> u4Context = new HashMap<>(1);
+        u4Context.put("userId", "U4");
+        final KeyNode keyNodeForU4EvalPostDelete = bonsai.evaluate(keyName, Context.builder()
+                .documentContext(Parsers.parse(u4Context))
+                .build());
+
+        Assertions.assertNotNull(keyNodeForU4EvalPostDelete, "KeyNode should not be null.");
+        Assertions.assertEquals(keyName, keyNodeForU4EvalPostDelete.getKey(),
+                                "The value of [keyNode.Key] should be : noneMatch.");
+        Assertions.assertEquals(1, keyNodeForU4EvalPostDelete.getEdgePath().size(),
+                                "Edge path should be of size 1");
+        // After deletion of edgeOfU3, edgeOfU4 is the 3rd edge in order
+        Assertions.assertEquals(3, keyNodeForU4EvalPostDelete.getEdgePath().get(0),
+                                "Edge path should point to 3rd number of edge");
+        Assertions.assertEquals(edgeOfU4.getEdgeIdentifier().getId(),
+                                keyNodeForU4EvalPostDelete.getEdges().get(0).getEdgeIdentifier().getId(),
+                                "Edge of U4 should be matched");
+    }
+
+    @Test
+    void given_bonsaiTreeWithUnlinkedVariation_when_evaluatingNextMatchingVariation_then_returnCorrectEdgeNumber() {
+
+        String keyName = "edgePathNumber";
+        Knot level1 = bonsai.createMapping(keyName, ValuedKnotData.stringValue("noneMatch"), null);
+        Knot level21 = bonsai.createKnot(ValuedKnotData.stringValue("U1"), null);
+        Knot level22 = bonsai.createKnot(ValuedKnotData.stringValue("U2"), null);
+        Knot level23 = bonsai.createKnot(ValuedKnotData.stringValue("U3"), null);
+        Knot level24 = bonsai.createKnot(ValuedKnotData.stringValue("U4"), null);
+        bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U1").build())
+                .knotId(level21.getId())
+                .build());
+        bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U2").build())
+                .knotId(level22.getId())
+                .build());
+        Edge edgeOfU3 = bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U3").build())
+                .knotId(level23.getId())
+                .build());
+        Edge edgeOfU4 = bonsai.addVariation(level1.getId(), Variation.builder()
+                .filter(EqualsFilter.builder().field("$.userId")
+                                .value("U4").build())
+                .knotId(level24.getId())
+                .build());
+
+        // Delete edge of U3
+        bonsai.unlinkVariation(level1.getId(), edgeOfU3.getEdgeIdentifier().getId());
+
+        // Evaluate with userId = U4
+        Map<String, String> u4Context = new HashMap<>(1);
+        u4Context.put("userId", "U4");
+        final KeyNode keyNodeForU4EvalPostDelete = bonsai.evaluate(keyName, Context.builder()
+                .documentContext(Parsers.parse(u4Context))
+                .build());
+
+        Assertions.assertNotNull(keyNodeForU4EvalPostDelete, "KeyNode should not be null.");
+        Assertions.assertEquals(keyName, keyNodeForU4EvalPostDelete.getKey(),
+                                "The value of [keyNode.Key] should be : noneMatch.");
+        Assertions.assertEquals(1, keyNodeForU4EvalPostDelete.getEdgePath().size(),
+                                "Edge path should be of size 1");
+        // After unlinking of edgeOfU3, edgeOfU4 is the 3rd edge in order
+        Assertions.assertEquals(3, keyNodeForU4EvalPostDelete.getEdgePath().get(0),
+                                "Edge path should point to 3rd number of edge");
+        Assertions.assertEquals(edgeOfU4.getEdgeIdentifier().getId(),
+                                keyNodeForU4EvalPostDelete.getEdges().get(0).getEdgeIdentifier().getId(),
+                                "Edge of U4 should be matched");
+    }
 }
