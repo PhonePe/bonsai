@@ -215,16 +215,16 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
         if (!isNotEmpty(values)) {
             return false;
         }
-        boolean hasNonNullValue = false;
+        boolean allValuesAreNonNull = false;
         for (T value : values) {
             if (value != null) {
-                hasNonNullValue = true;
+                allValuesAreNonNull = true;
                 if (!predicate.test(value)) {
                     return false;
                 }
             }
         }
-        return hasNonNullValue;
+        return allValuesAreNonNull;
     }
 
     private <T> List<T> readContextValues(Filter filter, TypeRef<List<T>> typeRef) {
