@@ -22,36 +22,33 @@ Delta operations are a way to apply a series of changes to a tree structure as a
 
 ## Types of Delta Operations
 
-Bonsai supports several types of delta operations:
+Bonsai supports three types of delta operations:
 
-- **CREATE_KNOT**: Create a new Knot
-- **UPDATE_KNOT_DATA**: Update a Knot's data
-- **UPDATE_KNOT_PROPERTIES**: Update a Knot's properties
-- **DELETE_KNOT**: Delete a Knot
-- **CREATE_EDGE**: Create a new Edge
-- **UPDATE_EDGE**: Update an Edge
-- **DELETE_EDGE**: Delete an Edge
-- **CREATE_MAPPING**: Create a key mapping
-- **UPDATE_MAPPING**: Update a key mapping
-- **DELETE_MAPPING**: Delete a key mapping
+- **KEY_MAPPING_DELTA**: Operations related to key mappings
+- **KNOT_DELTA**: Operations related to Knots
+- **EDGE_DELTA**: Operations related to Edges
+
+Each operation type has its own specific class and builder pattern.
 
 ## Creating Delta Operations
 
-You can create delta operations using the `DeltaOperation.builder()` method:
+You can create delta operations using the specific operation builders:
 
 ```java
-// Create a delta operation to create a new knot
-DeltaOperation createKnotOp = DeltaOperation.builder()
-    .operationType(OperationType.CREATE_KNOT)
-    .knotData(ValuedKnotData.builder().stringValue("New value").build())
-    .properties(Map.of("description", "New knot"))
+// Create a knot delta operation
+KnotDeltaOperation knotOperation = KnotDeltaOperation.builder()
+    .knot(knot) // Pass a Knot object
     .build();
 
-// Create a delta operation to create a mapping
-DeltaOperation createMappingOp = DeltaOperation.builder()
-    .operationType(OperationType.CREATE_MAPPING)
-    .key("newKey")
-    .knotId("generatedKnotId") // ID from the previous operation
+// Create a key mapping delta operation
+KeyMappingDeltaOperation mappingOperation = KeyMappingDeltaOperation.builder()
+    .keyId("newKey")
+    .knotId("generatedKnotId")
+    .build();
+
+// Create an edge delta operation
+EdgeDeltaOperation edgeOperation = EdgeDeltaOperation.builder()
+    .edge(edge) // Pass an Edge object
     .build();
 ```
 
@@ -87,31 +84,39 @@ Here's an example of using delta operations to create a complete tree structure:
 List<DeltaOperation> operations = new ArrayList<>();
 
 // Create the leaf knots
-operations.add(DeltaOperation.builder()
-    .operationType(OperationType.CREATE_KNOT)
+Knot eligibleKnot = Knot.builder()
     .id("eligibleKnot")
     .knotData(ValuedKnotData.builder().booleanValue(true).build())
     .properties(Map.of("description", "User is eligible"))
+    .build();
+
+operations.add(KnotDeltaOperation.builder()
+    .knot(eligibleKnot)
     .build());
 
-operations.add(DeltaOperation.builder()
-    .operationType(OperationType.CREATE_KNOT)
+Knot ineligibleKnot = Knot.builder()
     .id("ineligibleKnot")
     .knotData(ValuedKnotData.builder().booleanValue(false).build())
     .properties(Map.of("description", "User is ineligible"))
+    .build();
+
+operations.add(KnotDeltaOperation.builder()
+    .knot(ineligibleKnot)
     .build());
 
 // Create the root knot
-operations.add(DeltaOperation.builder()
-    .operationType(OperationType.CREATE_KNOT)
+Knot rootKnot = Knot.builder()
     .id("rootKnot")
     .knotData(ValuedKnotData.builder().build())
     .properties(Map.of("description", "User eligibility decision point"))
+    .build();
+
+operations.add(KnotDeltaOperation.builder()
+    .knot(rootKnot)
     .build());
 
 // Create the edges
-operations.add(DeltaOperation.builder()
-    .operationType(OperationType.CREATE_EDGE)
+Edge edge1 = Edge.builder()
     .id("edge1")
     .sourceKnotId("rootKnot")
     .targetKnotId("eligibleKnot")
@@ -127,20 +132,26 @@ operations.add(DeltaOperation.builder()
             .value(List.of("US", "CA", "UK"))
             .build()
     ))
+    .build();
+
+operations.add(EdgeDeltaOperation.builder()
+    .edge(edge1)
     .build());
 
-operations.add(DeltaOperation.builder()
-    .operationType(OperationType.CREATE_EDGE)
+Edge edge2 = Edge.builder()
     .id("edge2")
     .sourceKnotId("rootKnot")
     .targetKnotId("ineligibleKnot")
     .filters(List.of())
+    .build();
+
+operations.add(EdgeDeltaOperation.builder()
+    .edge(edge2)
     .build());
 
 // Create the key mapping
-operations.add(DeltaOperation.builder()
-    .operationType(OperationType.CREATE_MAPPING)
-    .key("userEligibility")
+operations.add(KeyMappingDeltaOperation.builder()
+    .keyId("userEligibility")
     .knotId("rootKnot")
     .build());
 
@@ -157,16 +168,18 @@ Here's an example of using delta operations to update an existing tree structure
 List<DeltaOperation> operations = new ArrayList<>();
 
 // Update a knot's data
-operations.add(DeltaOperation.builder()
-    .operationType(OperationType.UPDATE_KNOT_DATA)
+Knot updatedKnot = Knot.builder()
     .id("eligibleKnot")
     .knotData(ValuedKnotData.builder().booleanValue(true).build())
     .properties(Map.of("description", "User is eligible", "version", 1L))
+    .build();
+
+operations.add(KnotDeltaOperation.builder()
+    .knot(updatedKnot)
     .build());
 
 // Update an edge's filters
-operations.add(DeltaOperation.builder()
-    .operationType(OperationType.UPDATE_EDGE)
+Edge updatedEdge = Edge.builder()
     .id("edge1")
     .sourceKnotId("rootKnot")
     .targetKnotId("eligibleKnot")
@@ -183,6 +196,10 @@ operations.add(DeltaOperation.builder()
             .build()
     ))
     .properties(Map.of("version", 1L))
+    .build();
+
+operations.add(EdgeDeltaOperation.builder()
+    .edge(updatedEdge)
     .build());
 
 // Apply the delta operations
