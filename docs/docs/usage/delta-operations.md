@@ -32,24 +32,44 @@ Each operation type has its own specific class and builder pattern.
 
 ## Creating Delta Operations
 
-You can create delta operations using the specific operation builders:
+You can create delta operations using the specific operation builders or constructors:
 
 ```java
-// Create a knot delta operation
-KnotDeltaOperation knotOperation = KnotDeltaOperation.builder()
-    .knot(knot) // Pass a Knot object
+// Create a knot delta operation using builder
+Knot knot = Knot.builder()
+    .id("knotId")
+    .knotData(ValuedKnotData.stringValue("Sample value"))
     .build();
 
-// Create a key mapping delta operation
+KnotDeltaOperation knotOperation = KnotDeltaOperation.builder()
+    .knot(knot)
+    .build();
+
+// Or using constructor
+KnotDeltaOperation knotOp = new KnotDeltaOperation(knot);
+
+// Create a key mapping delta operation using builder
 KeyMappingDeltaOperation mappingOperation = KeyMappingDeltaOperation.builder()
     .keyId("newKey")
     .knotId("generatedKnotId")
     .build();
 
-// Create an edge delta operation
-EdgeDeltaOperation edgeOperation = EdgeDeltaOperation.builder()
-    .edge(edge) // Pass an Edge object
+// Or using constructor
+KeyMappingDeltaOperation mappingOp = new KeyMappingDeltaOperation("newKey", "generatedKnotId");
+
+// Create an edge delta operation using builder
+Edge edge = Edge.builder()
+    .edgeIdentifier(new EdgeIdentifier("edgeId", 1, 1))
+    .knotId("targetKnotId")
+    .filter(EqualsFilter.builder().field("userId").value("U1").build())
     .build();
+
+EdgeDeltaOperation edgeOperation = EdgeDeltaOperation.builder()
+    .edge(edge)
+    .build();
+
+// Or using constructor
+EdgeDeltaOperation edgeOp = new EdgeDeltaOperation(edge);
 ```
 
 ## Applying Delta Operations
@@ -73,7 +93,22 @@ List<DeltaOperation> revertOperations = result.getRevertDeltaOperations();
 The `applyDeltaOperations` method returns a `TreeKnotState` object that contains:
 
 - The updated tree structure (`TreeKnot`)
-- A list of operations that can be used to revert the changes (`revertDeltaOperations`)
+- A list of operations that can be used to revert the changes (`getDeltaOperationsToPreviousState()`)
+
+## Preview vs Apply Operations
+
+Bonsai provides two methods for working with delta operations:
+
+- **`getCompleteTreeWithDeltaOperations()`**: Preview changes without persisting them to storage
+- **`applyDeltaOperations()`**: Apply changes and persist them to storage
+
+```java
+// Preview changes without persisting
+TreeKnotState preview = bonsai.getCompleteTreeWithDeltaOperations("rootKey", operations);
+
+// Apply and persist changes
+TreeKnotState result = bonsai.applyDeltaOperations("rootKey", operations);
+```
 
 ## Example: Creating a Complete Tree with Delta Operations
 
@@ -215,7 +250,7 @@ The `applyDeltaOperations` method returns a list of operations that can be used 
 TreeKnotState result = bonsai.applyDeltaOperations("userEligibility", operations);
 
 // Get the revert operations
-List<DeltaOperation> revertOperations = result.getRevertDeltaOperations();
+List<DeltaOperation> revertOperations = result.getDeltaOperationsToPreviousState();
 
 // If needed, apply the revert operations to undo the changes
 TreeKnotState revertResult = bonsai.applyDeltaOperations("userEligibility", revertOperations);
