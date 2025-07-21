@@ -42,12 +42,18 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.function.Predicate;
 
 @Slf4j
-public class TraceWrappedJsonPathFilterEvaluationEngine<C extends JsonEvalContext>
-        extends JsonPathFilterEvaluationEngine<C> {
+public class TraceWrappedJsonPathFilterEvaluationEngine<C extends JsonEvalContext, F>
+        extends JsonPathFilterEvaluationEngine<C, F> {
 
     public TraceWrappedJsonPathFilterEvaluationEngine(String entityId, C context,
-                                                      Predicate<GenericFilterContext<C>> genericFilterHandler) {
-        super(entityId, context, genericFilterHandler);
+                                                      Predicate<GenericFilterContext<C, F>> genericFilterHandler) {
+        super(entityId, context, genericFilterHandler, null);
+    }
+
+    public TraceWrappedJsonPathFilterEvaluationEngine(String entityId, C context,
+                                                      Predicate<GenericFilterContext<C, F>> genericFilterHandler,
+                                                      F associatedEntity) {
+        super(entityId, context, genericFilterHandler, associatedEntity);
     }
 
     @Override
