@@ -241,11 +241,46 @@ class ConditionEngineTest {
         verify(engineSpy, never()).match("test", condition3);
     }
 
+    @Test
+    void testMatchWithAssociatedEntity_ShouldReturnFirstMatchingCondition() {
+        // Setup test data
+        TestCondition condition1 = new TestCondition(true, 100f);
+        TestCondition condition2 = new TestCondition(true, 75f);
+        List<TestCondition> conditions = Arrays.asList(condition1, condition2);
+        String testKey = "user_group_A";
+
+        // Create a spy to verify method calls
+        TestConditionEngine engineSpy = spy(conditionEngine);
+
+        // Configure mocked behavior for the 3-argument match method
+        when(engineSpy.match("test", condition1, testKey)).thenReturn(true);
+        when(engineSpy.match("test", condition2, testKey)).thenReturn(false);
+
+        // Act: Call the match method with the associated entity
+        Optional<TestCondition> result = engineSpy.match("test", conditions, testKey);
+
+        // Assert: Verify the correct condition was returned
+        assertTrue(result.isPresent());
+        assertEquals(condition1, result.get());
+
+        // Verify that the 3-argument match method was called for the first condition
+        verify(engineSpy).match("test", condition1, testKey);
+
+        // Verify that the 2-argument match overload was never called for this flow
+        verify(engineSpy, never()).match("test", condition1);
+    }
+
     // Test implementation of ConditionEngine for testing
-    private static class TestConditionEngine extends ConditionEngine<String, TestCondition> {
+    private static class TestConditionEngine extends ConditionEngine<String, TestCondition, String> {
         @Override
         public Boolean match(String entity, TestCondition condition) {
             return true; // Default implementation, will be mocked in test
+        }
+
+        @Override
+        public Boolean match(String entity, TestCondition condition, String associatedEntity) {
+            // Default implementation for the new match logic, will be mocked in tests.
+            return true;
         }
     }
 

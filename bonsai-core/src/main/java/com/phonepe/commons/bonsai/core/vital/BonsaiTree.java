@@ -736,7 +736,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                         .map(EdgeIdentifier::getId)
                         .toList())
                 .values());
-        Optional<Edge> conditionSatisfyingEdge = variationSelectorEngine.match(context, edges);
+        Optional<Edge> conditionSatisfyingEdge = variationSelectorEngine.match(context, edges, key);
         if (conditionSatisfyingEdge.isEmpty()) {
             /* base condition for the recursion */
             if (log.isDebugEnabled()) {

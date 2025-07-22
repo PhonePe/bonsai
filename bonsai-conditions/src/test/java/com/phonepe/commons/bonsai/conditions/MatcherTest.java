@@ -33,7 +33,7 @@ class MatcherTest {
 
     private Matcher.UniMatcher<String, Integer> uniMatcher;
     private Matcher.BooleanUniMatcher<String> booleanUniMatcher;
-    private Matcher.ConditionalMatcher<String, TestCondition> conditionalMatcher;
+    private Matcher.ConditionalMatcher<String, TestCondition, String> conditionalMatcher;
 
     private TestCondition condition1;
     private List<TestCondition> conditions;
@@ -64,6 +64,20 @@ class MatcherTest {
             @Override
             public Boolean match(String value, TestCondition condition) {
                 return value.length() > 5 && condition.isLive();
+            }
+
+            @Override
+            public Optional<TestCondition> match(String value, List<TestCondition> conditionList, String associatedEntity) {
+                return conditionList.stream()
+                        .filter(condition -> match(value, condition, associatedEntity))
+                        .findFirst();
+            }
+
+            @Override
+            public Boolean match(String value, TestCondition condition, String associatedEntity) {
+                // New logic for the test: match now also depends on the associatedEntity
+                boolean keyIsValid = "valid_key".equals(associatedEntity);
+                return value.length() > 5 && condition.isLive() && keyIsValid;
             }
         };
     }
@@ -127,6 +141,32 @@ class MatcherTest {
         // Test direct match method
         assertTrue(conditionalMatcher.match("test string", condition1));
         assertFalse(conditionalMatcher.match("short", condition1));
+    }
+
+    @Test
+    void testConditionalMatcherWithAssociatedEntity_Success() {
+        // Test with a value and key that both match the new logic
+        Optional<TestCondition> result = conditionalMatcher.match("test string", conditions, "valid_key");
+
+        assertTrue(result.isPresent());
+        assertEquals(condition1, result.get());
+    }
+
+    @Test
+    void testConditionalMatcherWithAssociatedEntity_Failure() {
+        // Test with a valid value but an invalid key
+        Optional<TestCondition> result = conditionalMatcher.match("test string", conditions, "invalid_key");
+
+        // Should fail because the associatedEntity doesn't match
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void testConditionalMatcherDirectMatchWithAssociatedEntity() {
+        // Test the direct boolean-returning match method with the associatedEntity
+        assertTrue(conditionalMatcher.match("a long enough string", condition1, "valid_key"));
+        assertFalse(conditionalMatcher.match("a long enough string", condition1, "invalid_key"));
+        assertFalse(conditionalMatcher.match("short", condition1, "valid_key"));
     }
 
     // Test implementation of Condition

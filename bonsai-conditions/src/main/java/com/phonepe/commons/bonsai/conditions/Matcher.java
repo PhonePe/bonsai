@@ -55,8 +55,9 @@ public class Matcher {
      *
      * @param <V>         contending entity
      * @param <C> list of condition to be matched with
+     * @param <F> An associated entity providing additional context for filtering.
      */
-    public interface ConditionalMatcher<V, C> {
+    public interface ConditionalMatcher<V, C, F> {
 
         /**
          * Try to match a contending entity with a Collection of Criteria,
@@ -76,5 +77,26 @@ public class Matcher {
          * @return true if there is a match
          */
         Boolean match(V v1, C condition);
+
+        /**
+         * Tries to match a contending entity against a list of conditions, using an additional associated entity for more complex filtering.
+         * This allows for nuanced logic where the match criteria might depend on both the primary entity and some other contextual data (e.g., using an evaluation key for uniform sampling).
+         *
+         * @param v1               The contending entity to be evaluated.
+         * @param conditionList       A list of conditions to match against.
+         * @param associatedEntity An additional entity that provides context for the matching logic.
+         * @return An Optional containing the first matching condition, or an empty Optional if no match is found.
+         */
+        Optional<C> match(V v1, List<C> conditionList, F associatedEntity);
+
+        /**
+         * Checks if a single condition matches the contending entity, using an additional associated entity.
+         *
+         * @param v1               The contending entity to be evaluated.
+         * @param condition        The single condition to match against.
+         * @param associatedEntity An additional entity that provides context for the matching logic.
+         * @return `true` if the condition is a match, otherwise `false`.
+         */
+        Boolean match(V v1, C condition, F associatedEntity);
     }
 }

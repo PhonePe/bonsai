@@ -69,7 +69,7 @@ public class PathExpression {
         if (filters != null && !filters.isEmpty() &&
                 !filters.stream()
                         .allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine<>(key, () -> context,
-                                genericFilterContext -> true)))) {
+                                genericFilterContext -> true, key)))) {
             return null;
         }
         if (value != null) {

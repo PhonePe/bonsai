@@ -57,8 +57,8 @@ public class JsonPathFilterEvaluationEngineTest {
 
     private DocumentContext mockDocumentContext;
     private JsonEvalContext mockContext;
-    private Predicate<GenericFilterContext<JsonEvalContext>> mockGenericFilterHandler;
-    private JsonPathFilterEvaluationEngine<JsonEvalContext> engine;
+    private Predicate<GenericFilterContext<JsonEvalContext, String>> mockGenericFilterHandler;
+    private JsonPathFilterEvaluationEngine<JsonEvalContext, String> engine;
 
     @BeforeEach
     @SuppressWarnings("unchecked")
@@ -71,7 +71,7 @@ public class JsonPathFilterEvaluationEngineTest {
         Mockito.when(mockContext.documentContext()).thenReturn(mockDocumentContext);
         Mockito.when(mockContext.id()).thenReturn("test-id");
         
-        engine = new JsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler);
+        engine = new JsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler, "key");
     }
 
     @Test

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ConditionEnginesTest {
 
-    private ConditionEngine<Void, TestCondition> trueConditionEngine;
+    private ConditionEngine<Void, TestCondition, String> trueConditionEngine;
     private TestCondition condition1;
     private TestCondition condition2;
     private List<TestCondition> conditions;
@@ -100,6 +100,57 @@ class ConditionEnginesTest {
         // Should return the first live condition
         assertTrue(result.isPresent());
         assertEquals(liveCondition, result.get());
+    }
+
+    /**
+     * Verifies that the 3-argument match overload also always returns true for a live condition.
+     */
+    @Test
+    void testTrueConditionEngineMatchWithAssociatedEntity() {
+        // Test that TrueConditionEngine always returns true, ignoring the associated entity.
+        assertTrue(trueConditionEngine.match(null, condition1, "any-key"));
+        assertTrue(trueConditionEngine.match(null, condition2, "another-key"));
+    }
+
+    /**
+     * Verifies the list-based match overload with an associated entity returns the first live condition.
+     */
+    @Test
+    void testTrueConditionEngineMatchWithListAndAssociatedEntity() {
+        // Test match with a list and an associated entity.
+        Optional<TestCondition> result = trueConditionEngine.match(null, conditions, "any-key");
+
+        // Should still return the first live condition, ignoring the key.
+        assertTrue(result.isPresent());
+        assertEquals(condition1, result.get());
+    }
+
+    /**
+     * Verifies that passing an associated entity to an empty list still results in an empty optional.
+     */
+    @Test
+    void testTrueConditionEngineMatchWithEmptyListAndAssociatedEntity() {
+        // Test match with an empty list and an associated entity.
+        Optional<TestCondition> result = trueConditionEngine.match(null, Collections.emptyList(), "any-key");
+
+        // Should return an empty Optional for an empty list.
+        assertFalse(result.isPresent());
+    }
+
+    /**
+     * Verifies that a non-live condition is not matched, even when an associated entity is present.
+     */
+    @Test
+    void testTrueConditionEngineWithNonLiveConditionAndAssociatedEntity() {
+        // Create a non-live condition.
+        TestCondition nonLiveCondition = new TestCondition(false, 100f);
+        List<TestCondition> list = Collections.singletonList(nonLiveCondition);
+
+        // Test match with a non-live condition and an associated entity.
+        Optional<TestCondition> result = trueConditionEngine.match(null, list, "any-key");
+
+        // Should return an empty Optional since the only condition is not live.
+        assertFalse(result.isPresent());
     }
 
     // Test implementation of Condition
