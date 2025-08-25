@@ -75,7 +75,6 @@ class MatcherTest {
 
             @Override
             public Boolean match(String value, TestCondition condition, String associatedEntity) {
-                // New logic for the test: match now also depends on the associatedEntity
                 boolean keyIsValid = "valid_key".equals(associatedEntity);
                 return value.length() > 5 && condition.isLive() && keyIsValid;
             }
@@ -145,7 +144,6 @@ class MatcherTest {
 
     @Test
     void testConditionalMatcherWithAssociatedEntity_Success() {
-        // Test with a value and key that both match the new logic
         Optional<TestCondition> result = conditionalMatcher.match("test string", conditions, "valid_key");
 
         assertTrue(result.isPresent());

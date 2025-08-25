@@ -80,7 +80,7 @@ public class Matcher {
 
         /**
          * Tries to match a contending entity against a list of conditions, using an additional associated entity for more complex filtering.
-         * This allows for nuanced logic where the match criteria might depend on both the primary entity and some other contextual data (e.g., using an evaluation key for uniform sampling).
+         * This allows for nuanced logic where the match criteria might depend on both the primary entity and some other contextual data.
          *
          * @param v1               The contending entity to be evaluated.
          * @param conditionList       A list of conditions to match against.

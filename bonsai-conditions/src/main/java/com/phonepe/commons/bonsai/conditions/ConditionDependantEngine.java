@@ -25,5 +25,5 @@ public abstract class ConditionDependantEngine<C extends Condition> extends Cond
     }
 
     @Override
-    public Boolean match(Void entity, C c, Void context ) {return match(c);}
+    public Boolean match(Void entity, C c, Void context) {return match(c);}
 }

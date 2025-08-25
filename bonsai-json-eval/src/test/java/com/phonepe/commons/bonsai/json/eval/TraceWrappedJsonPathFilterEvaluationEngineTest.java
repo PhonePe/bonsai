@@ -363,7 +363,6 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
 
     @Test
     void testVisitGenericFilter_WithAssociatedEntity() {
-        // Arrange: Create an engine instance with a specific associatedEntity.
         String testKey = "my-special-key";
         TraceWrappedJsonPathFilterEvaluationEngine<JsonEvalContext, String> engineWithKey =
                 new TraceWrappedJsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler, testKey);
@@ -373,11 +372,9 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
         Mockito.when(mockGenericFilterHandler.test(any(GenericFilterContext.class)))
                 .thenReturn(true);
 
-        // Use an ArgumentCaptor to capture the context passed to the handler.
         ArgumentCaptor<GenericFilterContext<JsonEvalContext, String>> contextCaptor =
                 ArgumentCaptor.forClass(GenericFilterContext.class);
 
-        // Act
         engineWithKey.visit(filter);
 
         // Assert: Verify the handler was called and capture the argument.
