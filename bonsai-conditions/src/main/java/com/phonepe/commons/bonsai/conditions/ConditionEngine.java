@@ -57,14 +57,14 @@ public abstract class ConditionEngine<E, C extends Condition, F> implements Matc
      *
      * @param entity        contender
      * @param conditions condition to be matched
-     * @param associatedEntity An additional entity or piece of context that can be used to provide more nuanced filtering logic.
+     * @param entityMetadata An additional entity or piece of context that can be used to provide more nuanced filtering logic.
      * @return matching criteria
      */
     @Override
-    public Optional<C> match(E entity, final List<C> conditions, F associatedEntity) {
+    public Optional<C> match(E entity, final List<C> conditions, F entityMetadata) {
         return conditions.stream()
                 .filter(condition -> condition.isLive() && (RANDOM_MATCHER.match(condition.getPercentage()) && match(
-                        entity, condition, associatedEntity)))
+                        entity, condition, entityMetadata)))
                 .findFirst();
     }
 

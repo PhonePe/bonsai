@@ -52,8 +52,8 @@ public class TraceWrappedJsonPathFilterEvaluationEngine<C extends JsonEvalContex
 
     public TraceWrappedJsonPathFilterEvaluationEngine(String entityId, C context,
                                                       Predicate<GenericFilterContext<C, F>> genericFilterHandler,
-                                                      F associatedEntity) {
-        super(entityId, context, genericFilterHandler, associatedEntity);
+                                                      F entityMetadata) {
+        super(entityId, context, genericFilterHandler, entityMetadata);
     }
 
     @Override

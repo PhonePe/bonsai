@@ -84,19 +84,19 @@ public class Matcher {
          *
          * @param v1               The contending entity to be evaluated.
          * @param conditionList       A list of conditions to match against.
-         * @param associatedEntity An additional entity that provides context for the matching logic.
+         * @param entityMetadata An additional entity that provides context for the matching logic.
          * @return An Optional containing the first matching condition, or an empty Optional if no match is found.
          */
-        Optional<C> match(V v1, List<C> conditionList, F associatedEntity);
+        Optional<C> match(V v1, List<C> conditionList, F entityMetadata);
 
         /**
          * Checks if a single condition matches the contending entity, using an additional associated entity.
          *
          * @param v1               The contending entity to be evaluated.
          * @param condition        The single condition to match against.
-         * @param associatedEntity An additional entity that provides context for the matching logic.
+         * @param entityMetadata An additional entity that provides context for the matching logic.
          * @return `true` if the condition is a match, otherwise `false`.
          */
-        Boolean match(V v1, C condition, F associatedEntity);
+        Boolean match(V v1, C condition, F entityMetadata);
     }
 }

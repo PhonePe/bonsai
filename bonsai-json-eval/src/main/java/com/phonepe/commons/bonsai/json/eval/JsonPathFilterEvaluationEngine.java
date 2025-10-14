@@ -71,7 +71,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext, F> implem
 
     private final Predicate<GenericFilterContext<C, F>> genericFilterHandler;
 
-    private final F associatedEntity;
+    private final F entityMetadata;
 
     @Override
     public Boolean visit(ContainsFilter filter) {
@@ -203,7 +203,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext, F> implem
 
     @Override
     public Boolean visit(GenericFilter filter) {
-        final GenericFilterContext<C, F> genericFilterContext = new GenericFilterContext<>(filter, context, associatedEntity);
+        final GenericFilterContext<C, F> genericFilterContext = new GenericFilterContext<>(filter, context, entityMetadata);
         return genericFilterHandler.test(genericFilterContext);
     }
 

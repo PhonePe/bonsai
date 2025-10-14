@@ -25,5 +25,5 @@ import lombok.Data;
 public class GenericFilterContext<C extends JsonEvalContext, F> {
     private GenericFilter genericFilter;
     private C context;
-    private F associatedEntity;
+    private F entityMetadata;
 }
