@@ -106,7 +106,7 @@ class ConditionEnginesTest {
      * Verifies that the 3-argument match overload also always returns true for a live condition.
      */
     @Test
-    void testTrueConditionEngineMatchWithAssociatedEntity() {
+    void testTrueConditionEngineMatchWithEntityMetadata() {
         // Test that TrueConditionEngine always returns true, ignoring the associated entity.
         assertTrue(trueConditionEngine.match(null, condition1, "any-key"));
         assertTrue(trueConditionEngine.match(null, condition2, "another-key"));
@@ -116,7 +116,7 @@ class ConditionEnginesTest {
      * Verifies the list-based match overload with an associated entity returns the first live condition.
      */
     @Test
-    void testTrueConditionEngineMatchWithListAndAssociatedEntity() {
+    void testTrueConditionEngineMatchWithListAndEntityMetadata() {
         // Test match with a list and an associated entity.
         Optional<TestCondition> result = trueConditionEngine.match(null, conditions, "any-key");
 
@@ -129,7 +129,7 @@ class ConditionEnginesTest {
      * Verifies that passing an associated entity to an empty list still results in an empty optional.
      */
     @Test
-    void testTrueConditionEngineMatchWithEmptyListAndAssociatedEntity() {
+    void testTrueConditionEngineMatchWithEmptyListAndEntityMetadata() {
         // Test match with an empty list and an associated entity.
         Optional<TestCondition> result = trueConditionEngine.match(null, Collections.emptyList(), "any-key");
 
@@ -141,7 +141,7 @@ class ConditionEnginesTest {
      * Verifies that a non-live condition is not matched, even when an associated entity is present.
      */
     @Test
-    void testTrueConditionEngineWithNonLiveConditionAndAssociatedEntity() {
+    void testTrueConditionEngineWithNonLiveConditionAndEntityMetadata() {
         // Create a non-live condition.
         TestCondition nonLiveCondition = new TestCondition(false, 100f);
         List<TestCondition> list = Collections.singletonList(nonLiveCondition);

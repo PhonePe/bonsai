@@ -67,15 +67,15 @@ class MatcherTest {
             }
 
             @Override
-            public Optional<TestCondition> match(String value, List<TestCondition> conditionList, String associatedEntity) {
+            public Optional<TestCondition> match(String value, List<TestCondition> conditionList, String entityMetadata) {
                 return conditionList.stream()
-                        .filter(condition -> match(value, condition, associatedEntity))
+                        .filter(condition -> match(value, condition, entityMetadata))
                         .findFirst();
             }
 
             @Override
-            public Boolean match(String value, TestCondition condition, String associatedEntity) {
-                boolean keyIsValid = "valid_key".equals(associatedEntity);
+            public Boolean match(String value, TestCondition condition, String entityMetadata) {
+                boolean keyIsValid = "valid_key".equals(entityMetadata);
                 return value.length() > 5 && condition.isLive() && keyIsValid;
             }
         };
@@ -143,7 +143,7 @@ class MatcherTest {
     }
 
     @Test
-    void testConditionalMatcherWithAssociatedEntity_Success() {
+    void testConditionalMatcherWithEntityMetadata_Success() {
         Optional<TestCondition> result = conditionalMatcher.match("test string", conditions, "valid_key");
 
         assertTrue(result.isPresent());
@@ -151,17 +151,17 @@ class MatcherTest {
     }
 
     @Test
-    void testConditionalMatcherWithAssociatedEntity_Failure() {
+    void testConditionalMatcherWithEntityMetadata_Failure() {
         // Test with a valid value but an invalid key
         Optional<TestCondition> result = conditionalMatcher.match("test string", conditions, "invalid_key");
 
-        // Should fail because the associatedEntity doesn't match
+        // Should fail because the entityMetadata doesn't match
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testConditionalMatcherDirectMatchWithAssociatedEntity() {
-        // Test the direct boolean-returning match method with the associatedEntity
+    void testConditionalMatcherDirectMatchWithEntityMetadata() {
+        // Test the direct boolean-returning match method with the entityMetadata
         assertTrue(conditionalMatcher.match("a long enough string", condition1, "valid_key"));
         assertFalse(conditionalMatcher.match("a long enough string", condition1, "invalid_key"));
         assertFalse(conditionalMatcher.match("short", condition1, "valid_key"));

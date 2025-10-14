@@ -362,7 +362,7 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
     }
 
     @Test
-    void testVisitGenericFilter_WithAssociatedEntity() {
+    void testVisitGenericFilter_WithEntityMetadata() {
         String testKey = "my-special-key";
         TraceWrappedJsonPathFilterEvaluationEngine<JsonEvalContext, String> engineWithKey =
                 new TraceWrappedJsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler, testKey);
@@ -380,7 +380,7 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
         // Assert: Verify the handler was called and capture the argument.
         Mockito.verify(mockGenericFilterHandler).test(contextCaptor.capture());
 
-        // Check that the captured context contains the correct associatedEntity.
-        Assertions.assertEquals(testKey, contextCaptor.getValue().getAssociatedEntity());
+        // Check that the captured context contains the correct entityMetadata.
+        Assertions.assertEquals(testKey, contextCaptor.getValue().getEntityMetadata());
     }
 }

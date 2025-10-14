@@ -63,15 +63,15 @@ public class JsonPathEvaluationTest {
     }
 
     @Test
-    void testJsonPathEval_WithAssociatedEntity() throws IOException {
+    void testJsonPathEval_WithEntityMetadata() throws IOException {
         JsonPathSetup.setup();
         Map<String, Object> object = objectExtractor.getObject("sample.json", Map.class);
         GenericFilter genericFilter = new GenericFilter(); // The logic is in the handler.
         String expectedKey = "user-segment-A";
 
-        // 1. Create a handler that checks the associatedEntity.
+        // 1. Create a handler that checks the entityMetadata.
         Predicate<GenericFilterContext<JsonEvalContext, String>> handler =
-                ctx -> expectedKey.equals(ctx.getAssociatedEntity());
+                ctx -> expectedKey.equals(ctx.getEntityMetadata());
 
         // 2. Test the positive case: engine is created with the correct key.
         JsonPathFilterEvaluationEngine<JsonEvalContext, String> evalWithCorrectKey =
@@ -83,7 +83,7 @@ public class JsonPathEvaluationTest {
                 );
 
         boolean result1 = genericFilter.accept(evalWithCorrectKey);
-        Assertions.assertTrue(result1, "Filter should pass when associatedEntity matches.");
+        Assertions.assertTrue(result1, "Filter should pass when entityMetadata matches.");
 
         // 3. Test the negative case: engine is created with an incorrect key.
         JsonPathFilterEvaluationEngine<JsonEvalContext, String> evalWithWrongKey =
@@ -95,6 +95,6 @@ public class JsonPathEvaluationTest {
                 );
 
         boolean result2 = genericFilter.accept(evalWithWrongKey);
-        Assertions.assertFalse(result2, "Filter should fail when associatedEntity does not match.");
+        Assertions.assertFalse(result2, "Filter should fail when entityMetadata does not match.");
     }
 }

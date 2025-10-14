@@ -234,7 +234,7 @@ class ConditionEngineTest {
     }
 
     @Test
-    void testMatchWithAssociatedEntity_ShouldReturnFirstMatchingCondition() {
+    void testMatchWithEntityMetadata_ShouldReturnFirstMatchingCondition() {
         TestCondition condition1 = new TestCondition(true, 100f);
         TestCondition condition2 = new TestCondition(true, 75f);
         List<TestCondition> conditions = Arrays.asList(condition1, condition2);
@@ -263,7 +263,7 @@ class ConditionEngineTest {
         }
 
         @Override
-        public Boolean match(String entity, TestCondition condition, String associatedEntity) {
+        public Boolean match(String entity, TestCondition condition, String entityMetadata) {
             // Default implementation for the new match logic, will be mocked in tests.
             return true;
         }
