@@ -108,7 +108,6 @@
         <maven-javadoc-plugin.version>3.8.0</maven-javadoc-plugin.version>
         <maven.plugin.gpg.version>1.6</maven.plugin.gpg.version>
         <maven.plugin.source.version>3.3.0</maven.plugin.source.version>
-        <maven.sonar.plugin.version>3.9.1.2184</maven.sonar.plugin.version>
 
         <!--lib versions-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
