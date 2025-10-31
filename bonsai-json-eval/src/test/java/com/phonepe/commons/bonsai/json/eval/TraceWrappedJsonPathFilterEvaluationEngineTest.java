@@ -41,6 +41,7 @@ import com.phonepe.commons.query.dsl.string.StringStartsWithFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -55,8 +56,8 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
 
     private DocumentContext mockDocumentContext;
     private JsonEvalContext mockContext;
-    private Predicate<GenericFilterContext<JsonEvalContext>> mockGenericFilterHandler;
-    private TraceWrappedJsonPathFilterEvaluationEngine<JsonEvalContext> engine;
+    private Predicate<GenericFilterContext<JsonEvalContext, String>> mockGenericFilterHandler;
+    private TraceWrappedJsonPathFilterEvaluationEngine<JsonEvalContext, String> engine;
 
     @BeforeEach
     @SuppressWarnings("unchecked")
@@ -343,8 +344,8 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
     @Test
     void testTraceWrappedVsRegularEngine() {
         // Create both engines with the same parameters
-        JsonPathFilterEvaluationEngine<JsonEvalContext> regularEngine = 
-                new JsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler);
+        JsonPathFilterEvaluationEngine<JsonEvalContext, String> regularEngine =
+                new JsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler, "Key");
         
         // Test that both engines return the same result for the same input
         EqualsFilter filter = new EqualsFilter();
@@ -358,5 +359,28 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
         Boolean traceResult = engine.visit(filter);
         
         Assertions.assertEquals(regularResult, traceResult);
+    }
+
+    @Test
+    void testVisitGenericFilter_WithEntityMetadata() {
+        String testKey = "my-special-key";
+        TraceWrappedJsonPathFilterEvaluationEngine<JsonEvalContext, String> engineWithKey =
+                new TraceWrappedJsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler, testKey);
+
+        GenericFilter filter = Mockito.mock(GenericFilter.class);
+
+        Mockito.when(mockGenericFilterHandler.test(any(GenericFilterContext.class)))
+                .thenReturn(true);
+
+        ArgumentCaptor<GenericFilterContext<JsonEvalContext, String>> contextCaptor =
+                ArgumentCaptor.forClass(GenericFilterContext.class);
+
+        engineWithKey.visit(filter);
+
+        // Assert: Verify the handler was called and capture the argument.
+        Mockito.verify(mockGenericFilterHandler).test(contextCaptor.capture());
+
+        // Check that the captured context contains the correct entityMetadata.
+        Assertions.assertEquals(testKey, contextCaptor.getValue().getEntityMetadata());
     }
 }

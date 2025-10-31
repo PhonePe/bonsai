@@ -27,67 +27,78 @@ public class GenericFilterContextTest {
 
     private GenericFilter mockFilter;
     private JsonEvalContext mockContext;
+    private String entityMetadata;
 
     @BeforeEach
     void setUp() {
         mockFilter = Mockito.mock(GenericFilter.class);
         mockContext = Mockito.mock(JsonEvalContext.class);
+        entityMetadata = "test-key";
+
         DocumentContext mockDocumentContext = Mockito.mock(DocumentContext.class);
         Mockito.when(mockContext.documentContext()).thenReturn(mockDocumentContext);
     }
 
     @Test
     void testGenericFilterContextCreation() {
-        GenericFilterContext<JsonEvalContext> context = new GenericFilterContext<>(mockFilter, mockContext);
+        GenericFilterContext<JsonEvalContext, String> context = new GenericFilterContext<>(mockFilter, mockContext, entityMetadata);
         Assertions.assertEquals(mockFilter, context.getGenericFilter());
         Assertions.assertEquals(mockContext, context.getContext());
+        Assertions.assertEquals(entityMetadata, context.getEntityMetadata());
     }
 
     @Test
     void testGenericFilterContextSetters() {
-        GenericFilterContext<JsonEvalContext> context = new GenericFilterContext<>(mockFilter, mockContext);
+        GenericFilterContext<JsonEvalContext, String> context = new GenericFilterContext<>(mockFilter, mockContext, entityMetadata);
         
         GenericFilter newFilter = Mockito.mock(GenericFilter.class);
         JsonEvalContext newContext = Mockito.mock(JsonEvalContext.class);
-        
+        String newEntityMetadata = "new-key";
+
         context.setGenericFilter(newFilter);
         context.setContext(newContext);
+        context.setEntityMetadata(newEntityMetadata);
         
         Assertions.assertEquals(newFilter, context.getGenericFilter());
         Assertions.assertEquals(newContext, context.getContext());
+        Assertions.assertEquals(newEntityMetadata, context.getEntityMetadata());
     }
 
     @Test
     void testGenericFilterContextEquality() {
-        GenericFilterContext<JsonEvalContext> context1 = new GenericFilterContext<>(mockFilter, mockContext);
-        GenericFilterContext<JsonEvalContext> context2 = new GenericFilterContext<>(mockFilter, mockContext);
+        GenericFilterContext<JsonEvalContext, String> context1 = new GenericFilterContext<>(mockFilter, mockContext, entityMetadata);
+        GenericFilterContext<JsonEvalContext, String> context2 = new GenericFilterContext<>(mockFilter, mockContext, entityMetadata);
         
         GenericFilter differentFilter = Mockito.mock(GenericFilter.class);
         JsonEvalContext differentContext = Mockito.mock(JsonEvalContext.class);
-        
-        GenericFilterContext<JsonEvalContext> context3 = new GenericFilterContext<>(differentFilter, mockContext);
-        GenericFilterContext<JsonEvalContext> context4 = new GenericFilterContext<>(mockFilter, differentContext);
+        String differentEntityMetadata = "different-key";
+
+        GenericFilterContext<JsonEvalContext, String> context3 = new GenericFilterContext<>(differentFilter, mockContext,entityMetadata);
+        GenericFilterContext<JsonEvalContext, String> context4 = new GenericFilterContext<>(mockFilter, differentContext, entityMetadata);
+        GenericFilterContext<JsonEvalContext, String> context5 = new GenericFilterContext<>(mockFilter, mockContext, differentEntityMetadata);
         
         Assertions.assertEquals(context1, context2);
         Assertions.assertNotEquals(context1, context3);
         Assertions.assertNotEquals(context1, context4);
+        Assertions.assertNotEquals(context1, context5);
     }
 
     @Test
     void testGenericFilterContextHashCode() {
-        GenericFilterContext<JsonEvalContext> context1 = new GenericFilterContext<>(mockFilter, mockContext);
-        GenericFilterContext<JsonEvalContext> context2 = new GenericFilterContext<>(mockFilter, mockContext);
+        GenericFilterContext<JsonEvalContext, String> context1 = new GenericFilterContext<>(mockFilter, mockContext, entityMetadata);
+        GenericFilterContext<JsonEvalContext, String> context2 = new GenericFilterContext<>(mockFilter, mockContext, entityMetadata);
         
         Assertions.assertEquals(context1.hashCode(), context2.hashCode());
     }
 
     @Test
     void testGenericFilterContextToString() {
-        GenericFilterContext<JsonEvalContext> context = new GenericFilterContext<>(mockFilter, mockContext);
+        GenericFilterContext<JsonEvalContext, String> context = new GenericFilterContext<>(mockFilter, mockContext, entityMetadata);
         String toString = context.toString();
         
         Assertions.assertNotNull(toString);
         Assertions.assertTrue(toString.contains("genericFilter"));
         Assertions.assertTrue(toString.contains("context"));
+        Assertions.assertTrue(toString.contains("entityMetadata"));
     }
 }

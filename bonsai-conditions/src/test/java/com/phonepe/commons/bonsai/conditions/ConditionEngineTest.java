@@ -217,23 +217,15 @@ class ConditionEngineTest {
 
     @Test
     void testMatch() {
-        // Setup test data
         TestCondition condition1 = new TestCondition(true, 100f);
         TestCondition condition2 = new TestCondition(true, 75f);
         TestCondition condition3 = new TestCondition(false, 100f);
         List<TestCondition> conditions = Arrays.asList(condition1, condition2, condition3);
-
-        // Create a test implementation with mock behavior
         TestConditionEngine engineSpy = spy(conditionEngine);
-
-        // Configure the mocked behavior directly
         when(engineSpy.match("test", condition1)).thenReturn(true);
         when(engineSpy.match("test", condition2)).thenReturn(false);
-
-        // Test the match method without modifying RANDOM_MATCHER
         Optional<TestCondition> result = engineSpy.match("test", conditions);
 
-        // Verify correct condition was returned
         assertTrue(result.isPresent());
         assertEquals(condition1, result.get());
 
@@ -241,11 +233,39 @@ class ConditionEngineTest {
         verify(engineSpy, never()).match("test", condition3);
     }
 
+    @Test
+    void testMatchWithEntityMetadata_ShouldReturnFirstMatchingCondition() {
+        TestCondition condition1 = new TestCondition(true, 100f);
+        TestCondition condition2 = new TestCondition(true, 75f);
+        List<TestCondition> conditions = Arrays.asList(condition1, condition2);
+        String testKey = "user_group_A";
+
+        TestConditionEngine engineSpy = spy(conditionEngine);
+
+        when(engineSpy.match("test", condition1, testKey)).thenReturn(true);
+        when(engineSpy.match("test", condition2, testKey)).thenReturn(false);
+
+        Optional<TestCondition> result = engineSpy.match("test", conditions, testKey);
+
+        assertTrue(result.isPresent());
+        assertEquals(condition1, result.get());
+
+        verify(engineSpy).match("test", condition1, testKey);
+
+        verify(engineSpy, never()).match("test", condition1);
+    }
+
     // Test implementation of ConditionEngine for testing
-    private static class TestConditionEngine extends ConditionEngine<String, TestCondition> {
+    private static class TestConditionEngine extends ConditionEngine<String, TestCondition, String> {
         @Override
         public Boolean match(String entity, TestCondition condition) {
             return true; // Default implementation, will be mocked in test
+        }
+
+        @Override
+        public Boolean match(String entity, TestCondition condition, String entityMetadata) {
+            // Default implementation for the new match logic, will be mocked in tests.
+            return true;
         }
     }
 

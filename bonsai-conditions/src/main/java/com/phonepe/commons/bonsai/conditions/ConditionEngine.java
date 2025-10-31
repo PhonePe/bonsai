@@ -30,7 +30,7 @@ import java.util.function.BooleanSupplier;
 /**
  * An abstract conditional matcher, who matches an entity against a list of conditions
  */
-public abstract class ConditionEngine<E, C extends Condition> implements Matcher.ConditionalMatcher<E, C> {
+public abstract class ConditionEngine<E, C extends Condition, F> implements Matcher.ConditionalMatcher<E, C, F> {
 
     /**
      * a random matcher to check applicability of a criteria, which is configured with a percentage
@@ -49,6 +49,22 @@ public abstract class ConditionEngine<E, C extends Condition> implements Matcher
         return conditions.stream()
                 .filter(condition -> condition.isLive() && (RANDOM_MATCHER.match(condition.getPercentage()) && match(
                         entity, condition)))
+                .findFirst();
+    }
+
+    /**
+     * check if the condition matches the contender
+     *
+     * @param entity        contender
+     * @param conditions condition to be matched
+     * @param entityMetadata An additional entity or piece of context that can be used to provide more nuanced filtering logic.
+     * @return matching criteria
+     */
+    @Override
+    public Optional<C> match(E entity, final List<C> conditions, F entityMetadata) {
+        return conditions.stream()
+                .filter(condition -> condition.isLive() && (RANDOM_MATCHER.match(condition.getPercentage()) && match(
+                        entity, condition, entityMetadata)))
                 .findFirst();
     }
 

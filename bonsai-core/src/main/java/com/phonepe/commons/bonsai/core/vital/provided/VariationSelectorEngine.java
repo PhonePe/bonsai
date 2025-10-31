@@ -33,15 +33,15 @@ import java.util.function.Predicate;
  * If so, this {@link Edge} will return true, ie, the Context satisfies the {@link Edge}s criteria
  */
 @Slf4j
-public class VariationSelectorEngine<C extends Context> extends ConditionEngine<C, Edge> {
+public class VariationSelectorEngine<C extends Context> extends ConditionEngine<C, Edge, String> {
 
-    private final Predicate<GenericFilterContext<C>> genericFilterHandler;
+    private final Predicate<GenericFilterContext<C, String>> genericFilterHandler;
 
     public VariationSelectorEngine() {
         this(genericFilterContext -> true);
     }
 
-    public VariationSelectorEngine(Predicate<GenericFilterContext<C>> genericFilterHandler) {
+    public VariationSelectorEngine(Predicate<GenericFilterContext<C, String>> genericFilterHandler) {
         this.genericFilterHandler = genericFilterHandler;
     }
 
@@ -57,12 +57,34 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
         return edge.getFilters()
                 .stream()
                 .allMatch(k -> {
-                    final JsonPathFilterEvaluationEngine<C> filterVisitor = log.isTraceEnabled()
+                    final JsonPathFilterEvaluationEngine<C, String> filterVisitor = log.isTraceEnabled()
                             ?
                             new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
                                     genericFilterHandler)
                             : new JsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
-                            genericFilterHandler);
+                            genericFilterHandler, null);
+                    return k.accept(filterVisitor);
+                });
+    }
+
+    @Override
+    public Boolean match(C context, Edge edge, String associatedKey) {
+        /* in case no document context is passed, we will not match the edge's filters */
+        if (context.getDocumentContext() == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("[bonsai][match][{}] no document context", edge.getEdgeIdentifier().getId());
+            }
+            return false;
+        }
+        return edge.getFilters()
+                .stream()
+                .allMatch(k -> {
+                    final JsonPathFilterEvaluationEngine<C, String> filterVisitor = log.isTraceEnabled()
+                                                                                    ?
+                                                                                    new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
+                                                                                                                                     genericFilterHandler, associatedKey)
+                                                                                    : new JsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
+                                                                                                                           genericFilterHandler, associatedKey);
                     return k.accept(filterVisitor);
                 });
     }

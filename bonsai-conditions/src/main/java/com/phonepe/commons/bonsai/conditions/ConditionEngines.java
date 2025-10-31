@@ -22,14 +22,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConditionEngines {
 
-    public static class TrueConditionEngine<C extends Condition> extends ConditionEngine<Void, C> {
+    public static class TrueConditionEngine<C extends Condition, F> extends ConditionEngine<Void, C, F> {
         @Override
         public Boolean match(Void v1, C c) {
             return true;
         }
+
+        @Override
+        public Boolean match(Void v1, C c, F v2) {
+            return true;
+        }
     }
 
-    public static <C extends Condition> ConditionEngine<Void, C> trueConditionEngine() {
+    public static <C extends Condition, F> ConditionEngine<Void, C, F> trueConditionEngine() {
         return new TrueConditionEngine<>();
     }
 }

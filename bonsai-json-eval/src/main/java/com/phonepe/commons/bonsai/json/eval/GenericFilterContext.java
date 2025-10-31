@@ -22,7 +22,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class GenericFilterContext<C extends JsonEvalContext> {
+public class GenericFilterContext<C extends JsonEvalContext, F> {
     private GenericFilter genericFilter;
     private C context;
+    private F entityMetadata;
 }

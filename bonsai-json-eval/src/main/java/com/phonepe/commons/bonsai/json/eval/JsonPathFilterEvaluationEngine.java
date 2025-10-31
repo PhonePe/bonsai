@@ -56,7 +56,7 @@ import java.util.function.Predicate;
  */
 @Slf4j
 @AllArgsConstructor
-public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implements FilterVisitor<Boolean> {
+public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext, F> implements FilterVisitor<Boolean> {
 
     public static final String BONSAI_FILTER_VALUES_DOCUMENT_LOG_STR = "[bonsai][{}] filter:{} values:{} document:{}";
     private static final TypeRef<List<Number>> NUMBER_TYPE_REF = new TypeRef<>() {
@@ -69,7 +69,9 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
 
     protected final C context;
 
-    private final Predicate<GenericFilterContext<C>> genericFilterHandler;
+    private final Predicate<GenericFilterContext<C, F>> genericFilterHandler;
+
+    private final F entityMetadata;
 
     @Override
     public Boolean visit(ContainsFilter filter) {
@@ -201,7 +203,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext> implement
 
     @Override
     public Boolean visit(GenericFilter filter) {
-        final GenericFilterContext<C> genericFilterContext = new GenericFilterContext<>(filter, context);
+        final GenericFilterContext<C, F> genericFilterContext = new GenericFilterContext<>(filter, context, entityMetadata);
         return genericFilterHandler.test(genericFilterContext);
     }
 
