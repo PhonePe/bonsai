@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>bonsai-conditions</artifactId>
+    <name>Condition Engine and Matchers</name>
 
     <dependencies>
         <dependency>

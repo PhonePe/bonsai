@@ -8,6 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>bonsai-json-eval</artifactId>
+    <name>Bonsai's JSON based evaluation Engine</name>
 
     <properties>
         <json-path.version>2.9.0</json-path.version>

@@ -8,6 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>bonsai-models</artifactId>
+    <name>Bonsai Models</name>
 
     <properties>
         <validation-api.version>2.0.1.Final</validation-api.version>
