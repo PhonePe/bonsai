@@ -10,6 +10,7 @@
     <url>https://github.com/PhonePe/bonsai</url>
     <description>Bonsai Rule Engine</description>
     <inceptionYear>2025</inceptionYear>
+    <name>Bonsai Rule Engine</name>
 
     <scm>
         <connection>scm:git:https://github.com/PhonePe/bonsai.git</connection>
