@@ -58,6 +58,22 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
         this.bonsaiProperties = bonsaiProperties;
     }
 
+    /**
+     * Check if mutual exclusivity is enabled for a given TreeKnot.
+     * TreeKnot-level setting takes precedence over global BonsaiProperties setting.
+     *
+     * @param treeKnot The TreeKnot to check
+     * @return true if mutual exclusivity is enabled, false otherwise
+     */
+    private boolean isMutualExclusivityEnabled(TreeKnot treeKnot) {
+        // TreeKnot-level setting takes precedence
+        if (treeKnot != null && treeKnot.getMutualExclusivityEnabled() != null) {
+            return treeKnot.getMutualExclusivityEnabled();
+        }
+        // Fall back to global BonsaiProperties setting
+        return bonsaiProperties.isMutualExclusivitySettingTurnedOn();
+    }
+
     private static <T> void checkNotNull(T reference, String fieldName) {
         if (reference == null) {
             throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT, ERROR_FIELD_STR.formatted(fieldName));
@@ -244,12 +260,16 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
 
         }
 
-        traverseAndValidateTree(treeKnot, rootKnotDataType, rootKnotValueType);
+        // Get mutual exclusivity setting from root TreeKnot (applies to entire tree)
+        final boolean mutualExclusivityEnabled = isMutualExclusivityEnabled(treeKnot);
+
+        traverseAndValidateTree(treeKnot, rootKnotDataType, rootKnotValueType, mutualExclusivityEnabled);
     }
 
     private void traverseAndValidateTree(final TreeKnot treeKnot,
                                          final KnotData.KnotDataType rootKnotDataType,
-                                         final Value.ValueType rootKnotValueType) {
+                                         final Value.ValueType rootKnotValueType,
+                                         final boolean mutualExclusivityEnabled) {
         checkNotNull(treeKnot, "TreeKnot can't be null");
         checkNotNull(treeKnot.getId(), "TreeKnot:Id can't be null");
         checkNotNull(treeKnot.getKnotData(), "TreeKnot:KnotData can't be null");
@@ -287,7 +307,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
                     BonsaiErrorCode.MAX_CONDITIONS_EXCEEDED,
                     String.format("TreeEdge:Filters exceed max allowed count: %d.",
                             bonsaiProperties.getMaxAllowedConditionsPerEdge()));
-            if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
+            if (mutualExclusivityEnabled) {
                 final Set<String> allFields = filters.stream()
                         .map(filter -> filter.accept(new FilterFieldIdentifier()))
                         .reduce(Stream::concat)
@@ -301,7 +321,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
             allDirectFilters.addAll(treeEdge.getFilters());
         }
 
-        if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
+        if (mutualExclusivityEnabled) {
             final Set<String> allFields = allDirectFilters.stream()
                     .map(filter -> filter.accept(new FilterFieldIdentifier()))
                     .reduce(Stream::concat)
@@ -316,7 +336,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
         /* Recursively Iterate */
         for (TreeEdge treeEdge : treeEdgeList) {
             final TreeKnot innerTreeKnot = treeEdge.getTreeKnot();
-            traverseAndValidateTree(innerTreeKnot, rootKnotDataType, rootKnotValueType);
+            traverseAndValidateTree(innerTreeKnot, rootKnotDataType, rootKnotValueType, mutualExclusivityEnabled);
         }
     }
 

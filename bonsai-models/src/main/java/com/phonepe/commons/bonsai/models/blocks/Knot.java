@@ -16,6 +16,7 @@
 
 package com.phonepe.commons.bonsai.models.blocks;
 
+import com.phonepe.commons.bonsai.models.BonsaiConstants;
 import com.phonepe.commons.bonsai.models.data.KnotData;
 import com.phonepe.commons.bonsai.models.structures.OrderedList;
 import lombok.Builder;
@@ -75,6 +76,41 @@ public class Knot {
                 .knotData(this.knotData)
                 .properties(this.properties)
                 .build();
+    }
+
+    /**
+     * Get mutual exclusivity setting from properties map.
+     * @return Boolean value if set, null if not specified
+     */
+    @javax.annotation.Nullable
+    public Boolean getMutualExclusivityEnabled() {
+        if (properties == null) {
+            return null;
+        }
+        Object value = properties.get(BonsaiConstants.MUTUAL_EXCLUSIVITY_PROPERTY);
+        if (value instanceof Boolean booleanValue) {
+            return booleanValue;
+        }
+        return null;
+    }
+
+    /**
+     * Set mutual exclusivity setting in properties map.
+     * @param enabled true to enable mutual exclusivity, false to disable, null to remove the setting
+     */
+    public void setMutualExclusivityEnabled(Boolean enabled) {
+        if (properties == null) {
+            if (enabled != null) {
+                this.properties = new java.util.HashMap<>();
+                properties.put(BonsaiConstants.MUTUAL_EXCLUSIVITY_PROPERTY, enabled);
+            }
+        } else {
+            if (enabled != null) {
+                properties.put(BonsaiConstants.MUTUAL_EXCLUSIVITY_PROPERTY, enabled);
+            } else {
+                properties.remove(BonsaiConstants.MUTUAL_EXCLUSIVITY_PROPERTY);
+            }
+        }
     }
 
 }

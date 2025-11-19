@@ -18,6 +18,7 @@ package com.phonepe.commons.bonsai.core.vital;
 
 import com.phonepe.commons.bonsai.core.exception.BonsaiError;
 import com.phonepe.commons.bonsai.core.exception.BonsaiErrorCode;
+import com.phonepe.commons.bonsai.models.BonsaiConstants;
 import com.phonepe.commons.bonsai.models.blocks.Edge;
 import com.phonepe.commons.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.commons.bonsai.models.blocks.Knot;
@@ -867,6 +868,333 @@ class ComponentBonsaiTreeValidatorTest {
         } catch (BonsaiError e) {
             Assertions.assertEquals(BonsaiErrorCode.MAX_VARIATIONS_EXCEEDED, e.getErrorCode());
         }
+    }
+
+    @Test
+    void Given_TreeKnotWithMutualExclusivityEnabled_When_GlobalSettingOff_ThenEnforceMutualExclusivity() {
+        // Global setting is OFF
+        final ComponentBonsaiTreeValidator validator =
+                getComponentBonsaiTreeValidator(Integer.MAX_VALUE, Integer.MAX_VALUE, false);
+
+        final ValuedKnotData leafKnotData = ValuedKnotData.builder()
+                .value(new StringValue("leaf value"))
+                .build();
+        final TreeKnot leafTreeKnot = TreeKnot.builder()
+                .id("leafKnotId")
+                .knotData(leafKnotData)
+                .build();
+
+        // Create edge with multiple fields (fieldOne and fieldTwo)
+        final List<Filter> filters = new ArrayList<>();
+        filters.add(new EqualsFilter("fieldOne", "valueOne"));
+        filters.add(new NotEqualsFilter("fieldTwo", "valueTwo"));
+        final TreeEdge treeEdge = TreeEdge.builder()
+                .edgeIdentifier(new EdgeIdentifier("edgeId", 1, 1))
+                .filters(filters)
+                .treeKnot(leafTreeKnot)
+                .build();
+
+        final ValuedKnotData valuedKnotData = ValuedKnotData.builder()
+                .value(new StringValue("root value"))
+                .build();
+        final List<TreeEdge> treeEdges = new ArrayList<>();
+        treeEdges.add(treeEdge);
+
+        // Create root TreeKnot with mutual exclusivity ENABLED
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(BonsaiConstants.MUTUAL_EXCLUSIVITY_PROPERTY, true);
+        final TreeKnot rootTreeKnot = TreeKnot.builder()
+                .id("rootKnotId")
+                .treeEdges(treeEdges)
+                .knotData(valuedKnotData)
+                .properties(properties)
+                .build();
+
+        // Should throw error because TreeKnot has mutual exclusivity enabled
+        BonsaiError error = assertThrows(BonsaiError.class, () -> validator.validate(rootTreeKnot));
+        Assertions.assertEquals(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR, error.getErrorCode());
+    }
+
+    @Test
+    void Given_TreeKnotWithMutualExclusivityDisabled_When_GlobalSettingOn_ThenAllowMultipleFields() {
+        // Global setting is ON
+        final ComponentBonsaiTreeValidator validator =
+                getComponentBonsaiTreeValidator(Integer.MAX_VALUE, Integer.MAX_VALUE, true);
+
+        final ValuedKnotData leafKnotData = ValuedKnotData.builder()
+                .value(new StringValue("leaf value"))
+                .build();
+        final TreeKnot leafTreeKnot = TreeKnot.builder()
+                .id("leafKnotId")
+                .knotData(leafKnotData)
+                .build();
+
+        // Create edge with multiple fields (fieldOne and fieldTwo)
+        final List<Filter> filters = new ArrayList<>();
+        filters.add(new EqualsFilter("fieldOne", "valueOne"));
+        filters.add(new NotEqualsFilter("fieldTwo", "valueTwo"));
+        final TreeEdge treeEdge = TreeEdge.builder()
+                .edgeIdentifier(new EdgeIdentifier("edgeId", 1, 1))
+                .filters(filters)
+                .treeKnot(leafTreeKnot)
+                .build();
+
+        final ValuedKnotData valuedKnotData = ValuedKnotData.builder()
+                .value(new StringValue("root value"))
+                .build();
+        final List<TreeEdge> treeEdges = new ArrayList<>();
+        treeEdges.add(treeEdge);
+
+        // Create root TreeKnot with mutual exclusivity DISABLED
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(BonsaiConstants.MUTUAL_EXCLUSIVITY_PROPERTY, false);
+        final TreeKnot rootTreeKnot = TreeKnot.builder()
+                .id("rootKnotId")
+                .treeEdges(treeEdges)
+                .knotData(valuedKnotData)
+                .properties(properties)
+                .build();
+
+        // Should NOT throw error because TreeKnot overrides global setting
+        validator.validate(rootTreeKnot);
+        Assertions.assertNotNull(rootTreeKnot);
+    }
+
+    @Test
+    void Given_TreeKnotWithoutMutualExclusivitySetting_When_GlobalSettingOn_ThenUseGlobalSetting() {
+        // Global setting is ON
+        final ComponentBonsaiTreeValidator validator =
+                getComponentBonsaiTreeValidator(Integer.MAX_VALUE, Integer.MAX_VALUE, true);
+
+        final ValuedKnotData leafKnotData = ValuedKnotData.builder()
+                .value(new StringValue("leaf value"))
+                .build();
+        final TreeKnot leafTreeKnot = TreeKnot.builder()
+                .id("leafKnotId")
+                .knotData(leafKnotData)
+                .build();
+
+        // Create edge with multiple fields (fieldOne and fieldTwo)
+        final List<Filter> filters = new ArrayList<>();
+        filters.add(new EqualsFilter("fieldOne", "valueOne"));
+        filters.add(new NotEqualsFilter("fieldTwo", "valueTwo"));
+        final TreeEdge treeEdge = TreeEdge.builder()
+                .edgeIdentifier(new EdgeIdentifier("edgeId", 1, 1))
+                .filters(filters)
+                .treeKnot(leafTreeKnot)
+                .build();
+
+        final ValuedKnotData valuedKnotData = ValuedKnotData.builder()
+                .value(new StringValue("root value"))
+                .build();
+        final List<TreeEdge> treeEdges = new ArrayList<>();
+        treeEdges.add(treeEdge);
+
+        // Create root TreeKnot WITHOUT mutual exclusivity setting (should use global)
+        final TreeKnot rootTreeKnot = TreeKnot.builder()
+                .id("rootKnotId")
+                .treeEdges(treeEdges)
+                .knotData(valuedKnotData)
+                .build();
+
+        // Should throw error because global setting is ON
+        BonsaiError error = assertThrows(BonsaiError.class, () -> validator.validate(rootTreeKnot));
+        Assertions.assertEquals(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR, error.getErrorCode());
+    }
+
+    @Test
+    void Given_TreeKnotWithMutualExclusivityEnabled_When_TwoEdgesWithDifferentFields_ThenThrowError() {
+        // Global setting is OFF
+        final ComponentBonsaiTreeValidator validator =
+                getComponentBonsaiTreeValidator(Integer.MAX_VALUE, Integer.MAX_VALUE, false);
+
+        final ValuedKnotData leafKnotDataOne = ValuedKnotData.builder()
+                .value(new StringValue("leaf value one"))
+                .build();
+        final TreeKnot leafTreeKnotOne = TreeKnot.builder()
+                .id("leafKnotId1")
+                .knotData(leafKnotDataOne)
+                .build();
+
+        final ValuedKnotData leafKnotDataTwo = ValuedKnotData.builder()
+                .value(new StringValue("leaf value two"))
+                .build();
+        final TreeKnot leafTreeKnotTwo = TreeKnot.builder()
+                .id("leafKnotId2")
+                .knotData(leafKnotDataTwo)
+                .build();
+
+        // Edge One with fieldOne
+        final List<Filter> filtersOne = new ArrayList<>();
+        filtersOne.add(new EqualsFilter("fieldOne", "valueOne"));
+        final TreeEdge treeEdgeOne = TreeEdge.builder()
+                .edgeIdentifier(new EdgeIdentifier("edgeId1", 1, 1))
+                .filters(filtersOne)
+                .treeKnot(leafTreeKnotOne)
+                .build();
+
+        // Edge Two with fieldTwo (different field!)
+        final List<Filter> filtersTwo = new ArrayList<>();
+        filtersTwo.add(new EqualsFilter("fieldTwo", "valueTwo"));
+        final TreeEdge treeEdgeTwo = TreeEdge.builder()
+                .edgeIdentifier(new EdgeIdentifier("edgeId2", 2, 2))
+                .filters(filtersTwo)
+                .treeKnot(leafTreeKnotTwo)
+                .build();
+
+        final ValuedKnotData valuedKnotData = ValuedKnotData.builder()
+                .value(new StringValue("root value"))
+                .build();
+        final List<TreeEdge> treeEdges = new ArrayList<>();
+        treeEdges.add(treeEdgeOne);
+        treeEdges.add(treeEdgeTwo);
+
+        // Create root TreeKnot with mutual exclusivity ENABLED
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(BonsaiConstants.MUTUAL_EXCLUSIVITY_PROPERTY, true);
+        final TreeKnot rootTreeKnot = TreeKnot.builder()
+                .id("rootKnotId")
+                .treeEdges(treeEdges)
+                .knotData(valuedKnotData)
+                .properties(properties)
+                .build();
+
+        // Should throw error because edges use different fields
+        BonsaiError error = assertThrows(BonsaiError.class, () -> validator.validate(rootTreeKnot));
+        Assertions.assertEquals(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR, error.getErrorCode());
+    }
+
+    @Test
+    void Given_TreeKnotWithMutualExclusivityDisabled_When_TwoEdgesWithDifferentFields_ThenPass() {
+        // Global setting is ON (but TreeKnot will override)
+        final ComponentBonsaiTreeValidator validator =
+                getComponentBonsaiTreeValidator(Integer.MAX_VALUE, Integer.MAX_VALUE, true);
+
+        final ValuedKnotData leafKnotDataOne = ValuedKnotData.builder()
+                .value(new StringValue("leaf value one"))
+                .build();
+        final TreeKnot leafTreeKnotOne = TreeKnot.builder()
+                .id("leafKnotId1")
+                .knotData(leafKnotDataOne)
+                .build();
+
+        final ValuedKnotData leafKnotDataTwo = ValuedKnotData.builder()
+                .value(new StringValue("leaf value two"))
+                .build();
+        final TreeKnot leafTreeKnotTwo = TreeKnot.builder()
+                .id("leafKnotId2")
+                .knotData(leafKnotDataTwo)
+                .build();
+
+        // Edge One with fieldOne
+        final List<Filter> filtersOne = new ArrayList<>();
+        filtersOne.add(new EqualsFilter("fieldOne", "valueOne"));
+        final TreeEdge treeEdgeOne = TreeEdge.builder()
+                .edgeIdentifier(new EdgeIdentifier("edgeId1", 1, 1))
+                .filters(filtersOne)
+                .treeKnot(leafTreeKnotOne)
+                .build();
+
+        // Edge Two with fieldTwo (different field!)
+        final List<Filter> filtersTwo = new ArrayList<>();
+        filtersTwo.add(new EqualsFilter("fieldTwo", "valueTwo"));
+        final TreeEdge treeEdgeTwo = TreeEdge.builder()
+                .edgeIdentifier(new EdgeIdentifier("edgeId2", 2, 2))
+                .filters(filtersTwo)
+                .treeKnot(leafTreeKnotTwo)
+                .build();
+
+        final ValuedKnotData valuedKnotData = ValuedKnotData.builder()
+                .value(new StringValue("root value"))
+                .build();
+        final List<TreeEdge> treeEdges = new ArrayList<>();
+        treeEdges.add(treeEdgeOne);
+        treeEdges.add(treeEdgeTwo);
+
+        // Create root TreeKnot with mutual exclusivity DISABLED
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(BonsaiConstants.MUTUAL_EXCLUSIVITY_PROPERTY, false);
+        final TreeKnot rootTreeKnot = TreeKnot.builder()
+                .id("rootKnotId")
+                .treeEdges(treeEdges)
+                .knotData(valuedKnotData)
+                .properties(properties)
+                .build();
+
+        // Should NOT throw error because TreeKnot has mutual exclusivity disabled
+        validator.validate(rootTreeKnot);
+        Assertions.assertNotNull(rootTreeKnot);
+    }
+
+    @Test
+    void Given_RootTreeKnotWithMutualExclusivityEnabled_When_ChildTreeKnotHasDifferentSetting_ThenChildInheritsFromRoot() {
+        // Global setting is OFF
+        final ComponentBonsaiTreeValidator validator =
+                getComponentBonsaiTreeValidator(Integer.MAX_VALUE, Integer.MAX_VALUE, false);
+
+        // Create a child knot that attempts to override mutual exclusivity to false
+        final Map<String, Object> childProperties = new HashMap<>();
+        childProperties.put(BonsaiConstants.MUTUAL_EXCLUSIVITY_PROPERTY, false);
+
+        final ValuedKnotData childLeafKnotData = ValuedKnotData.builder()
+                .value(new StringValue("child leaf value"))
+                .build();
+        final TreeKnot childLeafKnot = TreeKnot.builder()
+                .id("childLeafKnotId")
+                .knotData(childLeafKnotData)
+                .properties(childProperties)
+                .build();
+
+        // Create child edge with multiple fields (should fail because root has mutual exclusivity ON)
+        final List<Filter> childFilters = new ArrayList<>();
+        childFilters.add(new EqualsFilter("fieldOne", "valueOne"));
+        childFilters.add(new NotEqualsFilter("fieldTwo", "valueTwo"));
+        final TreeEdge childTreeEdge = TreeEdge.builder()
+                .edgeIdentifier(new EdgeIdentifier("childEdgeId", 1, 1))
+                .filters(childFilters)
+                .treeKnot(childLeafKnot)
+                .build();
+
+        final ValuedKnotData childKnotData = ValuedKnotData.builder()
+                .value(new StringValue("child knot value"))
+                .build();
+        final List<TreeEdge> childTreeEdges = new ArrayList<>();
+        childTreeEdges.add(childTreeEdge);
+        final TreeKnot childTreeKnot = TreeKnot.builder()
+                .id("childKnotId")
+                .treeEdges(childTreeEdges)
+                .knotData(childKnotData)
+                .properties(childProperties)  // Child attempts to disable mutual exclusivity
+                .build();
+
+        // Create parent edge with single field
+        final List<Filter> parentFilters = new ArrayList<>();
+        parentFilters.add(new EqualsFilter("fieldOne", "valueOne"));
+        final TreeEdge parentTreeEdge = TreeEdge.builder()
+                .edgeIdentifier(new EdgeIdentifier("parentEdgeId", 1, 1))
+                .filters(parentFilters)
+                .treeKnot(childTreeKnot)
+                .build();
+
+        // Create root TreeKnot with mutual exclusivity ENABLED
+        final Map<String, Object> rootProperties = new HashMap<>();
+        rootProperties.put(BonsaiConstants.MUTUAL_EXCLUSIVITY_PROPERTY, true);
+        final ValuedKnotData rootKnotData = ValuedKnotData.builder()
+                .value(new StringValue("root value"))
+                .build();
+        final List<TreeEdge> rootTreeEdges = new ArrayList<>();
+        rootTreeEdges.add(parentTreeEdge);
+        final TreeKnot rootTreeKnot = TreeKnot.builder()
+                .id("rootKnotId")
+                .treeEdges(rootTreeEdges)
+                .knotData(rootKnotData)
+                .properties(rootProperties)
+                .build();
+
+        // Should throw error because child inherits root's mutual exclusivity setting
+        // even though child has mutualExclusivity=false in its properties
+        BonsaiError error = assertThrows(BonsaiError.class, () -> validator.validate(rootTreeKnot));
+        Assertions.assertEquals(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR, error.getErrorCode());
     }
 
     private ComponentBonsaiTreeValidator getComponentBonsaiTreeValidator(final long maxAllowedVariationsPerKnot,

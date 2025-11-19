@@ -112,6 +112,22 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         );
     }
 
+    /**
+     * Check if mutual exclusivity is enabled for a given Knot.
+     * Knot-level setting takes precedence over global BonsaiProperties setting.
+     *
+     * @param knot The Knot to check
+     * @return true if mutual exclusivity is enabled, false otherwise
+     */
+    private boolean isMutualExclusivityEnabled(Knot knot) {
+        // Knot-level setting takes precedence
+        if (knot != null && knot.getMutualExclusivityEnabled() != null) {
+            return knot.getMutualExclusivityEnabled();
+        }
+        // Fall back to global BonsaiProperties setting
+        return bonsaiProperties.isMutualExclusivitySettingTurnedOn();
+    }
+
     @Override
     public Knot createKnot(Knot knot) {
         componentValidator.validate(knot);
@@ -811,7 +827,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     }
 
     private void validateConstraints(Knot knot, Edge edge) {
-        if (bonsaiProperties.isMutualExclusivitySettingTurnedOn()) {
+        if (isMutualExclusivityEnabled(knot)) {
             Map<String, Edge> allEdges = edgeStore.getAllEdges(
                     knot.getEdges()
                             .stream()
