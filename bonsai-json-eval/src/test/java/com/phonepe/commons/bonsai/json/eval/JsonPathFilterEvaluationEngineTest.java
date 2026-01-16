@@ -607,4 +607,132 @@ public class JsonPathFilterEvaluationEngineTest {
         Boolean result = engine.visit(filter);
         Assertions.assertTrue(result);
     }
+
+    @Test
+    void testLessThanFilterWithLargeIntegers() {
+        LessThanFilter filter = new LessThanFilter();
+        filter.setField("$.data.value");
+        filter.setValue(26011304);
+        
+        // Test with value less by 1 - this would fail with floatValue() due to precision loss
+        Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
+                .thenReturn(Collections.singletonList(26011303));
+        
+        Boolean result = engine.visit(filter);
+        Assertions.assertTrue(result, "26011303 should be less than 26011304");
+        
+        // Test with value less by 2
+        Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
+                .thenReturn(Collections.singletonList(26011302));
+        
+        result = engine.visit(filter);
+        Assertions.assertTrue(result, "26011302 should be less than 26011304");
+        
+        // Test with equal value
+        Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
+                .thenReturn(Collections.singletonList(26011304));
+        
+        result = engine.visit(filter);
+        Assertions.assertFalse(result, "26011304 should not be less than 26011304");
+        
+        // Test with greater value
+        Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
+                .thenReturn(Collections.singletonList(26011305));
+        
+        result = engine.visit(filter);
+        Assertions.assertFalse(result, "26011305 should not be less than 26011304");
+    }
+
+    @Test
+    void testLessEqualFilterWithLargeIntegers() {
+        LessEqualFilter filter = new LessEqualFilter();
+        filter.setField("$.data.value");
+        filter.setValue(26011304);
+        
+        // Test exact equality
+        Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
+                .thenReturn(Collections.singletonList(26011304));
+        
+        Boolean result = engine.visit(filter);
+        Assertions.assertTrue(result, "26011304 should be less than or equal to 26011304");
+        
+        // Test less than by 1
+        Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
+                .thenReturn(Collections.singletonList(26011303));
+        
+        result = engine.visit(filter);
+        Assertions.assertTrue(result, "26011303 should be less than or equal to 26011304");
+    }
+
+    @Test
+    void testGreaterThanFilterWithLargeIntegers() {
+        GreaterThanFilter filter = new GreaterThanFilter();
+        filter.setField("$.data.value");
+        filter.setValue(26011303);
+        
+        // Test greater by 1
+        Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
+                .thenReturn(Collections.singletonList(26011304));
+        
+        Boolean result = engine.visit(filter);
+        Assertions.assertTrue(result, "26011304 should be greater than 26011303");
+        
+        // Test not greater
+        Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
+                .thenReturn(Collections.singletonList(26011303));
+        
+        result = engine.visit(filter);
+        Assertions.assertFalse(result, "26011303 should not be greater than 26011303");
+    }
+
+    @Test
+    void testGreaterEqualFilterWithLargeIntegers() {
+        GreaterEqualFilter filter = new GreaterEqualFilter();
+        filter.setField("$.data.value");
+        filter.setValue(26011303);
+        
+        // Test exact equality
+        Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
+                .thenReturn(Collections.singletonList(26011303));
+        
+        Boolean result = engine.visit(filter);
+        Assertions.assertTrue(result, "26011303 should be greater than or equal to 26011303");
+        
+        // Test greater by 1
+        Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
+                .thenReturn(Collections.singletonList(26011304));
+        
+        result = engine.visit(filter);
+        Assertions.assertTrue(result, "26011304 should be greater than or equal to 26011303");
+    }
+
+    @Test
+    void testBetweenFilterWithLargeIntegers() {
+        BetweenFilter filter = new BetweenFilter();
+        filter.setField("$.data.value");
+        filter.setFrom(26011302);
+        filter.setTo(26011305);
+        
+        // Test value in range
+        Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
+                .thenReturn(Collections.singletonList(26011303));
+        
+        Boolean result = engine.visit(filter);
+        Assertions.assertTrue(result, "26011303 should be between 26011302 and 26011305");
+        
+        // Test value at lower bound (exclusive)
+        Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
+                .thenReturn(Collections.singletonList(26011302));
+        
+        result = engine.visit(filter);
+        Assertions.assertFalse(result, "26011302 should not be between 26011302 and 26011305 (exclusive bounds)");
+        
+        // Test value at upper bound (exclusive)
+        Mockito.when(mockDocumentContext.read(eq("$.data.value"), any(TypeRef.class)))
+                .thenReturn(Collections.singletonList(26011305));
+        
+        result = engine.visit(filter);
+        Assertions.assertFalse(result, "26011305 should not be between 26011302 and 26011305 (exclusive bounds)");
+    }
 }
+
