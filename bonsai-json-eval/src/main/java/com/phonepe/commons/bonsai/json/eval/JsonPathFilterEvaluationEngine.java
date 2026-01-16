@@ -239,24 +239,24 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext, F> implem
     }
 
     private Predicate<Number> lessThan(NumericBinaryFilter filter) {
-        return k -> k.floatValue() < filter.getValue().floatValue();
+        return k -> k.doubleValue() < filter.getValue().doubleValue();
     }
 
     private Predicate<Number> lessThanEquals(NumericBinaryFilter filter) {
-        return k -> k.floatValue() <= filter.getValue().floatValue();
+        return k -> k.doubleValue() <= filter.getValue().doubleValue();
     }
 
     private Predicate<Number> greaterThan(NumericBinaryFilter filter) {
-        return k -> k.floatValue() > filter.getValue().floatValue();
+        return k -> k.doubleValue() > filter.getValue().doubleValue();
     }
 
     private Predicate<Number> between(BetweenFilter filter) {
-        return k -> k.floatValue() > filter.getFrom().floatValue()
-                && k.floatValue() < filter.getTo().floatValue();
+        return k -> k.doubleValue() > filter.getFrom().doubleValue()
+                && k.doubleValue() < filter.getTo().doubleValue();
     }
 
     private Predicate<Number> greaterThanEquals(NumericBinaryFilter filter) {
-        return k -> k.floatValue() >= filter.getValue().floatValue();
+        return k -> k.doubleValue() >= filter.getValue().doubleValue();
     }
 
     private Predicate<Object> equalsFilter(EqualsFilter filter) {
