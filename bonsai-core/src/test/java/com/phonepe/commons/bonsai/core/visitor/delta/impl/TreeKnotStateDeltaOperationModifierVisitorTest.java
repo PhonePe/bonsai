@@ -24,6 +24,7 @@ import com.phonepe.commons.bonsai.core.vital.provided.EdgeStore;
 import com.phonepe.commons.bonsai.core.vital.provided.KnotStore;
 import com.phonepe.commons.bonsai.core.vital.provided.impl.InMemoryEdgeStore;
 import com.phonepe.commons.bonsai.core.vital.provided.impl.InMemoryKnotStore;
+import com.phonepe.commons.bonsai.json.eval.hope.HopeFactory;
 import com.phonepe.commons.bonsai.models.TreeKnotState;
 import com.phonepe.commons.bonsai.models.blocks.Edge;
 import com.phonepe.commons.bonsai.models.blocks.EdgeIdentifier;
@@ -65,7 +66,7 @@ class TreeKnotStateDeltaOperationModifierVisitorTest {
                 .maxAllowedConditionsPerEdge(10)
                 .maxAllowedVariationsPerKnot(5)
                 .build();
-        treeComponentValidator = new ComponentBonsaiTreeValidator(bonsaiProperties);
+        treeComponentValidator = new ComponentBonsaiTreeValidator(bonsaiProperties, HopeFactory.gethopeLangEngine());
         knotStore = new InMemoryKnotStore();
         edgeStore = new InMemoryEdgeStore();
         treeKnotModifierVisitor =

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
 import com.phonepe.commons.query.dsl.Filter;
+import io.appform.hope.lang.HopeLangEngine;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,11 +66,14 @@ public class PathExpression {
     /* if value is passed and all filters pass, this will be returned (applicable only when adjustments and path arent present) */
     private Object value;
 
+    private HopeLangEngine hopeLangEngine;
+
     public Pair<String, Object> eval(DocumentContext context) {
         if (filters != null && !filters.isEmpty() &&
                 !filters.stream()
-                        .allMatch(k -> k.accept(new JsonPathFilterEvaluationEngine<>(key, () -> context,
-                                genericFilterContext -> true, key)))) {
+                        .allMatch(k -> k.accept(
+                                new JsonPathFilterEvaluationEngine<>(key, () -> context, genericFilterContext -> true,
+                                        key, hopeLangEngine)))) {
             return null;
         }
         if (value != null) {

@@ -16,6 +16,7 @@
 
 package com.phonepe.commons.bonsai.json.eval;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
 import com.phonepe.commons.query.dsl.general.AnyFilter;
@@ -23,6 +24,7 @@ import com.phonepe.commons.query.dsl.general.ContainsFilter;
 import com.phonepe.commons.query.dsl.general.EqualsFilter;
 import com.phonepe.commons.query.dsl.general.ExistsFilter;
 import com.phonepe.commons.query.dsl.general.GenericFilter;
+import com.phonepe.commons.query.dsl.general.HopeFilter;
 import com.phonepe.commons.query.dsl.general.InFilter;
 import com.phonepe.commons.query.dsl.general.MissingFilter;
 import com.phonepe.commons.query.dsl.general.NotEqualsFilter;
@@ -38,6 +40,8 @@ import com.phonepe.commons.query.dsl.numeric.LessThanFilter;
 import com.phonepe.commons.query.dsl.string.StringEndsWithFilter;
 import com.phonepe.commons.query.dsl.string.StringRegexMatchFilter;
 import com.phonepe.commons.query.dsl.string.StringStartsWithFilter;
+import io.appform.hope.core.Evaluatable;
+import io.appform.hope.lang.HopeLangEngine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,6 +62,7 @@ public class JsonPathFilterEvaluationEngineTest {
     private DocumentContext mockDocumentContext;
     private JsonEvalContext mockContext;
     private Predicate<GenericFilterContext<JsonEvalContext, String>> mockGenericFilterHandler;
+    private HopeLangEngine mockHopeLangEngine;
     private JsonPathFilterEvaluationEngine<JsonEvalContext, String> engine;
 
     @BeforeEach
@@ -67,11 +72,12 @@ public class JsonPathFilterEvaluationEngineTest {
         mockDocumentContext = Mockito.mock(DocumentContext.class);
         mockContext = Mockito.mock(JsonEvalContext.class);
         mockGenericFilterHandler = Mockito.mock(Predicate.class);
+        mockHopeLangEngine = Mockito.mock(HopeLangEngine.class);
         
         Mockito.when(mockContext.documentContext()).thenReturn(mockDocumentContext);
         Mockito.when(mockContext.id()).thenReturn("test-id");
-        
-        engine = new JsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler, "key");
+        engine = new JsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler,
+                "key", mockHopeLangEngine);
     }
 
     @Test
@@ -733,6 +739,27 @@ public class JsonPathFilterEvaluationEngineTest {
         
         result = engine.visit(filter);
         Assertions.assertFalse(result, "26011305 should not be between 26011302 and 26011305 (exclusive bounds)");
+    }
+
+    @Test
+    void testHopeFilter() {
+        HopeFilter filter = new HopeFilter();
+        filter.setField("$.data.value");
+        filter.setValue("test");
+
+        Evaluatable evaluatable = Mockito.mock(Evaluatable.class);
+        Mockito.when(mockHopeLangEngine.parse(anyString())).thenReturn(evaluatable);
+        Mockito.when(mockDocumentContext.jsonString()).thenReturn("{\"data\":{\"value\":\"\"}}");
+        Mockito.when(mockHopeLangEngine.evaluate(eq(evaluatable), any(JsonNode.class))).thenReturn(true);
+
+        Boolean result = engine.visit(filter);
+        Assertions.assertTrue(result);
+
+        // Test with non-matching value
+        Mockito.when(mockHopeLangEngine.evaluate(eq(evaluatable), any(JsonNode.class))).thenReturn(false);
+
+        result = engine.visit(filter);
+        Assertions.assertFalse(result);
     }
 }
 

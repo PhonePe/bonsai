@@ -18,8 +18,10 @@ package com.phonepe.commons.bonsai.json.eval;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.jayway.jsonpath.JsonPath;
+import com.phonepe.commons.bonsai.json.eval.hope.HopeFactory;
 import com.phonepe.commons.query.dsl.Filter;
 import com.phonepe.commons.query.dsl.general.GenericFilter;
+import io.appform.hope.lang.HopeLangEngine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,19 +34,21 @@ public class JsonPathEvaluationTest {
 
     private final ObjectExtractor objectExtractor = new ObjectExtractor();
 
+    private final HopeLangEngine hopeLangEngine = HopeFactory.gethopeLangEngine();
+
     @Test
     void testJsonPathEval() throws IOException {
         JsonPathSetup.setup();
         Map object = objectExtractor.getObject("sample.json", Map.class);
         JsonPathFilterEvaluationEngine<JsonEvalContext, String> eval
                 = new JsonPathFilterEvaluationEngine<>("temp", () -> JsonPath.parse(object),
-                genericFilterContext -> true, null);
+                genericFilterContext -> true, null, hopeLangEngine);
         List<Filter> filters = objectExtractor.getObject("filterList1.json", new TypeReference<>() {
         });
         long count = filters.stream()
                 .filter(filter -> filter.accept(eval))
                 .count();
-        Assertions.assertEquals(8, count);
+        Assertions.assertEquals(9, count);
     }
 
     @Test
@@ -53,13 +57,13 @@ public class JsonPathEvaluationTest {
         Map object = objectExtractor.getObject("sample.json", Map.class);
         JsonPathFilterEvaluationEngine<JsonEvalContext, String> eval
                 = new TraceWrappedJsonPathFilterEvaluationEngine<>("temp", () -> JsonPath.parse(object),
-                genericFilterContext -> true);
+                genericFilterContext -> true, hopeLangEngine);
         List<Filter> filters = objectExtractor.getObject("filterList1.json", new TypeReference<>() {
         });
         long count = filters.stream()
                 .filter(filter -> filter.accept(eval))
                 .count();
-        Assertions.assertEquals(8, count);
+        Assertions.assertEquals(9, count);
     }
 
     @Test
@@ -79,7 +83,8 @@ public class JsonPathEvaluationTest {
                         "test-entity",
                         () -> JsonPath.parse(object),
                         handler,
-                        expectedKey
+                        expectedKey,
+                        hopeLangEngine
                 );
 
         boolean result1 = genericFilter.accept(evalWithCorrectKey);
@@ -91,7 +96,8 @@ public class JsonPathEvaluationTest {
                         "test-entity",
                         () -> JsonPath.parse(object),
                         handler,
-                        "wrong-key"
+                        "wrong-key",
+                        hopeLangEngine
                 );
 
         boolean result2 = genericFilter.accept(evalWithWrongKey);

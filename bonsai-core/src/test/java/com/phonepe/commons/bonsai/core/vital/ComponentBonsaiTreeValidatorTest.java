@@ -18,6 +18,7 @@ package com.phonepe.commons.bonsai.core.vital;
 
 import com.phonepe.commons.bonsai.core.exception.BonsaiError;
 import com.phonepe.commons.bonsai.core.exception.BonsaiErrorCode;
+import com.phonepe.commons.bonsai.json.eval.hope.HopeFactory;
 import com.phonepe.commons.bonsai.models.blocks.Edge;
 import com.phonepe.commons.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.commons.bonsai.models.blocks.Knot;
@@ -31,6 +32,7 @@ import com.phonepe.commons.bonsai.models.value.NumberValue;
 import com.phonepe.commons.bonsai.models.value.StringValue;
 import com.phonepe.commons.query.dsl.Filter;
 import com.phonepe.commons.query.dsl.general.EqualsFilter;
+import com.phonepe.commons.query.dsl.general.HopeFilter;
 import com.phonepe.commons.query.dsl.general.InFilter;
 import com.phonepe.commons.query.dsl.general.NotEqualsFilter;
 import com.phonepe.commons.query.dsl.general.NotInFilter;
@@ -39,6 +41,7 @@ import com.phonepe.commons.query.dsl.logical.NotFilter;
 import com.phonepe.commons.query.dsl.logical.OrFilter;
 import com.phonepe.commons.query.dsl.numeric.GreaterEqualFilter;
 import com.phonepe.commons.query.dsl.numeric.LessEqualFilter;
+import io.appform.hope.lang.HopeLangEngine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -53,12 +56,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ComponentBonsaiTreeValidatorTest {
 
+    private final HopeLangEngine hopeLangEngine = HopeFactory.gethopeLangEngine();
+
     private final ComponentBonsaiTreeValidator componentValidator
             = new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                                                        .mutualExclusivitySettingTurnedOn(true)
                                                        .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
                                                        .maxAllowedVariationsPerKnot(Integer.MAX_VALUE)
-                                                       .build());
+                                                       .build(), hopeLangEngine);
 
     @Test
     void validateEdge() {
@@ -132,7 +137,7 @@ class ComponentBonsaiTreeValidatorTest {
         assertThrows(BonsaiError.class, () -> new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                                                                                        .mutualExclusivitySettingTurnedOn(
                                                                                                true)
-                                                                                       .build())
+                                                                                       .build(), hopeLangEngine)
                 .validate(Edge.builder()
                                   .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
                                   .version(1)
@@ -151,6 +156,27 @@ class ComponentBonsaiTreeValidatorTest {
                                             .filter(new OrFilter(List.of(new GreaterEqualFilter("field1", 123),
                                                                          new GreaterEqualFilter("field1", 121))))
                                             .build());
+    }
+
+    @Test
+    void validateEdgeWithHopeFilterExpression() {
+        componentValidator.validate(Edge.builder()
+                .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
+                .version(1)
+                .knotId("knotId1")
+                .filter(new HopeFilter("field1", "date.now() > 1"))
+                .build());
+    }
+
+    @Test
+    void validateEdgeErrorWithInvalidHopeFilterExpression() {
+        assertThrows(BonsaiError.class, () -> componentValidator.validate(Edge.builder()
+                .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
+                .version(1)
+                .knotId("knotId1")
+                .filter(new HopeFilter("field1", " > 1"))
+                .build())
+        );
     }
 
     @Test
@@ -176,6 +202,24 @@ class ComponentBonsaiTreeValidatorTest {
     }
 
     @Test
+    void validateVariationWithHopeFilterExpression() {
+        componentValidator.validate(Variation.builder()
+                .filter(new HopeFilter("field1", "date.now() > 1"))
+                .knotId("knotId1")
+                .priority(1)
+                .build());
+    }
+
+    @Test
+    void validateVariationErrorWithInvalidHopeFilterExpression() {
+        assertThrows(BonsaiError.class, () -> componentValidator.validate(Variation.builder()
+                .filter(new HopeFilter("field1", " > 1"))
+                .knotId("knotId1")
+                .priority(1)
+                .build()));
+    }
+
+    @Test
     void validateVariationMutuality() {
         assertThrows(BonsaiError.class, () -> componentValidator.validate(Variation.builder()
                                                                                   .filter(new AndFilter(
@@ -194,7 +238,7 @@ class ComponentBonsaiTreeValidatorTest {
         assertThrows(BonsaiError.class, () -> new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                                                                                        .mutualExclusivitySettingTurnedOn(
                                                                                                true)
-                                                                                       .build())
+                                                                                       .build(), hopeLangEngine)
                 .validate(Variation.builder()
                                   .filter(new AndFilter(List.of(new GreaterEqualFilter("field1", 123),
                                                                 new GreaterEqualFilter("field1", 123))))
@@ -208,7 +252,7 @@ class ComponentBonsaiTreeValidatorTest {
         assertThrows(BonsaiError.class, () -> new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                                                                                        .mutualExclusivitySettingTurnedOn(
                                                                                                true)
-                                                                                       .build())
+                                                                                       .build(), hopeLangEngine)
                 .validate(Knot.builder()
                                   .id("k1")
                                   .version(1)
@@ -219,7 +263,7 @@ class ComponentBonsaiTreeValidatorTest {
     void validateKnotValid() {
         new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                                                  .mutualExclusivitySettingTurnedOn(true)
-                                                 .build())
+                                                 .build(), hopeLangEngine)
                 .validate(Knot.builder()
                                   .id("k1")
                                   .version(1)
@@ -232,7 +276,7 @@ class ComponentBonsaiTreeValidatorTest {
         assertThrows(BonsaiError.class, () -> new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                                                                                        .mutualExclusivitySettingTurnedOn(
                                                                                                true)
-                                                                                       .build())
+                                                                                       .build(), hopeLangEngine)
                 .validate(Knot.builder()
                                   .id("k1")
                                   .version(1)
@@ -878,6 +922,6 @@ class ComponentBonsaiTreeValidatorTest {
                 .maxAllowedVariationsPerKnot(maxAllowedVariationsPerKnot)
                 .build();
 
-        return new ComponentBonsaiTreeValidator(bonsaiProperties);
+        return new ComponentBonsaiTreeValidator(bonsaiProperties, hopeLangEngine);
     }
 }

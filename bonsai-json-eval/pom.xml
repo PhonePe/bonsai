@@ -12,6 +12,7 @@
 
     <properties>
         <json-path.version>2.9.0</json-path.version>
+        <hope.version>2.0.9</hope.version>
     </properties>
 
     <dependencies>
@@ -27,6 +28,20 @@
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
             <version>${json-path.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.28.0-GA</version>
+        </dependency>
+        <dependency>
+            <groupId>io.appform.hope</groupId>
+            <artifactId>hope-lang</artifactId>
+            <version>${hope.version}</version>
         </dependency>
     </dependencies>
 

@@ -19,7 +19,7 @@ package com.phonepe.commons.bonsai.core.vital;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.phonepe.commons.bonsai.core.Bonsai;
-import com.phonepe.commons.bonsai.core.Parsers;
+import com.phonepe.commons.bonsai.json.eval.Parsers;
 import com.phonepe.commons.bonsai.core.exception.BonsaiError;
 import com.phonepe.commons.bonsai.models.KeyNode;
 import com.phonepe.commons.bonsai.models.blocks.Edge;

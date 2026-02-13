@@ -33,10 +33,13 @@ import com.phonepe.commons.bonsai.models.data.MapKnotData;
 import com.phonepe.commons.bonsai.models.data.MultiKnotData;
 import com.phonepe.commons.bonsai.models.data.ValuedKnotData;
 import com.phonepe.commons.bonsai.models.value.Value;
+import com.phonepe.commons.query.dsl.AbstractFilterVisitor;
 import com.phonepe.commons.query.dsl.Filter;
 import com.phonepe.commons.query.dsl.FilterCounter;
 import com.phonepe.commons.query.dsl.FilterFieldIdentifier;
 
+import com.phonepe.commons.query.dsl.general.HopeFilter;
+import io.appform.hope.lang.HopeLangEngine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -54,8 +57,12 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
 
     private final BonsaiProperties bonsaiProperties;
 
-    public ComponentBonsaiTreeValidator(BonsaiProperties bonsaiProperties) {
+    private final HopeLangEngine hopeLangEngine;
+
+    public ComponentBonsaiTreeValidator(final BonsaiProperties bonsaiProperties,
+                                        final HopeLangEngine hopeLangEngine) {
         this.bonsaiProperties = bonsaiProperties;
+        this.hopeLangEngine = hopeLangEngine;
     }
 
     private static <T> void checkNotNull(T reference, String fieldName) {
@@ -139,6 +146,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
                         "fields are not mutually exclusive fields:" + allFields);
             }
         }
+        validateFilters(edge.getFilters());
     }
 
     @Override
@@ -170,6 +178,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
                 throw new BonsaiError(BonsaiErrorCode.VARIATION_MUTUAL_EXCLUSIVITY_CONSTRAINT_ERROR);
             }
         }
+        validateFilters(variation.getFilters());
     }
 
     @Override
@@ -225,6 +234,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
                         "fields are not mutually exclusive fields:" + allFields);
             }
         }
+        validateFilters(filters);
         // This condition will ensure, the edge has been added/modified.
         checkCondition((0 == edge.getVersion()),
                 "The version of [delta edge] should be zero.");
@@ -298,6 +308,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
                             "fields are not mutually exclusive :" + allFields);
                 }
             }
+            validateFilters(filters);
             allDirectFilters.addAll(treeEdge.getFilters());
         }
 
@@ -339,5 +350,23 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
                 return null;
             }
         });
+    }
+
+    private void validateFilters(final List<Filter> filters) {
+        if (null == filters) {
+            return;
+        }
+        filters.forEach(filter -> filter.accept(new AbstractFilterVisitor<Void>(null) {
+            @Override
+            public Void visit(final HopeFilter filter) {
+                try {
+                    hopeLangEngine.parse(filter.getValue());
+                } catch (Exception e) {
+                    throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT,
+                            "Invalid hope expression : %s, error : %s".formatted(filter.getValue(), e.getMessage()));
+                }
+                return null;
+            }
+        }));
     }
 }

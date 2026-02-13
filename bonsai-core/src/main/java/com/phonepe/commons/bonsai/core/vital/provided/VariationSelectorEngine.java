@@ -22,6 +22,7 @@ import com.phonepe.commons.bonsai.json.eval.GenericFilterContext;
 import com.phonepe.commons.bonsai.json.eval.JsonPathFilterEvaluationEngine;
 import com.phonepe.commons.bonsai.json.eval.TraceWrappedJsonPathFilterEvaluationEngine;
 import com.phonepe.commons.bonsai.models.blocks.Edge;
+import io.appform.hope.lang.HopeLangEngine;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Predicate;
@@ -37,12 +38,16 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
 
     private final Predicate<GenericFilterContext<C, String>> genericFilterHandler;
 
-    public VariationSelectorEngine() {
-        this(genericFilterContext -> true);
+    private final HopeLangEngine hopeLangEngine;
+
+    public VariationSelectorEngine(final HopeLangEngine hopeLangEngine) {
+        this(genericFilterContext -> true, hopeLangEngine);
     }
 
-    public VariationSelectorEngine(Predicate<GenericFilterContext<C, String>> genericFilterHandler) {
+    public VariationSelectorEngine(final Predicate<GenericFilterContext<C, String>> genericFilterHandler,
+                                   final HopeLangEngine hopeLangEngine) {
         this.genericFilterHandler = genericFilterHandler;
+        this.hopeLangEngine = hopeLangEngine;
     }
 
     @Override
@@ -60,9 +65,9 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
                     final JsonPathFilterEvaluationEngine<C, String> filterVisitor = log.isTraceEnabled()
                             ?
                             new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
-                                    genericFilterHandler)
+                                    genericFilterHandler, hopeLangEngine)
                             : new JsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
-                            genericFilterHandler, null);
+                            genericFilterHandler, null, hopeLangEngine);
                     return k.accept(filterVisitor);
                 });
     }
@@ -82,9 +87,9 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
                     final JsonPathFilterEvaluationEngine<C, String> filterVisitor = log.isTraceEnabled()
                                                                                     ?
                                                                                     new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
-                                                                                                                                     genericFilterHandler, associatedKey)
+                                                                                                                                     genericFilterHandler, associatedKey, hopeLangEngine)
                                                                                     : new JsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
-                                                                                                                           genericFilterHandler, associatedKey);
+                                                                                                                           genericFilterHandler, associatedKey, hopeLangEngine);
                     return k.accept(filterVisitor);
                 });
     }

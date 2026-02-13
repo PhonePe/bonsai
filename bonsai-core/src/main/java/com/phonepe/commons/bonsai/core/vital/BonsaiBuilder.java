@@ -18,6 +18,7 @@ package com.phonepe.commons.bonsai.core.vital;
 
 import com.google.common.base.Preconditions;
 import com.phonepe.commons.bonsai.core.Bonsai;
+import com.phonepe.commons.bonsai.json.eval.hope.HopeFactory;
 import com.phonepe.commons.bonsai.core.vital.provided.EdgeStore;
 import com.phonepe.commons.bonsai.core.vital.provided.KeyTreeStore;
 import com.phonepe.commons.bonsai.core.vital.provided.KnotStore;
@@ -29,6 +30,7 @@ import com.phonepe.commons.bonsai.core.vital.provided.impl.InMemoryKnotStore;
 import com.phonepe.commons.bonsai.models.blocks.Edge;
 import com.phonepe.commons.bonsai.models.blocks.Knot;
 
+import io.appform.hope.lang.HopeLangEngine;
 import java.util.UUID;
 
 /**
@@ -41,6 +43,7 @@ public class BonsaiBuilder<C extends Context> {
     private VariationSelectorEngine<C> variationSelectorEngine;
     private BonsaiProperties bonsaiProperties;
     private BonsaiIdGenerator bonsaiIdGenerator;
+    private HopeLangEngine hopeLangEngine;
 
     public static <C extends Context> BonsaiBuilder<C> builder() {
         return new BonsaiBuilder<>();
@@ -76,14 +79,21 @@ public class BonsaiBuilder<C extends Context> {
         return this;
     }
 
+    public BonsaiBuilder<C> withHopeLangEngine(HopeLangEngine hopeLangEngine) {
+        this.hopeLangEngine = hopeLangEngine;
+        return this;
+    }
+
     public Bonsai<C> build() {
         Preconditions.checkNotNull(bonsaiProperties, "bonsaiProperties cannot be null");
         keyTreeStore = keyTreeStore == null ? new InMemoryKeyTreeStore() : keyTreeStore;
         knotStore = knotStore == null ? new InMemoryKnotStore() : knotStore;
         edgeStore = edgeStore == null ? new InMemoryEdgeStore() : edgeStore;
-        variationSelectorEngine = variationSelectorEngine == null ?
-                new VariationSelectorEngine<>() : variationSelectorEngine;
-        final ComponentBonsaiTreeValidator bonsaiTreeValidator = new ComponentBonsaiTreeValidator(bonsaiProperties);
+        hopeLangEngine = hopeLangEngine == null ? HopeFactory.gethopeLangEngine() : hopeLangEngine;
+        variationSelectorEngine = variationSelectorEngine == null
+                                  ? new VariationSelectorEngine<>(hopeLangEngine)
+                                  : variationSelectorEngine;
+        final ComponentBonsaiTreeValidator bonsaiTreeValidator = new ComponentBonsaiTreeValidator(bonsaiProperties, hopeLangEngine);
         Preconditions.checkArgument(bonsaiProperties.getMaxAllowedConditionsPerEdge() > 0,
                 "maxAllowedConditionsPerEdge cannot be < 1");
         Preconditions.checkArgument(bonsaiProperties.getMaxAllowedVariationsPerKnot() > 0,
