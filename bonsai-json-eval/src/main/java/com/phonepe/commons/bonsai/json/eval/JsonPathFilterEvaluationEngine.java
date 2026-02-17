@@ -42,8 +42,6 @@ import com.phonepe.commons.query.dsl.numeric.NumericBinaryFilter;
 import com.phonepe.commons.query.dsl.string.StringEndsWithFilter;
 import com.phonepe.commons.query.dsl.string.StringRegexMatchFilter;
 import com.phonepe.commons.query.dsl.string.StringStartsWithFilter;
-import io.appform.hope.core.Evaluatable;
-import io.appform.hope.lang.HopeLangEngine;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -77,7 +75,7 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext, F> implem
 
     private final F entityMetadata;
 
-    private final HopeLangEngine hopeLangEngine;
+    private final BonsaiHopeEngine hopeEngine;
 
     @Override
     public Boolean visit(ContainsFilter filter) {
@@ -215,13 +213,15 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext, F> implem
 
     @Override
     public Boolean visit(HopeFilter filter) {
+        if (null == hopeEngine) {
+            log.warn("[bonsai][{}] HopeFilter encountered but hopeEngine is null, returning false", context.id());
+            return false;
+        }
         try {
-            final Evaluatable evaluatable = hopeLangEngine.parse(filter.getValue());
             final JsonNode jsonNode = Parsers.MAPPER.readTree(context.documentContext().jsonString());
-            return hopeLangEngine.evaluate(evaluatable, jsonNode);
+            return hopeEngine.parseAndEvaluate(filter.getValue(), jsonNode);
         } catch (Exception e) {
-            log.error("[bonsai][{}] filter:{}, document:{}, error", context.id(), filter,
-                    context.documentContext().json(), e);
+            log.error("[bonsai][{}] filter:{}, error:", context.id(), filter, e);
             return false;
         }
     }

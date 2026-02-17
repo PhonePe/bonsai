@@ -40,8 +40,6 @@ import com.phonepe.commons.query.dsl.numeric.LessThanFilter;
 import com.phonepe.commons.query.dsl.string.StringEndsWithFilter;
 import com.phonepe.commons.query.dsl.string.StringRegexMatchFilter;
 import com.phonepe.commons.query.dsl.string.StringStartsWithFilter;
-import io.appform.hope.core.Evaluatable;
-import io.appform.hope.lang.HopeLangEngine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,7 +60,7 @@ public class JsonPathFilterEvaluationEngineTest {
     private DocumentContext mockDocumentContext;
     private JsonEvalContext mockContext;
     private Predicate<GenericFilterContext<JsonEvalContext, String>> mockGenericFilterHandler;
-    private HopeLangEngine mockHopeLangEngine;
+    private BonsaiHopeEngine mockBonsaiHopeEngine;
     private JsonPathFilterEvaluationEngine<JsonEvalContext, String> engine;
 
     @BeforeEach
@@ -72,12 +70,12 @@ public class JsonPathFilterEvaluationEngineTest {
         mockDocumentContext = Mockito.mock(DocumentContext.class);
         mockContext = Mockito.mock(JsonEvalContext.class);
         mockGenericFilterHandler = Mockito.mock(Predicate.class);
-        mockHopeLangEngine = Mockito.mock(HopeLangEngine.class);
+        mockBonsaiHopeEngine = Mockito.mock(BonsaiHopeEngine.class);
         
         Mockito.when(mockContext.documentContext()).thenReturn(mockDocumentContext);
         Mockito.when(mockContext.id()).thenReturn("test-id");
         engine = new JsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler,
-                "key", mockHopeLangEngine);
+                "key", mockBonsaiHopeEngine);
     }
 
     @Test
@@ -747,16 +745,14 @@ public class JsonPathFilterEvaluationEngineTest {
         filter.setField("$.data.value");
         filter.setValue("test");
 
-        Evaluatable evaluatable = Mockito.mock(Evaluatable.class);
-        Mockito.when(mockHopeLangEngine.parse(anyString())).thenReturn(evaluatable);
         Mockito.when(mockDocumentContext.jsonString()).thenReturn("{\"data\":{\"value\":\"\"}}");
-        Mockito.when(mockHopeLangEngine.evaluate(eq(evaluatable), any(JsonNode.class))).thenReturn(true);
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), any(JsonNode.class))).thenReturn(true);
 
         Boolean result = engine.visit(filter);
         Assertions.assertTrue(result);
 
         // Test with non-matching value
-        Mockito.when(mockHopeLangEngine.evaluate(eq(evaluatable), any(JsonNode.class))).thenReturn(false);
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), any(JsonNode.class))).thenReturn(false);
 
         result = engine.visit(filter);
         Assertions.assertFalse(result);

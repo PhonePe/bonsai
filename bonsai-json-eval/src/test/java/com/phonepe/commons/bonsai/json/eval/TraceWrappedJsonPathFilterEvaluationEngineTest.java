@@ -40,8 +40,6 @@ import com.phonepe.commons.query.dsl.numeric.LessThanFilter;
 import com.phonepe.commons.query.dsl.string.StringEndsWithFilter;
 import com.phonepe.commons.query.dsl.string.StringRegexMatchFilter;
 import com.phonepe.commons.query.dsl.string.StringStartsWithFilter;
-import io.appform.hope.core.Evaluatable;
-import io.appform.hope.lang.HopeLangEngine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,7 +60,7 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
     private DocumentContext mockDocumentContext;
     private JsonEvalContext mockContext;
     private Predicate<GenericFilterContext<JsonEvalContext, String>> mockGenericFilterHandler;
-    private HopeLangEngine mockHopeLangEngine;
+    private BonsaiHopeEngine mockBonsaiHopeEngine;
     private TraceWrappedJsonPathFilterEvaluationEngine<JsonEvalContext, String> engine;
 
     @BeforeEach
@@ -72,13 +70,13 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
         mockDocumentContext = Mockito.mock(DocumentContext.class);
         mockContext = Mockito.mock(JsonEvalContext.class);
         mockGenericFilterHandler = Mockito.mock(Predicate.class);
-        mockHopeLangEngine = Mockito.mock(HopeLangEngine.class);
+        mockBonsaiHopeEngine = Mockito.mock(BonsaiHopeEngine.class);
         
         Mockito.when(mockContext.documentContext()).thenReturn(mockDocumentContext);
         Mockito.when(mockContext.id()).thenReturn("test-id");
         
         engine = new TraceWrappedJsonPathFilterEvaluationEngine<>("test-entity", mockContext, 
-                mockGenericFilterHandler, mockHopeLangEngine);
+                mockGenericFilterHandler, mockBonsaiHopeEngine);
     }
 
     @Test
@@ -354,7 +352,7 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
         // Create both engines with the same parameters
         JsonPathFilterEvaluationEngine<JsonEvalContext, String> regularEngine =
                 new JsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler, 
-                        "Key", mockHopeLangEngine);
+                        "Key", mockBonsaiHopeEngine);
         
         // Test that both engines return the same result for the same input
         EqualsFilter filter = new EqualsFilter();
@@ -375,7 +373,7 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
         String testKey = "my-special-key";
         TraceWrappedJsonPathFilterEvaluationEngine<JsonEvalContext, String> engineWithKey =
                 new TraceWrappedJsonPathFilterEvaluationEngine<>("test-entity", mockContext, 
-                        mockGenericFilterHandler, testKey, mockHopeLangEngine);
+                        mockGenericFilterHandler, testKey, mockBonsaiHopeEngine);
 
         GenericFilter filter = Mockito.mock(GenericFilter.class);
 
@@ -400,16 +398,14 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
         filter.setField("$.data.value");
         filter.setValue("test");
 
-        Evaluatable evaluatable = Mockito.mock(Evaluatable.class);
-        Mockito.when(mockHopeLangEngine.parse(anyString())).thenReturn(evaluatable);
         Mockito.when(mockDocumentContext.jsonString()).thenReturn("{\"data\":{\"value\":\"\"}}");
-        Mockito.when(mockHopeLangEngine.evaluate(eq(evaluatable), any(JsonNode.class))).thenReturn(true);
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), any(JsonNode.class))).thenReturn(true);
 
         Boolean result = engine.visit(filter);
         Assertions.assertTrue(result);
 
         // Test with non-matching value
-        Mockito.when(mockHopeLangEngine.evaluate(eq(evaluatable), any(JsonNode.class))).thenReturn(false);
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), any(JsonNode.class))).thenReturn(false);
 
         result = engine.visit(filter);
         Assertions.assertFalse(result);

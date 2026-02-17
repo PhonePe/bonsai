@@ -19,13 +19,14 @@ package com.phonepe.commons.bonsai.core.variation;
 import com.codahale.metrics.Timer;
 import com.google.common.collect.ImmutableMap;
 import com.phonepe.commons.bonsai.core.Bonsai;
+import com.phonepe.commons.bonsai.json.eval.BonsaiHopeEngine;
 import com.phonepe.commons.bonsai.json.eval.Parsers;
 import com.phonepe.commons.bonsai.core.PerformanceEvaluator;
 import com.phonepe.commons.bonsai.core.TreeGenerationHelper;
 import com.phonepe.commons.bonsai.core.vital.BonsaiBuilder;
 import com.phonepe.commons.bonsai.core.vital.BonsaiProperties;
 import com.phonepe.commons.bonsai.core.vital.Context;
-import com.phonepe.commons.bonsai.json.eval.hope.HopeFactory;
+import com.phonepe.commons.bonsai.json.eval.hope.impl.BonsaiHopeHandler;
 import com.phonepe.commons.bonsai.models.KeyNode;
 import com.phonepe.commons.bonsai.models.ValueNode;
 import com.phonepe.commons.bonsai.models.blocks.Knot;
@@ -44,7 +45,7 @@ class JsonPathFilterEvaluationEngineTest {
                     .mutualExclusivitySettingTurnedOn(true)
                     .maxAllowedVariationsPerKnot(Integer.MAX_VALUE)
                     .build())
-            .withHopeLangEngine(HopeFactory.gethopeLangEngine())
+            .withHopeHandler(new BonsaiHopeEngine(new BonsaiHopeHandler()))
             .build();
 
     @Test

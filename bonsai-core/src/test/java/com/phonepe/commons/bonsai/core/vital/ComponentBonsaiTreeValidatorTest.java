@@ -18,7 +18,8 @@ package com.phonepe.commons.bonsai.core.vital;
 
 import com.phonepe.commons.bonsai.core.exception.BonsaiError;
 import com.phonepe.commons.bonsai.core.exception.BonsaiErrorCode;
-import com.phonepe.commons.bonsai.json.eval.hope.HopeFactory;
+import com.phonepe.commons.bonsai.json.eval.BonsaiHopeEngine;
+import com.phonepe.commons.bonsai.json.eval.hope.impl.BonsaiHopeHandler;
 import com.phonepe.commons.bonsai.models.blocks.Edge;
 import com.phonepe.commons.bonsai.models.blocks.EdgeIdentifier;
 import com.phonepe.commons.bonsai.models.blocks.Knot;
@@ -41,7 +42,6 @@ import com.phonepe.commons.query.dsl.logical.NotFilter;
 import com.phonepe.commons.query.dsl.logical.OrFilter;
 import com.phonepe.commons.query.dsl.numeric.GreaterEqualFilter;
 import com.phonepe.commons.query.dsl.numeric.LessEqualFilter;
-import io.appform.hope.lang.HopeLangEngine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -56,14 +56,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ComponentBonsaiTreeValidatorTest {
 
-    private final HopeLangEngine hopeLangEngine = HopeFactory.gethopeLangEngine();
+    private final BonsaiHopeEngine hopeEngine = new BonsaiHopeEngine(new BonsaiHopeHandler());
 
     private final ComponentBonsaiTreeValidator componentValidator
             = new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                                                        .mutualExclusivitySettingTurnedOn(true)
                                                        .maxAllowedConditionsPerEdge(Integer.MAX_VALUE)
                                                        .maxAllowedVariationsPerKnot(Integer.MAX_VALUE)
-                                                       .build(), hopeLangEngine);
+                                                       .build(), hopeEngine);
 
     @Test
     void validateEdge() {
@@ -137,7 +137,7 @@ class ComponentBonsaiTreeValidatorTest {
         assertThrows(BonsaiError.class, () -> new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                                                                                        .mutualExclusivitySettingTurnedOn(
                                                                                                true)
-                                                                                       .build(), hopeLangEngine)
+                                                                                       .build(), hopeEngine)
                 .validate(Edge.builder()
                                   .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
                                   .version(1)
@@ -238,7 +238,7 @@ class ComponentBonsaiTreeValidatorTest {
         assertThrows(BonsaiError.class, () -> new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                                                                                        .mutualExclusivitySettingTurnedOn(
                                                                                                true)
-                                                                                       .build(), hopeLangEngine)
+                                                                                       .build(), hopeEngine)
                 .validate(Variation.builder()
                                   .filter(new AndFilter(List.of(new GreaterEqualFilter("field1", 123),
                                                                 new GreaterEqualFilter("field1", 123))))
@@ -252,7 +252,7 @@ class ComponentBonsaiTreeValidatorTest {
         assertThrows(BonsaiError.class, () -> new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                                                                                        .mutualExclusivitySettingTurnedOn(
                                                                                                true)
-                                                                                       .build(), hopeLangEngine)
+                                                                                       .build(), hopeEngine)
                 .validate(Knot.builder()
                                   .id("k1")
                                   .version(1)
@@ -263,7 +263,7 @@ class ComponentBonsaiTreeValidatorTest {
     void validateKnotValid() {
         new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                                                  .mutualExclusivitySettingTurnedOn(true)
-                                                 .build(), hopeLangEngine)
+                                                 .build(), hopeEngine)
                 .validate(Knot.builder()
                                   .id("k1")
                                   .version(1)
@@ -276,7 +276,7 @@ class ComponentBonsaiTreeValidatorTest {
         assertThrows(BonsaiError.class, () -> new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
                                                                                        .mutualExclusivitySettingTurnedOn(
                                                                                                true)
-                                                                                       .build(), hopeLangEngine)
+                                                                                       .build(), hopeEngine)
                 .validate(Knot.builder()
                                   .id("k1")
                                   .version(1)
@@ -922,6 +922,6 @@ class ComponentBonsaiTreeValidatorTest {
                 .maxAllowedVariationsPerKnot(maxAllowedVariationsPerKnot)
                 .build();
 
-        return new ComponentBonsaiTreeValidator(bonsaiProperties, hopeLangEngine);
+        return new ComponentBonsaiTreeValidator(bonsaiProperties, hopeEngine);
     }
 }

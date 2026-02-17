@@ -17,12 +17,13 @@
 package com.phonepe.commons.bonsai.core.vital.provided;
 
 import com.phonepe.commons.bonsai.conditions.ConditionEngine;
+import com.phonepe.commons.bonsai.json.eval.BonsaiHopeEngine;
 import com.phonepe.commons.bonsai.core.vital.Context;
+import com.phonepe.commons.bonsai.json.eval.hope.impl.BonsaiHopeHandler;
 import com.phonepe.commons.bonsai.json.eval.GenericFilterContext;
 import com.phonepe.commons.bonsai.json.eval.JsonPathFilterEvaluationEngine;
 import com.phonepe.commons.bonsai.json.eval.TraceWrappedJsonPathFilterEvaluationEngine;
 import com.phonepe.commons.bonsai.models.blocks.Edge;
-import io.appform.hope.lang.HopeLangEngine;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Predicate;
@@ -38,16 +39,20 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
 
     private final Predicate<GenericFilterContext<C, String>> genericFilterHandler;
 
-    private final HopeLangEngine hopeLangEngine;
+    private final BonsaiHopeEngine hopeEngine;
 
-    public VariationSelectorEngine(final HopeLangEngine hopeLangEngine) {
-        this(genericFilterContext -> true, hopeLangEngine);
+    public VariationSelectorEngine() {
+        this(genericFilterContext -> true, new BonsaiHopeEngine(new BonsaiHopeHandler()));
+    }
+
+    public VariationSelectorEngine(final BonsaiHopeEngine hopeEngine) {
+        this(genericFilterContext -> true, hopeEngine);
     }
 
     public VariationSelectorEngine(final Predicate<GenericFilterContext<C, String>> genericFilterHandler,
-                                   final HopeLangEngine hopeLangEngine) {
+                                   final BonsaiHopeEngine hopeEngine) {
         this.genericFilterHandler = genericFilterHandler;
-        this.hopeLangEngine = hopeLangEngine;
+        this.hopeEngine = hopeEngine;
     }
 
     @Override
@@ -65,9 +70,9 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
                     final JsonPathFilterEvaluationEngine<C, String> filterVisitor = log.isTraceEnabled()
                             ?
                             new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
-                                    genericFilterHandler, hopeLangEngine)
+                                    genericFilterHandler, hopeEngine)
                             : new JsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
-                            genericFilterHandler, null, hopeLangEngine);
+                            genericFilterHandler, null, hopeEngine);
                     return k.accept(filterVisitor);
                 });
     }
@@ -87,9 +92,9 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
                     final JsonPathFilterEvaluationEngine<C, String> filterVisitor = log.isTraceEnabled()
                                                                                     ?
                                                                                     new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
-                                                                                                                                     genericFilterHandler, associatedKey, hopeLangEngine)
+                                                                                                                                     genericFilterHandler, associatedKey, hopeEngine)
                                                                                     : new JsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
-                                                                                                                           genericFilterHandler, associatedKey, hopeLangEngine);
+                                                                                                                           genericFilterHandler, associatedKey, hopeEngine);
                     return k.accept(filterVisitor);
                 });
     }

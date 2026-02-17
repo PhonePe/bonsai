@@ -19,6 +19,7 @@ package com.phonepe.commons.bonsai.core.vital;
 import com.google.common.base.Strings;
 import com.phonepe.commons.bonsai.core.exception.BonsaiError;
 import com.phonepe.commons.bonsai.core.exception.BonsaiErrorCode;
+import com.phonepe.commons.bonsai.json.eval.BonsaiHopeEngine;
 import com.phonepe.commons.bonsai.models.blocks.Edge;
 import com.phonepe.commons.bonsai.models.blocks.Knot;
 import com.phonepe.commons.bonsai.models.blocks.Variation;
@@ -39,7 +40,6 @@ import com.phonepe.commons.query.dsl.FilterCounter;
 import com.phonepe.commons.query.dsl.FilterFieldIdentifier;
 
 import com.phonepe.commons.query.dsl.general.HopeFilter;
-import io.appform.hope.lang.HopeLangEngine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -57,12 +57,12 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
 
     private final BonsaiProperties bonsaiProperties;
 
-    private final HopeLangEngine hopeLangEngine;
+    private final BonsaiHopeEngine hopeEngine;
 
     public ComponentBonsaiTreeValidator(final BonsaiProperties bonsaiProperties,
-                                        final HopeLangEngine hopeLangEngine) {
+                                        final BonsaiHopeEngine hopeEngine) {
         this.bonsaiProperties = bonsaiProperties;
-        this.hopeLangEngine = hopeLangEngine;
+        this.hopeEngine = hopeEngine;
     }
 
     private static <T> void checkNotNull(T reference, String fieldName) {
@@ -360,7 +360,7 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
             @Override
             public Void visit(final HopeFilter filter) {
                 try {
-                    hopeLangEngine.parse(filter.getValue());
+                    hopeEngine.parse(filter.getValue());
                 } catch (Exception e) {
                     throw new BonsaiError(BonsaiErrorCode.INVALID_INPUT,
                             "Invalid hope expression : %s, error : %s".formatted(filter.getValue(), e.getMessage()));

@@ -18,10 +18,9 @@ package com.phonepe.commons.bonsai.json.eval;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.jayway.jsonpath.JsonPath;
-import com.phonepe.commons.bonsai.json.eval.hope.HopeFactory;
+import com.phonepe.commons.bonsai.json.eval.hope.impl.BonsaiHopeHandler;
 import com.phonepe.commons.query.dsl.Filter;
 import com.phonepe.commons.query.dsl.general.GenericFilter;
-import io.appform.hope.lang.HopeLangEngine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +33,7 @@ public class JsonPathEvaluationTest {
 
     private final ObjectExtractor objectExtractor = new ObjectExtractor();
 
-    private final HopeLangEngine hopeLangEngine = HopeFactory.gethopeLangEngine();
+    private final BonsaiHopeEngine bonsaiHopeEngine = new BonsaiHopeEngine(new BonsaiHopeHandler());
 
     @Test
     void testJsonPathEval() throws IOException {
@@ -42,7 +41,7 @@ public class JsonPathEvaluationTest {
         Map object = objectExtractor.getObject("sample.json", Map.class);
         JsonPathFilterEvaluationEngine<JsonEvalContext, String> eval
                 = new JsonPathFilterEvaluationEngine<>("temp", () -> JsonPath.parse(object),
-                genericFilterContext -> true, null, hopeLangEngine);
+                genericFilterContext -> true, null, bonsaiHopeEngine);
         List<Filter> filters = objectExtractor.getObject("filterList1.json", new TypeReference<>() {
         });
         long count = filters.stream()
@@ -57,7 +56,7 @@ public class JsonPathEvaluationTest {
         Map object = objectExtractor.getObject("sample.json", Map.class);
         JsonPathFilterEvaluationEngine<JsonEvalContext, String> eval
                 = new TraceWrappedJsonPathFilterEvaluationEngine<>("temp", () -> JsonPath.parse(object),
-                genericFilterContext -> true, hopeLangEngine);
+                genericFilterContext -> true, bonsaiHopeEngine);
         List<Filter> filters = objectExtractor.getObject("filterList1.json", new TypeReference<>() {
         });
         long count = filters.stream()
@@ -84,7 +83,7 @@ public class JsonPathEvaluationTest {
                         () -> JsonPath.parse(object),
                         handler,
                         expectedKey,
-                        hopeLangEngine
+                        bonsaiHopeEngine
                 );
 
         boolean result1 = genericFilter.accept(evalWithCorrectKey);
@@ -97,7 +96,7 @@ public class JsonPathEvaluationTest {
                         () -> JsonPath.parse(object),
                         handler,
                         "wrong-key",
-                        hopeLangEngine
+                        bonsaiHopeEngine
                 );
 
         boolean result2 = genericFilter.accept(evalWithWrongKey);

@@ -38,7 +38,6 @@ import com.phonepe.commons.query.dsl.numeric.LessThanFilter;
 import com.phonepe.commons.query.dsl.string.StringEndsWithFilter;
 import com.phonepe.commons.query.dsl.string.StringRegexMatchFilter;
 import com.phonepe.commons.query.dsl.string.StringStartsWithFilter;
-import io.appform.hope.lang.HopeLangEngine;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Predicate;
@@ -50,16 +49,16 @@ public class TraceWrappedJsonPathFilterEvaluationEngine<C extends JsonEvalContex
     public TraceWrappedJsonPathFilterEvaluationEngine(final String entityId,
                                                       final C context,
                                                       final Predicate<GenericFilterContext<C, F>> genericFilterHandler,
-                                                      final HopeLangEngine hopeLangEngine) {
-        super(entityId, context, genericFilterHandler, null, hopeLangEngine);
+                                                      final BonsaiHopeEngine hopeEngine) {
+        super(entityId, context, genericFilterHandler, null, hopeEngine);
     }
 
     public TraceWrappedJsonPathFilterEvaluationEngine(final String entityId,
                                                       final C context,
                                                       final Predicate<GenericFilterContext<C, F>> genericFilterHandler,
                                                       final F entityMetadata,
-                                                      final HopeLangEngine hopeLangEngine) {
-        super(entityId, context, genericFilterHandler, entityMetadata, hopeLangEngine);
+                                                      final BonsaiHopeEngine hopeEngine) {
+        super(entityId, context, genericFilterHandler, entityMetadata, hopeEngine);
     }
 
     @Override
