@@ -756,6 +756,12 @@ public class JsonPathFilterEvaluationEngineTest {
 
         result = engine.visit(filter);
         Assertions.assertFalse(result);
+
+        // Test with default false during exception
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), any(JsonNode.class))).thenThrow(new RuntimeException());
+
+        result = engine.visit(filter);
+        Assertions.assertFalse(result);
     }
 }
 
