@@ -40,7 +40,7 @@ public class JsonPathEvaluationTest {
         JsonPathSetup.setup();
         Map object = objectExtractor.getObject("sample.json", Map.class);
         JsonPathFilterEvaluationEngine<JsonEvalContext, String> eval
-                = new JsonPathFilterEvaluationEngine<>("temp", () -> JsonPath.parse(object),
+                = new JsonPathFilterEvaluationEngine<>("temp", Utils.getJsonEvalContext(JsonPath.parse(object), null),
                 genericFilterContext -> true, null, bonsaiHopeEngine);
         List<Filter> filters = objectExtractor.getObject("filterList1.json", new TypeReference<>() {
         });
@@ -55,7 +55,7 @@ public class JsonPathEvaluationTest {
         JsonPathSetup.setup();
         Map object = objectExtractor.getObject("sample.json", Map.class);
         JsonPathFilterEvaluationEngine<JsonEvalContext, String> eval
-                = new TraceWrappedJsonPathFilterEvaluationEngine<>("temp", () -> JsonPath.parse(object),
+                = new TraceWrappedJsonPathFilterEvaluationEngine<>("temp", Utils.getJsonEvalContext(JsonPath.parse(object), null),
                 genericFilterContext -> true, bonsaiHopeEngine);
         List<Filter> filters = objectExtractor.getObject("filterList1.json", new TypeReference<>() {
         });
@@ -80,7 +80,7 @@ public class JsonPathEvaluationTest {
         JsonPathFilterEvaluationEngine<JsonEvalContext, String> evalWithCorrectKey =
                 new JsonPathFilterEvaluationEngine<>(
                         "test-entity",
-                        () -> JsonPath.parse(object),
+                        Utils.getJsonEvalContext(JsonPath.parse(object), null),
                         handler,
                         expectedKey,
                         bonsaiHopeEngine
@@ -93,7 +93,7 @@ public class JsonPathEvaluationTest {
         JsonPathFilterEvaluationEngine<JsonEvalContext, String> evalWithWrongKey =
                 new JsonPathFilterEvaluationEngine<>(
                         "test-entity",
-                        () -> JsonPath.parse(object),
+                        Utils.getJsonEvalContext(JsonPath.parse(object), null),
                         handler,
                         "wrong-key",
                         bonsaiHopeEngine

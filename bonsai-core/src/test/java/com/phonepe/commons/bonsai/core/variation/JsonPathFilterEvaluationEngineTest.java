@@ -17,6 +17,7 @@
 package com.phonepe.commons.bonsai.core.variation;
 
 import com.codahale.metrics.Timer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import com.phonepe.commons.bonsai.core.Bonsai;
 import com.phonepe.commons.bonsai.json.eval.BonsaiHopeEngine;
@@ -35,6 +36,8 @@ import com.phonepe.commons.bonsai.models.data.ValuedKnotData;
 import com.phonepe.commons.bonsai.models.value.BooleanValue;
 import com.phonepe.commons.bonsai.models.value.StringValue;
 import com.phonepe.commons.query.dsl.general.HopeFilter;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -99,14 +102,17 @@ class JsonPathFilterEvaluationEngineTest {
                 .knotId(trueKnot.getId())
                 .filter(new HopeFilter("$.E", "\"$.E\" == 9333"))
                 .build());
+        final Map<String, Object> contextData = new HashMap<>();
+        contextData.put("E", 9333);
         KeyNode evaluate = bonsai.evaluate("hope_data", Context.builder()
-                .documentContext(Parsers.parse(ImmutableMap.of("E", 9333)))
+                .documentContext(Parsers.parse(contextData))
+                .contextAsJsonNode(Parsers.MAPPER.convertValue(contextData, JsonNode.class))
                 .build());
         Assertions.assertInstanceOf(ValueNode.class, evaluate.getNode());
         Assertions.assertTrue(((BooleanValue) ((ValueNode) evaluate.getNode()).getValue()).isValue());
-
+        contextData.put("E", 9334);
         evaluate = bonsai.evaluate("hope_data", Context.builder()
-                .documentContext(Parsers.parse(ImmutableMap.of("E", 9334)))
+                .documentContext(Parsers.parse(contextData))
                 .build());
         Assertions.assertInstanceOf(ValueNode.class, evaluate.getNode());
         Assertions.assertFalse(((BooleanValue) ((ValueNode) evaluate.getNode()).getValue()).isValue());

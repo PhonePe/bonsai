@@ -763,5 +763,31 @@ public class JsonPathFilterEvaluationEngineTest {
         result = engine.visit(filter);
         Assertions.assertFalse(result);
     }
+
+    @Test
+    void testHopeFilterWithContextAsJsonNode() {
+        HopeFilter filter = new HopeFilter();
+        filter.setField("$.data.value");
+        filter.setValue("test");
+
+        JsonNode jsonNode = Mockito.mock(JsonNode.class);
+        Mockito.when(mockContext.contextAsJsonNode()).thenReturn(jsonNode);
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), eq(jsonNode))).thenReturn(true);
+
+        Boolean result = engine.visit(filter);
+        Assertions.assertTrue(result);
+
+        // Test with non-matching value
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), eq(jsonNode))).thenReturn(false);
+
+        result = engine.visit(filter);
+        Assertions.assertFalse(result);
+
+        // Test with default false during exception
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), eq(jsonNode))).thenThrow(new RuntimeException());
+
+        result = engine.visit(filter);
+        Assertions.assertFalse(result);
+    }
 }
 

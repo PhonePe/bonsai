@@ -16,13 +16,15 @@
 
 package com.phonepe.commons.bonsai.json.eval;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.DocumentContext;
 
 import java.util.UUID;
 
-@FunctionalInterface
 public interface JsonEvalContext {
     DocumentContext documentContext();
+
+    JsonNode contextAsJsonNode();
 
     default String id() {
         return UUID.randomUUID().toString();

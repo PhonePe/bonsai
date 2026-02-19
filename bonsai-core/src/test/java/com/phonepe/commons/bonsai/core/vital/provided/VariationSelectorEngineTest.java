@@ -30,7 +30,7 @@ class VariationSelectorEngineTest {
     @Test
     void testWhenNoContextThenVariationSelectionReturnsFalse() {
         Optional<Edge> match = new VariationSelectorEngine<>(null)
-                .match(new Context(null, Maps.newHashMap()),
+                .match(new Context(null, null, Maps.newHashMap()),
                         Collections.singletonList(Edge.builder()
                                 .edgeIdentifier(new EdgeIdentifier())
                                 .build()));

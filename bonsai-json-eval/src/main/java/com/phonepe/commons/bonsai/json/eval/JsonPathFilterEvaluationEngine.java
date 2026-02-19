@@ -218,7 +218,9 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext, F> implem
             return false;
         }
         try {
-            final JsonNode jsonNode = Parsers.MAPPER.readTree(context.documentContext().jsonString());
+            final JsonNode jsonNode = null != context.contextAsJsonNode()
+                                      ? context.contextAsJsonNode()
+                                      : Parsers.MAPPER.readTree(context.documentContext().jsonString());
             return hopeEngine.parseAndEvaluate(filter.getValue(), jsonNode);
         } catch (Exception e) {
             log.error("[bonsai][{}] filter:{}, error:", context.id(), filter, e);

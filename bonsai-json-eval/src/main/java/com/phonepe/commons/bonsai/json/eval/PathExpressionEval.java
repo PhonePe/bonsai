@@ -41,10 +41,11 @@ public class PathExpressionEval {
     public Pair<String, Object> eval(DocumentContext context) {
         final String key = pathExpression.getKey();
         final List<Filter> filters = pathExpression.getFilters();
+        final JsonEvalContext jsonEvalContext = Utils.getJsonEvalContext(context, null);
         if (filters != null && !filters.isEmpty() &&
                 !filters.stream()
                         .allMatch(k -> k.accept(
-                                new JsonPathFilterEvaluationEngine<>(key, () -> context, genericFilterContext -> true,
+                                new JsonPathFilterEvaluationEngine<>(key, jsonEvalContext, genericFilterContext -> true,
                                         key, hopeEngine)))) {
             return null;
         }

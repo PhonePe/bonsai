@@ -17,6 +17,7 @@
 package com.phonepe.commons.bonsai.core.vital;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.phonepe.commons.bonsai.json.eval.JsonEvalContext;
 import com.phonepe.commons.bonsai.models.BonsaiConstants;
@@ -37,11 +38,20 @@ import java.util.Map;
 public class Context implements JsonEvalContext {
     @JsonIgnore
     private DocumentContext documentContext;
+
+    @JsonIgnore
+    private JsonNode contextAsJsonNode;
+
     private Map<String, Knot> preferences;
 
     @Override
     public DocumentContext documentContext() {
         return documentContext;
+    }
+
+    @Override
+    public JsonNode contextAsJsonNode() {
+        return contextAsJsonNode;
     }
 
     @Override
