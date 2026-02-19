@@ -17,19 +17,27 @@
 package com.phonepe.commons.bonsai.core.variation;
 
 import com.codahale.metrics.Timer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import com.phonepe.commons.bonsai.core.Bonsai;
-import com.phonepe.commons.bonsai.core.Parsers;
+import com.phonepe.commons.bonsai.json.eval.BonsaiHopeEngine;
+import com.phonepe.commons.bonsai.json.eval.Parsers;
 import com.phonepe.commons.bonsai.core.PerformanceEvaluator;
 import com.phonepe.commons.bonsai.core.TreeGenerationHelper;
 import com.phonepe.commons.bonsai.core.vital.BonsaiBuilder;
 import com.phonepe.commons.bonsai.core.vital.BonsaiProperties;
 import com.phonepe.commons.bonsai.core.vital.Context;
+import com.phonepe.commons.bonsai.json.eval.hope.impl.BonsaiHopeHandler;
 import com.phonepe.commons.bonsai.models.KeyNode;
 import com.phonepe.commons.bonsai.models.ValueNode;
 import com.phonepe.commons.bonsai.models.blocks.Knot;
+import com.phonepe.commons.bonsai.models.blocks.Variation;
 import com.phonepe.commons.bonsai.models.data.ValuedKnotData;
+import com.phonepe.commons.bonsai.models.value.BooleanValue;
 import com.phonepe.commons.bonsai.models.value.StringValue;
+import com.phonepe.commons.query.dsl.general.HopeFilter;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -40,6 +48,7 @@ class JsonPathFilterEvaluationEngineTest {
                     .mutualExclusivitySettingTurnedOn(true)
                     .maxAllowedVariationsPerKnot(Integer.MAX_VALUE)
                     .build())
+            .withHopeHandler(new BonsaiHopeEngine(new BonsaiHopeHandler()))
             .build();
 
     @Test
@@ -82,5 +91,30 @@ class JsonPathFilterEvaluationEngineTest {
         }
 
 
+    }
+
+    @Test
+    void hopeLangTestingOfBonsai() {
+        Knot knot = bonsai.createKnot(ValuedKnotData.booleanValue(false), null);
+        bonsai.createMapping("hope_data", knot.getId());
+        Knot trueKnot = bonsai.createKnot(ValuedKnotData.booleanValue(true), null);
+        bonsai.addVariation(knot.getId(), Variation.builder()
+                .knotId(trueKnot.getId())
+                .filter(new HopeFilter("$.E", "\"$.E\" == 9333"))
+                .build());
+        final Map<String, Object> contextData = new HashMap<>();
+        contextData.put("E", 9333);
+        KeyNode evaluate = bonsai.evaluate("hope_data", Context.builder()
+                .documentContext(Parsers.parse(contextData))
+                .contextAsJsonNode(Parsers.MAPPER.convertValue(contextData, JsonNode.class))
+                .build());
+        Assertions.assertInstanceOf(ValueNode.class, evaluate.getNode());
+        Assertions.assertTrue(((BooleanValue) ((ValueNode) evaluate.getNode()).getValue()).isValue());
+        contextData.put("E", 9334);
+        evaluate = bonsai.evaluate("hope_data", Context.builder()
+                .documentContext(Parsers.parse(contextData))
+                .build());
+        Assertions.assertInstanceOf(ValueNode.class, evaluate.getNode());
+        Assertions.assertFalse(((BooleanValue) ((ValueNode) evaluate.getNode()).getValue()).isValue());
     }
 }

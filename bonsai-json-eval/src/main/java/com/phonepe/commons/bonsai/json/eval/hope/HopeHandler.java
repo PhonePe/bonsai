@@ -14,19 +14,14 @@
  *  limitations under the License.
  */
 
-package com.phonepe.commons.bonsai.json.eval;
+package com.phonepe.commons.bonsai.json.eval.hope;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.jsonpath.DocumentContext;
+import io.appform.hope.core.Evaluatable;
 
-import java.util.UUID;
+public interface HopeHandler {
 
-public interface JsonEvalContext {
-    DocumentContext documentContext();
+    Evaluatable parse(String filterExpression);
 
-    JsonNode contextAsJsonNode();
-
-    default String id() {
-        return UUID.randomUUID().toString();
-    }
+    boolean parseAndEvaluate(String filterExpression, JsonNode jsonNode);
 }

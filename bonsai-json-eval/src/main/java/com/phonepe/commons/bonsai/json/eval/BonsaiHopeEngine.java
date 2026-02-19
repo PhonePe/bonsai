@@ -17,16 +17,24 @@
 package com.phonepe.commons.bonsai.json.eval;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.jsonpath.DocumentContext;
+import com.phonepe.commons.bonsai.json.eval.hope.HopeHandler;
+import io.appform.hope.core.Evaluatable;
 
-import java.util.UUID;
+public class BonsaiHopeEngine implements HopeHandler {
 
-public interface JsonEvalContext {
-    DocumentContext documentContext();
+    private final HopeHandler hopeHandler;
 
-    JsonNode contextAsJsonNode();
+    public BonsaiHopeEngine(final HopeHandler hopeHandler) {
+        this.hopeHandler = hopeHandler;
+    }
 
-    default String id() {
-        return UUID.randomUUID().toString();
+    @Override
+    public Evaluatable parse(final String filterExpression) {
+        return hopeHandler.parse(filterExpression);
+    }
+
+    @Override
+    public boolean parseAndEvaluate(final String filterExpression, final JsonNode jsonNode) {
+        return hopeHandler.parseAndEvaluate(filterExpression, jsonNode);
     }
 }

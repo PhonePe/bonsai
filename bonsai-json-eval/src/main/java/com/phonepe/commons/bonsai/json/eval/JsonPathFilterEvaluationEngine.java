@@ -16,6 +16,7 @@
 
 package com.phonepe.commons.bonsai.json.eval;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.TypeRef;
 import com.phonepe.commons.query.dsl.Filter;
 import com.phonepe.commons.query.dsl.FilterVisitor;
@@ -24,6 +25,7 @@ import com.phonepe.commons.query.dsl.general.ContainsFilter;
 import com.phonepe.commons.query.dsl.general.EqualsFilter;
 import com.phonepe.commons.query.dsl.general.ExistsFilter;
 import com.phonepe.commons.query.dsl.general.GenericFilter;
+import com.phonepe.commons.query.dsl.general.HopeFilter;
 import com.phonepe.commons.query.dsl.general.InFilter;
 import com.phonepe.commons.query.dsl.general.MissingFilter;
 import com.phonepe.commons.query.dsl.general.NotEqualsFilter;
@@ -72,6 +74,8 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext, F> implem
     private final Predicate<GenericFilterContext<C, F>> genericFilterHandler;
 
     private final F entityMetadata;
+
+    private final BonsaiHopeEngine hopeEngine;
 
     @Override
     public Boolean visit(ContainsFilter filter) {
@@ -205,6 +209,23 @@ public class JsonPathFilterEvaluationEngine<C extends JsonEvalContext, F> implem
     public Boolean visit(GenericFilter filter) {
         final GenericFilterContext<C, F> genericFilterContext = new GenericFilterContext<>(filter, context, entityMetadata);
         return genericFilterHandler.test(genericFilterContext);
+    }
+
+    @Override
+    public Boolean visit(HopeFilter filter) {
+        if (null == hopeEngine) {
+            log.warn("[bonsai][{}] HopeFilter encountered but hopeEngine is null, returning false", context.id());
+            return false;
+        }
+        try {
+            final JsonNode jsonNode = null != context.contextAsJsonNode()
+                                      ? context.contextAsJsonNode()
+                                      : Parsers.MAPPER.readTree(context.documentContext().jsonString());
+            return hopeEngine.parseAndEvaluate(filter.getValue(), jsonNode);
+        } catch (Exception e) {
+            log.error("[bonsai][{}] filter:{}, error:", context.id(), filter, e);
+            return false;
+        }
     }
 
     /// ////////////////////////////////////////////////////////////////////////////////////////////////////

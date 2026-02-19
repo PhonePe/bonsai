@@ -1,7 +1,7 @@
 package com.phonepe.commons.bonsai.core.variation;
 
 import com.jayway.jsonpath.TypeRef;
-import com.phonepe.commons.bonsai.core.Parsers;
+import com.phonepe.commons.bonsai.json.eval.Parsers;
 import com.phonepe.commons.bonsai.core.vital.Context;
 import com.phonepe.commons.query.dsl.Filter;
 import com.phonepe.commons.query.dsl.general.NotInFilter;

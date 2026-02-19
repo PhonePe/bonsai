@@ -22,6 +22,7 @@ import com.phonepe.commons.query.dsl.general.ContainsFilter;
 import com.phonepe.commons.query.dsl.general.EqualsFilter;
 import com.phonepe.commons.query.dsl.general.ExistsFilter;
 import com.phonepe.commons.query.dsl.general.GenericFilter;
+import com.phonepe.commons.query.dsl.general.HopeFilter;
 import com.phonepe.commons.query.dsl.general.InFilter;
 import com.phonepe.commons.query.dsl.general.MissingFilter;
 import com.phonepe.commons.query.dsl.general.NotEqualsFilter;
@@ -45,15 +46,19 @@ import java.util.function.Predicate;
 public class TraceWrappedJsonPathFilterEvaluationEngine<C extends JsonEvalContext, F>
         extends JsonPathFilterEvaluationEngine<C, F> {
 
-    public TraceWrappedJsonPathFilterEvaluationEngine(String entityId, C context,
-                                                      Predicate<GenericFilterContext<C, F>> genericFilterHandler) {
-        super(entityId, context, genericFilterHandler, null);
+    public TraceWrappedJsonPathFilterEvaluationEngine(final String entityId,
+                                                      final C context,
+                                                      final Predicate<GenericFilterContext<C, F>> genericFilterHandler,
+                                                      final BonsaiHopeEngine hopeEngine) {
+        super(entityId, context, genericFilterHandler, null, hopeEngine);
     }
 
-    public TraceWrappedJsonPathFilterEvaluationEngine(String entityId, C context,
-                                                      Predicate<GenericFilterContext<C, F>> genericFilterHandler,
-                                                      F entityMetadata) {
-        super(entityId, context, genericFilterHandler, entityMetadata);
+    public TraceWrappedJsonPathFilterEvaluationEngine(final String entityId,
+                                                      final C context,
+                                                      final Predicate<GenericFilterContext<C, F>> genericFilterHandler,
+                                                      final F entityMetadata,
+                                                      final BonsaiHopeEngine hopeEngine) {
+        super(entityId, context, genericFilterHandler, entityMetadata, hopeEngine);
     }
 
     @Override
@@ -191,6 +196,13 @@ public class TraceWrappedJsonPathFilterEvaluationEngine<C extends JsonEvalContex
 
     @Override
     public Boolean visit(GenericFilter filter) {
+        boolean result = super.visit(filter);
+        trace(filter, result);
+        return result;
+    }
+
+    @Override
+    public Boolean visit(HopeFilter filter) {
         boolean result = super.visit(filter);
         trace(filter, result);
         return result;

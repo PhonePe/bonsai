@@ -16,6 +16,7 @@
 
 package com.phonepe.commons.bonsai.json.eval;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
 import com.phonepe.commons.query.dsl.general.AnyFilter;
@@ -23,6 +24,7 @@ import com.phonepe.commons.query.dsl.general.ContainsFilter;
 import com.phonepe.commons.query.dsl.general.EqualsFilter;
 import com.phonepe.commons.query.dsl.general.ExistsFilter;
 import com.phonepe.commons.query.dsl.general.GenericFilter;
+import com.phonepe.commons.query.dsl.general.HopeFilter;
 import com.phonepe.commons.query.dsl.general.InFilter;
 import com.phonepe.commons.query.dsl.general.MissingFilter;
 import com.phonepe.commons.query.dsl.general.NotEqualsFilter;
@@ -58,6 +60,7 @@ public class JsonPathFilterEvaluationEngineTest {
     private DocumentContext mockDocumentContext;
     private JsonEvalContext mockContext;
     private Predicate<GenericFilterContext<JsonEvalContext, String>> mockGenericFilterHandler;
+    private BonsaiHopeEngine mockBonsaiHopeEngine;
     private JsonPathFilterEvaluationEngine<JsonEvalContext, String> engine;
 
     @BeforeEach
@@ -67,11 +70,12 @@ public class JsonPathFilterEvaluationEngineTest {
         mockDocumentContext = Mockito.mock(DocumentContext.class);
         mockContext = Mockito.mock(JsonEvalContext.class);
         mockGenericFilterHandler = Mockito.mock(Predicate.class);
+        mockBonsaiHopeEngine = Mockito.mock(BonsaiHopeEngine.class);
         
         Mockito.when(mockContext.documentContext()).thenReturn(mockDocumentContext);
         Mockito.when(mockContext.id()).thenReturn("test-id");
-        
-        engine = new JsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler, "key");
+        engine = new JsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler,
+                "key", mockBonsaiHopeEngine);
     }
 
     @Test
@@ -733,6 +737,57 @@ public class JsonPathFilterEvaluationEngineTest {
         
         result = engine.visit(filter);
         Assertions.assertFalse(result, "26011305 should not be between 26011302 and 26011305 (exclusive bounds)");
+    }
+
+    @Test
+    void testHopeFilter() {
+        HopeFilter filter = new HopeFilter();
+        filter.setField("$.data.value");
+        filter.setValue("test");
+
+        Mockito.when(mockDocumentContext.jsonString()).thenReturn("{\"data\":{\"value\":\"\"}}");
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), any(JsonNode.class))).thenReturn(true);
+
+        Boolean result = engine.visit(filter);
+        Assertions.assertTrue(result);
+
+        // Test with non-matching value
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), any(JsonNode.class))).thenReturn(false);
+
+        result = engine.visit(filter);
+        Assertions.assertFalse(result);
+
+        // Test with default false during exception
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), any(JsonNode.class))).thenThrow(new RuntimeException());
+
+        result = engine.visit(filter);
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    void testHopeFilterWithContextAsJsonNode() {
+        HopeFilter filter = new HopeFilter();
+        filter.setField("$.data.value");
+        filter.setValue("test");
+
+        JsonNode jsonNode = Mockito.mock(JsonNode.class);
+        Mockito.when(mockContext.contextAsJsonNode()).thenReturn(jsonNode);
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), eq(jsonNode))).thenReturn(true);
+
+        Boolean result = engine.visit(filter);
+        Assertions.assertTrue(result);
+
+        // Test with non-matching value
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), eq(jsonNode))).thenReturn(false);
+
+        result = engine.visit(filter);
+        Assertions.assertFalse(result);
+
+        // Test with default false during exception
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), eq(jsonNode))).thenThrow(new RuntimeException());
+
+        result = engine.visit(filter);
+        Assertions.assertFalse(result);
     }
 }
 

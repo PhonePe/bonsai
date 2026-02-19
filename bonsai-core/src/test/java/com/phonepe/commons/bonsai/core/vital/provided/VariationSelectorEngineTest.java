@@ -29,8 +29,8 @@ import java.util.Optional;
 class VariationSelectorEngineTest {
     @Test
     void testWhenNoContextThenVariationSelectionReturnsFalse() {
-        Optional<Edge> match = new VariationSelectorEngine<>()
-                .match(new Context(null, Maps.newHashMap()),
+        Optional<Edge> match = new VariationSelectorEngine<>(null)
+                .match(new Context(null, null, Maps.newHashMap()),
                         Collections.singletonList(Edge.builder()
                                 .edgeIdentifier(new EdgeIdentifier())
                                 .build()));

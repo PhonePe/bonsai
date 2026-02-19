@@ -16,6 +16,7 @@
 
 package com.phonepe.commons.bonsai.json.eval;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
 import com.phonepe.commons.query.dsl.general.AnyFilter;
@@ -23,6 +24,7 @@ import com.phonepe.commons.query.dsl.general.ContainsFilter;
 import com.phonepe.commons.query.dsl.general.EqualsFilter;
 import com.phonepe.commons.query.dsl.general.ExistsFilter;
 import com.phonepe.commons.query.dsl.general.GenericFilter;
+import com.phonepe.commons.query.dsl.general.HopeFilter;
 import com.phonepe.commons.query.dsl.general.InFilter;
 import com.phonepe.commons.query.dsl.general.MissingFilter;
 import com.phonepe.commons.query.dsl.general.NotEqualsFilter;
@@ -50,6 +52,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 
 public class TraceWrappedJsonPathFilterEvaluationEngineTest {
@@ -57,6 +60,7 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
     private DocumentContext mockDocumentContext;
     private JsonEvalContext mockContext;
     private Predicate<GenericFilterContext<JsonEvalContext, String>> mockGenericFilterHandler;
+    private BonsaiHopeEngine mockBonsaiHopeEngine;
     private TraceWrappedJsonPathFilterEvaluationEngine<JsonEvalContext, String> engine;
 
     @BeforeEach
@@ -66,11 +70,13 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
         mockDocumentContext = Mockito.mock(DocumentContext.class);
         mockContext = Mockito.mock(JsonEvalContext.class);
         mockGenericFilterHandler = Mockito.mock(Predicate.class);
+        mockBonsaiHopeEngine = Mockito.mock(BonsaiHopeEngine.class);
         
         Mockito.when(mockContext.documentContext()).thenReturn(mockDocumentContext);
         Mockito.when(mockContext.id()).thenReturn("test-id");
         
-        engine = new TraceWrappedJsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler);
+        engine = new TraceWrappedJsonPathFilterEvaluationEngine<>("test-entity", mockContext, 
+                mockGenericFilterHandler, mockBonsaiHopeEngine);
     }
 
     @Test
@@ -345,7 +351,8 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
     void testTraceWrappedVsRegularEngine() {
         // Create both engines with the same parameters
         JsonPathFilterEvaluationEngine<JsonEvalContext, String> regularEngine =
-                new JsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler, "Key");
+                new JsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler, 
+                        "Key", mockBonsaiHopeEngine);
         
         // Test that both engines return the same result for the same input
         EqualsFilter filter = new EqualsFilter();
@@ -365,7 +372,8 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
     void testVisitGenericFilter_WithEntityMetadata() {
         String testKey = "my-special-key";
         TraceWrappedJsonPathFilterEvaluationEngine<JsonEvalContext, String> engineWithKey =
-                new TraceWrappedJsonPathFilterEvaluationEngine<>("test-entity", mockContext, mockGenericFilterHandler, testKey);
+                new TraceWrappedJsonPathFilterEvaluationEngine<>("test-entity", mockContext, 
+                        mockGenericFilterHandler, testKey, mockBonsaiHopeEngine);
 
         GenericFilter filter = Mockito.mock(GenericFilter.class);
 
@@ -382,5 +390,24 @@ public class TraceWrappedJsonPathFilterEvaluationEngineTest {
 
         // Check that the captured context contains the correct entityMetadata.
         Assertions.assertEquals(testKey, contextCaptor.getValue().getEntityMetadata());
+    }
+
+    @Test
+    void testHopeFilter() {
+        HopeFilter filter = new HopeFilter();
+        filter.setField("$.data.value");
+        filter.setValue("test");
+
+        Mockito.when(mockDocumentContext.jsonString()).thenReturn("{\"data\":{\"value\":\"\"}}");
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), any(JsonNode.class))).thenReturn(true);
+
+        Boolean result = engine.visit(filter);
+        Assertions.assertTrue(result);
+
+        // Test with non-matching value
+        Mockito.when(mockBonsaiHopeEngine.parseAndEvaluate(anyString(), any(JsonNode.class))).thenReturn(false);
+
+        result = engine.visit(filter);
+        Assertions.assertFalse(result);
     }
 }
