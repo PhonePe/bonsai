@@ -17,12 +17,16 @@ At its core, the Context class contains:
 ```java
 public class Context {
     private final DocumentContext documentContext;
+    private final JsonNode contextAsJsonNode;
     private final Map<String, Knot> preferences;
     // ...
 }
 ```
 
 The `DocumentContext` is a JsonPath object that wraps the data being evaluated. This allows Edge conditions to use JsonPath expressions to access specific parts of the data.
+
+The `contextAsJsonNode` contains the data being evaluated in JSON format. 
+This comes in handy while evaluating Edge conditions that require raw JSON data such as [Hope](https://github.com/santanusinha/hope) expressions.
 
 ## JsonPath Integration
 
@@ -96,3 +100,4 @@ public class UserContext extends Context {
 - Consider performance implications of large Context objects
 - Use preferences judiciously to avoid bypassing the rule engine unnecessarily
 - Document the expected Context structure for each tree to ensure proper usage
+- Set the JsonNode context if your Edge conditions have filters using [Hope](https://github.com/santanusinha/hope) expressions for better performance.

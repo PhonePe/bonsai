@@ -12,6 +12,7 @@ Before evaluating a tree, you need to create a Context object that contains the 
 String json = "{\"user\": {\"age\": 25, \"country\": \"US\", \"type\": \"premium\"}}";
 Context context = Context.builder()
     .documentContext(JsonPath.parse(json))
+    .contextAsJsonNode(Parsers.MAPPER.readTree(json))
     .build();
 
 // Create a Context from an object

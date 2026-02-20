@@ -214,6 +214,18 @@ bonsai.addVariation(rootKnot.getId(), Variation.builder()
     ))
     .build());
 
+// Hope condition (Hope expression)
+bonsai.addVariation(rootKnot.getId(), Variation.builder()
+    .knotId(targetKnot.getId())
+    .filters(List.of(
+        Filter.builder()
+            .field("$.user.age")
+            .operator(Operator.HOPE)
+            .value("\"$.user.age\" > 18")
+            .build()
+    ))
+    .build());
+
 // Default condition (no filters)
 bonsai.addVariation(rootKnot.getId(), Variation.builder()
     .knotId(defaultKnot.getId())
