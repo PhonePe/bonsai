@@ -20,6 +20,7 @@ Bonsai<Context> bonsai = BonsaiBuilder.builder()
     .withEdgeStore(new InMemoryEdgeStore())        // Edge storage implementation
     .withKeyTreeStore(new InMemoryKeyTreeStore())  // Key-Tree mapping storage
     .withKnotStore(new InMemoryKnotStore())        // Knot storage implementation
+    .withHopeHandler(new BonsaiHopeHandler())      // Optional handler for evaluating Hope expressions
     .build();
 ```
 
@@ -122,6 +123,27 @@ Bonsai<UserContext> bonsai = BonsaiBuilder.builder()
     .build();
 ```
 
+### Hope Handler
+
+The `HopeHandler` is responsible for parsing and evaluation of Hope expressions in edge conditions. 
+You can use the default `BonsaiHopeHandler` or implement a custom one.
+
+```java
+public class CustomHopeHandler implements HopeHandler {
+    private final HopeLangEngine hopeLangEngine;
+
+    @Override
+    public Evaluatable parse(final String filterExpression) {
+        return hopeLangEngine.parse(filterExpression);
+    }
+
+    @Override
+    public boolean parseAndEvaluate(final String filterExpression, final JsonNode jsonNode) {
+        return hopeLangEngine.evaluate(parse(filterExpression), jsonNode);
+    }
+}
+```
+
 ## Complete Example
 
 Here's a complete example of creating a Bonsai instance with custom configuration:
@@ -138,6 +160,7 @@ Bonsai<UserContext> bonsai = BonsaiBuilder.builder()
     .withEdgeStore(new RedisEdgeStore(redisClient))
     .withKeyTreeStore(new RedisKeyTreeStore(redisClient))
     .withKnotStore(new RedisKnotStore(redisClient))
+    .withHopeHandler(new CustomHopeHandler())
     .build();
 ```
 
