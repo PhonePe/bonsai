@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import com.phonepe.commons.bonsai.core.exception.BonsaiError;
 import com.phonepe.commons.bonsai.core.exception.BonsaiErrorCode;
 import com.phonepe.commons.bonsai.json.eval.BonsaiHopeEngine;
+import com.phonepe.commons.bonsai.json.eval.hope.impl.BonsaiHopeHandler;
 import com.phonepe.commons.bonsai.models.blocks.Edge;
 import com.phonepe.commons.bonsai.models.blocks.Knot;
 import com.phonepe.commons.bonsai.models.blocks.Variation;
@@ -58,6 +59,11 @@ public final class ComponentBonsaiTreeValidator implements BonsaiTreeValidator {
     private final BonsaiProperties bonsaiProperties;
 
     private final BonsaiHopeEngine hopeEngine;
+
+    public ComponentBonsaiTreeValidator(final BonsaiProperties bonsaiProperties) {
+        this.bonsaiProperties = bonsaiProperties;
+        this.hopeEngine = new BonsaiHopeEngine(new BonsaiHopeHandler());
+    }
 
     public ComponentBonsaiTreeValidator(final BonsaiProperties bonsaiProperties,
                                         final BonsaiHopeEngine hopeEngine) {

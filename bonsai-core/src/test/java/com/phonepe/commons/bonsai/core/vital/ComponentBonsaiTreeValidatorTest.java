@@ -160,7 +160,9 @@ class ComponentBonsaiTreeValidatorTest {
 
     @Test
     void validateEdgeWithHopeFilterExpression() {
-        componentValidator.validate(Edge.builder()
+        new ComponentBonsaiTreeValidator(BonsaiProperties.builder()
+                .mutualExclusivitySettingTurnedOn(true)
+                .build()).validate(Edge.builder()
                 .edgeIdentifier(new EdgeIdentifier("id1", 1, 1))
                 .version(1)
                 .knotId("knotId1")
