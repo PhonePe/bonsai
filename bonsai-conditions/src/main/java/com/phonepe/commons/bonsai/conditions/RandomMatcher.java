@@ -19,8 +19,7 @@ package com.phonepe.commons.bonsai.conditions;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.security.SecureRandom;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * A BooleanUniMatcher, which uses random number generation to match x% of the calls with equal probability
@@ -34,7 +33,6 @@ public class RandomMatcher implements Matcher.BooleanUniMatcher<Number> {
      */
     protected long lowerBound = 0;
     protected long higherBound = 100;
-    protected Random random = new SecureRandom(Long.toBinaryString(System.currentTimeMillis()).getBytes());
 
     public RandomMatcher(long lowerBound, long higherBound) {
         this.lowerBound = lowerBound;
@@ -52,9 +50,12 @@ public class RandomMatcher implements Matcher.BooleanUniMatcher<Number> {
      * @return if
      */
     @Override
+    @SuppressWarnings("java:S2245") // We are using ThreadLocalRandom which is a better alternative to SecureRandom in multi-threaded environments
     public Boolean match(Number value) {
-        final long randomNumber = Math.abs(random.nextInt((int) ((higherBound - lowerBound) + lowerBound)));
+        final long randomNumber = Math.abs(ThreadLocalRandom.current()
+                .nextLong(lowerBound, higherBound));
         return randomNumber < value.longValue();
+
     }
 
 }

@@ -20,18 +20,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -39,8 +38,6 @@ class DecimalRandomMatcherTest {
 
     private DecimalRandomMatcher matcher;
 
-    @Mock
-    private Random random;
 
     @BeforeEach
     void setUp() {
@@ -62,54 +59,57 @@ class DecimalRandomMatcherTest {
     }
 
     @Test
-    void testMatchWithMockedRandom() throws Exception {
+    void testMatchWithMockedRandom() {
         matcher = new DecimalRandomMatcher();
-        injectMockedRandom(matcher);
-        when(random.nextInt(10000)).thenReturn(4500); // 45% of range
+        try (MockedStatic<ThreadLocalRandom> mocked = Mockito.mockStatic(ThreadLocalRandom.class)) {
+            ThreadLocalRandom mockRandom = Mockito.mock(ThreadLocalRandom.class);
+            mocked.when(ThreadLocalRandom::current).thenReturn(mockRandom);
+            when(mockRandom.nextLong(0, 10000)).thenReturn(4500L); // 45% of range
 
-        // Should match when value is 50% (threshold > random)
-        assertTrue(matcher.match(50f));
+            // Should match when value is 50% (threshold > random)
+            assertTrue(matcher.match(50f));
 
-        // Should not match when value is 40% (threshold < random)
-        assertFalse(matcher.match(40f));
-
-        // Verify the random.nextInt was called with expected args
-        verify(random, times(2)).nextInt(10000);
+            // Should not match when value is 40% (threshold < random)
+            assertFalse(matcher.match(40f));
+        }
     }
 
     @Test
-    void testMatchWithCustomBounds() throws Exception {
+    void testMatchWithCustomBounds() {
         matcher = new DecimalRandomMatcher(0, 1000);
-        injectMockedRandom(matcher);
+        try (MockedStatic<ThreadLocalRandom> mocked = Mockito.mockStatic(ThreadLocalRandom.class)) {
+            ThreadLocalRandom mockRandom = Mockito.mock(ThreadLocalRandom.class);
+            mocked.when(ThreadLocalRandom::current).thenReturn(mockRandom);
 
-        // Configure random to return a value that should be compared against threshold
-        when(random.nextInt(100000)).thenReturn(25000); // 25% of range
 
-        // Should match for a threshold of 30% (threshold > random)
-        assertTrue(matcher.match(300f));
+            // Configure random to return a value that should be compared against threshold
+            when(mockRandom.nextLong(0, 100000)).thenReturn(25000L); // 25% of range
 
-        // Should not match for a threshold of 20% (threshold < random)
-        assertFalse(matcher.match(200f));
+            // Should match for a threshold of 30% (threshold > random)
+            assertTrue(matcher.match(300f));
 
-        verify(random, times(2)).nextInt(100000);
+            // Should not match for a threshold of 20% (threshold < random)
+            assertFalse(matcher.match(200f));
+        }
     }
 
     @Test
-    void testMatchWithNegativeRandom() throws Exception {
+    void testMatchNearBoundary() {
         // Setup matcher with mocked Random
         matcher = new DecimalRandomMatcher();
-        injectMockedRandom(matcher);
+        try (MockedStatic<ThreadLocalRandom> mocked = Mockito.mockStatic(ThreadLocalRandom.class)) {
+            ThreadLocalRandom mockRandom = Mockito.mock(ThreadLocalRandom.class);
+            mocked.when(ThreadLocalRandom::current).thenReturn(mockRandom);
 
-        // Test with negative random value (absolute value should be used)
-        when(random.nextInt(10000)).thenReturn(-5000);
+            // nextInt(10000) returns 5000, which sits between 40% and 60%
+            when(mockRandom.nextLong(0, 10000)).thenReturn(5000L);
 
-        // Should match because absolute value of -5000 is 5000, which is < 60*100
-        assertTrue(matcher.match(60f));
+            // Should match because 5000 < 60*100 = 6000
+            assertTrue(matcher.match(60f));
 
-        // Should not match because absolute value of -5000 is 5000, which is > 40*100
-        assertFalse(matcher.match(40f));
-
-        verify(random, times(2)).nextInt(10000);
+            // Should not match because 5000 >= 40*100 = 4000
+            assertFalse(matcher.match(40f));
+        }
     }
 
     @RepeatedTest(100)
@@ -134,9 +134,7 @@ class DecimalRandomMatcherTest {
 
     // Helper method to inject mocked Random into matcher
     private void injectMockedRandom(DecimalRandomMatcher matcher) throws Exception {
-        java.lang.reflect.Field randomField = RandomMatcher.class.getDeclaredField("random");
-        randomField.setAccessible(true);
-        randomField.set(matcher, random);
+
     }
 
     @Test
