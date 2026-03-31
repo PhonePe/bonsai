@@ -51,8 +51,8 @@ public class RandomMatcher implements Matcher.BooleanUniMatcher<Number> {
      */
     @Override
     public Boolean match(Number value) {
-        final long randomNumber = ThreadLocalRandom.current()
-                .nextLong(lowerBound, higherBound);
+        final long randomNumber = Math.abs(ThreadLocalRandom.current()
+                .nextLong(lowerBound, higherBound));
         return randomNumber < value.longValue();
 
     }

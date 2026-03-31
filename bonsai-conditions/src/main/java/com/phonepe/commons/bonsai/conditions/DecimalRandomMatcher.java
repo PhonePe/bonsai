@@ -28,18 +28,18 @@ import java.util.concurrent.ThreadLocalRandom;
 @NoArgsConstructor
 public class DecimalRandomMatcher extends RandomMatcher {
 
+    private static final int FACTOR = 100;
+
     public DecimalRandomMatcher(long lowerBound, long higherBound) {
         super(lowerBound, higherBound);
     }
 
     @Override
     public Boolean match(Number value) {
-        final int factor = 100;
-        final long h = higherBound * factor;
-        final long l = lowerBound * factor;
-        final long randomNumber = ThreadLocalRandom.current()
-                .nextLong(l, h);
-        return randomNumber < (value.floatValue() * factor);
+        final long h = higherBound * FACTOR;
+        final long l = lowerBound * FACTOR;
+        final long randomNumber = Math.abs(ThreadLocalRandom.current().nextLong(l, h));
+        return randomNumber < (value.floatValue() * FACTOR);
     }
 }
 
