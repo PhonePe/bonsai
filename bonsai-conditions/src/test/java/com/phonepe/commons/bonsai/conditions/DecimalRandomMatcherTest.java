@@ -95,18 +95,18 @@ class DecimalRandomMatcherTest {
     }
 
     @Test
-    void testMatchWithNegativeRandom() throws Exception {
+    void testMatchNearBoundary() throws Exception {
         // Setup matcher with mocked Random
         matcher = new DecimalRandomMatcher();
         injectMockedRandom(matcher);
 
-        // Test with negative random value (absolute value should be used)
-        when(random.nextInt(10000)).thenReturn(-5000);
+        // nextInt(10000) returns 5000, which sits between 40% and 60%
+        when(random.nextInt(10000)).thenReturn(5000);
 
-        // Should match because absolute value of -5000 is 5000, which is < 60*100
+        // Should match because 5000 < 60*100 = 6000
         assertTrue(matcher.match(60f));
 
-        // Should not match because absolute value of -5000 is 5000, which is > 40*100
+        // Should not match because 5000 >= 40*100 = 4000
         assertFalse(matcher.match(40f));
 
         verify(random, times(2)).nextInt(10000);
@@ -136,7 +136,7 @@ class DecimalRandomMatcherTest {
     private void injectMockedRandom(DecimalRandomMatcher matcher) throws Exception {
         java.lang.reflect.Field randomField = RandomMatcher.class.getDeclaredField("random");
         randomField.setAccessible(true);
-        randomField.set(matcher, random);
+        randomField.set(matcher, ThreadLocal.withInitial(() -> random));
     }
 
     @Test
