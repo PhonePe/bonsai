@@ -6,3 +6,7 @@ target/
 *.iws
 *.ipr
 docs/.cache
+.classpath
+.factorypath
+.project
+.settings/

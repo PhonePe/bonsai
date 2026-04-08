@@ -22,6 +22,7 @@ import com.google.common.collect.Maps;
 import com.phonepe.commons.bonsai.core.Bonsai;
 import com.phonepe.commons.bonsai.core.exception.BonsaiError;
 import com.phonepe.commons.bonsai.core.exception.BonsaiErrorCode;
+import com.phonepe.commons.bonsai.core.util.IdUtils;
 import com.phonepe.commons.bonsai.core.visitor.delta.impl.TreeKnotStateDeltaOperationModifierVisitor;
 import com.phonepe.commons.bonsai.core.vital.provided.EdgeStore;
 import com.phonepe.commons.bonsai.core.vital.provided.KeyTreeStore;
@@ -65,7 +66,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -540,7 +540,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         try {
             String requestId = MDC.get(BonsaiConstants.EVALUATION_ID);
             if (requestId == null) {
-                requestId = UUID.randomUUID().toString();
+                requestId = IdUtils.generateFastUUID();
                 MDC.put(BonsaiConstants.EVALUATION_ID, requestId);
                 return true;
             }
