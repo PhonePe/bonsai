@@ -18,6 +18,7 @@ package com.phonepe.commons.bonsai.core.vital;
 
 import com.google.common.base.Preconditions;
 import com.phonepe.commons.bonsai.core.Bonsai;
+import com.phonepe.commons.bonsai.core.util.IdUtils;
 import com.phonepe.commons.bonsai.json.eval.BonsaiHopeEngine;
 import com.phonepe.commons.bonsai.json.eval.hope.HopeHandler;
 import com.phonepe.commons.bonsai.json.eval.hope.impl.BonsaiHopeHandler;
@@ -31,8 +32,6 @@ import com.phonepe.commons.bonsai.core.vital.provided.impl.InMemoryKeyTreeStore;
 import com.phonepe.commons.bonsai.core.vital.provided.impl.InMemoryKnotStore;
 import com.phonepe.commons.bonsai.models.blocks.Edge;
 import com.phonepe.commons.bonsai.models.blocks.Knot;
-
-import java.util.UUID;
 
 /**
  * Use this builder to build the Bonsai Tree
@@ -103,12 +102,12 @@ public class BonsaiBuilder<C extends Context> {
         bonsaiIdGenerator = bonsaiIdGenerator == null ? new BonsaiIdGenerator() {
             @Override
             public String newEdgeId() {
-                return UUID.randomUUID().toString();
+                return IdUtils.generateUUD();
             }
 
             @Override
             public String newKnotId() {
-                return UUID.randomUUID().toString();
+                return IdUtils.generateUUD();
             }
         } : bonsaiIdGenerator;
         return new BonsaiTree<>(

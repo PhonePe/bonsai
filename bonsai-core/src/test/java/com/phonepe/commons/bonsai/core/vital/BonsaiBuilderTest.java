@@ -17,6 +17,7 @@
 package com.phonepe.commons.bonsai.core.vital;
 
 import com.phonepe.commons.bonsai.core.Bonsai;
+import com.phonepe.commons.bonsai.core.util.IdUtils;
 import com.phonepe.commons.bonsai.json.eval.BonsaiHopeEngine;
 import com.phonepe.commons.bonsai.core.vital.provided.VariationSelectorEngine;
 import com.phonepe.commons.bonsai.core.vital.provided.impl.InMemoryEdgeStore;
@@ -50,12 +51,12 @@ class BonsaiBuilderTest {
         final BonsaiIdGenerator bonsaiIdGenerator = new BonsaiIdGenerator() {
             @Override
             public String newEdgeId() {
-                return UUID.randomUUID().toString();
+                return IdUtils.generateUUD();
             }
 
             @Override
             public String newKnotId() {
-                return UUID.randomUUID().toString();
+                return IdUtils.generateUUD();
             }
         };
         final Bonsai bonsaiTree = BonsaiBuilder.builder()
