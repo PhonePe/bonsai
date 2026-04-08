@@ -10,6 +10,7 @@ public class IdUtils {
         return UUID.randomUUID().toString();
     }
 
+    @SuppressWarnings("java:S2245")
     public String generateFastUUID() {
         return new UUID(ThreadLocalRandom.current().nextLong(), ThreadLocalRandom.current().nextLong()).toString();
     }
