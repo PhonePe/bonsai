@@ -66,6 +66,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -540,7 +541,8 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         try {
             String requestId = MDC.get(BonsaiConstants.EVALUATION_ID);
             if (requestId == null) {
-                requestId = UUID.randomUUID().toString();
+                ThreadLocalRandom random = ThreadLocalRandom.current();
+                requestId = new UUID(random.nextLong(), random.nextLong()).toString();
                 MDC.put(BonsaiConstants.EVALUATION_ID, requestId);
                 return true;
             }
