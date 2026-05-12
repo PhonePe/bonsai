@@ -28,6 +28,7 @@ import com.phonepe.commons.bonsai.core.vital.provided.KeyTreeStore;
 import com.phonepe.commons.bonsai.core.vital.provided.KnotStore;
 import com.phonepe.commons.bonsai.core.vital.provided.Stores;
 import com.phonepe.commons.bonsai.core.vital.provided.VariationSelectorEngine;
+import com.phonepe.commons.bonsai.core.vital.random.RandomIdProvider;
 import com.phonepe.commons.bonsai.models.BonsaiConstants;
 import com.phonepe.commons.bonsai.models.KeyNode;
 import com.phonepe.commons.bonsai.models.ListNode;
@@ -65,8 +66,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -94,13 +93,15 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     private final ComponentBonsaiTreeValidator componentValidator;
     private final BonsaiProperties bonsaiProperties;
     private final BonsaiIdGenerator bonsaiIdGenerator;
+    private final RandomIdProvider randomIdProvider;
     private final DeltaOperationVisitor<TreeKnotState> treeKnotDeltaOperationModifier;
 
     public BonsaiTree(final Stores<String, String, Knot, Edge> stores,
                       final VariationSelectorEngine<C> variationSelectorEngine,
                       final ComponentBonsaiTreeValidator componentValidator,
                       final BonsaiProperties bonsaiProperties,
-                      final BonsaiIdGenerator bonsaiIdGenerator) {
+                      final BonsaiIdGenerator bonsaiIdGenerator,
+                      final RandomIdProvider randomIdProvider) {
         this.keyTreeStore = stores.getKeyTreeStore();
         this.knotStore = stores.getKnotStore();
         this.edgeStore = stores.getEdgeStore();
@@ -108,6 +109,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         this.componentValidator = componentValidator;
         this.bonsaiProperties = bonsaiProperties;
         this.bonsaiIdGenerator = bonsaiIdGenerator;
+        this.randomIdProvider = randomIdProvider;
         this.treeKnotDeltaOperationModifier = new TreeKnotStateDeltaOperationModifierVisitor(
                 componentValidator, knotStore, edgeStore
         );
@@ -541,8 +543,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         try {
             String requestId = MDC.get(BonsaiConstants.EVALUATION_ID);
             if (requestId == null) {
-                ThreadLocalRandom random = ThreadLocalRandom.current();
-                requestId = new UUID(random.nextLong(), random.nextLong()).toString();
+                requestId = randomIdProvider.generate();
                 MDC.put(BonsaiConstants.EVALUATION_ID, requestId);
                 return true;
             }

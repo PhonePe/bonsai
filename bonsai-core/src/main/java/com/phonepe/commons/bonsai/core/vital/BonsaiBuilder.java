@@ -18,6 +18,8 @@ package com.phonepe.commons.bonsai.core.vital;
 
 import com.google.common.base.Preconditions;
 import com.phonepe.commons.bonsai.core.Bonsai;
+import com.phonepe.commons.bonsai.core.vital.random.impl.ThreadLocalRandomIdProvider;
+import com.phonepe.commons.bonsai.core.vital.random.RandomIdProvider;
 import com.phonepe.commons.bonsai.json.eval.BonsaiHopeEngine;
 import com.phonepe.commons.bonsai.json.eval.hope.HopeHandler;
 import com.phonepe.commons.bonsai.json.eval.hope.impl.BonsaiHopeHandler;
@@ -44,6 +46,7 @@ public class BonsaiBuilder<C extends Context> {
     private VariationSelectorEngine<C> variationSelectorEngine;
     private BonsaiProperties bonsaiProperties;
     private BonsaiIdGenerator bonsaiIdGenerator;
+    private RandomIdProvider randomIdProvider;
     private HopeHandler hopeHandler;
 
     public static <C extends Context> BonsaiBuilder<C> builder() {
@@ -80,6 +83,11 @@ public class BonsaiBuilder<C extends Context> {
         return this;
     }
 
+    public BonsaiBuilder<C> withRandomIdProvider(RandomIdProvider randomIdProvider) {
+        this.randomIdProvider = randomIdProvider;
+        return this;
+    }
+
     public BonsaiBuilder<C> withHopeHandler(HopeHandler hopeHandler) {
         this.hopeHandler = hopeHandler;
         return this;
@@ -111,11 +119,13 @@ public class BonsaiBuilder<C extends Context> {
                 return UUID.randomUUID().toString();
             }
         } : bonsaiIdGenerator;
+        randomIdProvider = randomIdProvider == null ? new ThreadLocalRandomIdProvider() : randomIdProvider;
         return new BonsaiTree<>(
                 new Stores<>(keyTreeStore, knotStore, edgeStore),
                 variationSelectorEngine,
                 bonsaiTreeValidator,
                 bonsaiProperties,
-                bonsaiIdGenerator);
+                bonsaiIdGenerator,
+                randomIdProvider);
     }
 }
