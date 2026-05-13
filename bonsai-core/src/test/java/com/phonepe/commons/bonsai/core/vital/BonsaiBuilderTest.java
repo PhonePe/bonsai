@@ -17,6 +17,8 @@
 package com.phonepe.commons.bonsai.core.vital;
 
 import com.phonepe.commons.bonsai.core.Bonsai;
+import com.phonepe.commons.bonsai.core.vital.random.RandomIdProvider;
+import com.phonepe.commons.bonsai.core.vital.random.impl.SecureRandomIdProvider;
 import com.phonepe.commons.bonsai.json.eval.BonsaiHopeEngine;
 import com.phonepe.commons.bonsai.core.vital.provided.VariationSelectorEngine;
 import com.phonepe.commons.bonsai.core.vital.provided.impl.InMemoryEdgeStore;
@@ -48,14 +50,17 @@ class BonsaiBuilderTest {
         final VariationSelectorEngine<Context> variationSelectorEngine = new VariationSelectorEngine<>(hopeEngine);
         final BonsaiProperties bonsaiProperties = BonsaiProperties.builder().build();
         final BonsaiIdGenerator bonsaiIdGenerator = new BonsaiIdGenerator() {
+
+            private final RandomIdProvider secureIdProvider = new SecureRandomIdProvider();
+
             @Override
             public String newEdgeId() {
-                return UUID.randomUUID().toString();
+                return secureIdProvider.generate();
             }
 
             @Override
             public String newKnotId() {
-                return UUID.randomUUID().toString();
+                return secureIdProvider.generate();
             }
         };
         final Bonsai bonsaiTree = BonsaiBuilder.builder()

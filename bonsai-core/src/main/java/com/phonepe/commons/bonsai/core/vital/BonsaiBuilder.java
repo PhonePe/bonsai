@@ -18,6 +18,9 @@ package com.phonepe.commons.bonsai.core.vital;
 
 import com.google.common.base.Preconditions;
 import com.phonepe.commons.bonsai.core.Bonsai;
+import com.phonepe.commons.bonsai.core.vital.random.impl.SecureRandomIdProvider;
+import com.phonepe.commons.bonsai.core.vital.random.impl.ThreadLocalRandomIdProvider;
+import com.phonepe.commons.bonsai.core.vital.random.RandomIdProvider;
 import com.phonepe.commons.bonsai.json.eval.BonsaiHopeEngine;
 import com.phonepe.commons.bonsai.json.eval.hope.HopeHandler;
 import com.phonepe.commons.bonsai.json.eval.hope.impl.BonsaiHopeHandler;
@@ -32,8 +35,6 @@ import com.phonepe.commons.bonsai.core.vital.provided.impl.InMemoryKnotStore;
 import com.phonepe.commons.bonsai.models.blocks.Edge;
 import com.phonepe.commons.bonsai.models.blocks.Knot;
 
-import java.util.UUID;
-
 /**
  * Use this builder to build the Bonsai Tree
  */
@@ -44,6 +45,7 @@ public class BonsaiBuilder<C extends Context> {
     private VariationSelectorEngine<C> variationSelectorEngine;
     private BonsaiProperties bonsaiProperties;
     private BonsaiIdGenerator bonsaiIdGenerator;
+    private RandomIdProvider requestIdProvider;
     private HopeHandler hopeHandler;
 
     public static <C extends Context> BonsaiBuilder<C> builder() {
@@ -80,6 +82,11 @@ public class BonsaiBuilder<C extends Context> {
         return this;
     }
 
+    public BonsaiBuilder<C> withRequestIdProvider(RandomIdProvider requestIdProvider) {
+        this.requestIdProvider = requestIdProvider;
+        return this;
+    }
+
     public BonsaiBuilder<C> withHopeHandler(HopeHandler hopeHandler) {
         this.hopeHandler = hopeHandler;
         return this;
@@ -100,15 +107,19 @@ public class BonsaiBuilder<C extends Context> {
                 "maxAllowedConditionsPerEdge cannot be < 1");
         Preconditions.checkArgument(bonsaiProperties.getMaxAllowedVariationsPerKnot() > 0,
                 "maxAllowedVariationsPerKnot cannot be < 1");
+        requestIdProvider = requestIdProvider == null ? new ThreadLocalRandomIdProvider() : requestIdProvider;
         bonsaiIdGenerator = bonsaiIdGenerator == null ? new BonsaiIdGenerator() {
+
+            private final RandomIdProvider secureIdProvider = new SecureRandomIdProvider();
+
             @Override
             public String newEdgeId() {
-                return UUID.randomUUID().toString();
+                return secureIdProvider.generate();
             }
 
             @Override
             public String newKnotId() {
-                return UUID.randomUUID().toString();
+                return secureIdProvider.generate();
             }
         } : bonsaiIdGenerator;
         return new BonsaiTree<>(
@@ -116,6 +127,7 @@ public class BonsaiBuilder<C extends Context> {
                 variationSelectorEngine,
                 bonsaiTreeValidator,
                 bonsaiProperties,
-                bonsaiIdGenerator);
+                bonsaiIdGenerator,
+                requestIdProvider);
     }
 }
