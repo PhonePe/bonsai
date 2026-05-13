@@ -93,7 +93,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
     private final ComponentBonsaiTreeValidator componentValidator;
     private final BonsaiProperties bonsaiProperties;
     private final BonsaiIdGenerator bonsaiIdGenerator;
-    private final RandomIdProvider randomIdProvider;
+    private final RandomIdProvider requestIdProvider;
     private final DeltaOperationVisitor<TreeKnotState> treeKnotDeltaOperationModifier;
 
     public BonsaiTree(final Stores<String, String, Knot, Edge> stores,
@@ -101,7 +101,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
                       final ComponentBonsaiTreeValidator componentValidator,
                       final BonsaiProperties bonsaiProperties,
                       final BonsaiIdGenerator bonsaiIdGenerator,
-                      final RandomIdProvider randomIdProvider) {
+                      final RandomIdProvider requestIdProvider) {
         this.keyTreeStore = stores.getKeyTreeStore();
         this.knotStore = stores.getKnotStore();
         this.edgeStore = stores.getEdgeStore();
@@ -109,7 +109,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         this.componentValidator = componentValidator;
         this.bonsaiProperties = bonsaiProperties;
         this.bonsaiIdGenerator = bonsaiIdGenerator;
-        this.randomIdProvider = randomIdProvider;
+        this.requestIdProvider = requestIdProvider;
         this.treeKnotDeltaOperationModifier = new TreeKnotStateDeltaOperationModifierVisitor(
                 componentValidator, knotStore, edgeStore
         );
@@ -543,7 +543,7 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
         try {
             String requestId = MDC.get(BonsaiConstants.EVALUATION_ID);
             if (requestId == null) {
-                requestId = randomIdProvider.generate();
+                requestId = requestIdProvider.generate();
                 MDC.put(BonsaiConstants.EVALUATION_ID, requestId);
                 return true;
             }

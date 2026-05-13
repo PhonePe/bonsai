@@ -45,7 +45,7 @@ public class BonsaiBuilder<C extends Context> {
     private VariationSelectorEngine<C> variationSelectorEngine;
     private BonsaiProperties bonsaiProperties;
     private BonsaiIdGenerator bonsaiIdGenerator;
-    private RandomIdProvider randomIdProvider;
+    private RandomIdProvider requestIdProvider;
     private HopeHandler hopeHandler;
 
     public static <C extends Context> BonsaiBuilder<C> builder() {
@@ -82,8 +82,8 @@ public class BonsaiBuilder<C extends Context> {
         return this;
     }
 
-    public BonsaiBuilder<C> withRandomIdProvider(RandomIdProvider randomIdProvider) {
-        this.randomIdProvider = randomIdProvider;
+    public BonsaiBuilder<C> withRequestIdProvider(RandomIdProvider requestIdProvider) {
+        this.requestIdProvider = requestIdProvider;
         return this;
     }
 
@@ -107,7 +107,7 @@ public class BonsaiBuilder<C extends Context> {
                 "maxAllowedConditionsPerEdge cannot be < 1");
         Preconditions.checkArgument(bonsaiProperties.getMaxAllowedVariationsPerKnot() > 0,
                 "maxAllowedVariationsPerKnot cannot be < 1");
-        randomIdProvider = randomIdProvider == null ? new ThreadLocalRandomIdProvider() : randomIdProvider;
+        requestIdProvider = requestIdProvider == null ? new ThreadLocalRandomIdProvider() : requestIdProvider;
         bonsaiIdGenerator = bonsaiIdGenerator == null ? new BonsaiIdGenerator() {
 
             private final RandomIdProvider secureIdProvider = new SecureRandomIdProvider();
@@ -128,6 +128,6 @@ public class BonsaiBuilder<C extends Context> {
                 bonsaiTreeValidator,
                 bonsaiProperties,
                 bonsaiIdGenerator,
-                randomIdProvider);
+                requestIdProvider);
     }
 }

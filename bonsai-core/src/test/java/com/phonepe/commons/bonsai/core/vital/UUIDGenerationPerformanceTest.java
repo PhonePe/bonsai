@@ -16,6 +16,7 @@
 
 package com.phonepe.commons.bonsai.core.vital;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -25,6 +26,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Performance comparison between UUID.randomUUID() (SecureRandom-based)
  * and ThreadLocalRandom-based UUID generation, as used in {@link BonsaiTree#setMDCContext()}.
  */
+@Disabled("Performance benchmark — not intended to run in CI.")
 class UUIDGenerationPerformanceTest {
 
     private static final int ITERATIONS = 1_000_000;
