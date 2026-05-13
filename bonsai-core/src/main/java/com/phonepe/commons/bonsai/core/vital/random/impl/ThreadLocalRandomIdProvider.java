@@ -29,6 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ThreadLocalRandomIdProvider implements RandomIdProvider {
 
     @Override
+    @SuppressWarnings("java:S2245")
     public String generate() {
         final ThreadLocalRandom random = ThreadLocalRandom.current();
         return new UUID(random.nextLong(), random.nextLong()).toString();
