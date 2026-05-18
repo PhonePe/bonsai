@@ -12,7 +12,7 @@
 
     <properties>
         <json-path.version>2.9.0</json-path.version>
-        <hope.version>2.0.9</hope.version>
+        <hope.version>2.0.10</hope.version>
         <javassist.version>3.28.0-GA</javassist.version>
     </properties>
 
