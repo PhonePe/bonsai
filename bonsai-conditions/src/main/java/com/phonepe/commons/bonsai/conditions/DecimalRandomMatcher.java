@@ -18,6 +18,8 @@ package com.phonepe.commons.bonsai.conditions;
 
 import lombok.NoArgsConstructor;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * DecimalRandomMatcher is a matcher that matches a given value with a random number generated between the lowerBound and
  * higherBound. The random number is generated using the Random class. The random number is then compared with the given
@@ -26,17 +28,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DecimalRandomMatcher extends RandomMatcher {
 
+    private static final int DECIMAL_FACTOR = 100;
+
     public DecimalRandomMatcher(long lowerBound, long higherBound) {
         super(lowerBound, higherBound);
     }
 
     @Override
+    @SuppressWarnings("java:S2245") // Percentage sampling does not require cryptographically secure randomness.
     public Boolean match(Number value) {
-        final int factor = 100;
-        final long h = higherBound * factor;
-        final long l = lowerBound * factor;
-        final long randomNumber = Math.abs(random.nextInt((int) ((h - l) + l)));
-        return randomNumber < (value.floatValue() * factor);
+        final double threshold = value.doubleValue();
+        if (threshold <= lowerBound) {
+            return false;
+        }
+        if (threshold >= higherBound) {
+            return true;
+        }
+
+        final long lowerBoundWithPrecision = lowerBound * DECIMAL_FACTOR;
+        final long higherBoundWithPrecision = higherBound * DECIMAL_FACTOR;
+        final long randomNumber = ThreadLocalRandom.current()
+                .nextLong(lowerBoundWithPrecision, higherBoundWithPrecision);
+        return randomNumber < threshold * DECIMAL_FACTOR;
     }
 }
-
