@@ -735,10 +735,11 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             }
             return knot;
         }
-        List<Edge> edges = new ArrayList<>(edgeStore.getAllEdges(edgeIdentifiers.stream()
-                        .map(EdgeIdentifier::getId)
-                        .toList())
-                .values());
+        final List<String> edgeIds = new ArrayList<>(edgeIdentifiers.size());
+        for (final EdgeIdentifier edgeIdentifier : edgeIdentifiers) {
+            edgeIds.add(edgeIdentifier.getId());
+        }
+        List<Edge> edges = new ArrayList<>(edgeStore.getAllEdges(edgeIds).values());
         Optional<Edge> conditionSatisfyingEdge = variationSelectorEngine.match(context, edges, key);
         if (conditionSatisfyingEdge.isEmpty()) {
             /* base condition for the recursion */
