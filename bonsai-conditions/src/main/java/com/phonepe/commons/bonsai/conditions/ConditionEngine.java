@@ -46,10 +46,12 @@ public abstract class ConditionEngine<E, C extends Condition, F> implements Matc
      */
     @Override
     public Optional<C> match(E entity, final List<C> conditions) {
-        return conditions.stream()
-                .filter(condition -> condition.isLive() && (RANDOM_MATCHER.match(condition.getPercentage()) && match(
-                        entity, condition)))
-                .findFirst();
+        for (final C condition : conditions) {
+            if (condition.isLive() && RANDOM_MATCHER.match(condition.getPercentage()) && match(entity, condition)) {
+                return Optional.of(condition);
+            }
+        }
+        return Optional.empty();
     }
 
     /**
@@ -62,10 +64,13 @@ public abstract class ConditionEngine<E, C extends Condition, F> implements Matc
      */
     @Override
     public Optional<C> match(E entity, final List<C> conditions, F entityMetadata) {
-        return conditions.stream()
-                .filter(condition -> condition.isLive() && (RANDOM_MATCHER.match(condition.getPercentage()) && match(
-                        entity, condition, entityMetadata)))
-                .findFirst();
+        for (final C condition : conditions) {
+            if (condition.isLive() && RANDOM_MATCHER.match(condition.getPercentage())
+                    && match(entity, condition, entityMetadata)) {
+                return Optional.of(condition);
+            }
+        }
+        return Optional.empty();
     }
 
     /**

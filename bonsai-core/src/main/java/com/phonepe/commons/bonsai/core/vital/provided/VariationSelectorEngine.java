@@ -47,24 +47,7 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
 
     @Override
     public Boolean match(C context, Edge edge) {
-        /* in case no document context is passed, we will not match the edge's filters */
-        if (context.getDocumentContext() == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("[bonsai][match][{}] no document context", edge.getEdgeIdentifier().getId());
-            }
-            return false;
-        }
-        return edge.getFilters()
-                .stream()
-                .allMatch(k -> {
-                    final JsonPathFilterEvaluationEngine<C, String> filterVisitor = log.isTraceEnabled()
-                            ?
-                            new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
-                                    genericFilterHandler)
-                            : new JsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
-                            genericFilterHandler, null);
-                    return k.accept(filterVisitor);
-                });
+        return match(context, edge, null);
     }
 
     @Override
@@ -76,16 +59,16 @@ public class VariationSelectorEngine<C extends Context> extends ConditionEngine<
             }
             return false;
         }
-        return edge.getFilters()
-                .stream()
-                .allMatch(k -> {
-                    final JsonPathFilterEvaluationEngine<C, String> filterVisitor = log.isTraceEnabled()
-                                                                                    ?
-                                                                                    new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
-                                                                                                                                     genericFilterHandler, associatedKey)
-                                                                                    : new JsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
-                                                                                                                           genericFilterHandler, associatedKey);
-                    return k.accept(filterVisitor);
-                });
+        final JsonPathFilterEvaluationEngine<C, String> filterVisitor = log.isTraceEnabled()
+                ? new TraceWrappedJsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
+                genericFilterHandler, associatedKey)
+                : new JsonPathFilterEvaluationEngine<>(edge.getEdgeIdentifier().getId(), context,
+                genericFilterHandler, associatedKey);
+        for (final var filter : edge.getFilters()) {
+            if (!filter.accept(filterVisitor)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
