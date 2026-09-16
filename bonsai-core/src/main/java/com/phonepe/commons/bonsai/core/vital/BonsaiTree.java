@@ -59,6 +59,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -756,11 +757,21 @@ public class BonsaiTree<C extends Context> implements Bonsai<C> {
             log.debug("[bonsai][getMatchingKnot][{}][{}] edge condition satisfied: {}, knot: {} ", context.id(), key,
                     edge.getEdgeIdentifier().getId(), rhsKnot.getId());
         }
-        if (Objects.isNull(edge.getProperties())) {
-            edge.setProperties(Maps.newHashMap());
-        }
-        edge.getProperties().put("key", key);
-        edgeList.add(edge);
+        /* The store-cached edge is shared across evaluations and threads; never mutate it directly.
+           Record the evaluation-scoped key in a per-evaluation copy of the properties map. */
+        final Map<String, Object> edgeProperties = new HashMap<>(edge.getProperties() == null
+                ? Collections.emptyMap()
+                : edge.getProperties());
+        edgeProperties.put("key", key);
+        edgeList.add(Edge.builder()
+                .live(edge.isLive())
+                .percentage(edge.getPercentage())
+                .edgeIdentifier(edge.getEdgeIdentifier())
+                .knotId(edge.getKnotId())
+                .version(edge.getVersion())
+                .filters(edge.getFilters())
+                .properties(edgeProperties)
+                .build());
         /* recursion happening here */
         Knot matchingNode = getMatchingKnot(key, rhsKnot, context, path, edgeList);
         /* no more matching knots on the RHS, use previous knot */
