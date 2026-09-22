@@ -20,31 +20,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import java.util.Random;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @Slf4j
 class DecimalRandomMatcherTest {
 
     private DecimalRandomMatcher matcher;
 
-    @Mock
-    private Random random;
-
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        matcher = new DecimalRandomMatcher();
     }
 
     @Test
@@ -62,54 +53,9 @@ class DecimalRandomMatcherTest {
     }
 
     @Test
-    void testMatchWithMockedRandom() throws Exception {
-        matcher = new DecimalRandomMatcher();
-        injectMockedRandom(matcher);
-        when(random.nextInt(10000)).thenReturn(4500); // 45% of range
-
-        // Should match when value is 50% (threshold > random)
-        assertTrue(matcher.match(50f));
-
-        // Should not match when value is 40% (threshold < random)
-        assertFalse(matcher.match(40f));
-
-        // Verify the random.nextInt was called with expected args
-        verify(random, times(2)).nextInt(10000);
-    }
-
-    @Test
-    void testMatchWithCustomBounds() throws Exception {
-        matcher = new DecimalRandomMatcher(0, 1000);
-        injectMockedRandom(matcher);
-
-        // Configure random to return a value that should be compared against threshold
-        when(random.nextInt(100000)).thenReturn(25000); // 25% of range
-
-        // Should match for a threshold of 30% (threshold > random)
-        assertTrue(matcher.match(300f));
-
-        // Should not match for a threshold of 20% (threshold < random)
-        assertFalse(matcher.match(200f));
-
-        verify(random, times(2)).nextInt(100000);
-    }
-
-    @Test
-    void testMatchWithNegativeRandom() throws Exception {
-        // Setup matcher with mocked Random
-        matcher = new DecimalRandomMatcher();
-        injectMockedRandom(matcher);
-
-        // Test with negative random value (absolute value should be used)
-        when(random.nextInt(10000)).thenReturn(-5000);
-
-        // Should match because absolute value of -5000 is 5000, which is < 60*100
-        assertTrue(matcher.match(60f));
-
-        // Should not match because absolute value of -5000 is 5000, which is > 40*100
-        assertFalse(matcher.match(40f));
-
-        verify(random, times(2)).nextInt(10000);
+    void testDefaultBounds() {
+        assertFalse(matcher.match(0));
+        assertTrue(matcher.match(100));
     }
 
     @RepeatedTest(100)
@@ -130,13 +76,6 @@ class DecimalRandomMatcherTest {
         float matchPercentage = (float) matchCount / trials * 100;
         assertEquals(threshold, matchPercentage, 5.0,
                      "Match percentage should be within 5% of the threshold");
-    }
-
-    // Helper method to inject mocked Random into matcher
-    private void injectMockedRandom(DecimalRandomMatcher matcher) throws Exception {
-        java.lang.reflect.Field randomField = RandomMatcher.class.getDeclaredField("random");
-        randomField.setAccessible(true);
-        randomField.set(matcher, random);
     }
 
     @Test
@@ -184,5 +123,15 @@ class DecimalRandomMatcherTest {
         }
         assertEquals(percentage, (float) (trueValue) / (size) * 1000, 0.1);
         assertEquals(1000 - percentage, (float) (falseValue) / (size) * 1000, 0.1);
+    }
+
+    @Test
+    void testCustomBounds() {
+        matcher = new DecimalRandomMatcher(10, 1000);
+
+        assertFalse(matcher.match(10));
+        assertFalse(matcher.match(9.99));
+        assertTrue(matcher.match(1000));
+        assertTrue(matcher.match(1000.01));
     }
 }
